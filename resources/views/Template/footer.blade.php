@@ -1,0 +1,21 @@
+<!-- footer area start-->
+<footer>
+    <div class="footer-area">
+        <p>© Copyright 2020 MIT. All right reserved.
+        </p>
+    </div>
+</footer>
+<!-- footer area end-->
+
+<script src="{{ asset('template/assets/js/vendor/jquery-2.2.4.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/popper.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/owl.carousel.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/metisMenu.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/jquery.slicknav.min.js') }}"></script>
+<script src="{{ asset('template/assets/js/plugins.js') }}"></script>
+<script src="{{ asset('template/assets/js/scripts.js') }}"></script>
+<script src="{{ asset('scripts/Template/footer.js') }}"></script>
+
+@yield('custom-script')
