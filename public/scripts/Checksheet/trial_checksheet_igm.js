@@ -161,10 +161,10 @@ const IGM = (() => {
                     <input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
                 </td>
                 <td>
-                    <input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled>
+                    <input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
                 </td>
                 <td>
-                    <input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled>
+                    <input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
                 </td>
                 <td id="td_item_no_${item_no_holder}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
             </tr>`;
@@ -190,6 +190,8 @@ const IGM = (() => {
             if (type === 'MM' || type === 'MMF') {
                 $(`#tr_item_no_${item_no}_sub_no_column`).remove();
                 $(`#tr_item_no_${item_no}_sub_no_1`).remove();
+                $(`#tr_item_no_${item_no}_sub_no_1`).remove();
+                $(`#tr_item_no_${item_no}_sub_no_max_1`).remove();
             } else {
                 $(`#tr_item_no_${item_no}_sub_no_column`).remove();
                 $(`#tr_item_no_${item_no}_sub_no_1`).remove();
@@ -967,11 +969,264 @@ const IGM = (() => {
         }
     };
 
-    this_igm.SubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
+    this_igm.ValidateItemNoUpperAndLowerLimit = (item_no) => {
+        let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
 
-        if(min_max_type === 'min'){
-            if(min_max_no > 1){
-                
+        if (upper_limit !== '') {
+            $(`#span_upper_limit_error_${item_no}`).remove();
+            if (upper_limit > 0) {
+                let new_upper_limit = upper_limit.replace(/^0+/, '');
+                $(`#txt_item_no_${item_no}_upper_limit`).val(new_upper_limit);
+            }
+        }
+
+        if (lower_limit !== '') {
+            $(`#span_lower_limit_error_${item_no}`).remove();
+            if (lower_limit > 0) {
+                let new_lower_limit = lower_limit.replace(/^0+/, '');
+                $(`#txt_item_no_${item_no}_lower_limit`).val(new_lower_limit);
+            }
+        }
+
+        if (upper_limit !== '' && lower_limit !== '') {
+            if (parseInt(lower_limit) > parseInt(upper_limit)) {
+                $(`#span_lower_limit_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
+                $(`#txt_item_no_${item_no}_lower_limit`).val('');
+            } else {
+                $(`#span_lower_limit_error_${item_no}`).remove();
+            }
+        }
+
+    };
+
+    this_igm.SubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
+        if ($(`#txt_item_no_${item_no}_upper_limit`).val() === '' || $(`#txt_item_no_${item_no}_lower_limit`).val() === '') {
+            $(`#span_upper_limit_error_${item_no}`).remove();
+            $(`#span_lower_limit_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
+            $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
+        } else {
+            if ($(`#txt_item_no_${item_no}_upper_limit`).val() !== '' && $(`#txt_item_no_${item_no}_lower_limit`).val() !== '') {
+                IGM.ValidateSubItemGetMinMax(item_no, sub_no, min_max_no, min_max_type);
+            } else {
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
+            }
+
+        }
+    };
+
+    this_igm.ValidateSubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
+        if (min_max_type === 'min') {
+            if (min_max_no === 1) {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                } else {
+                    $(`#span_min_error_${min_max_no}`).remove();
+                    IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                }
+
+            } else {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                } else {
+                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) {
+                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') {
+
+
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val('');
+
+                            IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
+
+                        } else {
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') {
+                                $(`#span_min_error_${min_max_no}`).remove();
+                                IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (min_max_no === 1) {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+                    $(`#span_min_error_${min_max_no}`).remove();
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Required</span>`);
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
+                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                } else {
+                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    } else {
+                        $(`#span_min_error_${min_max_no}`).remove();
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                    }
+                }
+
+            } else {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') {
+                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                } else {
+                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) {
+                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_count}`).val() === '') {
+
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
+
+                            IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
+
+                        } else {
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no - 1}`).val() !== '') {
+                                $(`#span_max_error_${min_max_no}`).remove();
+                                IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    this_igm.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit = (item_no, sub_no, min_max_no) => {
+        for (let error_count = 1; error_count <= min_max_no; error_count++) {
+            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${error_count}`).val() === '') {
+                $(`#span_min_error_${error_count}`).remove();
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${error_count}`).after(`<span id="span_min_error_${error_count}" class="span-error">Required</span>`);
+
+            } else {
+                $(`#span_min_error_${error_count}`).remove();
+            }
+
+            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${error_count}`).val() === '') {
+                $(`#span_max_error_${error_count}`).remove();
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${error_count}`).after(`<span id="span_max_error_${error_count}" class="span-error">Required</span>`);
+
+            } else {
+                $(`#span_max_error_${error_count}`).remove();
+            }
+
+        }
+
+    };
+
+    this_igm.ValidateSubItemGetMinMaxWithUpperAndLowerLimit = (item_no, sub_no, min_max_no, min_max_type) => {
+
+        let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let min_max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
+        let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
+        let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
+        let last_max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
+        let array_min_max_judgement_per_sub_item = [];
+        let array_min_max_judgement_per_sub_item_overall_NG_count = 0;
+        let overall_NG_count = 0;
+
+
+        if (parseInt(min_value) > parseInt(max_value)) {
+
+            $(`#span_min_error_${min_max_no}`).remove();
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Invalid min and max</span>`);
+        } else {
+            $(`#span_min_error_${min_max_no}`).remove();
+
+            if (last_max_value !== '') {
+                for (let a_count = 1; a_count <= 5; a_count++) {
+                    let min_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
+                    let max_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
+
+                    // checking ng min
+                    if (min_value !== '') {
+                        if (parseInt(min_value_loop) > parseInt(upper_limit)) {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        } else {
+                            if (parseInt(min_value_loop) < parseInt(lower_limit)) {
+                                array_min_max_judgement_per_sub_item.push('NG');
+                            } else {
+                                array_min_max_judgement_per_sub_item.push('OK');
+                            }
+                        }
+                    }
+
+                    // checking ng max
+                    if (max_value !== '') {
+                        if (parseInt(max_value_loop) > parseInt(upper_limit)) {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        } else {
+                            if (parseInt(max_value_loop) < parseInt(lower_limit)) {
+                                array_min_max_judgement_per_sub_item.push('NG');
+                            } else {
+                                array_min_max_judgement_per_sub_item.push('OK');
+                            }
+                        }
+                    }
+
+                    if (a_count === 5) {
+
+                        if (array_min_max_judgement_per_sub_item.length !== 10) {
+
+                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        } else {
+                            // counting ng NG
+                            for (let b_count = 0; b_count < array_min_max_judgement_per_sub_item.length; b_count++) {
+                                if (array_min_max_judgement_per_sub_item[b_count] === 'NG') {
+                                    array_min_max_judgement_per_sub_item_overall_NG_count++;
+                                }
+                            }
+                            array_min_max_judgement_per_sub_item = [];
+                        }
+
+                        for (let c_count = 1; c_count <= 5; c_count++) {
+                            let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
+                            let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
+
+                            //pagka nagbura sa gitna na may last value
+                            if (min_value === '') {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            } else {
+                                //pagka nagbura sa gitna na may last value
+                                if (max_value === '') {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                } else {
+                                    //pag lalagay ng sub item judgement
+                                    if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                    } else {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
+                                    }
+
+                                    //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
+                                    let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
+                                    let split_total_sub_no_count = sub_no_count.split(',');
+                                    let total_sub_no_count = split_total_sub_no_count[2];
+
+                                    for (let d_count = 1; d_count <= total_sub_no_count; d_count++) {
+
+                                        let judgement_per_sub_item = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+
+                                        if (judgement_per_sub_item === 'NG') {
+                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                            array_overall_judgement = [];
+                                        } else {
+                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
+                                            array_overall_judgement = [];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
             }
         }
     };
