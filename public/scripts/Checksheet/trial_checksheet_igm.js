@@ -787,7 +787,11 @@ const IGM = (() => {
             }
 
         }
-        IGM.SubitemCalculateVisualOverallJudgement(item_no, sub_no);
+        if (type === 'MM' || type === 'MMF') {
+            IGM.SubitemCalculateMinMaxOverallJudgement(item_no);
+        } else {
+            IGM.SubitemCalculateVisualOverallJudgement(item_no);
+        }
     };
 
     this_igm.RemoveSubNoChangeIdMC = (item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item) => {
@@ -936,11 +940,11 @@ const IGM = (() => {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
             }
 
-            IGM.SubitemCalculateVisualOverallJudgement(item_no, sub_no);
+            IGM.SubitemCalculateVisualOverallJudgement(item_no);
         }
     }
 
-    this_igm.SubitemCalculateVisualOverallJudgement = (item_no, sub_no) => {
+    this_igm.SubitemCalculateVisualOverallJudgement = (item_no) => {
 
         let overall_NG_count = 0;
         let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
@@ -1125,7 +1129,6 @@ const IGM = (() => {
         let last_max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
         let array_min_max_judgement_per_sub_item = [];
         let array_min_max_judgement_per_sub_item_overall_NG_count = 0;
-        let overall_NG_count = 0;
 
 
         if (parseInt(min_value) > parseInt(max_value)) {
@@ -1203,23 +1206,7 @@ const IGM = (() => {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
                                     }
 
-                                    //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
-                                    let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
-                                    let split_total_sub_no_count = sub_no_count.split(',');
-                                    let total_sub_no_count = split_total_sub_no_count[2];
-
-                                    for (let d_count = 1; d_count <= total_sub_no_count; d_count++) {
-
-                                        let judgement_per_sub_item = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
-
-                                        if (judgement_per_sub_item === 'NG') {
-                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                                            array_overall_judgement = [];
-                                        } else {
-                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
-                                            array_overall_judgement = [];
-                                        }
-                                    }
+                                    IGM.SubitemCalculateMinMaxOverallJudgement(item_no);
                                 }
                             }
                         }
@@ -1227,6 +1214,36 @@ const IGM = (() => {
                 }
             } else {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            }
+        }
+    };
+
+    this_igm.SubitemCalculateMinMaxOverallJudgement = (item_no) => {
+        //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
+        let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
+        let split_total_sub_no_count = sub_no_count.split(',');
+        let total_sub_no_count = split_total_sub_no_count[2];
+        let overall_NG_count = 0;
+
+        for (let index = 1; index <= total_sub_no_count; index++) {
+            array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+        }
+
+        for (let index = 0; index < array_overall_judgement.length; index++) {
+            if (array_overall_judgement[index] === 'NG') {
+                overall_NG_count++;
+            }
+        }
+
+        if (array_overall_judgement.length === 0) {
+            $(`#td_item_no_${item_no}_judgement`).html('N/A');
+        } else {
+            if (overall_NG_count > 0) {
+                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                array_overall_judgement = [];
+            } else {
+                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
+                array_overall_judgement = [];
             }
         }
     };
