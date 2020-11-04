@@ -363,20 +363,20 @@ const IGM = (() => {
                     //coordinates
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${sub_no_holder}_coordinates_1`);
                     //min
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_1`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_1_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_2`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_2_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_3`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_3_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_4`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_4_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_5`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_5_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_1_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_2_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_3_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_4_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_5_1`);
                     //judgement
                     $(`#td_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_judgement`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_judgement_1`);
                     //max
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_max_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_max_${remove_sub_no_count}_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_1`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_1_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_2`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_2_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_3`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_3_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_4`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_4_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_5`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_5_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_1_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_2_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_3_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_4_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_5_1`);
 
                 } else {
 
@@ -417,20 +417,27 @@ const IGM = (() => {
                         //coordinates
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${sub_no_holder}_coordinates`);
                         //min
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_1_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_min_1`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_2_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_min_2`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_3_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_min_3`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_4_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_min_4`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_5_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_min_5`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_1`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_2`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_3_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_3`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_4_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_4`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_5`);
                         //judgement
                         $(`#td_item_no_${a_count}_sub_no_${b_count}_judgement_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_judgement`);
                         //max
                         $(`#tr_item_no_${a_count}_sub_no_max_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_max_${b_count}`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_1_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_max_1`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_2_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_max_2`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_3_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_max_3`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_4_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_max_4`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_5_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_max_5`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_1`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_2`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_3_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_3`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_4_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_4`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_5`);
+
+                        //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
+                        for (let c_count = 1; c_count <= 5; c_count++) {
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no}, ${b_count},${c_count},'min');`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no}, ${b_count},${c_count},'max');`);
+                        }
+
                     } else {
                         $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
                         //coordinates
@@ -449,7 +456,6 @@ const IGM = (() => {
                         }
 
                     }
-
                 }
             }
         }
@@ -641,37 +647,37 @@ const IGM = (() => {
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
                 </td>
                 <td class="td_sub_no_input">
-                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},1,'min')">
+                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},2,'min')">
+                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},3,'min')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},4,'min')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},5,'min')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')">
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">N/A</td>
             </tr>
             <tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},1,'max')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},2,'max')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},3,'max')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},4,'max')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count}, ${new_sub_no},5,'max')">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')">
                 </td>
             </tr>`;
         } else {
@@ -811,14 +817,18 @@ const IGM = (() => {
         $(`#a_remove_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no_holder},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item});`);
         $(`#a_remove_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `a_remove_item_no_${item_no}_sub_no_${sub_no_holder}`);
         //visuals
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_coordinates`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_coordinates`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_1`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_visual_1`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_2`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_visual_2`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_3`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_visual_3`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_4`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_visual_4`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_5`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_visual_5`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_coordinates`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_coordinates`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_1`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_1`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_2`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_2`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_3`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_3`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_4`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_4`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_visual_5`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_5`);
         //judgement
         $(`#td_item_no_${item_no}_sub_no_${next_sub_no_holder}_judgement`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_judgement`);
+
+        for (let c_count = 1; c_count <= 5; c_count++) {
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${item_no},${sub_no_holder},${c_count});`);
+        }
 
     };
 
@@ -843,19 +853,23 @@ const IGM = (() => {
         $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_coordinates`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_coordinates`);
 
         //min
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_1`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_min_1`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_2`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_min_2`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_3`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_min_3`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_4`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_min_4`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_5`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_min_5`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_1`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_1`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_2`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_2`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_3`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_3`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_4`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_4`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_min_5`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_5`);
         //max
         $(`#tr_item_no_${item_no}_sub_no_max_${next_sub_no_holder}`).attr('id', `tr_item_no_${item_no}_sub_no_max_${sub_no_holder}`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_1`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_max_1`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_2`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_max_2`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_3`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_max_3`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_4`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_max_4`);
-        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_5`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_max_5`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_1`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_1`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_2`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_2`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_3`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_3`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_4`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_4`);
+        $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_5`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_5`);
 
+        for (let c_count = 1; c_count <= 5; c_count++) {
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'min');`);
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'max');`);
+        }
     };
 
     this_igm.SubItemSelectVisual = (item_no, sub_no, visual_no) => {
