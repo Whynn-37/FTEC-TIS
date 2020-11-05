@@ -23,3 +23,4 @@ Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
 
+Route::get('test', 'TestController@test');
