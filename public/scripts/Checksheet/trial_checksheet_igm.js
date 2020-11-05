@@ -255,7 +255,7 @@ const IGM = (() => {
         let add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${previous_item_no_holder}`).attr('onclick');
         let add_igm_sub_no_onclick_value = $(`#a_add_igm_item_no_${previous_item_no_holder}_sub_no`).attr('onclick');
         let validate_sub_no_count_onclick_value = $(`#btn_validate_sub_no_count_${previous_item_no_holder}`).attr('onclick');
-
+      
         let split_add_igm_item_no_onclick_value = add_igm_item_no_onclick_value.split(',');
         let split_add_igm_sub_no_onclick_value = add_igm_sub_no_onclick_value.split(',');
 
@@ -301,6 +301,7 @@ const IGM = (() => {
         $(`#btn_validate_sub_no_count_${next_item_no_holder}_1`).attr('onclick', `${new_validate_sub_no_count_onclick_value}`);
 
         IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type, split_add_igm_item_no_onclick_value, previous_item_no_holder, next_item_no_holder);
+
     };
 
     this_igm.AddIgmItemNoInputsBetweenChangeTemporaryIdToOriginalId = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
@@ -343,27 +344,40 @@ const IGM = (() => {
     this_igm.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId = (type, split_add_igm_item_no_onclick_value, previous_item_no_holder, next_item_no_holder) => {
 
         // PAG RERENAME NG REMOVE SUB NO ID BASED SA BAGONG ITEM NO
+        console.log(split_add_igm_item_no_onclick_value)
         let item_no_existing_sub_no_count = split_add_igm_item_no_onclick_value[2];
+        let split_item_no_existing_sub_no_type = split_add_igm_item_no_onclick_value[0].split('(');
+       
+        let item_no_existing_sub_no_type = split_item_no_existing_sub_no_type[1].replace(/"|'/g, '');
+        
         if (item_no_existing_sub_no_count > 0) {
+
             for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
 
                 let remove_sub_no_onclick_value = $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('onclick')
+               
                 let split_remove_sub_no_onclick_value = remove_sub_no_onclick_value.split(',');
 
                 let new_remove_sub_no_onclick_value = `${split_remove_sub_no_onclick_value[0]},${split_remove_sub_no_onclick_value[1]},${next_item_no_holder},${split_remove_sub_no_onclick_value[3]},${split_remove_sub_no_onclick_value[4]}`;
 
-                $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`)
-                $(`#a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`).attr('onclick', `${new_remove_sub_no_onclick_value}`)
-                $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`)
+                $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+                $(`#a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`).attr('onclick', `${new_remove_sub_no_onclick_value}`);
+                $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
-                $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`)
+                $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`);
 
-                if (type === 'MM' || type === 'MMF') {
+                $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).text(`${remove_sub_no_count}`);
+                $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).attr('id', `span_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_label_1`);
+
+                if (item_no_existing_sub_no_type === 'MM' || type === 'MMF') {
+                   
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
                     //coordinates
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${sub_no_holder}_coordinates_1`);
+                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
+
                     //min
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_1_1`);
+
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_2_1`);
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_3_1`);
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_4_1`);
@@ -397,25 +411,31 @@ const IGM = (() => {
 
     this_igm.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId = (type, previous_item_no) => {
         let count_value = parseInt(previous_item_no) + 2;
-
+      
         for (let a_count = count_value; a_count <= item_no_count; a_count++) {
             let add_igm_tem_no_onclick_value = $(`#a_add_igm_item_no_${a_count}`).attr('onclick');
+           
             let split_add_igm_tem_no_onclick_value = add_igm_tem_no_onclick_value.split(',');
+           
 
             let existing_sub_no_count_value = split_add_igm_tem_no_onclick_value[2];
+            let split_item_no_existing_sub_no_type = split_add_igm_tem_no_onclick_value[0].split('(');
+            let item_no_existing_sub_no_type = split_item_no_existing_sub_no_type[1].replace(/"|'/g, '');
 
             if (existing_sub_no_count_value > 0) {
                 for (let b_count = 1; b_count <= existing_sub_no_count_value; b_count++) {
-
+                    
                     $(`#a_remove_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `a_remove_item_no_${a_count}_sub_no_${b_count}`);
                     $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`)
 
                     $(`#th_tr_item_no_${a_count}_sub_no_column_rowspan_1`).attr('id', `th_tr_item_no_${a_count}_sub_no_column_rowspan`)
 
-                    if (type === 'MM' || type === 'MMF') {
-                        $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${remove_sub_no_count}`);
+                    $(`#span_item_no_${a_count}_sub_no_${b_count}_label_1`).attr('id', `span_item_no_${a_count}_sub_no_${b_count}_label`);
+
+                    if (item_no_existing_sub_no_type === 'MM' || item_no_existing_sub_no_type === 'MMF') {
+                        $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
                         //coordinates
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${sub_no_holder}_coordinates`);
+                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
                         //min
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_1`);
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_2`);
@@ -434,8 +454,8 @@ const IGM = (() => {
 
                         //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
                         for (let c_count = 1; c_count <= 5; c_count++) {
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no}, ${b_count},${c_count},'min');`);
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no}, ${b_count},${c_count},'max');`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'min');`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'max');`);
                         }
 
                     } else {
@@ -452,7 +472,7 @@ const IGM = (() => {
 
                         //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
                         for (let c_count = 1; c_count <= 5; c_count++) {
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${a_count}, ${b_count}, ${c_count});`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${a_count},${b_count}, ${c_count});`);
                         }
 
                     }
@@ -482,18 +502,6 @@ const IGM = (() => {
             $('#tfoot_add_igm_item').prop('hidden', false);
             $('#tbl_new_igm').prop('hidden', true);
         } else {
-            //VALIDATE SUB NO COUNT
-            var btn_validate_sub_no_count_onclick_value = $(`#btn_validate_sub_no_count_${item_no}`).attr('onclick');
-            var split_btn_validate_sub_no_count_onclick_value = btn_validate_sub_no_count_onclick_value.split('(');
-            var split_split_btn_validate_sub_no_count_onclick_value = split_btn_validate_sub_no_count_onclick_value[1].split(',');
-            var existing_sub_no_count_value = split_split_btn_validate_sub_no_count_onclick_value[0];
-            //ADD IGM ITEM NO
-            var a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${item_no}`).attr('onclick');
-            var split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
-            var split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
-            var type_value = split_split_a_add_igm_item_no_onclick_value[0];
-            var split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
-            var added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
 
             if (item_no - 1 === 1) {
                 $('#tr_item_no_main_column').prop('hidden', true);
@@ -510,6 +518,20 @@ const IGM = (() => {
                     if (count === item_no) {
                         var item_no_holder = item_no;
                         var next_item_no_holder = item_no + 1;
+
+                        //VALIDATE SUB NO COUNT
+                        var btn_validate_sub_no_count_onclick_value = $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick');
+                        var split_btn_validate_sub_no_count_onclick_value = btn_validate_sub_no_count_onclick_value.split('(');
+                        var split_split_btn_validate_sub_no_count_onclick_value = split_btn_validate_sub_no_count_onclick_value[1].split(',');
+                        var existing_sub_no_count_value = split_split_btn_validate_sub_no_count_onclick_value[0];
+                        //ADD IGM ITEM NO
+                        var a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
+                        var split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
+                        var split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
+                        var type_value = split_split_a_add_igm_item_no_onclick_value[0];
+                        var split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
+                        var added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
+
                     } else {
                         item_no_holder = count;
                         next_item_no_holder = count + 1;
@@ -553,11 +575,18 @@ const IGM = (() => {
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                     $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
 
+                    if (existing_sub_no_count_value > 0) {
+                        IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
+                        if(count === new_item_no_count){
+                            item_no_count--;
+                            new_item_no_count--;
+                            IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
+                        }
+                    }
+
                 }
             }
         }
-        item_no_count--;
-        new_item_no_count--;
     };
 
     this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count) => {
@@ -1248,7 +1277,7 @@ const IGM = (() => {
                 overall_NG_count++;
             }
         }
-
+        
         if (array_overall_judgement.length === 0) {
             $(`#td_item_no_${item_no}_judgement`).html('N/A');
         } else {
