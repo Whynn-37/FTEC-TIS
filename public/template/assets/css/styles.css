@@ -367,7 +367,7 @@ input[type=number] {
     left: 0;
     top: 100%;
     z-index: 99;
-    width: 200px;
+    width: 260px;
     background: #fff;
     opacity: 0;
     visibility: hidden;
@@ -1255,6 +1255,19 @@ table.dbkit-table tr td {
     margin-bottom: 0;
 }
 
+footer {
+    position: relative;
+    margin-bottom: 0px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #fff;
+    color: #676666;
+    text-align: center;
+    padding: 23px 0 19px;
+    
+ }
+
 /*-------------------- END Letest Post ------------------- */
 
 
@@ -1772,6 +1785,16 @@ table.dbkit-table tr td {
 }
 
 .gradiant-bg .card-header a:before {
+    color: #fff;
+}
+
+.gradiant-bg-danger .card-header a {
+    background-image: -webkit-linear-gradient(top left, #c20131, #d81c4b);
+    background-image: linear-gradient(to bottom right, #c20131, #d81c4b);
+    color: #fff;
+}
+
+.gradiant-bg-danger .card-header a:before {
     color: #fff;
 }
 
@@ -3136,4 +3159,7 @@ table.dataTable thead td {
 
 .subitem-visual-judgement {
     font-size: 20px;
+}
+.tab-font-size{
+    font-size: 20px;;
 }

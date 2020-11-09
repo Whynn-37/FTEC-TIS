@@ -10,15 +10,14 @@
 @section('content-page')
 
 <div class="main-content-inner">
-
     <div class="container">
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <h4 class="header-title"><i class="ti-clipboard"></i> EVALUATION</h4>
+                        <h4 class="header-title"><i class="ti-clipboard"></i> DISAPPROVED INSPECTION DATA</h4>
                         <form id="form_trial_checksheet" method="post" enctype="multipart/form-data">
-                            <div id="accordion4" class="according accordion-s3 gradiant-bg mb-3">
+                            <div id="accordion4" class="according accordion-s2 gradiant-bg-danger mb-3">
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_details"><strong
@@ -32,9 +31,7 @@
                                                 <div class="col-md-4">
                                                     <label>PART NO:</label>&nbsp;
                                                     <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
-                                                    <select
-                                                        class="form-control mb-3 select2 form_trial_checksheet_field"
-                                                        name="slc_part_no" id="slc_part_no">
+                                                    <select class="form-control mb-3 select2 form_trial_checksheet_field" name="slc_part_no" id="slc_part_no" onchange="EVALUATE.LoadPartNoDetails();">
                                                         <option value="" selected disabled>Select part no.</option>
                                                         <option value="Part no 1">Part no 1</option>
                                                         <option value="Part no 2">Part no 2</option>
@@ -74,7 +71,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="accordion_attachment" class="according accordion-s3 gradiant-bg mb-3">
+                            <div id="accordion_attachment" class="according accordion-s2 gradiant-bg-danger mb-3" hidden>
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_attach_files"><strong
@@ -119,7 +116,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="accordion_igm" class="according accordion-s3 gradiant-bg mb-5">
+                            <div id="accordion_igm" class="according accordion-s2 gradiant-bg-danger mb-5" hidden>
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_igm_details"><strong
@@ -155,7 +152,7 @@
                                                                         <td id="td_item_no_1_lower_limit">test5</td>
                                                                         <td id="td_item_no_1_judgement">test</td>
                                                                         <td colspan="3" id="td_item_no_1_hinsei">  {{--onclick="EVALUATE.Hinsei(item no,TOOLS,TYPE,SPECS,UPPERLIMIT,LOWERLIMIT);" --}}
-                                                                            <button type="button" id="btn_item_no_1_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(1,'test1','test2','test3',15,10);"><strong class="strong-font"><i class="ti-notepad"></i> HINSEI</strong></button>
+                                                                            <button type="button" id="btn_item_no_1_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(1,'test1','test2','test3',15,10);"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
                                                                         </td>
                                                                     </tr>
                                                                     <tr id="tr_item_no_1_sub_no_column" >
@@ -198,7 +195,7 @@
                                                                         <td>test</td>
                                                                         <td>test</td>
                                                                         <td colspan="3" id="td_item_no_2_hinsei">
-                                                                            <button id="btn_item_no_2_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(2);"><strong class="strong-font"><i class="ti-notepad"></i> HINSEI</strong></button>
+                                                                            <button id="btn_item_no_2_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(2);"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
                                                                         </td>
                                                                     </tr>
                                                                     <tr id="tr_item_no_1_sub_no_column" >
@@ -270,17 +267,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
+                            <div class="row" id="div_approve" hidden>
+                                <div class="col-md-12">
                                     <button type="button" class="btn btn-primary btn-block"
                                         onclick="EVALUATE.ApproveData();">
                                         <h4><i class="ti-check"></i> APPROVE</h4>
-                                    </button>
-                                </div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-danger btn-block"
-                                        onclick="EVALUATE.DisapproveData();">
-                                        <h4><i class="ti-close"></i> DISAPPROVE</h4>
                                     </button>
                                 </div>
                             </div>
@@ -308,8 +299,8 @@
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };
-        // select2
-        let select2 = $('.select2').select2();
+       // select2
+       let select2 = $('.select2').select2();
         select2.data('select2').$selection.css('height', '45px');
         select2.data('select2').$selection.css('margin-bottom', '15px');
 
