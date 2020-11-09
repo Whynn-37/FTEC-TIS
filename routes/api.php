@@ -19,3 +19,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('test', 'TestController@test');
+
+//Trial Ledger
+Route::post('store-trial-ledger', 'TrialLedgerController@storeTrialLedger');
+
+//Trial Checksheet
+Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
+Route::get('load-revision', 'TrialChecksheetController@loadRevision');
+Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
