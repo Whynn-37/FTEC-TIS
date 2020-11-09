@@ -13,7 +13,7 @@
 <div class="main-content-inner">
 
     <div class="container">
-        <div class="row">
+        <div class="row" id="div_main_content">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -40,35 +40,149 @@
                                                         <option value="Part no 1">Part no 1</option>
                                                         <option value="Part no 2">Part no 2</option>
                                                     </select>
-                                                    <label>PART NAME:</label>
-                                                    <input class="form-control mb-2" type="text" placeholder="Part Name"
-                                                        id="txt_part_name" disabled>
-                                                    <label>SUPPLIER:</label>
-                                                    <input class="form-control mb-3" type="text" placeholder="Supplier"
-                                                        id="txt_supplier" disabled>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label>REVISION:</label>
-                                                    <input class="form-control mb-3" type="text" placeholder="Revision"
-                                                        disabled>
-                                                    <label>TRIAL APPLICATION:</label>
-                                                    <input class="form-control mb-3" type="text"
-                                                        placeholder="Trial Application" id="txt_trial_application"
-                                                        disabled>
-                                                    <label>KIND OF DIE:</label>
-                                                    <input class="form-control mb-3" type="text"
-                                                        placeholder="Kind of Die" id="txt_kind_of_die" disabled>
+                                                    <input class="form-control mb-3" type="text" placeholder="Revision">
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label>TRIAL STAGE:</label>
+                                                    <select id="slc_trial_stage" class="form-control mb-3">
+                                                        <option value="" selected disabled>Select trial stage</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label>PART NAME:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Part name" id="txt_part_name">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label>MODEL NAME:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Model name" id="txt_model_name">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>RECEIVED DATE:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_received_date">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label>MODEL NAME:</label>
-                                                    <input class="form-control mb-3" type="text"
-                                                        placeholder="Model Name" id="txt_model_name" disabled>
-                                                    <label>TRIAL STAGE:</label>
-                                                    <input class="form-control mb-3" type="text"
-                                                        placeholder="Trial Stage" id="txt_trial_stage" disabled>
+                                                    <label>INSPECTION COMPLETION DATE:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Inspection completion date" id="txt_inspection_completion_date">
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label>ACTUAL INSPECTION TIME:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Actual inspection time" id="txt_actual_inspection_time">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label>TRIAL INSPECTION REASON (INSPECTION TYPE):</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_reason" id="chk_reason_nd" value="ND">
+                                                            <label class="form-check-label" for="chk_reason_nd">ND</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_reason" id="chk_reason_nr" value="NR">
+                                                            <label class="form-check-label" for="chk_reason_nr">NR</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_reason" id="chk_reason_td" value="TD">
+                                                            <label class="form-check-label" for="chk_reason_td">TD</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_reason" id="chk_reason_4m" value="4M">
+                                                            <label class="form-check-label" for="chk_reason_4m">4M</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_reason" id="chk_reason_rm" value="RM">
+                                                            <label class="form-check-label" for="chk_reason_rm">RM</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
                                                     <label>JUDGEMENT:</label>
-                                                    <input class="form-control mb-3" type="text" placeholder="Judgement"
-                                                        id="txt_judgement" disabled>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_judgement" id="chk_judgement_passed" value="合格">
+                                                            <label class="form-check-label" for="chk_judgement_passed">合格</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_judgement" id="chk_judgement_ng" value="不良">
+                                                            <label class="form-check-label" for="chk_judgement_ng">不良</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_judgement" id="chk_judgement_dash" value="-">
+                                                            <label class="form-check-label" for="chk_judgement_dash">-</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>KIND OF DIE:</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_die_kind" id="chk_die_kind_mo" value="MO">
+                                                            <label class="form-check-label" for="chk_die_kind_mo">MO</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_die_kind" id="chk_die_kind_p" value="P">
+                                                            <label class="form-check-label" for="chk_die_kind_p">P</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_die_kind" id="chk_die_kind_mis" value="MIS">
+                                                            <label class="form-check-label" for="chk_die_kind_mis">MIS</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_die_kind" id="chk_die_kind_ca" value="CA">
+                                                            <label class="form-check-label" for="chk_die_kind_ca">CA</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>INSPECTION STATUS:</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_status" id="chk_inspection_status_finished" value="完了">
+                                                            <label class="form-check-label" for="chk_inspection_status_finished">完了</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk_inspection_status" id="chk_inspection_status_not_finished" value="未完了">
+                                                            <label class="form-check-label" for="chk_inspection_status_not_finished">未完了</label>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-3">
+                                                    <label>RECEIVING STATUS:</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk-receiving_status" id="chk_receiving_status_received" value="受付済">
+                                                            <label class="form-check-label" for="chk_receiving_status_received">受付済</label>
+                                                        </div> 
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" name="chk-receiving_status" id="chk_receiving_status_not_received" value="受付未">
+                                                            <label class="form-check-label" for="chk_receiving_status_not_received">受付未</label>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="">INSPECTOR:</label>
+                                                    <select name="" id="" class="form-control mb-3">
+                                                        <option value="" disabled selected>Select inspector</option>
+                                                        <option value="Test1">Test1</option>
+                                                        <option value="Test2">Test2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button class="btn btn-primary btn-block"><strong
+                                                        style="font-size: 20px;"><i class="ti-search"></i> SEARCH</strong></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -91,9 +205,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-12" align="center">
                                                                     <div class="alert alert-info">
-                                                                        <h5 class="header-title"><i
-                                                                                class="ti-timer"></i>
-                                                                            TARGET
+                                                                        <h5 class="header-title"><i class="ti-timer"></i> TARGET
                                                                             TAKT TIME</h5>
                                                                         <div id="div_target_takt_time_timer"
                                                                             data-timer="9000" style="width: 450px;"
@@ -211,8 +323,7 @@
                                                                 <div class="col-md-12">
                                                                     <div class="single-table">
                                                                         <div class="table-responsive">
-                                                                            <table
-                                                                                class="table text-center table-sm table-bordered"
+                                                                            <table class="table text-center table-sm table-bordered"
                                                                                 id="tbl_downtime_code">
                                                                                 <thead class="text-uppercase bg-dark">
                                                                                     <tr class="text-white">
@@ -265,7 +376,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="according accordion-s3 gradiant-bg mb-5">
+                            <div class="according accordion-s3 gradiant-bg mb-5" id="div_accordion_igm" hidden>
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_igm"><strong
@@ -279,7 +390,7 @@
                                                     <div class="single-table">
                                                         <div class="table-responsive">
                                                             <table class="table text-center table-sm table-bordered" id="tbl_igm">
-                                                                <thead class="text-uppercase bg-dark">
+                                                                <thead class="text-uppercase bg-dark" id="thead_tbl_igm">
                                                                     <tr class="text-white">
                                                                         <th>ITEM NO</th>
                                                                         <th>TOOLS</th>
@@ -364,16 +475,29 @@
                                 <div class="col-md-6">
                                     <label>ATTACH FILE:</label>&nbsp;
                                     <span id="span_attach_file" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file" class="form-control mb-2 form_trial_checksheet_field"
-                                        name="attachment" id="txt_attachment"
-                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-                                    <label>DATE INSPECTED:</label>&nbsp;
-                                    <span id="span_date_inspected" class="span-error"></span>
-                                    <input class="form-control mb-3" type="text"
-                                        placeholder="Date Inspected" id="txt_date_inspected" disabled>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,image/*" multiple onchange="CHECKSHEET.AttachFile();">
+                                    <div class="single-table" id="div_tble_attachment">
+                                        <div class="table-responsive">
+                                            <table class="table text-center table-sm table-bordered" id="tbl_attachment" hidden>
+                                                <thead class="text-uppercase bg-dark">
+                                                    <tr class="text-white">
+                                                        <th scope="col">FILE NAME</th>
+                                                        <th scope="col">ACTION</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody_tbl_attachment"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="div_date_inspected">
+                                        <label>DATE INSPECTED:</label>&nbsp;
+                                        <span id="span_date_inspected" class="span-error"></span>
+                                        <input class="form-control mb-3" type="text"
+                                            placeholder="Date Inspected" id="txt_date_inspected" disabled>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label>TEMPERATURE:</label>&nbsp;
+                                    <label id="lbl_temperature">TEMPERATURE:</label>&nbsp;
                                     <span id="span_temperature" class="span-error form_trial_checksheet_field_error"></span>
                                     <input class="form-control mb-3 form_trial_checksheet_field" type="text"
                                         placeholder="Temperature" id="txt_temperature" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
@@ -382,7 +506,7 @@
                                     <input class="form-control mb-3 form_trial_checksheet_field" type="text"
                                         placeholder="Humidity" id="txt_humidity" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                 </div>
-                            </div>
+                            </div><br>
                             <div class="row">
                                 <div class="col-md-12">
                                     <button type="button" class="btn btn-primary btn-block"
@@ -407,6 +531,7 @@
     <script src="{{ asset('scripts/Checksheet/trial_checksheet.js') }}"></script>
     <script src="{{ asset('scripts/Checksheet/trial_checksheet_time_functions.js') }}"></script>
     <script src="{{ asset('scripts/Checksheet/trial_checksheet_igm.js') }}"></script>
+
     <script>
         // swal
         const swal_options = {
@@ -415,6 +540,15 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes',
+            allowOutsideClick: false,
+            customClass: 'swal-wide',
+        };
+        const swal_options_refresh = {
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Refresh',
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };

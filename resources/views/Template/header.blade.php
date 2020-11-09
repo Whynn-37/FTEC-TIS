@@ -3,6 +3,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>TIS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta id="csrf-token" name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png"
         href="{{ asset('template/assets/images/logo/tis.ico') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/css/bootstrap.min.css') }}">
