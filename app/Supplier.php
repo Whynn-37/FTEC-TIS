@@ -13,4 +13,12 @@ class Supplier extends Model
         Supplier::truncate();
         return Supplier::insert($result);
     }
+
+    public function getSupplier($supplier_code)
+    {
+        return Supplier::where('supplier_code',$supplier_code)
+        ->select('supplier_name')
+        ->first();
+    }
+    
 }

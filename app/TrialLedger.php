@@ -36,4 +36,12 @@ class TrialLedger extends Model
         ->select('trial_number')
         ->get();
     }
+
+    public function getTrialLedger($data)
+    {
+        return TrialLedger::where('part_number',$data['part_number'])
+        ->where('revision_number',$data['revision_number'])
+        ->where('trial_number',$data['trial_number'])
+        ->first();
+    }
 }
