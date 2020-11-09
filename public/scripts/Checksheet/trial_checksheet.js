@@ -84,12 +84,20 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.TaktTimeTimerAction = (status) => {
+
         let downtime_running_time = $("#txt_downtime_running_time").text();
+
+        if (status === 'start_takt_time') {
+            var text = 'start';
+        } else {
+            text = 'stop';
+        }
 
         Swal.fire(
             $.extend(swal_options, {
                 confirmButtonText: 'Yes',
                 title: "Are you sure?",
+                text: `Clicking 'Yes' will ${text} the cycle time`,
             })
         ).then((result) => {
             if (result.value) {
@@ -106,6 +114,7 @@ const CHECKSHEET = (() => {
         Swal.fire(
             $.extend(swal_options, {
                 title: "Do you want to load the IGM?",
+                text: ``,
             })
         ).then((result) => {
             if (result.value) {
@@ -113,9 +122,9 @@ const CHECKSHEET = (() => {
                 alert('load igm dito');
                 $('#div_accordion_igm').prop('hidden', false);
             } else {
+                $('#div_accordion_igm').prop('hidden', false);
                 $('#thead_tbl_igm').prop('hidden', true);
                 $('#tbody_tbl_igm').prop('hidden', true);
-                item_no_count = 0;
             }
         });
 
