@@ -19,13 +19,13 @@ class CreateTrialLedgersTable extends Migration
             $table->integer('supplier_code');
             $table->string('part_number');
             $table->string('part_name');
-            $table->integer('revision_number');
+            $table->string('revision_number');
             $table->string('inspection_reason');
             $table->string('die_class');
             $table->string('model_name')->nullable();
             $table->string('delivery_date')->nullable();
             $table->string('judgment')->nullable();
-            $table->integer('trail_number');
+            $table->integer('trial_number');
             $table->string('inspection_actual_time')->nullable();
             $table->string('inspection_required_time')->nullable();
             $table->string('plan_start_date')->nullable();
