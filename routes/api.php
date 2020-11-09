@@ -27,3 +27,6 @@ Route::post('store-trial-ledger', 'TrialLedgerController@storeTrialLedger');
 Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
+
+//Supplier
+Route::get('store-supplier', 'SupplierController@storeSupplier');

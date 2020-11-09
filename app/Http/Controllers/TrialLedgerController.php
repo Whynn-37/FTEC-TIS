@@ -35,7 +35,7 @@ class TrialLedgerController extends Controller
                     'delivery_date'                 =>  $data[$i][15], //D_DELV_DATE
                     'inspector_id'                  =>  $data[$i][16], //INSPECTOR_ID
                     'judgment'                      =>  $data[$i][17], //JUDG
-                    'trail_number'                  =>  $data[$i][18], //TRIAL_NUM
+                    'trial_number'                  =>  $data[$i][18], //TRIAL_NUM
                     'inspection_actual_time'        =>  $data[$i][20], //INSP_ACT_TIME
                     'inspection_required_time'      =>  $data[$i][21], //INSP_REQ_TIME
                     'plan_start_date'               =>  $data[$i][22], //PLAN_START_DATE

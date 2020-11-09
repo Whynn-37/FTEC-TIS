@@ -7,7 +7,7 @@ use DB;
 
 class TrialLedger extends Model
 {
-    protected $fillable = ['application_date', 'supplier_code', 'part_number', 'part_name',  'revision_number', 'inspection_reason', 'die_class', 'trail_number'];
+    protected $fillable = ['application_date', 'supplier_code', 'part_number', 'part_name',  'revision_number', 'inspection_reason', 'die_class', 'trial_number'];
 
     public function storeTrialLedger($result)
     {
@@ -33,7 +33,7 @@ class TrialLedger extends Model
     {
         return TrialLedger::where('revision_number',$data['revision_number'])
         ->where('part_number',$data['part_number'])
-        ->select('trail_number')
+        ->select('trial_number')
         ->get();
     }
 }
