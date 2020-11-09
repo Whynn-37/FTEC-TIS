@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.LoadCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
 });
@@ -10,10 +11,42 @@ const CHECKSHEET = (() => {
 
     let array_item = [];
     let array_sub_item = [];
+    let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
+    let array_files = [];
+
+    this_checksheet.LoadRefreshAlert = () => {
+        $('#div_main_content').prop('hidden', true)
+        Swal.fire(
+            $.extend(swal_options_refresh, {
+                title: "Click refresh to update the trial ledger data",
+            })
+        ).then((result) => {
+            if (result.value) {
+                Swal.fire({
+                    title: "Updating...",
+                    imageUrl: `${base_url}/template/assets/images/icon/updating3.gif`,
+                    imageWidth: 350,
+                    imageHeight: 250,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                })
+                setTimeout(function () {
+                    swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Update complete',
+                        allowOutsideClick: false,
+                    })
+                    $('#div_main_content').prop('hidden', false);
+                }, 2000);
+            }
+        });
+    };
 
     this_checksheet.LoadDowntimeRunningTime = () => {
         var new_date = new Date();
-        let date_now = new_date.getDate() + "/" + (new_date.getMonth() + 1) + "/" + new_date.getFullYear();
+        let date_now = `${new_date.getMonth() + 1}/${new_date.getDate()}/${new_date.getFullYear()}`;
         var txt_time =
             new_date.getHours() + ":" + new_date.getMinutes() + ":" + new_date.getSeconds();
         document.getElementById(
@@ -55,6 +88,7 @@ const CHECKSHEET = (() => {
 
         Swal.fire(
             $.extend(swal_options, {
+                confirmButtonText: 'Yes',
                 title: "Are you sure?",
             })
         ).then((result) => {
@@ -69,6 +103,25 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.TaktTimeStart = (downtime_running_time) => {
+        Swal.fire(
+            $.extend(swal_options, {
+                title: "Do you want to load the IGM?",
+            })
+        ).then((result) => {
+            if (result.value) {
+                CHECKSHEET.ProceedTaktTimeStart(downtime_running_time);
+                alert('load igm dito');
+                $('#div_accordion_igm').prop('hidden', false);
+            } else {
+                $('#thead_tbl_igm').prop('hidden', true);
+                $('#tbody_tbl_igm').prop('hidden', true);
+                item_no_count = 0;
+            }
+        });
+
+    };
+
+    this_checksheet.ProceedTaktTimeStart = (downtime_running_time) => {
         let new_date = new Date();
         let date_now = new_date.getDate() + "/" + (new_date.getMonth() + 1) + "/" + new_date.getFullYear();
 
@@ -191,6 +244,79 @@ const CHECKSHEET = (() => {
         }
         $("#div_takt_time_timer").TimeCircles().start();
         downtime_count++;
+    };
+
+    this_checksheet.AttachFile = () => {
+
+        $('#tbl_attachment').prop('hidden', false);
+        $('#txt_attachment').LoadingOverlay('show');
+        $('#tbl_attachment').LoadingOverlay('show');
+        $('#div_date_inspected').remove();
+
+        let date_inspected_input = `<div id="div_date_inspected">
+            <label>DATE INSPECTED:</label>&nbsp;
+            <span id="span_date_inspected" class="span-error"></span>
+            <input class="form-control mb-3" type="text"
+                placeholder="Date Inspected" id="txt_date_inspected" disabled>
+        </div>`;
+
+        $('#lbl_temperature').before(date_inspected_input);
+
+        let file_length = $('#txt_attachment')[0].files.length;
+        let tr = '';
+
+        for (let file_count = 0; file_count < file_length; file_count++) {
+            let file = $('#txt_attachment')[0].files[file_count];
+            let file_name = $('#txt_attachment')[0].files[file_count].name;
+            let split_file = file_name.split('.');
+
+            if (array_file_type.includes(split_file[1]) === true) {
+                array_files.push(file);
+                tr += `
+                <tr id="tr_attached_file_${file_count}">
+                    <td>${file_name}</td>
+                    <td>
+                        <button class="btn btn-danger btn-xs" onclick="CHECKSHEET.RemoveAttachedFile(${file_count},'${file_name}');"><i class="ti-close"></i> REMOVE</button>
+                    </td>
+                </tr>`;
+
+            } else {
+                $('#txt_attachment span').remove();
+                $('#txt_attachment').after(`<span class="span-error">"${file_name}" is an invalid file</span><br><br>`)
+            }
+        }
+        $('#tbody_tbl_attachment').html(tr);
+        $('#txt_attachment').LoadingOverlay('hide');
+        $('#tbl_attachment').LoadingOverlay('hide');
+    };
+
+    this_checksheet.RemoveAttachedFile = (file_no, file_name_in_table) => {
+
+        $(`#tr_attached_file_${file_no}`).remove();
+
+        for (let file_count = 0; file_count < array_files.length; file_count++) {
+
+            if (array_files[file_count].name === file_name_in_table) {
+
+                array_files = $.grep(array_files, function (value) {
+                    return value.name != file_name_in_table;
+                });
+            }
+        }
+
+        if (array_files.length === 0) {
+            $('#txt_attachment').val('');
+            $('#div_date_inspected').remove();
+            $('#tbl_attachment').prop('hidden', true);
+            let date_inspected_input = `<div id="div_date_inspected">
+                <label>DATE INSPECTED:</label>&nbsp;
+                <span id="span_date_inspected" class="span-error"></span>
+                <input class="form-control mb-3" type="text"
+                    placeholder="Date Inspected" id="txt_date_inspected" disabled>
+            </div>`;
+
+            $('#div_tble_attachment').after(date_inspected_input);
+        }
     };
 
     this_checksheet.SaveTrialChecksheet = () => {

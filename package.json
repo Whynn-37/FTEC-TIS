@@ -17,5 +17,12 @@
         "resolve-url-loader": "^3.1.0",
         "sass": "^1.15.2",
         "sass-loader": "^8.0.0"
+    },
+    "dependencies": {
+        "@sweetalert2/theme-dark": "^4.0.1",
+        "datatables.net": "^1.10.22",
+        "gasparesganga-jquery-loading-overlay": "^2.1.7",
+        "select2": "^4.0.13",
+        "sweetalert2": "^10.9.0"
     }
 }

@@ -2,7 +2,6 @@
 <html lang="en">
 
 @include('Template.header')
-
 <body class="body-bg">
     <div id="preloader">
         <div class="loader"></div>
