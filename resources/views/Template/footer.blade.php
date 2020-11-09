@@ -19,5 +19,10 @@
 <script src="{{ asset('template/assets/js/plugins.js') }}"></script>
 <script src="{{ asset('template/assets/js/scripts.js') }}"></script>
 <script src="{{ asset('scripts/Template/footer.js') }}"></script>
-
+<script>
+    const _TOKEN = $('#csrf-token').attr('content');
+</script>
+<script>
+        var base_url = "{{ url('/') }}";
+</script>
 @yield('custom-script')

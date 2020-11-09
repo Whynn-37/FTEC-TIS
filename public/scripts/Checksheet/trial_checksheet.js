@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.LoadCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
 });
@@ -12,6 +13,36 @@ const CHECKSHEET = (() => {
     let array_sub_item = [];
     let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
     let array_files = [];
+
+    this_checksheet.LoadRefreshAlert = () => {
+        $('#div_main_content').prop('hidden', true)
+        Swal.fire(
+            $.extend(swal_options_refresh, {
+                title: "Click refresh to update the trial ledger data",
+            })
+        ).then((result) => {
+            if (result.value) {
+                Swal.fire({
+                    title: "Updating...",
+                    imageUrl: `${base_url}/template/assets/images/icon/updating3.gif`,
+                    imageWidth: 350,
+                    imageHeight: 250,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                })
+                setTimeout(function () {
+                    swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Update complete',
+                        allowOutsideClick: false,
+                    })
+                    $('#div_main_content').prop('hidden', false);
+                }, 2000);
+            }
+        });
+    };
 
     this_checksheet.LoadDowntimeRunningTime = () => {
         var new_date = new Date();
@@ -57,6 +88,7 @@ const CHECKSHEET = (() => {
 
         Swal.fire(
             $.extend(swal_options, {
+                confirmButtonText: 'Yes',
                 title: "Are you sure?",
             })
         ).then((result) => {
@@ -71,6 +103,25 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.TaktTimeStart = (downtime_running_time) => {
+        Swal.fire(
+            $.extend(swal_options, {
+                title: "Do you want to load the IGM?",
+            })
+        ).then((result) => {
+            if (result.value) {
+                CHECKSHEET.ProceedTaktTimeStart(downtime_running_time);
+                alert('load igm dito');
+                $('#div_accordion_igm').prop('hidden', false);
+            } else {
+                $('#thead_tbl_igm').prop('hidden', true);
+                $('#tbody_tbl_igm').prop('hidden', true);
+                item_no_count = 0;
+            }
+        });
+
+    };
+
+    this_checksheet.ProceedTaktTimeStart = (downtime_running_time) => {
         let new_date = new Date();
         let date_now = new_date.getDate() + "/" + (new_date.getMonth() + 1) + "/" + new_date.getFullYear();
 
@@ -256,7 +307,7 @@ const CHECKSHEET = (() => {
         if (array_files.length === 0) {
             $('#txt_attachment').val('');
             $('#div_date_inspected').remove();
-            $('#tbl_attachment').prop('hidden',true);
+            $('#tbl_attachment').prop('hidden', true);
             let date_inspected_input = `<div id="div_date_inspected">
                 <label>DATE INSPECTED:</label>&nbsp;
                 <span id="span_date_inspected" class="span-error"></span>

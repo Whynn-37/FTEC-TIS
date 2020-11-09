@@ -13,7 +13,7 @@
 <div class="main-content-inner">
 
     <div class="container">
-        <div class="row">
+        <div class="row" id="div_main_content">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -376,7 +376,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="according accordion-s3 gradiant-bg mb-5">
+                            <div class="according accordion-s3 gradiant-bg mb-5" id="div_accordion_igm" hidden>
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_igm"><strong
@@ -390,7 +390,7 @@
                                                     <div class="single-table">
                                                         <div class="table-responsive">
                                                             <table class="table text-center table-sm table-bordered" id="tbl_igm">
-                                                                <thead class="text-uppercase bg-dark">
+                                                                <thead class="text-uppercase bg-dark" id="thead_tbl_igm">
                                                                     <tr class="text-white">
                                                                         <th>ITEM NO</th>
                                                                         <th>TOOLS</th>
@@ -540,6 +540,15 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes',
+            allowOutsideClick: false,
+            customClass: 'swal-wide',
+        };
+        const swal_options_refresh = {
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Refresh',
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };
