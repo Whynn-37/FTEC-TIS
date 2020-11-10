@@ -1,9 +1,7 @@
 <!-- footer area start-->
 <footer>
-    <div class="footer-area">
-        <p>© Copyright 2020 MIT. All right reserved.
-        </p>
-    </div>
+    <p>© Copyright 2020 MIT. All right reserved.
+    </p>
 </footer>
 <!-- footer area end-->
 

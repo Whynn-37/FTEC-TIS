@@ -84,33 +84,38 @@
                                     <div class="card-body"><br>
                                         <div class="row">
                                             <div class="vertical-rectangle">
-                                                <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                                <img id="img_attachment_1" src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
                                                 <div class="file-options">
-                                                    <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button id="btn_add_to_pdf_1" type="button" class="btn btn-green"  onclick="APPROVE.AddToPdf();"><i class="ti-plus"></i> ADD TO PDF</button>
                                                 </div>
                                             </div>
                                             <div class="vertical-rectangle">
                                                 <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
                                                 <div class="file-options">
-                                                    <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green"><i class="ti-plus"></i> ADD TO PDF</button>
                                                 </div>
                                             </div>
                                             <div class="vertical-rectangle">
                                                 <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
                                                 <div class="file-options">
-                                                    <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green"><i class="ti-plus"></i> ADD TO PDF</button>
                                                 </div>
                                             </div>
                                             <div class="vertical-rectangle">
                                                 <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
                                                 <div class="file-options">
-                                                    <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green"><i class="ti-plus"></i> ADD TO PDF</button>
                                                 </div>
                                             </div>
                                             <div class="vertical-rectangle">
                                                 <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
                                                 <div class="file-options">
-                                                    <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                                                    <button type="button" class="btn btn-green"><i class="ti-plus"></i> ADD TO PDF</button>
                                                 </div>
                                             </div>
                                         </div><br>
@@ -277,7 +282,7 @@
 @section('custom-script')
 <script src="../node_modules/sweetalert2/dist/sweetalert2.min.js"></script>
 <script src="../node_modules/select2/dist/js/select2.min.js"></script>
-<script src="{{ asset('scripts/Evaluator/approval.js') }}"></script>
+<script src="{{ asset('scripts/Approver/approval.js') }}"></script>
 <script>
     // swal
     const swal_options = {
