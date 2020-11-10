@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('Template.template');
+    return view('Login.login');
 });
 
 Route::get('login', 'PageController@login_page');
@@ -23,3 +23,13 @@ Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
 
+//login controller 
+Route::get('select-all', 'LoginUserController@selectAll');
+Route::get('select-user/{id}', 'LoginUserController@selectUser');
+Route::post('login-authentication', 'LoginUserController@loginAuthentication');
+
+Route::get('get-credentials/{id}', 'PageController@get_credentials');
+Route::get('logout', 'PageController@logout');
+
+//token
+Route::get('token','LoginUserController@token');
