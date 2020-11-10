@@ -37,7 +37,7 @@
                                                         <option value="Part no 2">Part no 2</option>
                                                     </select>
                                                     <label>PART NAME:</label>
-                                                    <input class="form-control mb-2" type="text" placeholder="Part Name"
+                                                    <input class="form-control mb-3" type="text" placeholder="Part Name"
                                                         id="txt_part_name" disabled>
                                                     <label>SUPPLIER:</label>
                                                     <input class="form-control mb-3" type="text" placeholder="Supplier"
@@ -65,6 +65,13 @@
                                                     <label>JUDGEMENT:</label>
                                                     <input class="form-control mb-3" type="text" placeholder="Judgement"
                                                         id="txt_judgement" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>REMARKS:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Remarks"
+                                                        id="txt_remarks" disabled>
                                                 </div>
                                             </div>
                                         </div>

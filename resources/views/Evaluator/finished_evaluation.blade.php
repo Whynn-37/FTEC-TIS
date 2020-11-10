@@ -37,7 +37,7 @@
                                                         <option value="Part no 2">Part no 2</option>
                                                     </select>
                                                     <label>PART NAME:</label>
-                                                    <input class="form-control mb-2" type="text" placeholder="Part Name"
+                                                    <input class="form-control mb-3" type="text" placeholder="Part Name"
                                                         id="txt_part_name" disabled>
                                                     <label>SUPPLIER:</label>
                                                     <input class="form-control mb-3" type="text" placeholder="Supplier"
