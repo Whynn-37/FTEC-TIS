@@ -87,9 +87,10 @@ class TrialChecksheetController extends Controller
 
         $message = 'No Data';
         $status = 'Error';
-        if ($data['part_number'] != null || 
-        $data['revision_number'] != null || 
-        $data['trial_number'] != null) 
+        $result_data = [];
+        if ($request->part_number != null || 
+        $request->revision_number != null || 
+        $request->trial_number != null) 
         {
             $message = 'uuhm uuhmm';
             $status = 'Success';
@@ -107,8 +108,6 @@ class TrialChecksheetController extends Controller
 
             $data_trial_checksheet  = json_decode(json_encode($trial_checksheet->getTrialChecksheet($data)),true);
             
-            $result_data = [];
-
             $data_checksheet_item = [];
             $data_checksheet_data = [];
             $data_takt_time = [];
@@ -155,4 +154,5 @@ class TrialChecksheetController extends Controller
         ]);
     }
 
+    
 }

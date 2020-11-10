@@ -31,3 +31,6 @@ Route::get('load-details', 'TrialChecksheetController@loadDetails');
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
+
+//Cycle Time
+Route::post('start-cycle-time','TaktTimeController@startCycleTime');
