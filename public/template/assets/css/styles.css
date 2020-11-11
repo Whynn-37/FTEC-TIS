@@ -3105,6 +3105,7 @@ table.dataTable thead td {
 .file-image {
     max-height: 80%;
     max-width: 80%;
+    width: 100%;
     position: absolute;
     top: 0;
     bottom: 0;
