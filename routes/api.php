@@ -30,14 +30,11 @@ Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 
 //Supplier
-<<<<<<< HEAD
 Route::post('store-supplier', 'SupplierController@storeSupplier');
 
 //Cycle Time
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
-=======
 Route::get('store-supplier', 'SupplierController@storeSupplier');
 
 //DownTime
 Route::post('start-down-time', 'DownTimeController@startDownTime');
->>>>>>> local
