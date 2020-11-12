@@ -30,3 +30,6 @@ Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 
 //Supplier
 Route::get('store-supplier', 'SupplierController@storeSupplier');
+
+//DownTime
+Route::post('start-down-time', 'DownTimeController@startDownTime');
