@@ -33,6 +33,7 @@ Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::post('store-supplier', 'SupplierController@storeSupplier');
 
 //Cycle Time
+Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
 Route::get('store-supplier', 'SupplierController@storeSupplier');
 
