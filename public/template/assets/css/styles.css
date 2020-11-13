@@ -264,7 +264,6 @@ input[type=number] {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    overflow-y: scroll;
     overflow-x: hidden;
 }
 
@@ -1256,7 +1255,7 @@ table.dbkit-table tr td {
 }
 
 footer {
-    position: relative;
+    position: fixed;
     margin-bottom: 0px;
     left: 0;
     bottom: 0;
@@ -1798,6 +1797,16 @@ footer {
     color: #fff;
 }
 
+.gradiant-bg-dark .card-header a {
+    background-image: -webkit-linear-gradient(top left, #1f2837, #37455e);
+    background-image: linear-gradient(to bottom right, #1f2837, #37455e);
+    color: #fff;
+}
+
+.gradiant-bg-dark .card-header a:before {
+    color: #fff;
+}
+
 /*-------------------- END Accroding ------------------- */
 
 
@@ -1973,9 +1982,9 @@ p.card-text {
     padding-left: 100px;
 }
 
-.modal-dialog.modal-xl {
+/* .modal-dialog.modal-xl {
     max-width: 100%;
-}
+} */
 
 /*-------------------- END Modal ------------------- */
 
@@ -3163,4 +3172,8 @@ table.dataTable thead td {
 }
 .tab-font-size{
     font-size: 20px;;
+}
+
+.btn-font-lg{
+    font-size: 18px;;
 }

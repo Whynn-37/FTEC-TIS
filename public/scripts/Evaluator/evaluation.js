@@ -1,18 +1,46 @@
 $(document).ready(function () {
-
+    EVALUATE.LoadFinishedInspectionData();
+    EVALUATE.LoadDisapprovedInspectionData();
 });
 
 const EVALUATE = (() => {
     let this_evaluate = {};
     let onkeyup_number_only = 'onkeypress="return event.charCode >= 48 && event.charCode <= 57;"';
 
-    
-    this_evaluate.LoadPartNoDetails = (item_no, tools, type, specs, upper_limit, lower_limit) => {
-        $('#accordion_attachment').prop('hidden',false);
-        $('#accordion_igm').prop('hidden',false);
-        $('#div_approve').prop('hidden',false);
-        
+    this_evaluate.LoadFinishedInspectionData = () => {
+        $('#tbl_finished_inspection_data').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+        });
+    };
 
+    this_evaluate.LoadDisapprovedInspectionData = () => {
+        $('#tbl_disapproved_inspection_data').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+        });
+    };
+
+    this_evaluate.ViewFinishedInspectionData = (status) => {
+        $('#modal_view_inspection_data').modal('show');
+
+        if (status === 'finished') {
+            $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #009670, #01c293)');
+            $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #009670, #01c293)');
+            $('#modal_title').html('EVALUATION (APPROVED INSPECTION DATA)');
+        } else {
+            $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #c20131, #d81c4b)');
+            $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
+            $('#modal_title').html('EVALUATION (DISAPPROVED INSPECTION DATA)');
+        }
     };
 
     this_evaluate.Hinsei = (item_no, tools, type, specs, upper_limit, lower_limit) => {
