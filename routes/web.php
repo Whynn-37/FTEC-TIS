@@ -17,8 +17,7 @@ Route::get('/', function () {
 
 Route::get('login', 'PageController@login_page');
 Route::get('trial-checksheet', 'PageController@trial_checksheet_page');
-Route::get('finished-inspection', 'PageController@finished_evaluation_page');
-Route::get('disapproved-inspection', 'PageController@disapproved_evaluation_page');
+Route::get('evaluation', 'PageController@evaluation_page');
 Route::get('approval', 'PageController@approver_page');
 Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;

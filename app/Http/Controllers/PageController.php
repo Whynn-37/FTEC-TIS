@@ -16,14 +16,9 @@ class PageController extends Controller
         return view('Checksheet.trial_checksheet');
     }
 
-    public function finished_evaluation_page ()
+    public function evaluation_page ()
     {
-        return view('Evaluator.finished_evaluation');
-    }
-    
-    public function disapproved_evaluation_page ()
-    {
-        return view('Evaluator.disapproved_evaluation');
+        return view('Evaluator.evaluation');
     }
 
     public function approver_page ()

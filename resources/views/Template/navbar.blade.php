@@ -42,11 +42,7 @@
                                         style="font-size:1.2em">TRIAL CHECKSHEET</span></a>
                             </li>
                             <li>
-                                <a href="#"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">EVALUATOR</span></a>
-                                <ul class="submenu">
-                                    <li><a href="{{ url('finished-inspection') }}">FINISHED INSPECTION DATA</a></li>
-                                    <li><a href="{{ url('disapproved-inspection') }}">DISAPPROVED INSPECTION DATA</a></li>
-                                </ul>
+                                <a href="{{ url('evaluation') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">EVALUATOR</span></a>
                             </li>
                             <li>
                                 <a href="{{ url('approval') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span
