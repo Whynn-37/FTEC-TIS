@@ -91,6 +91,17 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'mydb' => [
+            'driver' => 'sqlsrv',
+            'host' => '10.51.10.39',
+            'database' => 'mydb',
+            'username' => 'sa',
+            'password' => 'ftec@1966',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ]
+
     ],
 
     /*

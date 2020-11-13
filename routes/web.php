@@ -12,15 +12,26 @@
 */
 
 Route::get('/', function () {
-    return view('Template.template');
+    return view('Login.login');
 });
 
 Route::get('login', 'PageController@login_page');
 Route::get('trial-checksheet', 'PageController@trial_checksheet_page');
-Route::get('evaluation', 'PageController@evaluator_page');
+Route::get('finished-inspection', 'PageController@finished_evaluation_page');
+Route::get('disapproved-inspection', 'PageController@disapproved_evaluation_page');
 Route::get('approval', 'PageController@approver_page');
 Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
 
 Route::get('test', 'TestController@test');
+//login controller 
+Route::get('select-all', 'LoginUserController@selectAll');
+Route::get('select-user/{id}', 'LoginUserController@selectUser');
+Route::post('login-authentication', 'LoginUserController@loginAuthentication');
+
+Route::get('get-credentials/{id}', 'PageController@get_credentials');
+Route::get('logout', 'PageController@logout');
+
+//token
+Route::get('token','LoginUserController@token');

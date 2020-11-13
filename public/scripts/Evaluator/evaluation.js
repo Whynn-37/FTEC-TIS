@@ -6,6 +6,15 @@ const EVALUATE = (() => {
     let this_evaluate = {};
     let onkeyup_number_only = 'onkeypress="return event.charCode >= 48 && event.charCode <= 57;"';
 
+    
+    this_evaluate.LoadPartNoDetails = (item_no, tools, type, specs, upper_limit, lower_limit) => {
+        $('#accordion_attachment').prop('hidden',false);
+        $('#accordion_igm').prop('hidden',false);
+        $('#div_approve').prop('hidden',false);
+        
+
+    };
+
     this_evaluate.Hinsei = (item_no, tools, type, specs, upper_limit, lower_limit) => {
 
         $(`#btn_item_no_${item_no}_hinsei`).prop('hidden', true);
@@ -152,20 +161,6 @@ const EVALUATE = (() => {
                     icon: 'success',
                     title: 'Success',
                     text: 'Approve successful',
-                })
-            }
-        })
-    }
-
-    this_evaluate.DisapproveData = () => {
-        Swal.fire($.extend(swal_options, {
-            title: 'Are you sure you want to disapprove?',
-        })).then((result) => {
-            if (result.value) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Disapprove successful',
                 })
             }
         })

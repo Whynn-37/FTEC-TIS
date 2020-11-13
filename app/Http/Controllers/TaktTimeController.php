@@ -8,6 +8,26 @@ use App\TrialChecksheet;
 
 class TaktTimeController extends Controller
 {
+    public function loadCycleTime(request $request, TaktTime $takt_time)
+    {
+        $message = 'No data';
+        $status = 'Error';
+
+        $result = $takt_time->loadCycleTime($request->trial_checksheet_id);
+
+        if (count($result) !== 0)
+        {
+            $message = 'Takt Time table loaded successfully';
+            $status = 'Success';
+        }
+
+        return response()->json([
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ]);
+    }
+
     public function startCycleTime(TrialChecksheet $trial_checksheet,TaktTime $takt_time, Request $request)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;

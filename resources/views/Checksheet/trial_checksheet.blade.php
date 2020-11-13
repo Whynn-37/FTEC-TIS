@@ -540,6 +540,7 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };

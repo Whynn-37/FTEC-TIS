@@ -8,9 +8,9 @@ class TaktTime extends Model
 {
     protected $fillable = ['trial_checksheet_id','start_date','start_time','takt_time'];
 
-    public function getTaktTime($id)
+    public function loadCycleTime($trial_checksheet_id)
     {
-        return TaktTime::where('trial_checksheet_id', $id)
+        return TaktTime::where('trial_checksheet_id', $trial_checksheet_id)
         ->get();
     }
 

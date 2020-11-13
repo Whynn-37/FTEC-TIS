@@ -35,4 +35,10 @@ Route::get('store-igm', 'TrialChecksheetController@storeIgm');
 Route::post('store-supplier', 'SupplierController@storeSupplier');
 
 //Cycle Time
+Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
+Route::get('store-supplier', 'SupplierController@storeSupplier');
+
+//DownTime
+Route::get('load-down-time', 'DownTimeController@loadDownTime');
+Route::post('start-down-time', 'DownTimeController@startDownTime');
