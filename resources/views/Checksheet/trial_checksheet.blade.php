@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <h4 class="header-title"><i class="ti-clipboard"></i> TRIAL CHECKSHEET</h4>
                         <form id="form_trial_checksheet" method="post" enctype="multipart/form-data">
-                            <div id="accordion4" class="according accordion-s3 gradiant-bg mb-3">
+                            <div id="accordion4" class="according accordion-s2 gradiant-bg mb-3">
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_details"><strong
@@ -189,7 +189,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="according accordion-s3 gradiant-bg mb-3">
+                            <div class="according accordion-s2 gradiant-bg mb-3">
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_cycle_time"><strong
@@ -376,7 +376,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="according accordion-s3 gradiant-bg mb-5" id="div_accordion_igm" hidden>
+                            <div class="according accordion-s2 gradiant-bg mb-5" id="div_accordion_igm" hidden>
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_igm"><strong
@@ -549,7 +549,7 @@
             showCancelButton: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Refresh',
+            confirmButtonText: 'REFRESH',
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };

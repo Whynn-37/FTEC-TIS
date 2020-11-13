@@ -35,7 +35,7 @@ const EVALUATE = (() => {
         if (status === 'finished') {
             $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #009670, #01c293)');
             $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #009670, #01c293)');
-            $('#modal_title').html('EVALUATION (APPROVED INSPECTION DATA)');
+            $('#modal_title').html('EVALUATION (FINISHED INSPECTION DATA)');
         } else {
             $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #c20131, #d81c4b)');
             $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
@@ -77,7 +77,7 @@ const EVALUATE = (() => {
         <br>
         <div class="row">
             <div class="col-md-6"><button type="button" class="btn btn-success btn-block btn-sm" onclick="EVALUATE.SaveHinsei(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-check"></i> SAVE</button></div>
-            <div class="col-md-6"><button type="button" class="btn btn-secondary btn-block btn-sm" onclick="EVALUATE.CancelHinsei(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-close"></i> CANCEL</button></div>
+            <div class="col-md-6"><button type="button" class="btn btn-secondary btn-block btn-sm" onclick="EVALUATE.CancelHinsei(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-na"></i> CANCEL</button></div>
         </div>`;
 
         $(`#td_item_no_${item_no}_hinsei`).html(td_remarks);
@@ -133,7 +133,7 @@ const EVALUATE = (() => {
         let td_data5 = `<input type="number" class="form-control" name="" id="txt_sub_no_${sub_no}_data5" value="${data5}">`;
         let td_edit_button = `
         <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem(${sub_no}, '${coordinates}', '${data1}', '${data2}', '${data3}', '${data4}', '${data5}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-        <button type="button" class="btn btn-secondary btn-block" onclick="EVALUATE.CancelSubItem(${sub_no}, '${coordinates}', '${data1}', '${data2}', '${data3}', '${data4}', '${data5}')"><strong class="strong-font"><i class="ti-close"></i> CANCEL</strong></button>`;
+        <button type="button" class="btn btn-secondary btn-block" onclick="EVALUATE.CancelSubItem(${sub_no}, '${coordinates}', '${data1}', '${data2}', '${data3}', '${data4}', '${data5}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
 
         $(`#td_sub_no_${sub_no}_coordinates`).html(td_coordinates);
         $(`#td_sub_no_${sub_no}_data1`).html(td_data1);

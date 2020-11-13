@@ -1,5 +1,7 @@
 $(document).ready(function () {
     APPROVE.LoadAttachments();
+    APPROVE.LoadFinishedInspectionData();
+    APPROVE.LoadDisapprovedInspectionData();
 });
 
 const APPROVE = (() => {
@@ -8,6 +10,33 @@ const APPROVE = (() => {
     let array_add_to_pdf = [];
     let add_to_pdf_count = 1;
     let attachment_count = 5;
+
+
+    this_approve.LoadFinishedInspectionData = () => {
+        $('#tbl_finished_inspection_data').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+        });
+    };
+
+    this_approve.LoadDisapprovedInspectionData = () => {
+        $('#tbl_disapproved_inspection_data').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+        });
+    };
+
+    this_approve.ViewFinishedInspectionData = () => {
+        $('#modal_view_inspection_data').modal('show');
+    };
 
     this_approve.LoadAttachments = () => {
 
@@ -58,11 +87,12 @@ const APPROVE = (() => {
                         let onclick_value = $(`#btn_add_to_pdf_${index}`).attr('onclick');
                         let split_onclick_value = onclick_value.split(',');
                         let check_file_no_value = split_onclick_value[1];
+                        let check_file_name_value = split_onclick_value[2];
 
                         if (check_file_no_value !== '') {
                             if (parseInt(check_file_no_value) > check_file_no) {
                                 $(`#img_attachment_${index}`).attr('src', `${APPROVE.AddToPdfCheckedImage(parseInt(check_file_no_value) - 1)}`);
-                                $(`#btn_add_to_pdf_${index}`).attr('onclick', `APPROVE.AddToPdf(${index},${parseInt(check_file_no_value) - 1},'${file_name}','checked');`);
+                                $(`#btn_add_to_pdf_${index}`).attr('onclick', `APPROVE.AddToPdf(${index},${parseInt(check_file_no_value) - 1},${check_file_name_value},'checked');`);
                             }
                         }
                     }
@@ -72,7 +102,6 @@ const APPROVE = (() => {
             array_add_to_pdf = $.grep(array_add_to_pdf, function (value) {
                 return value != file_name;
             });
-            $(`#img_attachment_${file_no}`).removeAttr('value');
             add_to_pdf_count--;
         }
 

@@ -48,7 +48,7 @@
                                                         <td>test</td>
                                                         <td>test</td>
                                                         <td>
-                                                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><i class="ti-eye"></i> EVALUATE</button>
+                                                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -98,7 +98,7 @@
                                                         <td>test</td>
                                                         <td>test</td>
                                                         <td>
-                                                            <button class="btn btn-danger btn-block" onclick="EVALUATE.ViewFinishedInspectionData('disapproved');"><i class="ti-eye"></i> EVALUATE</button>
+                                                            <button class="btn btn-danger btn-block" onclick="EVALUATE.ViewFinishedInspectionData('disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
