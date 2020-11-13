@@ -7,6 +7,26 @@ use App\DownTime;
 
 class DownTimeController extends Controller
 {
+    public function loadDownTime(request $request, DownTime $down_time)
+    {
+        $message = 'No data';
+        $status = 'Error';
+
+        $result = $down_time->loadDownTime($request->trial_checksheet_id);
+
+        if (count($result) !== 0)
+        {
+            $message = 'Down Time table loaded successfully';
+            $status = 'Success';
+        }
+
+        return response()->json([
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ]);
+    }
+
     public function startDownTime(request $request, DownTime $down_time)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;
@@ -25,7 +45,7 @@ class DownTimeController extends Controller
         }
         else
         {
-            $start_time = $down_time->stopDownTime($trial_checksheet_id);
+            $start_time = $down_time->getLatestDownTime($trial_checksheet_id);
 
             $data = [
                 'trial_checksheet_id'   =>  $trial_checksheet_id,

@@ -37,4 +37,5 @@ Route::post('start-cycle-time','TaktTimeController@startCycleTime');
 Route::get('store-supplier', 'SupplierController@storeSupplier');
 
 //DownTime
+Route::get('load-down-time', 'DownTimeController@loadDownTime');
 Route::post('start-down-time', 'DownTimeController@startDownTime');
