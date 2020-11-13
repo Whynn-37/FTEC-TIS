@@ -12,7 +12,8 @@ class SupplierController extends Controller
     {
         $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
 
-        $data = $upload->upload($file);
+        $sheet = 0;
+        $data = $upload->upload($file,$sheet);
 
         for($i = 1; $i < count($data); $i ++)
         {

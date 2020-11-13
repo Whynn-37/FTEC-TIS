@@ -9,9 +9,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class UploadController extends Controller
 {
-    public function upload($file)
+    public function upload($file,$sheet=null)
     {
-        $import = new UploadImport();
+        $import = new UploadImport($sheet);
 
         Excel::import($import, $file);
         $data =  $import->get_data();

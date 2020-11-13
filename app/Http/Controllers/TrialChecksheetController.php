@@ -10,6 +10,8 @@ use App\ChecksheetItem;
 use App\ChecksheetData;
 use App\TaktTime;
 use App\DownTime;
+use App\Http\Controllers\UploadController;
+use DB;
 
 class TrialChecksheetController extends Controller
 {
@@ -154,5 +156,101 @@ class TrialChecksheetController extends Controller
         ]);
     }
 
-    
+   
+    public function storeIgm (UploadController $upload,ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
+    {
+        $part_number = $request->part_number;
+        $revision_number   = $request->revision_number;
+        $trial_checksheet_id = $request->trial_checksheet_id;
+
+        $filename =$part_number.'_'.$revision_number;
+        $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+
+        $igm_files = scandir($path);
+
+        //filtering of igm file
+        for ($i=0; $i < count($igm_files); $i++) 
+        { 
+           if(strpos($igm_files[$i],$filename) !== false)
+           {
+              $filtered_igm [] = $igm_files[$i];
+           }
+        }
+         
+        $igm_data =  end($filtered_igm);
+
+        $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
+
+        // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
+        $sheet = 0;
+
+        if(file_exists($file))
+        {
+            $data = $upload->upload($file,$sheet);
+
+            for($i=6; $i < count($data); $i++)
+            {  
+                $igm_result [] =[
+                    'item_number'       => $data[$i][26],//sub no
+                    'type'              => $data[$i][28],//type
+                    'specification'     => $data[$i][29],//nominal
+                    'upper_limit'       => $data[$i][31],//ul
+                    'lower_limit'       => $data[$i][32],//ll
+                    'tools'             => $data[$i][37]//tools
+                ];
+            }
+
+            for($i=0; $i < count($igm_result); $i++)
+            {  
+                if($igm_result[$i]['item_number'] !== null &&
+                $igm_result[$i]['item_number'] !== 'Sub Seq')
+                {
+                    $checksheet_items[] = [
+                        'trial_checksheet_id'   => $trial_checksheet_id,
+                        'item_number'           => intval($igm_result[$i]['item_number']),
+                        'tools'                 => $igm_result[$i]['tools'],
+                        'type'                  => $igm_result[$i]['type'],
+                        'specification'         => $igm_result[$i]['specification'],
+                        'upper_limit'           => $igm_result[$i]['upper_limit'],
+                        'lower_limit'           => $igm_result[$i]['lower_limit'],
+                        'item_type'             => 1,
+                        'created_at'            => now(),
+                        'updated_at'            => now()
+                    ];
+                }
+            }
+
+            $checksheet_item_result =  $checksheet_item->storeChecksheetItem($checksheet_items);
+
+            for($i=0; $i< count($checksheet_item_result);$i++)
+            {   
+                $checksheet_datas [] = [
+                    'checksheet_item_id'    => $checksheet_item_result[$i],
+                    'sub_number'            => 1,
+                    'created_at'            => now(),
+                    'updated_at'            => now()
+                ];
+            }
+            $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
+
+
+            $status = 'error';
+            $message = 'no data';
+            $result = false;
+
+            if ($checksheet_item_result && $checksheet_data_result)
+            {
+                $status = 'success';
+                $message = 'Successfully Save';
+                $result = true;
+            }
+
+            return[
+                'status' => $status,
+                'message' => $message,
+                'result'    => $result
+            ];
+        } 
+
+    }
 }

@@ -15,10 +15,11 @@ class TrialLedgerController extends Controller
         $message = 'No file in Directory';
         $status = 'Error';
         $result = [];
+        $sheet = 0;
 
         if(file_exists($file))
         {
-            $data = $upload->upload($file);
+            $data = $upload->upload($file,$sheet);
 
             for($i=1; $i < count($data); $i++)
             {

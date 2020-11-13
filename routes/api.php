@@ -28,6 +28,8 @@ Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
+Route::get('store-igm', 'TrialChecksheetController@storeIgm');
+
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
