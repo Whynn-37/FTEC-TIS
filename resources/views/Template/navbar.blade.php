@@ -29,34 +29,38 @@
     </div>
 </div>
 <!-- main header area end -->
-<!-- header area start -->
-<div class="header-area header-bottom">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-9  d-none d-lg-block">
-                <div class="horizontal-menu">
-                    <nav>
-                        <ul id="nav_menu">
-                            <li>
-                                <a href="{{ url('trial-checksheet') }}"><i class="ti-clipboard" style="font-size:1.2em"></i><span
-                                        style="font-size:1.2em">TRIAL CHECKSHEET</span></a>
-                            </li>
-                            <li>
-                                <a href="{{ url('evaluation') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">EVALUATOR</span></a>
-                            </li>
-                            <li>
-                                <a href="{{ url('approval') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span
-                                        style="font-size:1.2em">APPROVER</span></a>
-                            </li>
-                        </ul>
-                    </nav>
+    <!-- header area start -->
+    <div class="header-area header-bottom">
+        @if (Session::get('access_level') === '1')
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-9  d-none d-lg-block">
+                        <div class="horizontal-menu">
+                        
+                            <nav>
+                                <ul id="nav_menu">
+                                    <li>
+                                        <a href="{{ url('trial-checksheet') }}"><i class="ti-clipboard" style="font-size:1.2em"></i><span
+                                                style="font-size:1.2em">TRIAL CHECKSHEET</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('evaluation') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">EVALUATOR</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('approval') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span
+                                                style="font-size:1.2em">APPROVER</span></a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- mobile_menu -->
+                    <div class="col-12 d-block d-lg-none">
+                        <div id="mobile_menu"></div>
+                    </div>
                 </div>
             </div>
-            <!-- mobile_menu -->
-            <div class="col-12 d-block d-lg-none">
-                <div id="mobile_menu"></div>
-            </div>
-        </div>
+        @endif
     </div>
-</div>
-<!-- header area end -->
+    <!-- header area end -->                      
+
