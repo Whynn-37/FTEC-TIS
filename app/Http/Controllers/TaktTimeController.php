@@ -46,7 +46,7 @@ class TaktTimeController extends Controller
             $data = [
                 'part_number'       => $request->part_number,
                 'revision_number'   => $request->revision_number,
-                'trial_stage'       => $request->trial_number
+                'trial_number'       => $request->trial_number
             ];
     
             $last_id =  $trial_checksheet->storeTrialChecksheet($data);  
@@ -61,19 +61,52 @@ class TaktTimeController extends Controller
 
         $result_takt_time =  $takt_time->storeTaktTime($result);
 
-        $status = "error";
+        $status = "Error";
         $message = "no data";
 
         if($result_takt_time != null)
         {
-            $status = "success";
-            $message = "uhhm uhmm"; 
+            $status = "Success";
+            $message = "Successfully"; 
         }
         
         return response()->json([
             'status'    =>  $status,
             'message'   =>  $message,
             'data'      =>  $result_takt_time
+        ]);
+    }
+
+    public function StopCycleTime(TaktTime $load_takt_time,Request $request)
+    {
+        $trial_checksheet_id    = $request->trial_checksheet_id;
+        $actual_time            = $request->actual_time;
+        $total_takt_time        = $request->total_takt_time;
+
+        $id = $load_takt_time->getIdTaktTime($trial_checksheet_id);
+         
+        $data = 
+            [
+                'end_time'          => date('H:i:s'),
+                'actual_time'       => $actual_time,
+                'total_takt_time'   => $total_takt_time
+            ];
+
+        $takt_time_result =  $load_takt_time->updateTaktTime($id,$data);
+
+        $status = "Error";
+        $message = "no data";
+
+        if($takt_time_result != null)
+        {
+            $status = "Success";
+            $message = "Successfully"; 
+        }
+        
+        return response()->json([
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $takt_time_result
         ]);
     }
 }

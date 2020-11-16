@@ -9,6 +9,11 @@ class ChecksheetItem extends Model
 {
     protected $fillable = ['trial_checksheet_id','item_number','tools','type','specification','upper_limit','lower_limit','item_type'];
 
+    public function checksheet_datas()
+    {
+        return $this->hasOne('App\ChecksheetData');
+    }
+
     public function getChecksheetItem($id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $id)
@@ -35,5 +40,15 @@ class ChecksheetItem extends Model
             );
         }
         return $id;
+    }
+
+    public function loadChecksheetData($data)
+    {
+        foreach ($data as $id) 
+        {
+            $result[] = ChecksheetItem::find($id['id'])->checksheet_datas;
+        }
+
+        return $result;
     }
 }

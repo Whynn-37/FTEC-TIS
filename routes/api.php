@@ -29,6 +29,7 @@ Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::get('store-igm', 'TrialChecksheetController@storeIgm');
+Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 
 
 //Supplier
@@ -37,7 +38,8 @@ Route::post('store-supplier', 'SupplierController@storeSupplier');
 //Cycle Time
 Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
-Route::get('store-supplier', 'SupplierController@storeSupplier');
+Route::get('stop-cycle-time', 'TaktTimeController@stopCycleTime');
+// Route::get('store-supplier', 'SupplierController@storeSupplier');
 
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');

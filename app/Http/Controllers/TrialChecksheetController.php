@@ -253,4 +253,34 @@ class TrialChecksheetController extends Controller
         } 
 
     }
+
+    public function loadIgm(TrialChecksheet $trial_checksheet, ChecksheetItem $checksheet_item, Request $request)
+    {
+
+        $status = 'error';
+        $message = 'no i.d';
+        $checksheet_items = [];
+        $checksheet_datas = [];
+
+        $trial_checksheet_id = $request->trial_checksheet_id;
+
+        if($trial_checksheet_id !== null)
+        {
+            $checksheet_items = $trial_checksheet->loadChecksheetItem($trial_checksheet_id);
+            $checksheet_datas = $checksheet_item->loadChecksheetData($checksheet_items);
+
+            $status = 'success';
+            $message = 'Successfully';
+        }
+
+        return [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => 
+                [
+                    'items' => $checksheet_items,
+                    'datas' => $checksheet_datas,
+                ]
+            ];
+    }
 }

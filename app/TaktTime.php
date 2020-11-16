@@ -18,4 +18,18 @@ class TaktTime extends Model
     {
         return TaktTime::create($data);
     }
+
+    public function getIdTaktTime($id)
+    {
+        return TaktTime::where('trial_checksheet_id', $id)
+        ->select('id')
+        ->latest()
+        ->first();
+    }
+
+    public function updateTaktTime($id,$data)
+    {
+        return TaktTime::where('id',$id['id'])
+        ->update($data);
+    }
 }
