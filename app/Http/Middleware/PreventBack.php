@@ -18,7 +18,8 @@ class PreventBack
          // condition 
          if ($request->session()->has('name')) {
 
-            return redirect('trial-checksheet');
+            // return redirect('trial-checksheet');
+            return $next($request);
 
      
         } else {
