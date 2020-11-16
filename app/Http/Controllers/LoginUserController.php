@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-
+use App\LoginUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\LoginUser;
 
 class LoginUserController extends Controller
 {
 
     public function token()
     {
-        //token 
+        //token
         return csrf_token();
-    } 
+    }
     public function selectAll(LoginUser $user)
     {
         return $user->selectAll();
@@ -33,61 +32,60 @@ class LoginUserController extends Controller
     public function loginAuthentication(Request $request)
     {
         $validator = Validator::make(request()->all(), [
-            'txt_employee_id'      => 'required',
-            'exampleInputPassword1'      => 'required'  // please change the id name
+            'txt_employee_id' => 'required',
+            'txt_employee_password' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $data = [
                 "response" => "warning",
-                "value"    => $validator->errors()
+                "value" => $validator->errors(),
             ];
         } else {
 
             $datas = request()->except('_token');
-            $datas  = [
-                'name'                 =>  $request->txt_employee_id,
-                'password'                =>  $request->exampleInputPassword1,
-         
+            $datas = [
+                'name' => $request->txt_employee_id,
+                'password' => $request->txt_employee_password,
+
             ];
 
-            try 
+            try
             {
 
+                $user = new LoginUser();
+                $data = $user->selectUser($datas);
 
-            $user = new LoginUser();
-            $data = $user->selectUser($datas);
-            
-               if($data)
-               {
-            
-                  session(['name' => $data->name,
+                if ($data) {
+
+                    session(['name' => $data->name,
                         'fullname' => $data->fullname,
                         'access_level' => $data->access_level,
                         'position' => $data->position,
                         'emailadd' => $data->emailadd,
-                        ]);
+                    ]);
 
-                $data = request()->session()->all();
-                return redirect('trial-checksheet');
-               }
-               else
-               {
+                    $data = request()->session()->all();
+                    // return redirect('trial-checksheet');
                     $data = [
-                        "response" => "Invalid Credentials"
-                    ]; 
-               }
+                        "response" => "success",
+                        "value" => ['access_level' => $data['access_level'], 'position' => $data['position']],
+                    ];
 
-            } 
+                } else {
+                    $data = [
+                        "response" => "fail",
+                        "value" => "Invalid Credentials",
+                    ];
+                }
 
-            catch (\Throwable $th)
-            {
+            } catch (\Throwable $th) {
                 $data = [
-                    "response" => "error"  ,
-                    "value"    => $th->getMessage()
+                    "response" => "error",
+                    "value" => $th->getMessage(),
                 ];
             }
         }
-        return response()->json($data);  
+        return response()->json($data);
     }
 }
