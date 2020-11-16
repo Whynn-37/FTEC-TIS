@@ -17,7 +17,7 @@ class CreateTrialChecksheetsTable extends Migration
             $table->id();
             $table->string('part_number');
             $table->integer('revision_number');
-            $table->integer('trial_stage');
+            $table->integer('trial_number');
             $table->integer('judgement')->nullable();
             $table->string('date_inspected')->nullable();
             $table->string('temperature')->nullable();
