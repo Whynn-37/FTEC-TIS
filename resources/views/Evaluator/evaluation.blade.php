@@ -67,22 +67,16 @@
                                                 <thead class="text-uppercase bg-dark">
                                                     <tr class="text-white">
                                                        <th>PART NO</th>
-                                                       <th>PART NAME</th>
-                                                       <th>MODEL NAME</th>
-                                                       <th>SUPPLIER</th>
-                                                       <th>KIND OF DIE</th>
-                                                       <th>TRIAL APPLICATION</th>
-                                                       <th>TRIAL STAGE</th>
                                                        <th>REVISION</th>
-                                                       <th>JUDGEMENT</th>
+                                                       <th>TRIAL NO</th>
+                                                       <th>DISAPPROVED BY</th>
+                                                       <th>DISAPPROVED DATE/TIME</th>
+                                                       <th>REASON</th>
                                                        <th>ACTION</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tbody_tbl_disapproved_inspection_data">
                                                     <tr>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
                                                         <td>test</td>
                                                         <td>test</td>
                                                         <td>test</td>
