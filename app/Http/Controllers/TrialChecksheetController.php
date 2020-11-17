@@ -283,4 +283,54 @@ class TrialChecksheetController extends Controller
                 ]
             ];
     }
+
+    public function storeItems(ChecksheetItem $store_checksheet_items,ChecksheetData $checksheet_data,Request $request)
+    {
+        $trial_checksheet_id = $request->trial_checksheet_id;
+        $item_number         = $request->item_number;
+        $tools               = $request->tools;
+        $type                = $request->type;
+        $specification       = $request->specification;
+        $upper_limit         = $request->upper_limit;
+        $lower_limit         = $request->lower_limit;
+        $sub_number          = $request->sub_number;
+
+        $checksheet_items[] = [
+            'trial_checksheet_id'   => $trial_checksheet_id,
+            'item_number'           => $item_number,
+            'tools'                 => $tools,
+            'type'                  => $type,
+            'specification'         => $specification,
+            'upper_limit'           => $upper_limit,
+            'lower_limit'           => $lower_limit,
+            'item_type'             => 0,
+            'created_at'            => now(),
+            'updated_at'            => now()
+        ];
+
+        $checksheet_item_result =  $store_checksheet_items->storeChecksheetItem($checksheet_items);
+
+            $checksheet_datas [] = [
+                'checksheet_item_id'    => $checksheet_item_result[0],
+                'sub_number'            => 1,
+                'created_at'            => now(),
+                'updated_at'            => now()
+            ];
+            
+        $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
+
+        $status = 'error';
+        $message = 'no data';
+
+        if ($checksheet_item_result && $checksheet_data_result)
+        {
+            $status = 'success';
+            $message = 'Successfully Save';
+        }
+
+        return[
+            'status' => $status,
+            'message' => $message, 
+        ];
+    }
 }
