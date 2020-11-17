@@ -10,7 +10,8 @@ class TrialLedgerController extends Controller
 {
     public function storeTrialLedger(UploadController $upload,TrialLedger $trial_ledger)
     {
-        $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
+        // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
+        $file = 'F:\TIS\trial_ledger.xlsx';
 
         $message = 'No file in Directory';
         $status = 'Error';

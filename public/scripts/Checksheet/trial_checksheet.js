@@ -14,6 +14,7 @@ const CHECKSHEET = (() => {
     let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
     let array_files = [];
 
+    // pang refresh ng trial ledger
     this_checksheet.LoadRefreshAlert = () => {
         $('#div_main_content').prop('hidden', true)
         Swal.fire(
@@ -30,16 +31,158 @@ const CHECKSHEET = (() => {
                     showConfirmButton: false,
                     allowOutsideClick: false,
                 })
-                setTimeout(function () {
-                    swal.close();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Update complete',
-                        allowOutsideClick: false,
-                    })
-                    $('#div_main_content').prop('hidden', false);
-                }, 2000);
+                $.ajax({
+                    url: `store-trial-ledger`,
+                    type: 'post',
+                    dataType: 'json',
+                    cache: false,
+                    data: {
+                        _token: _TOKEN
+                    },
+                    success: result => {
+                        if (result.status === 'Success') {
+                            swal.close();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: result.message,
+                                allowOutsideClick: false,
+                            })
+                            $('#div_main_content').prop('hidden', false);
+                            CHECKSHEET.LoadPartnumber();
+                        } else {
+                            swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: result.message,
+                                allowOutsideClick: false,
+                            })
+                            $('#div_main_content').prop('hidden', false);
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+    this_checksheet.LoadPartnumber = () => {
+        $.ajax({
+            url: `load-partnumber`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            success: data => {
+                $('#slc_part_number').empty();
+                let select_options = '<option value="" selected disabled>Select part no.</option>';
+
+                data.data.forEach((val) => {
+                    select_options += `<option value="${val.part_number}">${val.part_number}</option>`
+                });
+
+                $('#slc_part_number').append(select_options);
+            }
+        });
+    };
+
+    this_checksheet.LoadRevision = (part_number) => {
+        $('#slc_revision_number').LoadingOverlay('show');
+
+        $.ajax({
+            url: `load-revision`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                part_number: part_number
+            },
+            success: data => {
+                $('#slc_revision_number').empty();
+
+                let select_options = '<option value="" selected disabled>Select revision number</option>';
+
+                data.data.forEach((val) => {
+                    select_options += `<option value="${val.revision_number}">${val.revision_number}</option>`;
+                });
+
+                $('#slc_revision_number').append(select_options);
+                $('#slc_revision_number').LoadingOverlay('hide');
+            }
+        });
+    };
+
+    this_checksheet.LoadTrialNumber = () => {
+
+        let part_number = $('#slc_part_number').val();
+        let revision_number = $('#slc_revision_number').val();
+
+        $('#slc_trial_number').LoadingOverlay('show');
+
+        $.ajax({
+            url: `load-trial-number`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                part_number: part_number,
+                revision_number: revision_number,
+            },
+            success: data => {
+                $('#slc_trial_number').empty();
+
+                let select_options = '<option value="" selected disabled>Select trial number</option>';
+
+                data.data.forEach((val) => {
+                    select_options += `<option value="${val.trial_number}">${val.trial_number}</option>`;
+                });
+
+                $('#slc_trial_number').append(select_options);
+                $('#slc_trial_number').LoadingOverlay('hide');
+            }
+        });
+    };
+
+    this_checksheet.LoadDetails = () => {
+
+        let part_number = $('#slc_part_number').val();
+        let revision_number = $('#slc_revision_number').val();
+        let trial_number = $('#slc_trial_number').val();
+
+        $('#accordion_details').LoadingOverlay('show');
+        $('#div_takt_time').LoadingOverlay('show');
+
+        $.ajax({
+            url: `load-details`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                part_number: part_number,
+                revision_number: revision_number,
+                trial_number: trial_number,
+            },
+            success: data => {
+                if (data.status === 'Success') {
+                    let target_takt_time = data.data.trial_checksheets.inspection_required_time * 60;
+
+                    $('#txt_part_name').val(data.data.trial_checksheets.part_name);
+                    $('#txt_model_name').val(data.data.trial_checksheets.model_name);
+                    $('#txt_received_date').val(data.data.trial_checksheets.received_date);
+                    $('#txt_inspection_completion_date').val(data.data.trial_checksheets.delivery_date);
+                    $('#txt_actual_inspection_time').val(data.data.trial_checksheets.inspection_actual_time);
+                    $('#txt_inspection_reason').val(data.data.trial_checksheets.inspection_reason);
+                    $('#txt_die_kind').val(data.data.trial_checksheets.die_class);
+                    $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
+                    $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
+                    $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
+                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+
+                    $("#div_target_takt_time_timer").TimeCircles().rebuild();
+                    $("#div_target_takt_time_timer").TimeCircles().stop();
+
+                    $('#accordion_details').LoadingOverlay('hide');
+                    $('#div_takt_time').LoadingOverlay('hide');
+                }
             }
         });
     };

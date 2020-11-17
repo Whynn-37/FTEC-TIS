@@ -10,7 +10,8 @@ class SupplierController extends Controller
 {
     public function storeSupplier(UploadController $upload,Supplier $supplier)
     {
-        $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
+        // $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
+        $file = 'F:\TIS\supplier.xlsx';
 
         $sheet = 0;
         $data = $upload->upload($file,$sheet);

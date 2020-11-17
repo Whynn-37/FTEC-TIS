@@ -53,7 +53,7 @@ class TrialChecksheetController extends Controller
         ]);
     }
 
-    public function loadTrialStage(TrialLedger $trial_ledger, request $request)
+    public function loadTrialNumber(TrialLedger $trial_ledger, request $request)
     {
         $message = 'No Trial number';
         $status = 'Error';
@@ -63,7 +63,7 @@ class TrialChecksheetController extends Controller
             'part_number'       =>  $request->part_number
         ];
 
-        $result = $trial_ledger->loadTrialStage($data);
+        $result = $trial_ledger->loadTrialNumber($data);
 
         if (count($result) !== 0) {
             $message = 'Trial number loaded successfully';
