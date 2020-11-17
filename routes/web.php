@@ -34,3 +34,26 @@ Route::get('logout', 'PageController@logout');
 
 //token
 Route::get('token','LoginUserController@token');
+
+//Trial Ledger
+Route::post('store-trial-ledger', 'TrialLedgerController@storeTrialLedger');
+
+//Trial Checksheet
+Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
+Route::get('load-revision', 'TrialChecksheetController@loadRevision');
+Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
+Route::get('load-details', 'TrialChecksheetController@loadDetails');
+Route::get('store-igm', 'TrialChecksheetController@storeIgm');
+
+
+//Supplier
+Route::post('store-supplier', 'SupplierController@storeSupplier');
+
+//Cycle Time
+Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
+Route::post('start-cycle-time','TaktTimeController@startCycleTime');
+
+//DownTime
+Route::get('load-down-time', 'DownTimeController@loadDownTime');
+Route::post('start-down-time', 'DownTimeController@startDownTime');
+
