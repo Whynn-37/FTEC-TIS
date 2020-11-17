@@ -8,6 +8,46 @@ const EVALUATE = (() => {
     let onkeyup_number_only = 'onkeypress="return event.charCode >= 48 && event.charCode <= 57;"';
 
     this_evaluate.LoadFinishedInspectionData = () => {
+
+        // $('#tbl_finished_inspection_data').LoadingOverlay('show');
+        // $.ajax({
+        //     url: `load-inspection-finished`,
+        //     type: 'post',
+        //     dataType: 'json',
+        //     cache: false,
+        //     success: data => {
+
+        //         $('#tbl_pending_request_list').DataTable().destroy();
+        //         $('#tbody_tbl_pending_request_list').empty();
+
+        //         let tbody = '';
+        //         data.response.forEach((val) => {
+        //             tbody += 
+        //             `<tr>
+        //                 <td>test</td>
+        //                 <td>test</td>
+        //                 <td>test</td>
+        //                 <td>test</td>
+        //                 <td>test</td>
+        //                 <td>
+        //                     <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+        //                 </td>
+        //             </tr>`;
+        //         });
+
+
+        //         $('#tbody_tbl_pending_request_list').html(tbody);
+        //         $('#tbl_finished_inspection_data').DataTable({
+        //             "paging": true,
+        //             "lengthChange": true,
+        //             "searching": true,
+        //             "ordering": true,
+        //             "info": true,
+        //             "autoWidth": true,
+        //         });
+        //         $('#tbl_finished_inspection_data').LoadingOverlay('hide');
+        //     }
+        // });
         $('#tbl_finished_inspection_data').DataTable({
             "paging": true,
             "lengthChange": true,
