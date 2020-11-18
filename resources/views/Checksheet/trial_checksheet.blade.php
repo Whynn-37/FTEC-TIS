@@ -206,8 +206,6 @@
                                                                         DOWNTIME</h5>
                                                                     <span id="txt_downtime_running_time" hidden></span>
                                                                     <label>TYPE:</label>&nbsp;
-                                                                    <span id="span_error_downtime_type"
-                                                                        class="span-error"></span>
                                                                     <select class="form-control mb-3" name=""
                                                                         id="slc_downtime_type">
                                                                         <option value="" selected disabled>Select type
@@ -229,7 +227,7 @@
                                                                     <div class="single-table">
                                                                         <div class="table-responsive">
                                                                             <table class="table text-center table-sm table-bordered"
-                                                                                id="tbl_downtime_code">
+                                                                                id="tbl_downtime">
                                                                                 <thead class="text-uppercase bg-dark">
                                                                                     <tr class="text-white">
                                                                                         <th scope="col">DOWNTIME TYPE
@@ -239,7 +237,7 @@
                                                                                         <th scope="col">DOWNTIME</th>
                                                                                     </tr>
                                                                                 </thead>
-                                                                                <tbody id="tbody_tbl_downtime_code">
+                                                                                <tbody id="tbody_tbl_downtime">
                                                                                 </tbody>
                                                                                 <tfoot>
                                                                                     <tr class="bg-info text-white">
