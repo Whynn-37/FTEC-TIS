@@ -47,4 +47,4 @@ Route::patch('stop-cycle-time', 'TaktTimeController@stopCycleTime');
 
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');
-Route::post('start-down-time', 'DownTimeController@startDownTime');
+Route::post('downtime', 'DownTimeController@startDownTime');
