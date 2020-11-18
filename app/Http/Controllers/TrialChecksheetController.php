@@ -53,7 +53,7 @@ class TrialChecksheetController extends Controller
         ]);
     }
 
-    public function loadTrialStage(TrialLedger $trial_ledger, request $request)
+    public function loadTrialNumber(TrialLedger $trial_ledger, request $request)
     {
         $message = 'No Trial number';
         $status = 'Error';
@@ -63,7 +63,7 @@ class TrialChecksheetController extends Controller
             'part_number'       =>  $request->part_number
         ];
 
-        $result = $trial_ledger->loadTrialStage($data);
+        $result = $trial_ledger->loadTrialNumber($data);
 
         if (count($result) !== 0) {
             $message = 'Trial number loaded successfully';
@@ -127,8 +127,8 @@ class TrialChecksheetController extends Controller
                     $data_checksheet_data [] = json_decode(json_encode($checksheet_data->getChecksheetData($data_checksheet_item[$i]['id'])),true);
                 }
                 
-                $data_takt_time = json_decode(json_encode($takt_time->getTaktTime($data_trial_checksheet['id'])),true);
-                $data_down_time = json_decode(json_encode($down_time->getDownTime($data_trial_checksheet['id'])),true);
+                $data_takt_time = json_decode(json_encode($takt_time->loadCycleTime($data_trial_checksheet['id'])),true);
+                $data_down_time = json_decode(json_encode($down_time->loadDownTime($data_trial_checksheet['id'])),true);
             }
             else
             {
