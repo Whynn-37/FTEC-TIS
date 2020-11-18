@@ -14,7 +14,7 @@ class ChecksheetData extends Model
         ->get();
     }
 
-    public function storeChecksheetData($data)
+    public function storeChecksheetDatas($data)
     {
         return ChecksheetData::insert($data);
     }
@@ -32,8 +32,14 @@ class ChecksheetData extends Model
                 'judgment'              => $data['judgment'],
                 'remarks'               => $data['remarks'],
                 'hinsei'                => $data['hinsei'],
+
             ]
         );
+    }
+
+    public function updateAutoJudgmentData($id, $data)
+    {
+        return ChecksheetData::where('checksheet_item_id', $id)->update($data);
     }
 
     public function deleteDatas($id)

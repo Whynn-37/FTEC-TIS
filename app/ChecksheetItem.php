@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChecksheetItem extends Model
 {
-    protected $fillable = ['trial_checksheet_id','item_number','tools','type','specification','upper_limit','lower_limit','item_type'];
+    protected $fillable = ['trial_checksheet_id','item_number','tools','type','specification','upper_limit','lower_limit','item_type', 'judgment'];
 
     public function checksheet_datas()
     {
@@ -20,7 +20,7 @@ class ChecksheetItem extends Model
         ->get();
     }
 
-    public function storeChecksheetItem($data)
+    public function storeChecksheetItems($data)
     {
         foreach($data as $row)
         {
@@ -56,7 +56,7 @@ class ChecksheetItem extends Model
     public function updateOrCreateChecksheetItem($data)
     {
         return ChecksheetItem::updateOrCreate(
-            [
+            [   
                 'trial_checksheet_id'   => $data['trial_checksheet_id'],
                 'item_number'           => $data['item_number'],
             ],
@@ -67,8 +67,16 @@ class ChecksheetItem extends Model
                 'upper_limit'           => $data['upper_limit'],
                 'lower_limit'           => $data['lower_limit'],
                 'item_type'             => $data['item_type'],
+                'judgment'              => $data['judgment'],
+                'remarks'               => $data['remarks'],
+                'hinsei'                => $data['hinsei'],
             ]
         );
+    }
+
+    public function updateAutoJudgmentItem($id, $data)
+    {
+        return ChecksheetItem::find($id)->update($data);
     }
 
     public function deleteItem($id)

@@ -220,7 +220,7 @@ class TrialChecksheetController extends Controller
                 }
             }
 
-            $checksheet_item_result =  $checksheet_item->storeChecksheetItem($checksheet_items);
+            $checksheet_item_result =  $checksheet_item->storeChecksheetItems($checksheet_items);
 
             for($i=0; $i< count($checksheet_item_result);$i++)
             {   
@@ -231,7 +231,7 @@ class TrialChecksheetController extends Controller
                     'updated_at'            => now()
                 ];
             }
-            $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
+            $checksheet_data_result =  $checksheet_data->storeChecksheetDatas($checksheet_datas);
 
 
             $status = 'Error';
@@ -293,7 +293,6 @@ class TrialChecksheetController extends Controller
         $specification       = $request->specification;
         $upper_limit         = $request->upper_limit;
         $lower_limit         = $request->lower_limit;
-        $sub_number          = $request->sub_number;
 
         $checksheet_items = [
             'trial_checksheet_id'   => $trial_checksheet_id,
@@ -304,8 +303,9 @@ class TrialChecksheetController extends Controller
             'upper_limit'           => $upper_limit,
             'lower_limit'           => $lower_limit,
             'item_type'             => 0,
-            'created_at'            => now(),
-            'updated_at'            => now()
+            'judgment'              => null,
+            'remarks'               => null,
+            'hinsei'                => null,
         ];
 
         $checksheet_item_result =  $checksheet_item->updateOrCreateChecksheetItem($checksheet_items);
@@ -317,7 +317,7 @@ class TrialChecksheetController extends Controller
             'data'                  => null,
             'judgment'              => null,
             'remarks'               => null,
-            'hinsei'                => null,
+            'hinsei'                => null
         ];
         
         $checksheet_data_result =  $checksheet_data->updateOrCreateChecksheetData($checksheet_datas);
@@ -379,7 +379,7 @@ class TrialChecksheetController extends Controller
                 'data'               => null,
                 'judgment'           => null,
                 'remarks'            => null,
-                'hinsei'             => null
+                'hinsei'             => null,
             ];
     
             $result =  $checksheet_data->updateOrCreateChecksheetData($data);
@@ -412,5 +412,33 @@ class TrialChecksheetController extends Controller
                 'data'    => $result
              ];
         }
+    }
+
+    public function updateJudgment(ChecksheetItem $checksheet_item, ChecksheetData $checksheet_data, Request $request)
+    {
+        $id                  = $request->id;
+        $judgment_items      = $request->judgment_items;
+
+        $coordinates         = $request->coordinates;
+        $data                = $request->data;
+        $judgment_datas      = $request->judgment_datas;
+
+        $items = [
+            'judgment'              => $judgment_items
+        ];
+
+        $datas = [
+            'coordinates' => $coordinates,
+            'data' => $data,
+            'judgment' => $judgment_datas,
+        ];
+
+        $checksheet_item_result = $checksheet_item->updateAutoJudgmentItem($id, $items);
+        $checksheet_data_result = $checksheet_data->updateAutoJudgmentData($id, $datas);
+
+        return [
+            'checksheet_item' => $checksheet_item_result,
+            'checksheet_data' => $checksheet_data_result
+        ];
     }
 }
