@@ -34,6 +34,7 @@ Route::post('store-items','TrialChecksheetController@storeItems');
 Route::delete('delete-item','TrialChecksheetController@deleteItem');
 Route::post('store-datas','TrialChecksheetController@storeDatas');
 Route::delete('delete-datas','TrialChecksheetController@deleteDatas');
+Route::get('load-inspection-finished','TrialChecksheetController@loadFinishedInspection');
 
 
 

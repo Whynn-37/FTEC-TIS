@@ -413,5 +413,26 @@ class TrialChecksheetController extends Controller
              ];
         }
     }
+    public function loadFinishedInspection(TrialChecksheet $trial_checksheet)
+    {
+    
+
+        $result = $trial_checksheet->loadFinishedInspection();
+
+        $status = 'Error';
+        $message = 'no data';
+
+        if ($result)
+        {
+            $status = 'Success';
+            $message = 'Successfully Load';
+        }
+
+        return [
+            'status' => $status,
+            'message' => $message,
+            'data' => $result,
+        ];
+    }
     
 }
