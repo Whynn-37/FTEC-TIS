@@ -32,7 +32,8 @@ Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('store-items','TrialChecksheetController@storeItems');
 Route::delete('delete-item','TrialChecksheetController@deleteItem');
-
+Route::post('store-datas','TrialChecksheetController@storeDatas');
+Route::delete('delete-datas','TrialChecksheetController@deleteDatas');
 
 
 //Supplier

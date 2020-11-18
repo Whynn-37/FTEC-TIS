@@ -35,4 +35,9 @@ class ChecksheetData extends Model
             ]
         );
     }
+
+    public function deleteDatas($id)
+    {
+        return ChecksheetData::find($id)->delete();
+    }
 }
