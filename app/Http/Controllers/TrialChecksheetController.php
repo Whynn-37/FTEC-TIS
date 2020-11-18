@@ -234,13 +234,13 @@ class TrialChecksheetController extends Controller
             $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
 
 
-            $status = 'error';
+            $status = 'Error';
             $message = 'no data';
             $result = false;
 
             if ($checksheet_item_result && $checksheet_data_result)
             {
-                $status = 'success';
+                $status = 'Success';
                 $message = 'Successfully Save';
                 $result = true;
             }
@@ -257,7 +257,7 @@ class TrialChecksheetController extends Controller
     public function loadIgm(TrialChecksheet $trial_checksheet, ChecksheetItem $checksheet_item, Request $request)
     {
 
-        $status = 'error';
+        $status = 'Error';
         $message = 'no i.d';
         $checksheet_items = [];
         $checksheet_datas = [];
@@ -269,7 +269,7 @@ class TrialChecksheetController extends Controller
             $checksheet_items = $trial_checksheet->loadChecksheetItem($trial_checksheet_id);
             $checksheet_datas = $checksheet_item->loadChecksheetData($checksheet_items);
 
-            $status = 'success';
+            $status = 'Success';
             $message = 'Successfully';
         }
 
@@ -284,7 +284,7 @@ class TrialChecksheetController extends Controller
             ];
     }
 
-    public function storeItems(ChecksheetItem $store_checksheet_items,ChecksheetData $checksheet_data,Request $request)
+    public function storeItems(ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;
         $item_number         = $request->item_number;
@@ -295,7 +295,7 @@ class TrialChecksheetController extends Controller
         $lower_limit         = $request->lower_limit;
         $sub_number          = $request->sub_number;
 
-        $checksheet_items[] = [
+        $checksheet_items = [
             'trial_checksheet_id'   => $trial_checksheet_id,
             'item_number'           => $item_number,
             'tools'                 => $tools,
@@ -308,29 +308,57 @@ class TrialChecksheetController extends Controller
             'updated_at'            => now()
         ];
 
-        $checksheet_item_result =  $store_checksheet_items->storeChecksheetItem($checksheet_items);
+        $checksheet_item_result =  $checksheet_item->updateOrCreateChecksheetItem($checksheet_items);
+        
+        $checksheet_datas = [
+            'checksheet_item_id'    => $checksheet_item_result->id,
+            'sub_number'            => 1,
+            'coordinates'           => null,
+            'data'                  => null,
+            'judgment'              => null,
+            'remarks'               => null,
+            'hinsei'                => null,
+        ];
+        
+        $checksheet_data_result =  $checksheet_data->updateOrCreateChecksheetData($checksheet_datas);
 
-            $checksheet_datas [] = [
-                'checksheet_item_id'    => $checksheet_item_result[0],
-                'sub_number'            => 1,
-                'created_at'            => now(),
-                'updated_at'            => now()
-            ];
-            
-        $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
-
-        $status = 'error';
-        $message = 'no data';
+        $status = 'Error';
+        $message = 'Not Successfully Save';
 
         if ($checksheet_item_result && $checksheet_data_result)
         {
-            $status = 'success';
+            $status = 'Success';
             $message = 'Successfully Save';
         }
 
-        return[
+        return [
             'status' => $status,
-            'message' => $message, 
+            'message' => $message,
+            'data' => [
+                'checksheet_item_id' => $checksheet_item_result->id,
+                'checksheet_data_id' => $checksheet_data_result->id
+            ]
+        ];
+    }
+
+    public function deleteItem(ChecksheetItem $checksheet_item, Request $request)
+    {
+        $id = $request->id;
+
+        $result = $checksheet_item->deleteItem($id);
+
+        $status = 'Error';
+        $message = 'no data';
+
+        if ($request)
+        {
+            $status = 'Success';
+            $message = 'Successfully Deleted';
+        }
+
+        return [
+            'status' => $status,
+            'message' => $message,
         ];
     }
 }

@@ -51,4 +51,29 @@ class ChecksheetItem extends Model
 
         return $result;
     }
+
+    
+    public function updateOrCreateChecksheetItem($data)
+    {
+        return ChecksheetItem::updateOrCreate(
+            [
+                'trial_checksheet_id'   => $data['trial_checksheet_id'],
+                'item_number'           => $data['item_number'],
+            ],
+            [
+                'tools'                 => $data['tools'],
+                'type'                  => $data['type'],
+                'specification'         => $data['specification'],
+                'upper_limit'           => $data['upper_limit'],
+                'lower_limit'           => $data['lower_limit'],
+                'item_type'             => $data['item_type'],
+            ]
+        );
+    }
+
+    public function deleteItem($id)
+    {
+        ChecksheetItem::find($id)->checksheet_datas()->delete();
+        return ChecksheetItem::find($id)->delete();
+    }
 }
