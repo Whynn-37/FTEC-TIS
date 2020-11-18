@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaktTime extends Model
 {
-    protected $fillable = ['trial_checksheet_id','start_date','start_time','takt_time'];
+    protected $fillable = ['trial_checksheet_id','start_date','start_time','takt_time', 'end_time', 'actual_time', 'total_takt_time', 'date_finished'];
 
     public function loadCycleTime($trial_checksheet_id)
     {
@@ -14,15 +14,28 @@ class TaktTime extends Model
         ->get();
     }
 
-    public function storeTaktTime($data)
+    public function updateOrCreateTaktTime($data)
     {
-        return TaktTime::create($data);
+        // edited by jed
+        return TaktTime::updateOrCreate(
+            [
+                'trial_checksheet_id'   => $data['trial_checksheet_id'],
+                'start_date'            => $data['start_date'],
+                'start_time'            => $data['start_time'],
+            ],
+            [
+                'end_time'              => $data['end_time'],
+                'actual_time'           => $data['actual_time'],
+                'total_takt_time'       => $data['total_takt_time'],
+                'takt_time'             => $data['takt_time'],
+            ]
+        );
     }
 
-    public function getIdTaktTime($id)
+    public function getStartDateTime($id)
     {
         return TaktTime::where('trial_checksheet_id', $id)
-        ->select('id')
+        ->select('start_time', 'start_date')
         ->latest()
         ->first();
     }

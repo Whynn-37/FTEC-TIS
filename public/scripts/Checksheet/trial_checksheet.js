@@ -1,6 +1,6 @@
 $(document).ready(function () {
     CHECKSHEET.LoadRefreshAlert();
-    CHECKSHEET.LoadCycleTimeTimer();
+    CHECKSHEET.InitializeCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
 });
 
@@ -76,8 +76,8 @@ const CHECKSHEET = (() => {
                 $('#slc_part_number').empty();
                 let select_options = '<option value="" selected disabled>Select part no.</option>';
 
-                data.data.forEach((val) => {
-                    select_options += `<option value="${val.part_number}">${val.part_number}</option>`
+                data.data.forEach((value) => {
+                    select_options += `<option value="${value.part_number}">${value.part_number}</option>`
                 });
 
                 $('#slc_part_number').append(select_options);
@@ -101,8 +101,8 @@ const CHECKSHEET = (() => {
 
                 let select_options = '<option value="" selected disabled>Select revision number</option>';
 
-                data.data.forEach((val) => {
-                    select_options += `<option value="${val.revision_number}">${val.revision_number}</option>`;
+                data.data.forEach((value) => {
+                    select_options += `<option value="${value.revision_number}">${value.revision_number}</option>`;
                 });
 
                 $('#slc_revision_number').append(select_options);
@@ -132,8 +132,8 @@ const CHECKSHEET = (() => {
 
                 let select_options = '<option value="" selected disabled>Select trial number</option>';
 
-                data.data.forEach((val) => {
-                    select_options += `<option value="${val.trial_number}">${val.trial_number}</option>`;
+                data.data.forEach((value) => {
+                    select_options += `<option value="${value.trial_number}">${value.trial_number}</option>`;
                 });
 
                 $('#slc_trial_number').append(select_options);
@@ -165,6 +165,7 @@ const CHECKSHEET = (() => {
                 if (data.status === 'Success') {
                     let target_takt_time = data.data.trial_checksheets.inspection_required_time * 60;
 
+                    $('#trial_checksheet_id').val(data.data.trial_checksheets.id);
                     $('#txt_part_name').val(data.data.trial_checksheets.part_name);
                     $('#txt_model_name').val(data.data.trial_checksheets.model_name);
                     $('#txt_received_date').val(data.data.trial_checksheets.received_date);
@@ -182,6 +183,22 @@ const CHECKSHEET = (() => {
 
                     $('#accordion_details').LoadingOverlay('hide');
                     $('#div_takt_time').LoadingOverlay('hide');
+
+                    $('#tbody_tbl_takt_time').empty();
+
+                    let tbody = '';
+
+                    data.data.takt_times.forEach((value) => {
+                        tbody += `<tr>
+                            <td>${value.start_date}</td>
+                            <td>${value.date_finished}</td>
+                            <td>${value.start_time}</td>
+                            <td>${value.end_time}</td>
+                            <td>${value.total_takt_time}</td>
+                        </tr>`;
+                    });
+
+                    $('#tbody_tbl_takt_time').html(tbody);
                 }
             }
         });
@@ -204,7 +221,7 @@ const CHECKSHEET = (() => {
         }, 1000);
     };
 
-    this_checksheet.LoadCycleTimeTimer = () => {
+    this_checksheet.InitializeCycleTimeTimer = () => {
         $("#btn_start_time").prop("hidden", false);
         $("#btn_stop_time").prop("hidden", true);
 
@@ -239,88 +256,154 @@ const CHECKSHEET = (() => {
         Swal.fire(
             $.extend(swal_options, {
                 confirmButtonText: 'Yes',
-                title: "Are you sure?",
-                text: `Clicking 'Yes' will ${text} the cycle time`,
+                title: `Are you sure you want to ${text}?`,
             })
         ).then((result) => {
             if (result.value) {
                 if (status === "start_takt_time") {
-                    CHECKSHEET.TaktTimeStart(downtime_running_time);
+                    CHECKSHEET.StartCycleTime(downtime_running_time);
                 } else {
-                    CHECKSHEET.TaktTimeStop(downtime_running_time);
+                    CHECKSHEET.StopCycleTime(downtime_running_time);
                 }
             }
         });
     };
 
-    this_checksheet.TaktTimeStart = (downtime_running_time) => {
-        Swal.fire(
-            $.extend(swal_options, {
-                title: "Do you want to load the IGM?",
-                text: ``,
-            })
-        ).then((result) => {
-            if (result.value) {
-                CHECKSHEET.ProceedTaktTimeStart(downtime_running_time);
-                alert('load igm dito');
-                $('#div_accordion_igm').prop('hidden', false);
-            } else {
-                $('#div_accordion_igm').prop('hidden', false);
-                $('#thead_tbl_igm').prop('hidden', true);
-                $('#tbody_tbl_igm').prop('hidden', true);
+    this_checksheet.StartCycleTime = (downtime_running_time) => {
+
+        $('#div_card_takt_time').LoadingOverlay('show');
+
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let target_takt_time = $('#div_target_takt_time_timer').attr('data-timer') / 60;
+        let part_number = $('#slc_part_number').val();
+        let revision_number = $('#slc_revision_number').val();
+        let trial_number = $('#slc_trial_number').val();
+
+        $.ajax({
+            url: `start-cycle-time`,
+            type: 'post',
+            dataType: 'json',
+            cache: false,
+            data: {
+                _token: _TOKEN,
+                trial_checksheet_id: trial_checksheet_id,
+                takt_time: target_takt_time,
+                part_number: part_number,
+                revision_number: revision_number,
+                trial_number: trial_number,
+            },
+            success: data => {
+
+                if (data.status === 'Success') {
+
+                    $('#slc_part_number').prop('disabled', true);
+                    $('#slc_revision_number').prop('disabled', true);
+                    $('#slc_trial_number').prop('disabled', true);
+
+                    $("#div_target_takt_time_timer").TimeCircles().start();
+                    $("#div_takt_time_timer").TimeCircles().start();
+                    $("#div_actual_time_timer").TimeCircles().start();
+
+                    $("#btn_start_time").prop("hidden", true);
+                    $("#btn_stop_time").prop("hidden", false);
+                    $("#btn_start_downtime").prop("disabled", false);
+                    $("#slc_downtime_type").prop("disabled", false);
+
+                    $('#trial_checksheet_id').val(data.data.trial_checksheet_id);
+
+                    // let tbody = '';
+                    // tbody += `<tr>
+                    //     <td>${data.data.start_date}</td>
+                    //     <td></td>
+                    //     <td>${data.data.start_time}</td>
+                    //     <td></td>
+                    //     <td></td>
+                    // </tr>`;
+
+                    // $('#tbody_tbl_takt_time').html(tbody);
+                    CHECKSHEET.LoadCycleTime();
+                    $('#div_card_takt_time').LoadingOverlay('hide');
+                }
             }
         });
-
-    };
-
-    this_checksheet.ProceedTaktTimeStart = (downtime_running_time) => {
-        let new_date = new Date();
-        let date_now = new_date.getDate() + "/" + (new_date.getMonth() + 1) + "/" + new_date.getFullYear();
-
-        $("#div_target_takt_time_timer").TimeCircles().start();
-        $("#div_takt_time_timer").TimeCircles().start();
-        $("#div_actual_time_timer").TimeCircles().start();
-        $("#btn_start_time").prop("hidden", true);
-        $("#btn_stop_time").prop("hidden", false);
-        $("#btn_start_downtime").prop("disabled", false);
-        $("#slc_downtime_type").prop("disabled", false);
-
-        $("#td_start_time_takt_time").html(downtime_running_time);
-
-        if ($("#td_date_start_takt_time").html() === "") {
-            $("#td_date_start_takt_time").html(date_now);
-        }
-        if ($("#td_end_time_takt_time").html() !== "") {
-            $("#td_end_time_takt_time").html("");
-        }
 
         CHECKSHEET.LoadDowntimeRunningTimeInterval();
         FOOTER.LoadNavbarDateTimeInterval();
     };
 
-    this_checksheet.TaktTimeStop = (downtime_running_time) => {
-        let takt_time_left = $("#div_takt_time_timer").TimeCircles().getTime();
-        let absolute_value_takt_time_left = Math.abs(Math.floor(takt_time_left));
-        let total_takt_time = $("#td_total_takt_time").html();
-        let converted_takt_time_left = CONVERSION.ConvertSecondsToTime(absolute_value_takt_time_left);
 
-        if (total_takt_time === "") {
-            $("#td_total_takt_time").html(converted_takt_time_left);
-        } else {
-            converted_total_takt_time = CONVERSION.ConvertTimeToSeconds(total_takt_time);
-            sum_total_takt_time = converted_total_takt_time + absolute_value_takt_time_left;
-            new_total_takt_time = CONVERSION.ConvertSecondsToTime(sum_total_takt_time);
-            $("#td_total_takt_time").html(new_total_takt_time);
-        }
+    this_checksheet.LoadCycleTime = () => {
 
-        $("#td_end_time_takt_time").html(downtime_running_time);
-        $("#btn_start_time").prop("hidden", false);
-        $("#btn_stop_time").prop("hidden", true);
-        $("#div_target_takt_time_timer").TimeCircles().stop();
-        $("#div_actual_time_timer").TimeCircles().stop();
-        $("#div_takt_time_timer").TimeCircles().restart();
-        $("#div_takt_time_timer").TimeCircles().stop();
-        $("#btn_start_downtime").prop("disabled", true);
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+
+        $.ajax({
+            url: `load-cycle-time`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                trial_checksheet_id: trial_checksheet_id,
+            },
+            success: data => {
+
+                let tbody = '';
+                data.data.forEach((value) => {
+
+                    tbody += `<tr>
+                        <td>${value.start_date}</td>
+                        <td>${value.date_finished}</td>
+                        <td>${value.start_time}</td>
+                        <td>${value.end_time}</td>
+                        <td>${value.total_takt_time}</td>
+                    </tr>`;
+
+                });
+                $('#tbody_tbl_takt_time').html(tbody);
+            }
+        });
+    };
+
+    this_checksheet.StopCycleTime = (actual_time) => {
+        
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+
+        let remaining_target_takt_time = $('#div_target_takt_time_timer').TimeCircles().getTime();
+        let converted_remaining_target_takt_time = remaining_target_takt_time / 60;
+
+        let remaining_takt_time = $("#div_takt_time_timer").TimeCircles().getTime();
+        let absolute_value_remaining_takt_time = Math.abs(Math.floor(remaining_takt_time));
+        let converted_remaining_takt_time = absolute_value_remaining_takt_time / 60;
+
+        let remaining_actual_time = $("#div_actual_time_timer").TimeCircles().getTime();
+        let absolute_value_remaining_actual_time = Math.abs(Math.floor(remaining_actual_time));
+        let converted_remaining_actual_time = absolute_value_remaining_actual_time / 60;
+
+        $.ajax({
+            url: `stop-cycle-time`,
+            type: 'patch',
+            dataType: 'json',
+            cache: false,
+            data: {
+                _token: _TOKEN,
+                trial_checksheet_id: trial_checksheet_id,
+                total_takt_time: converted_remaining_takt_time.toFixed(2),
+                actual_time: converted_remaining_actual_time.toFixed(2),
+                takt_time: converted_remaining_target_takt_time.toFixed(2),
+            },
+            success: data => {
+
+                if (data.status === 'Success') {
+                    CHECKSHEET.LoadCycleTime();
+                    $("#btn_start_time").prop("hidden", false);
+                    $("#btn_stop_time").prop("hidden", true);
+                    $("#div_target_takt_time_timer").TimeCircles().stop();
+                    $("#div_actual_time_timer").TimeCircles().stop();
+                    $("#div_takt_time_timer").TimeCircles().restart();
+                    $("#div_takt_time_timer").TimeCircles().stop();
+                    $("#btn_start_downtime").prop("disabled", true);
+                }
+            }
+        });
     };
 
     this_checksheet.DowntimeTimerAction = (status) => {

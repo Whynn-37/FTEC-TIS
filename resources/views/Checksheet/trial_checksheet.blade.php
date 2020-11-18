@@ -31,7 +31,7 @@
                                     <div id="accordion_details" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
                                             {{-- HIDDEN ID REQUEST NI JED --}}
-                                            <span id="trial_checksheet_id" hidden></span>
+                                            <input type="text" id="trial_checksheet_id" hidden>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label>PART NO:</label>&nbsp;
@@ -115,7 +115,7 @@
                                             <div class="row">
                                                 <div class="col-md-7">
                                                     <div class="card shadow mb-4">
-                                                        <div class="card-body">
+                                                        <div class="card-body" id="div_card_takt_time">
                                                             <div class="row">
                                                                 <div class="col-md-12" align="center">
                                                                     <div class="alert alert-info" id="div_takt_time">
@@ -156,7 +156,7 @@
                                                                         <div class="table-responsive">
                                                                             <table
                                                                                 class="table text-center table-sm table-bordered"
-                                                                                id="tbl_downtime">
+                                                                                id="tbl_takt_time">
                                                                                 <thead class="text-uppercase bg-dark">
                                                                                     <tr class="text-white">
                                                                                         <th>DATE START</th>
@@ -166,15 +166,7 @@
                                                                                         <th>TOTAL TAKT TIME</th>
                                                                                     </tr>
                                                                                 </thead>
-                                                                                <tbody id="tbody_tbl_downtime">
-                                                                                    <tr>
-                                                                                        <td id="td_date_start_takt_time"></td>
-                                                                                        <td id="td_date_finish_takt_time"></td>
-                                                                                        <td id="td_start_time_takt_time"></td>
-                                                                                        <td id="td_end_time_takt_time"></td>
-                                                                                        <td id="td_total_takt_time"></td>
-                                                                                    </tr>
-                                                                                </tbody>
+                                                                                <tbody id="tbody_tbl_takt_time"></tbody>
                                                                             </table>
                                                                         </div>
                                                                     </div>
