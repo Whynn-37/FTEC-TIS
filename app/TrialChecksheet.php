@@ -3,7 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\TrialLedger;
+use DB;
 class TrialChecksheet extends Model
 {
 
@@ -30,6 +31,20 @@ class TrialChecksheet extends Model
     public function loadChecksheetItem($id)
     {
         return TrialChecksheet::find($id)->checksheet_items;
+    }
+
+    public function getChecksheetDetails($id)
+    {
+       
+     return   $data = TrialChecksheet::join('trial_ledgers', function($join)
+        {
+            $join->on('trial_ledgers.part_number', '=', 'trial_checksheets.part_number')
+                ->on('trial_ledgers.trial_number', '=', 'trial_checksheets.trial_number')
+                ->on('trial_ledgers.revision_number', '=', 'trial_checksheets.revision_number');
+        })
+        ->where('trial_checksheets.id', $id)
+        ->select(['trial_checksheets.*','trial_ledgers.*'])
+        ->get();
     }
     
 }
