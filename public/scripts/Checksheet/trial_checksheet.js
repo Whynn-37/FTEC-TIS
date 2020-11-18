@@ -142,14 +142,42 @@ const CHECKSHEET = (() => {
         });
     };
 
-    this_checksheet.LoadDetails = () => {
+    this_checksheet.ValidateLoadDetails = () => {
 
         let part_number = $('#slc_part_number').val();
         let revision_number = $('#slc_revision_number').val();
         let trial_number = $('#slc_trial_number').val();
 
+        if (part_number === null && revision_number === null && trial_number === null) {
+            $('#span_error_part_number').remove();
+            $('#span_error_revision_number').remove();
+            $('#span_error_trial_number').remove();
+            $('#slc_part_number').before('<span id ="span_error_part_number" class="span-error">Required</span>');
+            $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
+            $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        } else if (revision_number === null && trial_number === null) {
+            $('#span_error_part_number').remove();
+            $('#span_error_revision_number').remove();
+            $('#span_error_trial_number').remove();
+            $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
+            $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        } else if (trial_number === null) {
+            $('#span_error_part_number').remove();
+            $('#span_error_revision_number').remove();
+            $('#span_error_trial_number').remove();
+            $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        } else {
+            $('#span_error_part_number').remove();
+            $('#span_error_revision_number').remove();
+            $('#span_error_trial_number').remove();
+            CHECKSHEET.LoadDetails(part_number, revision_number, trial_number);
+        }
+    };
+
+    this_checksheet.LoadDetails = (part_number, revision_number, trial_number) => {
+
         $('#accordion_details').LoadingOverlay('show');
-        $('#div_takt_time').LoadingOverlay('show');
+        $('#div_card_takt_time').LoadingOverlay('show');
 
         $.ajax({
             url: `load-details`,
@@ -163,8 +191,8 @@ const CHECKSHEET = (() => {
             },
             success: data => {
                 if (data.status === 'Success') {
-                    let target_takt_time = data.data.trial_checksheets.inspection_required_time * 60;
 
+                    //checksheet details
                     $('#trial_checksheet_id').val(data.data.trial_checksheets.id);
                     $('#txt_part_name').val(data.data.trial_checksheets.part_name);
                     $('#txt_model_name').val(data.data.trial_checksheets.model_name);
@@ -176,29 +204,40 @@ const CHECKSHEET = (() => {
                     $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
-                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
 
+                    var target_takt_time = data.data.trial_checksheets.inspection_required_time * 60;
+                    var total_takt_time = 0;
+
+                    //existing na takt time
+                    if (data.data.takt_times.length > 0) {
+                        //last array element of target takt time
+                        array_takt_time_data = data.data.takt_times[data.data.takt_times.length - 1];
+                        target_takt_time = array_takt_time_data['takt_time'] * 60;
+
+                        // sum ng takt time para sa actual time na timer
+                        let sum_total_takt_time = 0;
+                        data.data.takt_times.forEach((value) => {
+                            sum_total_takt_time += parseFloat(value.total_takt_time);
+                        });
+
+                        total_takt_time = -Math.abs(sum_total_takt_time * 60);
+                        CHECKSHEET.LoadCycleTime();
+                        CHECKSHEET.LoadDowntime();
+                    }
+
+                    //target takt time
+                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
                     $("#div_target_takt_time_timer").TimeCircles().rebuild();
                     $("#div_target_takt_time_timer").TimeCircles().stop();
 
+                    //actual time
+                    $('#div_actual_time_timer').attr('data-timer', total_takt_time);
+                    $("#div_actual_time_timer").TimeCircles().rebuild();
+                    $("#div_actual_time_timer").TimeCircles().stop();
+
                     $('#accordion_details').LoadingOverlay('hide');
-                    $('#div_takt_time').LoadingOverlay('hide');
+                    $('#div_card_takt_time').LoadingOverlay('hide');
 
-                    $('#tbody_tbl_takt_time').empty();
-
-                    let tbody = '';
-
-                    data.data.takt_times.forEach((value) => {
-                        tbody += `<tr>
-                            <td>${value.start_date}</td>
-                            <td>${value.date_finished}</td>
-                            <td>${value.start_time}</td>
-                            <td>${value.end_time}</td>
-                            <td>${value.total_takt_time}</td>
-                        </tr>`;
-                    });
-
-                    $('#tbody_tbl_takt_time').html(tbody);
                 }
             }
         });
@@ -295,15 +334,15 @@ const CHECKSHEET = (() => {
             success: data => {
 
                 if (data.status === 'Success') {
-
+                    //checksheet details
                     $('#slc_part_number').prop('disabled', true);
                     $('#slc_revision_number').prop('disabled', true);
                     $('#slc_trial_number').prop('disabled', true);
-
+                    //target takt time
                     $("#div_target_takt_time_timer").TimeCircles().start();
                     $("#div_takt_time_timer").TimeCircles().start();
                     $("#div_actual_time_timer").TimeCircles().start();
-
+                    //downtime
                     $("#btn_start_time").prop("hidden", true);
                     $("#btn_stop_time").prop("hidden", false);
                     $("#btn_start_downtime").prop("disabled", false);
@@ -311,17 +350,9 @@ const CHECKSHEET = (() => {
 
                     $('#trial_checksheet_id').val(data.data.trial_checksheet_id);
 
-                    // let tbody = '';
-                    // tbody += `<tr>
-                    //     <td>${data.data.start_date}</td>
-                    //     <td></td>
-                    //     <td>${data.data.start_time}</td>
-                    //     <td></td>
-                    //     <td></td>
-                    // </tr>`;
-
-                    // $('#tbody_tbl_takt_time').html(tbody);
                     CHECKSHEET.LoadCycleTime();
+                    
+                    $('#div_accordion_igm').prop('hidden', false);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
             }
@@ -330,7 +361,6 @@ const CHECKSHEET = (() => {
         CHECKSHEET.LoadDowntimeRunningTimeInterval();
         FOOTER.LoadNavbarDateTimeInterval();
     };
-
 
     this_checksheet.LoadCycleTime = () => {
 
@@ -345,6 +375,7 @@ const CHECKSHEET = (() => {
                 trial_checksheet_id: trial_checksheet_id,
             },
             success: data => {
+                $('#tbody_tbl_takt_time').empty();
 
                 let tbody = '';
                 data.data.forEach((value) => {
@@ -364,7 +395,9 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.StopCycleTime = (actual_time) => {
-        
+
+        $('#div_card_takt_time').LoadingOverlay('show');
+
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
         let remaining_target_takt_time = $('#div_target_takt_time_timer').TimeCircles().getTime();
@@ -394,91 +427,136 @@ const CHECKSHEET = (() => {
 
                 if (data.status === 'Success') {
                     CHECKSHEET.LoadCycleTime();
+                    //cycle time
                     $("#btn_start_time").prop("hidden", false);
                     $("#btn_stop_time").prop("hidden", true);
                     $("#div_target_takt_time_timer").TimeCircles().stop();
                     $("#div_actual_time_timer").TimeCircles().stop();
                     $("#div_takt_time_timer").TimeCircles().restart();
                     $("#div_takt_time_timer").TimeCircles().stop();
+
+                    //downtime
+                    $("#slc_downtime_type").prop("disabled", true);
                     $("#btn_start_downtime").prop("disabled", true);
+
+                    $('#div_card_takt_time').LoadingOverlay('hide');
                 }
             }
         });
     };
 
     this_checksheet.DowntimeTimerAction = (status) => {
+
         let downtime_running_time = $("#txt_downtime_running_time").text();
         let downtime_type = $("#slc_downtime_type").val();
 
-        Swal.fire(
-            $.extend(swal_options, {
-                title: "Are you sure?",
-            })
-        ).then((result) => {
-            if (result.value) {
-                if (status === "start_downtime") {
-                    if (downtime_type === null) {
-                        $("#span_error_downtime_type").text("Select type");
-                    } else {
-                        CHECKSHEET.DowntimeStart(downtime_running_time, downtime_type);
-                    }
-                } else {
-                    CHECKSHEET.DowntimeFinish(downtime_running_time, downtime_type);
+        if (downtime_type === null) {
+            $("#span_error_downtime_type").remove();
+            $("#slc_downtime_type").before('<span id ="span_error_downtime_type" class="span-error">Required</span>');
+        } else {
+
+            $("#span_error_downtime_type").remove();
+            if (status === 'start_downtime') {
+                var text = 'start';
+            } else {
+                text = 'stop';
+            }
+            Swal.fire(
+                $.extend(swal_options, {
+                    title: `Are you sure you want to ${text} downtime?`,
+                })
+            ).then((result) => {
+                if (result.value) {
+                    CHECKSHEET.Downtime(text, downtime_type);
                 }
+            });
+        }
+    };
+
+    this_checksheet.LoadDowntime = () => {
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+
+        $.ajax({
+            url: `load-down-time`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                trial_checksheet_id: trial_checksheet_id,
+            },
+            success: data => {
+                $('#tbody_tbl_downtime').empty();
+
+                // sum ng downtime
+                let sum_downtime = 0;
+                data.data.forEach((value) => {
+                    sum_downtime += parseFloat(value.total_down_time);
+                });
+
+                let tbody = '';
+                data.data.forEach((value) => {
+
+                    tbody += `<tr>
+                        <td>${value.type}</td>
+                        <td>${value.start_time}</td>
+                        <td>${value.down_time}</td>
+                        <td>${value.total_down_time}</td>
+                    </tr>`;
+
+                });
+                $('#tbody_tbl_downtime').html(tbody);
+                $('#td_total_downtime').html(sum_downtime);
             }
         });
     };
 
-    this_checksheet.DowntimeStart = (downtime_running_time, downtime_type) => {
-        $("#div_downtime_timer").TimeCircles().start();
-        $("#btn_finish_downtime").prop("disabled", false);
-        $("#btn_start_downtime").prop("disabled", true);
-        $("#span_error_downtime_type").text("");
-        $("#slc_downtime_type").val(null);
-        $("#slc_downtime_type").prop("disabled", true);
-        let tr = "";
-        tr += `<tr>
-            <td>${downtime_type}</td>
-            <td id="td_downtime_start_time${downtime_count}">${downtime_running_time}</td>
-            <td id="td_downtime_end_time${downtime_count}"></td>
-            <td id="td_downtime${downtime_count}"></td>
-        </tr>`;
-        $("#tbody_tbl_downtime_code").append(tr);
-        $("#div_takt_time_timer").TimeCircles().stop();
-    };
+    this_checksheet.Downtime = (status, downtime_type) => {
 
-    this_checksheet.DowntimeFinish = (downtime_running_time) => {
-        $("#div_downtime_timer").TimeCircles().restart();
-        $("#div_downtime_timer").TimeCircles().stop();
-        $("#btn_finish_downtime").prop("disabled", true);
-        $("#btn_start_downtime").prop("disabled", false);
-        $("#slc_downtime_type").prop("disabled", false);
-        $(`#td_downtime_end_time${downtime_count}`).html(downtime_running_time);
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
 
-        // start time and end time column calculation
-        let downtime_start_time = $(
-            `#td_downtime_start_time${downtime_count}`
-        ).html();
-        let converted_downtime_start_time = CONVERSION.ConvertTimeToSeconds(downtime_start_time);
-        let converted_downtime_end_time = CONVERSION.ConvertTimeToSeconds(downtime_running_time);
-        //downtime column calculation
-        let downtime_difference = converted_downtime_end_time - converted_downtime_start_time;
-        let converted_downtime_difference = CONVERSION.ConvertSecondsToTime(downtime_difference);
+        if (status === 'start') {
 
-        $(`#td_downtime${downtime_count}`).html(converted_downtime_difference);
-        if (downtime_count === 1) {
-            $("#td_total_downtime").html(converted_downtime_difference);
+            $("#div_downtime_timer").TimeCircles().start();
+            $("#btn_finish_downtime").prop("disabled", false);
+            $("#btn_start_downtime").prop("disabled", true);
+            $("#span_error_downtime_type").prop("disabled", true);
+            $("#slc_downtime_type").prop("disabled", true);
+            $("#btn_stop_time").prop("disabled", true);
+
+            var total_down_time = null;
         } else {
-            total_downtime = $("#td_total_downtime").html();
-            // total down time column calculation
-            converted_downtime_difference = CONVERSION.ConvertTimeToSeconds(converted_downtime_difference);
-            converted_total_downtime = CONVERSION.ConvertTimeToSeconds(total_downtime);
-            sum_total_downtime = CONVERSION.ConvertSecondsToTime(converted_total_downtime + converted_downtime_difference);
+            let downtime = $("#div_downtime_timer").TimeCircles().getTime();
+            let absolute_value_downtime = Math.abs(Math.floor(downtime));
+            total_down_time = (absolute_value_downtime / 60).toFixed(2);
 
-            total_downtime = $("#td_total_downtime").html(sum_total_downtime);
+            $("#div_downtime_timer").TimeCircles().restart();
+            $("#div_downtime_timer").TimeCircles().stop();
+            $("#btn_finish_downtime").prop("disabled", true);
+            $("#btn_start_downtime").prop("disabled", false);
+            $("#btn_stop_time").prop("disabled", false);
+            $("#slc_downtime_type").prop("disabled", false);
+            $("#span_error_downtime_type").prop("disabled", false);
+            $("#slc_downtime_type").val(null);
+            $("#div_takt_time_timer").TimeCircles().start();
         }
-        $("#div_takt_time_timer").TimeCircles().start();
-        downtime_count++;
+
+        $.ajax({
+            url: `downtime`,
+            type: 'post',
+            dataType: 'json',
+            cache: false,
+            data: {
+                _token: _TOKEN,
+                trial_checksheet_id: trial_checksheet_id,
+                type: downtime_type,
+                total_down_time: total_down_time,
+            },
+            success: result => {
+                CHECKSHEET.LoadDowntime();
+            }
+        });
+
+        $("#div_takt_time_timer").TimeCircles().stop();
     };
 
     this_checksheet.AttachFile = () => {
