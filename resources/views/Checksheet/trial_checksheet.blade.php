@@ -94,7 +94,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.LoadDetails();"><strong
+                                                    <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.ValidateLoadDetails();"><strong
                                                         style="font-size: 20px;"><i class="ti-search"></i> SEARCH</strong></button>
                                                 </div>
                                             </div>
@@ -133,7 +133,7 @@
                                                                         <h5 class="header-title"><i
                                                                                 class="ti-timer"></i>
                                                                             ACTUAL TIME</h5>
-                                                                        <div id="div_actual_time_timer" data-timer="0"
+                                                                        <div id="div_actual_time_timer"
                                                                             style="width: 390px;" align="center">
                                                                         </div>
                                                                     </div>
