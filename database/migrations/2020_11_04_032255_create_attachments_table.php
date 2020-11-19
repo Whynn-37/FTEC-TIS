@@ -16,7 +16,8 @@ class CreateAttachmentsTable extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trial_checksheet_id');
-            $table->string('attachment');
+            $table->string('file_folder');
+            $table->string('file_name');
             $table->timestamps();
             $table->foreign('trial_checksheet_id')->references('id')->on('trial_checksheets');
         });

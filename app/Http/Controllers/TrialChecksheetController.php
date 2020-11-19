@@ -94,7 +94,7 @@ class TrialChecksheetController extends Controller
         $request->revision_number != null || 
         $request->trial_number != null) 
         {
-            $message = 'uuhm uuhmm';
+            $message = 'Successfully Load';
             $status = 'Success';
 
             $data = [
@@ -157,7 +157,10 @@ class TrialChecksheetController extends Controller
     }
 
    
-    public function storeIgm (UploadController $upload,ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
+    public function storeIgm (UploadController $upload, 
+                                ChecksheetItem $checksheet_item,
+                                ChecksheetData $checksheet_data, 
+                                Request $request)
     {
         $part_number = $request->part_number;
         $revision_number   = $request->revision_number;
@@ -220,7 +223,7 @@ class TrialChecksheetController extends Controller
                 }
             }
 
-            $checksheet_item_result =  $checksheet_item->storeChecksheetItem($checksheet_items);
+            $checksheet_item_result =  $checksheet_item->storeChecksheetItems($checksheet_items);
 
             for($i=0; $i< count($checksheet_item_result);$i++)
             {   
@@ -231,7 +234,7 @@ class TrialChecksheetController extends Controller
                     'updated_at'            => now()
                 ];
             }
-            $checksheet_data_result =  $checksheet_data->storeChecksheetData($checksheet_datas);
+            $checksheet_data_result =  $checksheet_data->storeChecksheetDatas($checksheet_datas);
 
 
             $status = 'Error';
@@ -283,6 +286,7 @@ class TrialChecksheetController extends Controller
                 ]
             ];
     }
+<<<<<<< HEAD
 
     public function storeItems(ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
     {
@@ -434,5 +438,7 @@ class TrialChecksheetController extends Controller
             'data' => $result,
         ];
     }
+=======
+>>>>>>> local
     
 }

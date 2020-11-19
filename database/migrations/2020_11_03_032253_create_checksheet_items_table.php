@@ -22,10 +22,10 @@ class CreateChecksheetItemsTable extends Migration
             $table->string('specification')->nullable();
             $table->string('upper_limit')->nullable();
             $table->string('lower_limit')->nullable();
-            $table->integer('judgment')->nullable();
-            $table->integer('item_type')->nullable();
-            $table->integer('remarks')->nullable();
-            $table->integer('hinsei')->nullable();
+            $table->string('judgment')->nullable();
+            $table->integer('item_type')->nullable(); // 1 igm // 0 manual
+            $table->string('remarks')->nullable();
+            $table->string('hinsei')->nullable();
             $table->timestamps();
             $table->foreign('trial_checksheet_id')->references('id')->on('trial_checksheets');
         });
