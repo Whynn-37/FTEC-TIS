@@ -30,14 +30,7 @@ Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
-<<<<<<< HEAD
-Route::post('store-items','TrialChecksheetController@storeItems');
-Route::delete('delete-item','TrialChecksheetController@deleteItem');
-Route::post('store-datas','TrialChecksheetController@storeDatas');
-Route::delete('delete-datas','TrialChecksheetController@deleteDatas');
-Route::get('load-inspection-finished','TrialChecksheetController@loadFinishedInspection');
-=======
->>>>>>> local
+
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
@@ -61,3 +54,4 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
+Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');

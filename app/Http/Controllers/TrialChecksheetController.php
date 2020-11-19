@@ -167,24 +167,24 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id = $request->trial_checksheet_id;
 
         $filename =$part_number.'_'.$revision_number;
-        $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+        // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
 
-        $igm_files = scandir($path);
+        // $igm_files = scandir($path);
 
-        //filtering of igm file
-        for ($i=0; $i < count($igm_files); $i++) 
-        { 
-           if(strpos($igm_files[$i],$filename) !== false)
-           {
-              $filtered_igm [] = $igm_files[$i];
-           }
-        }
+        // //filtering of igm file
+        // for ($i=0; $i < count($igm_files); $i++) 
+        // { 
+        //    if(strpos($igm_files[$i],$filename) !== false)
+        //    {
+        //       $filtered_igm [] = $igm_files[$i];
+        //    }
+        // }
          
-        $igm_data =  end($filtered_igm);
+        // $igm_data =  end($filtered_igm);
 
-        $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
+       // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
 
-        // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
+       $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
         $sheet = 0;
 
         if(file_exists($file))

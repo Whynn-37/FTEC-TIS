@@ -48,9 +48,9 @@ class TrialChecksheet extends Model
     }
     public function loadFinishedInspection()
     {
-        return TrialChecksheet::join('takt_times', 'takt_times.trial_checksheet_id','=','trial_checksheets.id')
-        ->where('takt_times.date_finished', '!=', null)
-        ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','trial_checksheets.judgement','takt_times.date_finished')
+        return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
+        ->where('approvals.decision', '=', 1)
+        ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','trial_checksheets.judgment','trial_checksheets.date_finished')
         ->get();
     }
 }
