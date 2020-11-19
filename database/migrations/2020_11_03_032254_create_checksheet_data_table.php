@@ -19,9 +19,9 @@ class CreateChecksheetDataTable extends Migration
             $table->integer('sub_number')->nullable();
             $table->string('coordinates')->nullable();
             $table->text('data')->nullable();
-            $table->integer('judgment')->nullable();
+            $table->string('judgment')->nullable();
             $table->string('remarks')->nullable();
-            $table->integer('hinsei')->nullable();
+            $table->string('hinsei')->nullable();
             $table->timestamps();
             $table->foreign('checksheet_item_id')->references('id')->on('checksheet_items');
         });

@@ -30,12 +30,14 @@ Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
-Route::post('store-items','TrialChecksheetController@storeItems');
-Route::delete('delete-item','TrialChecksheetController@deleteItem');
-Route::post('store-datas','TrialChecksheetController@storeDatas');
-Route::delete('delete-datas','TrialChecksheetController@deleteDatas');
-Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
 
+// CHecksheet Item
+Route::post('store-items','ChecksheetItemController@storeItems');
+Route::delete('delete-item','ChecksheetItemController@deleteItem');
+
+// Checksheet Data
+Route::post('store-datas','ChecksheetDataController@storeDatas');
+Route::delete('delete-datas','ChecksheetDataController@deleteDatas');
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
@@ -44,7 +46,6 @@ Route::post('store-supplier', 'SupplierController@storeSupplier');
 Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
 Route::patch('stop-cycle-time', 'TaktTimeController@stopCycleTime');
-// Route::get('store-supplier', 'SupplierController@storeSupplier');
 
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');
