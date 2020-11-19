@@ -18,8 +18,8 @@ class CreateDownTimesTable extends Migration
             $table->unsignedBigInteger('trial_checksheet_id');
             $table->string('type');
             $table->string('start_time');
-            $table->string('down_time');
-            $table->string('total_down_time');
+            $table->string('down_time')->nullable();
+            $table->string('total_down_time')->nullable();
             $table->timestamps();
             $table->foreign('trial_checksheet_id')->references('id')->on('trial_checksheets');
         });

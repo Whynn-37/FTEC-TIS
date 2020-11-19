@@ -12,6 +12,8 @@ use App\TaktTime;
 use App\DownTime;
 use App\Http\Controllers\UploadController;
 use DB;
+use App\Approval;
+use App\Attachment;
 
 class TrialChecksheetController extends Controller
 {
@@ -286,5 +288,82 @@ class TrialChecksheetController extends Controller
                 ]
             ];
     }
-    
+
+    public function finishedChecksheet(TrialChecksheet $trial_checksheet,Approval $approval,Attachment $attachment,Request $request)
+    {
+        $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
+
+        $requestKeys = collect($request->except('trial_checksheet_id',
+                                                'date_inspected',
+                                                'temperature',
+                                                'humidity',
+                                                'judgment',
+                                                'part_number',
+                                                'revision_number'))->keys();
+
+        $trial_checksheet_id = $request->trial_checksheet_id;
+        $date_inspected      = $request->date_inspected;
+        $temperature         = $request->temperature;
+        $humidity            = $request->humidity;
+        $judgment            = $request->judgment;
+        $part_number         = $request->part_number;
+        $revision_number     = $request->revision_number;
+
+       $folder_name = date('Y-m-d').'_'.$part_number.'_'.$revision_number;
+
+       $status  = 'Error';
+       $message = 'Failed to Saved Please contact Jed Relator, Puge mo eh !!';
+
+       if($requestKeys !== null)
+       {
+            for($i=0; $i < count($requestKeys); $i++)
+            {
+                $files []       = $file_names[$i].'.'.request()->file($file_names[$i])->getClientOriginalExtension();
+
+                $file_upload [] = request()->file($file_names[$i])->storeAs($folder_name,$files[$i],'public');
+            }
+
+            $trial_checksheet_data = 
+                [
+                    'date_finished'    => now(),
+                    'judgment'         => $judgment,
+                    'date_inspected'   => $date_inspected,
+                    'temperature'      => $temperature,
+                    'humidity'         => $humidity,
+                ];
+
+            $trial_checksheet_result =  $trial_checksheet->updateTrialChecksheet($trial_checksheet_id,$trial_checksheet_data);
+
+            $approval_data =
+                [
+                    'trial_checksheet_id'      => $trial_checksheet_id,
+                    'decision'                 => 1
+                ];
+
+            $approval_result =  $approval->storeApproval($approval_data);
+
+            $attachment_data =
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'file_folder'           => $folder_name,
+                    'file_name'             => implode(',',$files)
+                ];
+
+            $attachment_result =  $attachment->storeAttachments($attachment_data);
+
+            $status  = 'Success';
+            $message = 'Successfully Saved';
+       }
+
+       return [
+        'status'    => $status,
+        'message'   => $message,
+        'result'    => 
+           [
+            'trial_result'      => $trial_checksheet_result,
+            'approval_result'   => $approval_result,
+            'attachment_result' => $attachment_result
+           ]    
+        ];
+    }
 }

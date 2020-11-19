@@ -8,7 +8,7 @@ use DB;
 class TrialChecksheet extends Model
 {
 
-    protected $fillable = ['part_number','revision_number','trial_number'];
+    protected $guarded = [];
 
     public function checksheet_items()
     {
@@ -45,6 +45,11 @@ class TrialChecksheet extends Model
         ->where('trial_checksheets.id', $id)
         ->select(['trial_checksheets.*','trial_ledgers.*'])
         ->get();
+    }
+
+    public function updateTrialChecksheet($id,$data)
+    {
+        return TrialChecksheet::find($id)->update($data);
     }
     
 }

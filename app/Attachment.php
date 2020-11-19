@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
 {
-    //
+    protected $guarded = [];
+
+    public function storeAttachments($data)
+    {
+        return Attachment::create($data);
+    }
 }

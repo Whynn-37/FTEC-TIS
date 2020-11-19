@@ -16,14 +16,14 @@ class CreateApprovalsTable extends Migration
         Schema::create('approvals', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trial_checksheet_id');
-            $table->string('evaluated_by');
-            $table->string('evaluated_datetime');
-            $table->string('approved_by');
-            $table->string('approved_datetime');
-            $table->string('disapproved_by');
-            $table->string('disapproved_datetime');
+            $table->string('evaluated_by')->nullable();
+            $table->string('evaluated_datetime')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->string('approved_datetime')->nullable();
+            $table->string('disapproved_by')->nullable();
+            $table->string('disapproved_datetime')->nullable();
             $table->integer('decision');
-            $table->text('reason');
+            $table->text('reason')->nullable();
             $table->timestamps();
             $table->foreign('trial_checksheet_id')->references('id')->on('trial_checksheets');
         });

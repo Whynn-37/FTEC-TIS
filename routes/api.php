@@ -30,6 +30,8 @@ Route::get('load-trial-stage', 'TrialChecksheetController@loadTrialStage');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
+Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
+
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
@@ -53,3 +55,4 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
+
