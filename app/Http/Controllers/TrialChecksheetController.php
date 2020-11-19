@@ -94,7 +94,7 @@ class TrialChecksheetController extends Controller
         $request->revision_number != null || 
         $request->trial_number != null) 
         {
-            $message = 'uuhm uuhmm';
+            $message = 'Successfully Load';
             $status = 'Success';
 
             $data = [
@@ -157,7 +157,10 @@ class TrialChecksheetController extends Controller
     }
 
    
-    public function storeIgm (UploadController $upload,ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
+    public function storeIgm (UploadController $upload, 
+                                ChecksheetItem $checksheet_item,
+                                ChecksheetData $checksheet_data, 
+                                Request $request)
     {
         $part_number = $request->part_number;
         $revision_number   = $request->revision_number;
@@ -282,136 +285,6 @@ class TrialChecksheetController extends Controller
                     'datas' => $checksheet_datas,
                 ]
             ];
-    }
-
-    public function storeItems(ChecksheetItem $checksheet_item,ChecksheetData $checksheet_data,Request $request)
-    {
-        $trial_checksheet_id = $request->trial_checksheet_id;
-        $item_number         = $request->item_number;
-        $tools               = $request->tools;
-        $type                = $request->type;
-        $specification       = $request->specification;
-        $upper_limit         = $request->upper_limit;
-        $lower_limit         = $request->lower_limit;
-        $sub_number          = $request->sub_number;
-
-        $checksheet_items = [
-            'trial_checksheet_id'   => $trial_checksheet_id,
-            'item_number'           => $item_number,
-            'tools'                 => $tools,
-            'type'                  => $type,
-            'specification'         => $specification,
-            'upper_limit'           => $upper_limit,
-            'lower_limit'           => $lower_limit,
-            'item_type'             => 0,
-            'created_at'            => now(),
-            'updated_at'            => now()
-        ];
-
-        $checksheet_item_result =  $checksheet_item->updateOrCreateChecksheetItem($checksheet_items);
-        
-        $checksheet_datas = [
-            'checksheet_item_id'    => $checksheet_item_result->id,
-            'sub_number'            => 1,
-            'coordinates'           => null,
-            'data'                  => null,
-            'judgment'              => null,
-            'remarks'               => null,
-            'hinsei'                => null,
-        ];
-        
-        $checksheet_data_result =  $checksheet_data->updateOrCreateChecksheetData($checksheet_datas);
-
-        $status = 'Error';
-        $message = 'Not Successfully Save';
-
-        if ($checksheet_item_result && $checksheet_data_result)
-        {
-            $status = 'Success';
-            $message = 'Successfully Save';
-        }
-
-        return [
-            'status' => $status,
-            'message' => $message,
-            'data' => [
-                'checksheet_item_id' => $checksheet_item_result->id,
-                'checksheet_data_id' => $checksheet_data_result->id
-            ]
-        ];
-    }
-
-    public function deleteItem(ChecksheetItem $checksheet_item, Request $request)
-    {
-        $id = $request->id;
-
-        $result = $checksheet_item->deleteItem($id);
-
-        $status = 'Error';
-        $message = 'no data';
-
-        if ($result)
-        {
-            $status = 'Success';
-            $message = 'Successfully Deleted';
-        }
-
-        return [
-            'status' => $status,
-            'message' => $message,
-        ];
-    }
-
-    public function storeDatas(ChecksheetData $checksheet_data,Request $request)
-    {
-        $checksheet_item_id = $request->checksheet_item_id;
-        $sub_number         = $request->sub_number;
-
-        $status = 'Error';
-        $message = 'no data';
-
-        if ($checksheet_item_id !== null && $sub_number !== null)
-        {
-            $data = [
-                'checksheet_item_id' => $checksheet_item_id,
-                'sub_number'         => $sub_number,
-                'coordinates'        => null,
-                'data'               => null,
-                'judgment'           => null,
-                'remarks'            => null,
-                'hinsei'             => null
-            ];
-    
-            $result =  $checksheet_data->updateOrCreateChecksheetData($data);
-
-            $status = 'Success';
-            $message = 'Successfully Saved';
-        }
-
-        return [
-            'status' => $status,
-            'message' => $message,
-            'data'  => $result->id
-        ];
-    }
-
-    public function deleteDatas(ChecksheetData $checksheet_data,Request $request)
-    {
-        $id = $request->id;
-
-        $status = 'Error';
-        $message = 'no data';
-
-        if($id !== null)
-        {
-            $result =  $checksheet_data->deleteDatas($id);
-
-            return [
-                'status' => 'Success' ,
-                'message' => 'Successfully Deleted' ,
-                'data'    => $result
-             ];
-        }
     }
     
 }

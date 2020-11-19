@@ -23,7 +23,7 @@ class CreateChecksheetItemsTable extends Migration
             $table->string('upper_limit')->nullable();
             $table->string('lower_limit')->nullable();
             $table->integer('judgment')->nullable();
-            $table->integer('item_type')->nullable();
+            $table->integer('item_type')->nullable(); // 1 igm // 0 manual
             $table->integer('remarks')->nullable();
             $table->integer('hinsei')->nullable();
             $table->timestamps();

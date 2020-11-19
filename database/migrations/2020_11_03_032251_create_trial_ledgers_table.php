@@ -25,7 +25,7 @@ class CreateTrialLedgersTable extends Migration
             $table->string('model_name')->nullable();
             $table->string('delivery_date')->nullable();
             $table->string('judgment')->nullable();
-            $table->integer('trial_number');
+            $table->string('trial_number');
             $table->string('inspection_actual_time')->nullable();
             $table->string('inspection_required_time')->nullable();
             $table->string('plan_start_date')->nullable();

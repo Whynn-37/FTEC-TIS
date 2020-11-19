@@ -18,7 +18,6 @@ class CreateTaktTimesTable extends Migration
             $table->unsignedBigInteger('trial_checksheet_id');
             $table->string('start_date');
             $table->string('start_time');
-            $table->string('date_finished')->nullable();
             $table->string('end_time')->nullable();
             $table->string('actual_time')->nullable();
             $table->string('total_takt_time')->nullable();

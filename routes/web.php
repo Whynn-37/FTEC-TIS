@@ -45,6 +45,13 @@ Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::get('store-igm', 'TrialChecksheetController@storeIgm');
 
+//CHecksheet Item
+Route::post('store-items','ChecksheetItemController@storeItems');
+Route::delete('delete-item','ChecksheetItemController@deleteItem');
+
+//Checksheet Data
+Route::post('store-datas','ChecksheetDataController@storeDatas');
+Route::delete('delete-datas','ChecksheetDataController@deleteDatas');
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
@@ -57,4 +64,7 @@ Route::patch('stop-cycle-time', 'TaktTimeController@stopCycleTime');
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');
 Route::post('downtime', 'DownTimeController@startDownTime');
+
+//approval
+Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
 
