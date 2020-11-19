@@ -11,7 +11,7 @@ const IGM = (() => {
     let this_igm = {};
 
     let array_item_tools = ['BF', 'BG', 'BM', 'CM', 'CMM', 'CS', 'DC', 'DG', 'DI', 'DM', 'DPG', 'DSM', 'EG', 'GB', 'GM', 'GT', 'HG', 'HS', 'HT', 'IR', 'JIG', 'K', 'LS', 'MJ', 'MM', 'MP', 'PG', 'PJ', 'PLG', 'PM', 'PPS', 'PR', 'PS', 'RG', 'RHT', 'RT', 'RW', 'SDC', 'SF', 'SG', 'SR', 'ST', 'TD', 'TG', 'TI', 'TM', 'VAM', 'VHT', 'VSL'];
-    let array_item_type = ['A', 'BF', 'G', 'MC', 'MM', 'MMF', 'MT', 'PF', 'RA'];
+    let array_item_type = ['Actual', 'Belt Fit', 'Gauge', 'Material Check', 'Min and Max', 'Min and Max and Form Tolerance', 'Material Thickness', 'Press Fit', 'Rivet A'];
     let array_overall_judgement = [];
 
     this_igm.ValidateLoadIGM = () => {
@@ -32,6 +32,7 @@ const IGM = (() => {
     };
 
     this_igm.StoreIGM = () => {
+        $('#accordion_igm').LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
         let part_number = $('#slc_part_number').val();
@@ -55,7 +56,6 @@ const IGM = (() => {
     };
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
-
         $.ajax({
             url: `load-igm`,
             type: 'get',
@@ -65,11 +65,88 @@ const IGM = (() => {
                 trial_checksheet_id: trial_checksheet_id,
             },
             success: data => {
-                
+                $('#btn_validate_load_igm').prop('hidden', true);
+                $('#tbl_igm').prop('hidden', false);
+                $('#tbody_tbl_igm').prop('hidden', false);
+                $('#tfoot_add_igm_item').prop('hidden', false);
+
+                //pagkuha ng checksheet items
+                IGM.GetChecksheetItems(data);
+
+                //pagkuha ng checksheet datas
+                data.data.datas.forEach((value) => {
+                    IGM.SelectItemType(value.id, 1,'th_new_igm_sub_column_dark');
+                });
+                $('#accordion_igm').LoadingOverlay('hide');
             }
         });
     };
 
+    this_igm.GetChecksheetItems = (data) => {
+
+        let array_item_tools_options = '';
+        let array_item_type_options = '';
+        let tr_new_item = '';
+        let item_no_count = 1;
+
+        for (let index = 0; index < array_item_tools.length; index++) {
+            array_item_tools_options += `<option value="${array_item_tools[index]}"></option>`;
+        }
+
+        for (let index = 0; index < array_item_type.length; index++) {
+            array_item_type_options += `<option value="${array_item_type[index]}">${array_item_type[index]}</option>`;
+        }
+        //pagkuha ng items
+        data.data.items.forEach((value) => {
+            tr_new_item += `${IGM.AddIgmItemNoHeader(value.id,'bg-dark')}
+            <tr id="tr_item_no_${value.id}">
+            <input type="text" id="item_id_${value.id}" >
+                <td>
+                    <div class="dropright">
+                        <span id="span_item_no_${value.id}_label">${item_no_count}</span>
+                        <button id="btn_validate_sub_no_count_${value.id}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.id});"></button>
+                        <div class="dropdown-menu">
+                            <a id="a_add_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.id},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
+                            <a id="a_add_igm_item_no_${value.id}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.id},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
+                            <a id="a_remove_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.id});"><i class="ti-close"></i> REMOVE</a>
+                        </div>
+                    </div>
+                </td> 
+                <td>
+                    <input list="item_tools_list" id="slc_item_no_${value.id}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
+                    <datalist id="item_tools_list">
+                        ${array_item_tools_options}
+                    </datalist>
+                <td>
+                    <select id="slc_item_no_${value.id}_type" class="form-control" onchange="IGM.SelectItemType(${value.id},1);">
+                        <option value=""selected disabled>Select type</option>
+                        ${array_item_type_options}
+                    </select>
+                </td>
+                <td>
+                    <input id="txt_item_no_${value.id}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
+                </td>
+                <td>
+                    <input id="txt_item_no_${value.id}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+                </td>
+                <td>
+                    <input id="txt_item_no_${value.id}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+                </td>
+                <td id="td_item_no_${value.id}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
+            </tr>`;
+            item_no_count++;
+        });
+
+        //pag didisplay ng datatable
+        $('#tbody_tbl_igm').html(tr_new_item);
+
+        //pag fill ng data sa inputs
+        data.data.items.forEach((value) => {
+            $(`#slc_item_no_${value.id}_tools`).val(value.tools);
+            $(`#slc_item_no_${value.id}_type`).val(value.type);
+        });
+    };
+    // PARA SA MANUAL NA PAG AADD
     this_igm.AddIgmItemNo = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
 
         if ($('#tbl_new_igm').is(':hidden')) {
@@ -103,7 +180,7 @@ const IGM = (() => {
                 // PAGKA MAY EXISTING SUB ITEM, HINDI PA TAPOS TO.
                 if (previous_item_no === item_no_count) {
                     item_no_count++;
-                    if (type === 'MM' || type === 'MMF') {
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                         tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
                         $(`#tr_item_no_${previous_item_no}_sub_no_max_${existing_sub_no_count}`).after(tr_new_item);
                     } else {
@@ -115,7 +192,7 @@ const IGM = (() => {
                 } else {
                     item_no_count++;
                     IGM.AddIgmItemNoInputsBetweenChangeId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
-                    if (type === 'MM' || type === 'MMF') {
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                         tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
                         $(`#tr_item_no_${previous_item_no}_sub_no_max_${existing_sub_no_count}`).after(tr_new_item);
                     } else {
@@ -129,24 +206,24 @@ const IGM = (() => {
         }
     };
 
-    this_igm.AddIgmItemNoHeader = (previous_item_no) => {
+    this_igm.AddIgmItemNoHeader = (previous_item_no, bg_header = "th_new_igm_sub_column") => {
         let item_no_holder = parseInt(previous_item_no) + 1;
 
         let tr_new_item_header = `
-        <tr class="text-white" id="tr_item_no_${item_no_holder}_column">
-            <th class="th_new_igm_sub_column">ITEM NO</th>
-            <th class="th_new_igm_sub_column">TOOLS</th>
-            <th class="th_new_igm_sub_column">TYPE</th>
-            <th class="th_new_igm_sub_column">SPECS</th>
-            <th class="th_new_igm_sub_column">UPPER LIMIT</th>
-            <th class="th_new_igm_sub_column">LOWER LIMIT</th>
-            <th class="th_new_igm_sub_column">JUDGEMENT</th>
-            <th class="th_new_igm_sub_column" id="th_igm_item_no_${item_no_holder}_extra_column" colspan="7" hidden></th>
+        <tr class="text-white ${bg_header}" id="tr_item_no_${item_no_holder}_column">
+            <th>ITEM NO</th>
+            <th>TOOLS</th>
+            <th>TYPE</th>
+            <th>SPECS</th>
+            <th>UPPER LIMIT</th>
+            <th>LOWER LIMIT</th>
+            <th>JUDGEMENT</th>
+            <th id="th_igm_item_no_${item_no_holder}_extra_column" colspan="7" hidden></th>
         </tr>`;
         return tr_new_item_header;
     };
 
-    this_igm.AddIgmItemNoInputs = (type, tr_new_item_header, previous_item_no, new_item_no_count_holder, existing_sub_no_count) => {
+    this_igm.AddIgmItemNoInputs = (type, tr_new_item_header, previous_item_no) => {
         // NOTE IGM.AddIgmItemNo('MC',${item_no_holder},0,0);
         //(type, current_item_no, sub item count, added item no in between count)
         let array_item_tools_options = '';
@@ -209,10 +286,10 @@ const IGM = (() => {
 
     };
 
-    this_igm.SelectItemType = (item_no, existing_sub_no_count) => {
+    this_igm.SelectItemType = (item_no, existing_sub_no_count,bg_header="th_new_igm_sub_column") => {
         let type = $(`#slc_item_no_${item_no}_type`).val();
 
-        if (type === 'MM' || type === 'MMF') {
+        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
             $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
             $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', false);
             $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', false);
@@ -223,7 +300,7 @@ const IGM = (() => {
         }
 
         if (existing_sub_no_count === 1) {
-            if (type === 'MM' || type === 'MMF') {
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                 $(`#tr_item_no_${item_no}_sub_no_column`).remove();
                 $(`#tr_item_no_${item_no}_sub_no_1`).remove();
                 $(`#tr_item_no_${item_no}_sub_no_1`).remove();
@@ -236,13 +313,13 @@ const IGM = (() => {
 
             $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},0);`)
 
-            IGM.AddIgmSubNo(`${type}`, item_no, 0, 0);
+            IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header);
             $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
             $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
             $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
             $(`#a_add_igm_item_no_${item_no}_sub_no`).prop('hidden', false);
         } else {
-            IGM.AddIgmSubNo(`${type}`, item_no, 0, 0);
+            IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header);
             $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
             $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
             $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
@@ -405,7 +482,7 @@ const IGM = (() => {
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).text(`${remove_sub_no_count}`);
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).attr('id', `span_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_label_1`);
 
-                if (item_no_existing_sub_no_type === 'MM' || type === 'MMF') {
+                if (item_no_existing_sub_no_type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
 
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
                     //coordinates
@@ -467,7 +544,7 @@ const IGM = (() => {
 
                     $(`#span_item_no_${a_count}_sub_no_${b_count}_label_1`).attr('id', `span_item_no_${a_count}_sub_no_${b_count}_label`);
 
-                    if (item_no_existing_sub_no_type === 'MM' || item_no_existing_sub_no_type === 'MMF') {
+                    if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') {
                         $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
                         //coordinates
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
@@ -604,7 +681,10 @@ const IGM = (() => {
                     $(`#a_remove_igm_item_no_${next_item_no_holder}`).attr('id', `a_remove_igm_item_no_${item_no_holder}`)
                     //inputs
                     $(`#slc_item_no_${next_item_no_holder}_tools`).attr('id', `slc_item_no_${item_no_holder}_tools`);
+
                     $(`#slc_item_no_${next_item_no_holder}_type`).attr('id', `slc_item_no_${item_no_holder}_type`);
+                    $(`#slc_item_no_${item_no_holder}_type`).attr('onchange', `IGM.SelectItemType(3,${existing_sub_no_count_value})`);
+
                     $(`#txt_item_no_${next_item_no_holder}_specs`).attr('id', `txt_item_no_${item_no_holder}_specs`);
                     $(`#txt_item_no_${next_item_no_holder}_upper_limit`).attr('id', `txt_item_no_${item_no_holder}_upper_limit`);
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
@@ -613,8 +693,6 @@ const IGM = (() => {
                     if (existing_sub_no_count_value > 0) {
                         IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
                         if (count === new_item_no_count) {
-                            item_no_count--;
-                            new_item_no_count--;
                             IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
                         }
                     }
@@ -622,9 +700,11 @@ const IGM = (() => {
                 }
             }
         }
+        item_no_count--;
+        new_item_no_count--;
     };
 
-    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count) => {
+    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count,bg_header) => {
         let tr = '';
         let tr_sub_no_column = '';
         let rowspan = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
@@ -641,21 +721,15 @@ const IGM = (() => {
 
             let next_number = parseInt(sub_no_count) + 1;
 
-            if (type === 'MM' || type === 'MMF') {
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                 var rowspan_count = 3;
 
             } else {
                 rowspan_count = 2;
             }
 
-            tr_sub_no_column += `
-            <tr id="tr_item_no_${item_no_count}_sub_no_column" >
-                <th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
-                <th class="th_new_igm_sub_column">SUB NO</th>
-                <th class="th_new_igm_sub_column">COORDINATES</th>
-                <th class="th_new_igm_sub_column" colspan="5">DATA</th>
-                <th class="th_new_igm_sub_column">JUDGEMENT</th>
-            </tr>`;
+
+            tr_sub_no_column += IGM.AddIgmSubNoHeader(item_no_count, rowspan_count,bg_header);
 
             tr += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count);
             $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
@@ -679,7 +753,7 @@ const IGM = (() => {
 
             let previous_sub_no = parseInt(existing_sub_no_count_per_item) - 1
             //CHECK KUNG BAKIT MALI YUNG NALALAGYAN NG ROW 10/22/2020
-            if (type === 'MM' || type === 'MMF') {
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                 $(`#tr_item_no_${item_no_count}_sub_no_max_${previous_sub_no}`).after(tr);
                 $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 2);
             } else {
@@ -691,11 +765,23 @@ const IGM = (() => {
         }
     };
 
+    this_igm.AddIgmSubNoHeader = (item_no_count, rowspan_count, bg_header) => {
+        let tr_sub_no_column = `
+        <tr id="tr_item_no_${item_no_count}_sub_no_column" class="${bg_header}">
+            <th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
+            <th>SUB NO</th>
+            <th>COORDINATES</th>
+            <th colspan="5">DATA</th>
+            <th>JUDGEMENT</th>
+        </tr>`;
+        return tr_sub_no_column;
+    };
+
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count) => {
         let tr = '';
         let new_sub_no = existing_sub_no_count_per_item;
 
-        if (type === 'MM' || type === 'MMF') {
+        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
@@ -759,19 +845,19 @@ const IGM = (() => {
                 <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
             </td>
             <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Enter Visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly>
+                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly>
             </td>
             <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Enter Visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly>
+                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly>
             </td>
             <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Enter Visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly>
+                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly>
             </td>
             <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Enter Visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly>
+                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly>
             </td>
             <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Enter Visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly>
+                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly>
             </td>
             <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >N/A</td>
             </tr`;
@@ -801,7 +887,7 @@ const IGM = (() => {
             $(`#td_item_no_${item_no}_judgement`).html('N/A');
 
             $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-            if (type === 'MM' || type === 'MMF') {
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                 $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
                 $(`#tr_item_no_${item_no}_sub_no_max_${sub_no}`).remove();
             } else {
@@ -813,7 +899,7 @@ const IGM = (() => {
 
         } else {
             if (existing_sub_no_count_per_item === sub_no) {
-                if (type === 'MM' || type === 'MMF') {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                     $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
                     $(`#tr_item_no_${item_no}_sub_no_max_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 2);
@@ -829,7 +915,7 @@ const IGM = (() => {
                     $(`#a_remove_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item_holder});`)
                 }
             } else {
-                if (type === 'MM' || type === 'MMF') {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                     $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
                     $(`#tr_item_no_${item_no}_sub_no_max_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 2);
@@ -844,7 +930,7 @@ const IGM = (() => {
 
                 // PARA SA MGA NEXT SUB ITEM NG NIREMOVE NA SUB ITEM
                 for (let count = sub_no; count <= existing_sub_no_count_per_item; count++) {
-                    if (type === 'MM' || type === 'MMF') {
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                         IGM.RemoveSubNoChangeIdMMAndMMF(item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item_holder);
                     } else {
                         IGM.RemoveSubNoChangeIdMC(item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item_holder);

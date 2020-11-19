@@ -3081,6 +3081,11 @@ table.dataTable thead td {
     color: #fff;
 }
 
+.th_new_igm_sub_column_dark {
+    background-color: #353a40;
+    color: #fff;
+}
+
 .td_sub_no_input {
     width: 10%;
 }
