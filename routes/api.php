@@ -33,6 +33,7 @@ Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
 
 
+
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
 Route::delete('delete-item','ChecksheetItemController@deleteItem');
@@ -56,3 +57,4 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
 
+Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
