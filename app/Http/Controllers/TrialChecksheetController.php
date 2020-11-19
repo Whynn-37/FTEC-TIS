@@ -286,5 +286,35 @@ class TrialChecksheetController extends Controller
                 ]
             ];
     }
+
+    public function updateJudgment(ChecksheetItem $checksheet_item, ChecksheetData $checksheet_data, Request $request)
+    {
+        $id                  = $request->id;
+        $sub_number          = $request->sub_number;
+
+        $judgment_items      = $request->judgment_items;
+
+        $coordinates         = $request->coordinates;
+        $data                = $request->data;
+        $judgment_datas      = $request->judgment_datas;
+
+        $items = [
+            'judgment'              => $judgment_items
+        ];
+
+        $datas = [
+            'coordinates' => $coordinates,
+            'data' => $data,
+            'judgment' => $judgment_datas,
+        ];
+
+        $checksheet_item_result = $checksheet_item->updateAutoJudgmentItem($id, $items);
+        $checksheet_data_result = $checksheet_data->updateAutoJudgmentData($id, $sub_number, $datas);
+
+        return [
+            'checksheet_item' => $checksheet_item_result,
+            'checksheet_data' => $checksheet_data_result
+        ];
+    }  
     
 }
