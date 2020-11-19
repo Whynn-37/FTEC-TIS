@@ -37,9 +37,11 @@ class ChecksheetData extends Model
         );
     }
 
-    public function updateAutoJudgmentData($id, $data)
+    public function updateAutoJudgmentData($id, $sub_number, $data)
     {
-        return ChecksheetData::where('checksheet_item_id', $id)->update($data);
+        return ChecksheetData::where('checksheet_item_id', $id)
+        ->where('sub_number', $sub_number)
+        ->update($data);
     }
 
     public function deleteDatas($id)
