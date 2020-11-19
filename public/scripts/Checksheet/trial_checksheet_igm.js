@@ -14,24 +14,60 @@ const IGM = (() => {
     let array_item_type = ['A', 'BF', 'G', 'MC', 'MM', 'MMF', 'MT', 'PF', 'RA'];
     let array_overall_judgement = [];
 
+    this_igm.ValidateLoadIGM = () => {
 
-    this_igm.ViewIgmSubNo = (action) => {
+        Swal.fire(
+            $.extend(swal_options, {
+                title: `Do you want to load IGM?`,
+            })
+        ).then((result) => {
+            if (result.value) {
+                //if yes
+                IGM.StoreIGM();
+            } else {
+                //if no
+                alert(1)
+            }
+        });
+    };
 
-        let get_class = $(`#icon_item_no_${action}`).prop('class');
+    this_igm.StoreIGM = () => {
 
-        if (get_class === 'ti-angle-right') {
-            $(`#icon_item_no_${action}`).removeClass('ti-angle-right');
-            $(`#icon_item_no_${action}`).addClass('ti-angle-down');
-            $(`#tr_sub_no_${action}`).prop('hidden', false);
-            $(`#tr_sub_no_column_${action}`).prop('hidden', false);
-            $(`#th_igm_item_no_extra_column_${action}`).prop('hidden', false);
-        } else {
-            $(`#icon_item_no_${action}`).removeClass('ti-angle-down');
-            $(`#icon_item_no_${action}`).addClass('ti-angle-right');
-            $(`#tr_sub_no_${action}`).prop('hidden', true);
-            $(`#tr_sub_no_column_${action}`).prop('hidden', true);
-            $(`#th_igm_item_no_extra_column_${action}`).prop('hidden', true);
-        }
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let part_number = $('#slc_part_number').val();
+        let revision_number = $('#slc_revision_number').val();
+
+        $.ajax({
+            url: `store-igm`,
+            type: 'post',
+            dataType: 'json',
+            cache: false,
+            data: {
+                _token: _TOKEN,
+                part_number: part_number,
+                revision_number: revision_number,
+                trial_checksheet_id: trial_checksheet_id,
+            },
+            success: data => {
+                IGM.LoadIGM(trial_checksheet_id);
+            }
+        });
+    };
+
+    this_igm.LoadIGM = (trial_checksheet_id) => {
+
+        $.ajax({
+            url: `load-igm`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                trial_checksheet_id: trial_checksheet_id,
+            },
+            success: data => {
+                
+            }
+        });
     };
 
     this_igm.AddIgmItemNo = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {

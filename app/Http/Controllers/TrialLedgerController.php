@@ -30,7 +30,7 @@ class TrialLedgerController extends Controller
                     'supplier_code'                 =>  $data[$i][3], //SUP_CD
                     'part_number'                   =>  $data[$i][4], //PART_DWG_NO
                     'part_name'                     =>  $data[$i][5], //PART_NAME
-                    'revision_number'               =>  intval($data[$i][6]), //PART_VER
+                    'revision_number'               =>  $data[$i][6], //PART_VER
                     'inspection_reason'             =>  $data[$i][7], //INSP_REASON
                     'die_class'                     =>  $data[$i][9], //DIE_CLASS
                     'model_name'                    =>  $data[$i][10], //MODEL

@@ -166,8 +166,10 @@ class TrialChecksheetController extends Controller
         $revision_number   = $request->revision_number;
         $trial_checksheet_id = $request->trial_checksheet_id;
 
-        $filename =$part_number.'_'.$revision_number;
-        $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+        // $filename =$part_number.'_'.$revision_number;
+        $filename =$part_number.'_'.$revision_number.'(00)';
+        // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+        $path ='F:\TIS\\';
 
         $igm_files = scandir($path);
 
@@ -182,7 +184,8 @@ class TrialChecksheetController extends Controller
          
         $igm_data =  end($filtered_igm);
 
-        $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
+        // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
+        $file = 'F:\TIS\\'.$igm_data;
 
         // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
         $sheet = 0;

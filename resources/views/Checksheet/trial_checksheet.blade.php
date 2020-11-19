@@ -160,7 +160,6 @@
                                                                                 <thead class="text-uppercase bg-dark">
                                                                                     <tr class="text-white">
                                                                                         <th>DATE START</th>
-                                                                                        <th>DATE FINISH</th>
                                                                                         <th>START TIME</th>
                                                                                         <th>END TIME</th>
                                                                                         <th>TOTAL TAKT TIME</th>
@@ -178,7 +177,7 @@
                                                                         class="btn btn-success btn-block"
                                                                         id="btn_start_time"
                                                                         onclick="CHECKSHEET.TaktTimeTimerAction('start_takt_time');"
-                                                                        id="btn_start_time">
+                                                                        id="btn_start_time" disabled>
                                                                         <strong class="strong-font">
                                                                             <i class="ti-control-play"></i> START
                                                                         </strong>
@@ -289,7 +288,10 @@
                                     </div>
                                     <div id="accordion_igm" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
-                                            <div class="row">
+                                            <button type="button" class="btn btn-primary btn-block" onclick="IGM.ValidateLoadIGM();"><strong
+                                                style="font-size: 20px;"><i class="ti-reload"></i> CLICK TO LOAD IGM</strong></button>
+                                            {{-- existing --}}
+                                            {{-- <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="single-table">
                                                         <div class="table-responsive">
@@ -338,7 +340,7 @@
                                                                 </tbody>
                                                                 <tfoot id="tfoot_add_igm_item">
                                                                    <td colspan="9"> {{--  type, current_item_no + 1, sub item count, added item no in between count--}}
-                                                                        <button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',2,0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+                                                                        {{-- <button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',2,0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
                                                                     </td>
                                                                 </tfoot>
                                                             </table>
@@ -346,8 +348,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
+                                            <br> --}}
+                                            {{-- manual adding --}}
+                                            {{-- <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="single-table">
                                                         <div class="table-responsive">
@@ -370,7 +373,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>

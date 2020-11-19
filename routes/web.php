@@ -43,7 +43,12 @@ Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
-Route::get('store-igm', 'TrialChecksheetController@storeIgm');
+Route::post('store-igm', 'TrialChecksheetController@storeIgm');
+Route::get('load-igm', 'TrialChecksheetController@loadIgm');
+Route::post('store-items','TrialChecksheetController@storeItems');
+Route::delete('delete-item','TrialChecksheetController@deleteItem');
+Route::post('store-datas','TrialChecksheetController@storeDatas');
+Route::delete('delete-datas','TrialChecksheetController@deleteDatas');
 
 //CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
