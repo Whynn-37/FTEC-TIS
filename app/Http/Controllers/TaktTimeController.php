@@ -97,7 +97,6 @@ class TaktTimeController extends Controller
         $total_takt_time        = $request->total_takt_time;
         $takt_time              = $request->takt_time;
 
-
         $start_date_time = $load_takt_time->getStartDateTime($trial_checksheet_id);
          
         $data = 

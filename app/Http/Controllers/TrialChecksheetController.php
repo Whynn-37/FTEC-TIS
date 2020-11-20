@@ -162,101 +162,133 @@ class TrialChecksheetController extends Controller
     public function storeIgm (UploadController $upload, 
                                 ChecksheetItem $checksheet_item,
                                 ChecksheetData $checksheet_data, 
+                                TaktTime $takt_time,
                                 Request $request)
     {
         $part_number = $request->part_number;
         $revision_number   = $request->revision_number;
         $trial_checksheet_id = $request->trial_checksheet_id;
 
-        $filename =$part_number.'_'.$revision_number;
-        $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+        $actual_time            = $request->actual_time;
+        $total_takt_time        = $request->total_takt_time;
+        $takt_time              = $request->takt_time;
 
-        $igm_files = scandir($path);
+        $status = 'Error';
+        $message = 'No Trial Checksheet I.D';
+        $result = false;
 
-        //filtering of igm file
-        for ($i=0; $i < count($igm_files); $i++) 
-        { 
-           if(strpos($igm_files[$i],$filename) !== false)
-           {
-              $filtered_igm [] = $igm_files[$i];
-           }
-        }
-         
-        $igm_data =  end($filtered_igm);
-
-        $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
-
-        // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
-        $sheet = 0;
-
-        if(file_exists($file))
+        if($part_number !== null || $revision_number !== null || $trial_checksheet_id !== null)
         {
-            $data = $upload->upload($file,$sheet);
-
-            for($i=6; $i < count($data); $i++)
-            {  
-                $igm_result [] =[
-                    'item_number'       => $data[$i][26],//sub no
-                    'type'              => $data[$i][28],//type
-                    'specification'     => $data[$i][29],//nominal
-                    'upper_limit'       => $data[$i][31],//ul
-                    'lower_limit'       => $data[$i][32],//ll
-                    'tools'             => $data[$i][37]//tools
-                ];
+            $filename =$part_number.'_'.$revision_number;
+            $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+    
+            $igm_files = scandir($path);
+    
+            //filtering of igm file
+            for ($i=0; $i < count($igm_files); $i++) 
+            { 
+               if(strpos($igm_files[$i],$filename) !== false)
+               {
+                  $filtered_igm [] = $igm_files[$i];
+               }
             }
-
-            for($i=0; $i < count($igm_result); $i++)
-            {  
-                if($igm_result[$i]['item_number'] !== null &&
-                $igm_result[$i]['item_number'] !== 'Sub Seq')
+    
+            $status = 'Error';
+            $message = 'No file exist';
+            $result = false;
+    
+            if(!empty($filtered_igm))
+            {
+                $igm_data =  end($filtered_igm);
+    
+                $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_data;
+    
+                // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
+                $sheet = 0;
+    
+                if(file_exists($file))
                 {
-                    $checksheet_items[] = [
-                        'trial_checksheet_id'   => $trial_checksheet_id,
-                        'item_number'           => intval($igm_result[$i]['item_number']),
-                        'tools'                 => $igm_result[$i]['tools'],
-                        'type'                  => $igm_result[$i]['type'],
-                        'specification'         => $igm_result[$i]['specification'],
-                        'upper_limit'           => $igm_result[$i]['upper_limit'],
-                        'lower_limit'           => $igm_result[$i]['lower_limit'],
-                        'item_type'             => 1,
-                        'created_at'            => now(),
-                        'updated_at'            => now()
-                    ];
+                    $data = $upload->upload($file,$sheet);
+    
+                    for($i=6; $i < count($data); $i++)
+                    {  
+                        $igm_result [] =[
+                            'item_number'       => $data[$i][26],//sub no
+                            'type'              => $data[$i][28],//type
+                            'specification'     => $data[$i][29],//nominal
+                            'upper_limit'       => $data[$i][31],//ul
+                            'lower_limit'       => $data[$i][32],//ll
+                            'tools'             => $data[$i][37]//tools
+                        ];
+                    }
+    
+                    for($i=0; $i < count($igm_result); $i++)
+                    {  
+                        if($igm_result[$i]['item_number'] !== null &&
+                        $igm_result[$i]['item_number'] !== 'Sub Seq')
+                        {
+                            $checksheet_items[] = [
+                                'trial_checksheet_id'   => $trial_checksheet_id,
+                                'item_number'           => intval($igm_result[$i]['item_number']),
+                                'tools'                 => $igm_result[$i]['tools'],
+                                'type'                  => $igm_result[$i]['type'],
+                                'specification'         => $igm_result[$i]['specification'],
+                                'upper_limit'           => $igm_result[$i]['upper_limit'],
+                                'lower_limit'           => $igm_result[$i]['lower_limit'],
+                                'item_type'             => 1,
+                                'created_at'            => now(),
+                                'updated_at'            => now()
+                            ];
+                        }
+                    }
+    
+                    $checksheet_item_result =  $checksheet_item->storeChecksheetItems($checksheet_items);
+    
+                    for($i=0; $i< count($checksheet_item_result);$i++)
+                    {   
+                        $checksheet_datas [] = [
+                            'checksheet_item_id'    => $checksheet_item_result[$i],
+                            'sub_number'            => 1,
+                            'created_at'            => now(),
+                            'updated_at'            => now()
+                        ];
+                    }
+                    $checksheet_data_result =  $checksheet_data->storeChecksheetDatas($checksheet_datas);
+
+                    $start_date_time = $takt_time->getStartDateTime($trial_checksheet_id);
+         
+                    $data = 
+                        [
+                            'trial_checksheet_id'   => $trial_checksheet_id,
+                            'start_date'            => $start_date_time['start_date'],
+                            'start_time'            => $start_date_time['start_time'],
+                            'end_time'              => date('H:i:s'),
+                            'actual_time'           => $actual_time,
+                            'total_takt_time'       => $total_takt_time,
+                            'takt_time'             => $takt_time,
+                        ];
+
+                    $takt_time_result =  $takt_time->updateOrCreateTaktTime($data);
+    
+                    $status = 'Error';
+                    $message = 'no data';
+                    $result = false;
+    
+                    if ($checksheet_item_result && $checksheet_data_result && $takt_time_result)
+                    {
+                        $status = 'Success';
+                        $message = 'Successfully Save';
+                        $result = true;
+                    }
                 }
             }
+        }
 
-            $checksheet_item_result =  $checksheet_item->storeChecksheetItems($checksheet_items);
-
-            for($i=0; $i< count($checksheet_item_result);$i++)
-            {   
-                $checksheet_datas [] = [
-                    'checksheet_item_id'    => $checksheet_item_result[$i],
-                    'sub_number'            => 1,
-                    'created_at'            => now(),
-                    'updated_at'            => now()
-                ];
-            }
-            $checksheet_data_result =  $checksheet_data->storeChecksheetDatas($checksheet_datas);
-
-
-            $status = 'Error';
-            $message = 'no data';
-            $result = false;
-
-            if ($checksheet_item_result && $checksheet_data_result)
-            {
-                $status = 'Success';
-                $message = 'Successfully Save';
-                $result = true;
-            }
-
-            return[
-                'status' => $status,
-                'message' => $message,
-                'result'    => $result
-            ];
-        } 
-
+        return[
+            'status' => $status,
+            'message' => $message,
+            'result'    => $result
+        ];
     }
 
     public function loadIgm(TrialChecksheet $trial_checksheet, ChecksheetItem $checksheet_item, Request $request)
@@ -289,7 +321,6 @@ class TrialChecksheetController extends Controller
             ];
     }
 
-<<<<<<< HEAD
     public function finishedChecksheet(TrialChecksheet $trial_checksheet,Approval $approval,Attachment $attachment,Request $request)
     {
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
@@ -314,8 +345,12 @@ class TrialChecksheetController extends Controller
 
        $status  = 'Error';
        $message = 'Failed to Saved Please contact Jed Relator, Puge mo eh !!';
+        
+       $trial_checksheet_result = [];
+       $approval_result = [];
+       $attachment_result = [];
 
-       if($requestKeys !== null)
+       if(count($requestKeys) !== 0)
        {
             for($i=0; $i < count($requestKeys); $i++)
             {
@@ -367,7 +402,7 @@ class TrialChecksheetController extends Controller
            ]    
         ];
     }
-=======
+
     public function updateJudgment(ChecksheetItem $checksheet_item, ChecksheetData $checksheet_data, Request $request)
     {
         $id                  = $request->id;
@@ -398,5 +433,4 @@ class TrialChecksheetController extends Controller
         ];
     }  
     
->>>>>>> 5d399561dbad49e4f8d02ffa88fc6248bd4e1631
 }
