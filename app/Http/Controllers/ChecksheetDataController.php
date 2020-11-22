@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\ChecksheetData;
-
 class ChecksheetDataController extends Controller
 {
-    public function storeDatas(ChecksheetData $checksheet_data,Request $request)
+    public function storeDatas(ChecksheetData $ChecksheetData, Request $Request)
     {
-        $checksheet_item_id = $request->checksheet_item_id;
-        $sub_number         = $request->sub_number;
+        $checksheet_item_id = $Request->checksheet_item_id;
+        $sub_number = $Request->sub_number;
 
         $status = 'Error';
         $message = 'no data';
+        $result = [];
 
         if ($checksheet_item_id !== null && $sub_number !== null)
         {
@@ -27,35 +27,53 @@ class ChecksheetDataController extends Controller
                 'hinsei'             => null
             ];
     
-            $result =  $checksheet_data->updateOrCreateChecksheetData($data);
+            $result = $ChecksheetData->updateOrCreateChecksheetData($data);
 
-            $status = 'Success';
-            $message = 'Successfully Saved';
+            $status = 'Error';
+            $message = 'Not Successfully Saved';
+
+            if ($result) 
+            {
+                $status = 'Success';
+                $message = 'Successfully Saved';
+                $result = $result->id;
+            }
         }
 
-        return [
-            'status' => $status,
-            'message' => $message,
-            'data'  => $result->id
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $result
         ];
     }
 
-    public function deleteDatas(ChecksheetData $checksheet_data,Request $request)
+    public function deleteDatas(ChecksheetData $ChecksheetData, Request $Request)
     {
-        $id = $request->id;
+        $id = $Request->id;
 
         $status = 'Error';
         $message = 'no data';
 
         if($id !== null)
         {
-            $result =  $checksheet_data->deleteDatas($id);
+            $result =  $ChecksheetData->deleteDatas($id);
 
-            return [
-                'status' => 'Success' ,
-                'message' => 'Successfully Deleted' ,
-                'data'    => $result
-             ];
+            $status = 'Error';
+            $message = 'Not Successfully Deleted';
+
+            if ($result) 
+            {
+                $status = 'Success';
+                $message = 'Successfully Deleted';
+            }
         }
+
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $result
+        ];
     }
 }
