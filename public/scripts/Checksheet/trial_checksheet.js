@@ -87,7 +87,7 @@ const CHECKSHEET = (() => {
 
     this_checksheet.LoadRevision = (part_number) => {
         $('#slc_revision_number').LoadingOverlay('show');
-
+        $('#slc_trial_number').empty();
         $.ajax({
             url: `load-revision`,
             type: 'get',
@@ -225,6 +225,12 @@ const CHECKSHEET = (() => {
                         CHECKSHEET.LoadDowntime();
                     }
 
+                    if (data.data.checksheet_items.length > 0) {
+                        IGM.LoadIGM(data.data.trial_checksheets.id);
+                    } else {
+                        $('#btn_validate_load_igm').prop('hidden', false);
+                    }
+
                     //target takt time
                     $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
                     $("#div_target_takt_time_timer").TimeCircles().rebuild();
@@ -234,6 +240,8 @@ const CHECKSHEET = (() => {
                     $('#div_actual_time_timer').attr('data-timer', total_takt_time);
                     $("#div_actual_time_timer").TimeCircles().rebuild();
                     $("#div_actual_time_timer").TimeCircles().stop();
+
+                    $('#btn_start_time').prop('disabled', false);
 
                     $('#accordion_details').LoadingOverlay('hide');
                     $('#div_card_takt_time').LoadingOverlay('hide');
@@ -335,9 +343,9 @@ const CHECKSHEET = (() => {
 
                 if (data.status === 'Success') {
                     //checksheet details
-                    $('#slc_part_number').prop('disabled', true);
-                    $('#slc_revision_number').prop('disabled', true);
-                    $('#slc_trial_number').prop('disabled', true);
+                    $('#slc_part_number').prop('readonly', true);
+                    $('#slc_revision_number').prop('readonly', true);
+                    $('#slc_trial_number').prop('readonly', true);
                     //target takt time
                     $("#div_target_takt_time_timer").TimeCircles().start();
                     $("#div_takt_time_timer").TimeCircles().start();
@@ -351,7 +359,7 @@ const CHECKSHEET = (() => {
                     $('#trial_checksheet_id').val(data.data.trial_checksheet_id);
 
                     CHECKSHEET.LoadCycleTime();
-                    
+
                     $('#div_accordion_igm').prop('hidden', false);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
@@ -382,7 +390,6 @@ const CHECKSHEET = (() => {
 
                     tbody += `<tr>
                         <td>${value.start_date}</td>
-                        <td>${value.date_finished}</td>
                         <td>${value.start_time}</td>
                         <td>${value.end_time}</td>
                         <td>${value.total_takt_time}</td>
@@ -427,6 +434,11 @@ const CHECKSHEET = (() => {
 
                 if (data.status === 'Success') {
                     CHECKSHEET.LoadCycleTime();
+                    //checksheet details
+                    $('#slc_part_number').prop('readonly', false);
+                    $('#slc_revision_number').prop('readonly', false);
+                    $('#slc_trial_number').prop('readonly', false);
+
                     //cycle time
                     $("#btn_start_time").prop("hidden", false);
                     $("#btn_stop_time").prop("hidden", true);
@@ -439,6 +451,7 @@ const CHECKSHEET = (() => {
                     $("#slc_downtime_type").prop("disabled", true);
                     $("#btn_start_downtime").prop("disabled", true);
 
+                    $('#div_accordion_igm').prop('hidden', true);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
             }
