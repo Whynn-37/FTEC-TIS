@@ -32,7 +32,6 @@ class ChecksheetData extends Model
                 'judgment'              => $data['judgment'],
                 'remarks'               => $data['remarks'],
                 'hinsei'                => $data['hinsei'],
-
             ]
         );
     }

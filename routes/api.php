@@ -55,4 +55,6 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
+Route::post('edit-hinsei', 'ApprovalController@editHinsei');
+Route::post('edit-data', 'ApprovalController@editData');
 
