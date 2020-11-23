@@ -87,7 +87,7 @@ const CHECKSHEET = (() => {
 
     this_checksheet.LoadRevision = (part_number) => {
         $('#slc_revision_number').LoadingOverlay('show');
-
+        $('#slc_trial_number').empty();
         $.ajax({
             url: `load-revision`,
             type: 'get',
@@ -223,6 +223,12 @@ const CHECKSHEET = (() => {
                         total_takt_time = -Math.abs(sum_total_takt_time * 60);
                         CHECKSHEET.LoadCycleTime();
                         CHECKSHEET.LoadDowntime();
+                    }
+
+                    if (data.data.checksheet_items.length > 0) {
+                        IGM.LoadIGM(data.data.trial_checksheets.id);
+                    } else {
+                        $('#btn_validate_load_igm').prop('hidden', false);
                     }
 
                     //target takt time
@@ -445,6 +451,7 @@ const CHECKSHEET = (() => {
                     $("#slc_downtime_type").prop("disabled", true);
                     $("#btn_start_downtime").prop("disabled", true);
 
+                    $('#div_accordion_igm').prop('hidden', true);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
             }

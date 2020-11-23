@@ -2,8 +2,9 @@ $(document).ready(function () {
 
 });
 
+
 var sub_no_count = 0; // count kung ilan ang sub no
-var item_no_count = 1; // count kung ilan ang item no
+var item_no_count = ''; // count kung ilan ang item no
 var new_item_no_count = 0; // count kung ilan ang new_item_no_count
 var existing_sub_no_count_per_item;
 
@@ -26,7 +27,22 @@ const IGM = (() => {
                 IGM.StoreIGM();
             } else {
                 //if no
-                alert(1)
+                $('#accordion_igm').LoadingOverlay('show');
+
+                $('#btn_validate_load_igm').prop('hidden', true);
+                $('#tbl_igm').prop('hidden', false);
+                $('#tbody_tbl_igm').prop('hidden', false);
+
+                item_no_count += 0;
+                let tfoot_tbl_igm = `
+				<tfoot id="tfoot_add_igm_item">
+					<td colspan="9"> 
+						<button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+					</td>
+				</tfoot>
+				`;
+                $('#tbody_tbl_igm').after(tfoot_tbl_igm);
+                $('#accordion_igm').LoadingOverlay('hide');
             }
         });
     };
@@ -68,15 +84,37 @@ const IGM = (() => {
                 $('#btn_validate_load_igm').prop('hidden', true);
                 $('#tbl_igm').prop('hidden', false);
                 $('#tbody_tbl_igm').prop('hidden', false);
-                $('#tfoot_add_igm_item').prop('hidden', false);
 
                 //pagkuha ng checksheet items
                 IGM.GetChecksheetItems(data);
 
                 //pagkuha ng checksheet datas
                 data.data.datas.forEach((value) => {
-                    IGM.SelectItemType(value.id, 1,'th_new_igm_sub_column_dark');
+                    IGM.SelectItemType(value.id, 1, 'th_new_igm_sub_column_dark');
                 });
+
+                //pagkuha ng max item number
+                if (data.data.items.length > 0) {
+                    let count = 1;
+                    data.data.items.forEach((value) => {
+                        if (count === data.data.items.length) {
+                            item_no_count += value.item_number;
+                        }
+                        count++;
+                    });
+                } else {
+                    item_no_count += 0;
+                }
+
+                // add item button , {{--IGM.AddIgmItemNo(type, current_item_no + 1, sub item count, added item no in between count)--}}
+                let tfoot_tbl_igm = `
+				<tfoot id="tfoot_add_igm_item">
+					<td colspan="9"> 
+						<button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+					</td>
+				</tfoot>
+				`;
+                $('#tbody_tbl_igm').after(tfoot_tbl_igm);
                 $('#accordion_igm').LoadingOverlay('hide');
             }
         });
@@ -87,7 +125,6 @@ const IGM = (() => {
         let array_item_tools_options = '';
         let array_item_type_options = '';
         let tr_new_item = '';
-        let item_no_count = 1;
 
         for (let index = 0; index < array_item_tools.length; index++) {
             array_item_tools_options += `<option value="${array_item_tools[index]}"></option>`;
@@ -98,48 +135,46 @@ const IGM = (() => {
         }
         //pagkuha ng items
         data.data.items.forEach((value) => {
-            tr_new_item += `${IGM.AddIgmItemNoHeader(value.id,'bg-dark')}
-            <tr id="tr_item_no_${value.id}">
-            <input type="text" id="item_id_${value.id}" >
-                <td>
-                    <div class="dropright">
-                        <span id="span_item_no_${value.id}_label">${item_no_count}</span>
-                        <button id="btn_validate_sub_no_count_${value.id}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.id});"></button>
-                        <div class="dropdown-menu">
-                            <a id="a_add_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.id},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
-                            <a id="a_add_igm_item_no_${value.id}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.id},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
-                            <a id="a_remove_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.id});"><i class="ti-close"></i> REMOVE</a>
-                        </div>
-                    </div>
-                </td> 
-                <td>
-                    <input list="item_tools_list" id="slc_item_no_${value.id}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
-                    <datalist id="item_tools_list">
-                        ${array_item_tools_options}
-                    </datalist>
-                <td>
-                    <select id="slc_item_no_${value.id}_type" class="form-control" onchange="IGM.SelectItemType(${value.id},1);">
-                        <option value=""selected disabled>Select type</option>
-                        ${array_item_type_options}
-                    </select>
-                </td>
-                <td>
-                    <input id="txt_item_no_${value.id}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
-                </td>
-                <td>
-                    <input id="txt_item_no_${value.id}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
-                </td>
-                <td>
-                    <input id="txt_item_no_${value.id}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
-                </td>
-                <td id="td_item_no_${value.id}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
-            </tr>`;
-            item_no_count++;
+            tr_new_item += `${IGM.AddIgmItemNoHeader(value.id - 1,'th_new_igm_sub_column_dark')}
+			<tr id="tr_item_no_${value.id}">
+			<input type="text" id="item_id_${value.id}" >
+				<td>
+					<div class="dropright">
+						<span id="span_item_no_${value.id}_label">${value.item_number}</span>
+						<button id="btn_validate_sub_no_count_${value.id}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.id});"></button>
+						<div class="dropdown-menu">
+							<a id="a_add_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.id},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
+							<a id="a_add_igm_item_no_${value.id}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.id},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
+							<a id="a_remove_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.id});"><i class="ti-close"></i> REMOVE</a>
+						</div>
+					</div>
+				</td> 
+				<td>
+					<input list="item_tools_list" id="slc_item_no_${value.id}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
+					<datalist id="item_tools_list">
+						${array_item_tools_options}
+					</datalist>
+				<td>
+					<select id="slc_item_no_${value.id}_type" class="form-control" onchange="IGM.SelectItemType(${value.id},1);">
+						<option value=""selected disabled>Select type</option>
+						${array_item_type_options}
+					</select>
+				</td>
+				<td>
+					<input id="txt_item_no_${value.id}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
+				</td>
+				<td>
+					<input id="txt_item_no_${value.id}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+				</td>
+				<td>
+					<input id="txt_item_no_${value.id}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+				</td>
+				<td id="td_item_no_${value.id}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
+			</tr>`;
         });
 
         //pag didisplay ng datatable
         $('#tbody_tbl_igm').html(tr_new_item);
-
         //pag fill ng data sa inputs
         data.data.items.forEach((value) => {
             $(`#slc_item_no_${value.id}_tools`).val(value.tools);
@@ -150,6 +185,7 @@ const IGM = (() => {
     this_igm.AddIgmItemNo = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
 
         if ($('#tbl_new_igm').is(':hidden')) {
+
             item_no_count++;
             new_item_no_count++;
             $('#tbl_new_igm').prop('hidden', false);
@@ -161,37 +197,38 @@ const IGM = (() => {
         } else {
             if (existing_sub_no_count === 0) {
                 // kung yung aaddan ng item ay yung last item no
-                if (previous_item_no === item_no_count) {
+                if (previous_item_no === parseInt(item_no_count)) {
+
                     item_no_count++;
+
                     tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
                     $(`#tr_item_no_${previous_item_no}`).after(tr_new_item);
                     new_item_no_count++;
 
                 } else {
+
                     item_no_count++;
+
+                    //naka base kung niload ba ang igm or hindi
+                    // if (igm_status === 'no_load_igm') {
+                    // alert(2)
                     IGM.AddIgmItemNoInputsBetweenChangeId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+                    // } else {
+                    //     alert(3)
+                    //     IGM.AddIgmItemNoInputsBetweenChangeIdWithIGM(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+                    // }
+
                     tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, new_item_no_count, existing_sub_no_count);
                     $(`#tr_item_no_${previous_item_no}`).after(tr_new_item);
                     new_item_no_count++;
-
                 }
 
             } else {
                 // PAGKA MAY EXISTING SUB ITEM, HINDI PA TAPOS TO.
                 if (previous_item_no === item_no_count) {
-                    item_no_count++;
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                        tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
-                        $(`#tr_item_no_${previous_item_no}_sub_no_max_${existing_sub_no_count}`).after(tr_new_item);
-                    } else {
-                        tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
-                        $(`#tr_item_no_${previous_item_no}_sub_no_${existing_sub_no_count}`).after(tr_new_item);
-                    }
-                    new_item_no_count++;
 
-                } else {
                     item_no_count++;
-                    IGM.AddIgmItemNoInputsBetweenChangeId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+
                     if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
                         tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
                         $(`#tr_item_no_${previous_item_no}_sub_no_max_${existing_sub_no_count}`).after(tr_new_item);
@@ -199,9 +236,29 @@ const IGM = (() => {
                         tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
                         $(`#tr_item_no_${previous_item_no}_sub_no_${existing_sub_no_count}`).after(tr_new_item);
                     }
+
+                    new_item_no_count++;
+                } else {
+
+                    item_no_count++;
+
+                    //naka base kung niload ba ang igm or hindi
+                    // if (igm_status === 'no_load_igm') {
+                    IGM.AddIgmItemNoInputsBetweenChangeId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+                    // } else {
+                    //     IGM.AddIgmItemNoInputsBetweenChangeIdWithIGM(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+                    // }
+
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
+                        tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
+                        $(`#tr_item_no_${previous_item_no}_sub_no_max_${existing_sub_no_count}`).after(tr_new_item);
+                    } else {
+                        tr_new_item = IGM.AddIgmItemNoInputs(type, IGM.AddIgmItemNoHeader(previous_item_no), previous_item_no, item_no_count, existing_sub_no_count);
+                        $(`#tr_item_no_${previous_item_no}_sub_no_${existing_sub_no_count}`).after(tr_new_item);
+                    }
+
                     new_item_no_count++;
                 }
-
             }
         }
     };
@@ -210,16 +267,16 @@ const IGM = (() => {
         let item_no_holder = parseInt(previous_item_no) + 1;
 
         let tr_new_item_header = `
-        <tr class="text-white ${bg_header}" id="tr_item_no_${item_no_holder}_column">
-            <th>ITEM NO</th>
-            <th>TOOLS</th>
-            <th>TYPE</th>
-            <th>SPECS</th>
-            <th>UPPER LIMIT</th>
-            <th>LOWER LIMIT</th>
-            <th>JUDGEMENT</th>
-            <th id="th_igm_item_no_${item_no_holder}_extra_column" colspan="7" hidden></th>
-        </tr>`;
+		<tr class="text-white" id="tr_item_no_${item_no_holder}_column">
+			<th width="8%" class="${bg_header}">ITEM NO</th>
+			<th width="15%" class="${bg_header}">TOOLS</th>
+			<th width="20%" class="${bg_header}">TYPE</th>
+			<th width="10%" class="${bg_header}">SPECS</th>
+			<th width="10%" class="${bg_header}">UPPER LIMIT</th>
+			<th width="10%" class="${bg_header}">LOWER LIMIT</th>
+			<th width="10%" class="${bg_header}">JUDGEMENT</th>
+			<th width="10%" class="${bg_header}" id="th_igm_item_no_${item_no_holder}_extra_column" colspan="7" hidden></th>
+		</tr>`;
         return tr_new_item_header;
     };
 
@@ -228,7 +285,6 @@ const IGM = (() => {
         //(type, current_item_no, sub item count, added item no in between count)
         let array_item_tools_options = '';
         let array_item_type_options = '';
-
         if (previous_item_no === item_no_count) {
             var item_no_holder = item_no_count;
 
@@ -247,46 +303,46 @@ const IGM = (() => {
         }
 
         let tr_new_item = `${tr_new_item_header}
-            <tr id="tr_item_no_${item_no_holder}">
-                <td>
-                    <div class="dropright">
-                        <span id="span_item_no_${item_no_holder}_label">${item_no_holder}</span>
-                        <button id="btn_validate_sub_no_count_${item_no_holder}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(${existing_sub_no_count_holder},${item_no_holder});"></button>
-                        <div class="dropdown-menu">
-                            <a id="a_add_igm_item_no_${item_no_holder}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${type}',${item_no_holder},${existing_sub_no_count_holder},0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
-                            <a id="a_add_igm_item_no_${item_no_holder}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${type}',${item_no_holder},${existing_sub_no_count_holder},0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
-                            <a id="a_remove_igm_item_no_${item_no_holder}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${item_no_holder});"><i class="ti-close"></i> REMOVE</a>
-                        </div>
-                    </div>
-                </td> 
-                <td>
-                    <input list="item_tools_list" id="slc_item_no_${item_no_holder}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
-                    <datalist id="item_tools_list">
-                        ${array_item_tools_options}
-                    </datalist>
-                <td>
-                    <select id="slc_item_no_${item_no_holder}_type" class="form-control" onchange="IGM.SelectItemType(${item_no_holder},${existing_sub_no_count_holder});">
-                        <option value=""selected disabled>Select type</option>
-                        ${array_item_type_options}
-                    </select>
-                </td>
-                <td>
-                    <input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
-                </td>
-                <td>
-                    <input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
-                </td>
-                <td>
-                    <input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
-                </td>
-                <td id="td_item_no_${item_no_holder}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
-            </tr>`;
+			<tr id="tr_item_no_${item_no_holder}">
+				<td>
+					<div class="dropright">
+						<span id="span_item_no_${item_no_holder}_label">${item_no_holder}</span>
+						<button id="btn_validate_sub_no_count_${item_no_holder}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(${existing_sub_no_count_holder},${item_no_holder});"></button>
+						<div class="dropdown-menu">
+							<a id="a_add_igm_item_no_${item_no_holder}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${type}',${item_no_holder},${existing_sub_no_count_holder},0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
+							<a id="a_add_igm_item_no_${item_no_holder}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${type}',${item_no_holder},${existing_sub_no_count_holder},0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
+							<a id="a_remove_igm_item_no_${item_no_holder}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${item_no_holder});"><i class="ti-close"></i> REMOVE</a>
+						</div>
+					</div>
+				</td> 
+				<td>
+					<input list="item_tools_list" id="slc_item_no_${item_no_holder}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
+					<datalist id="item_tools_list">
+						${array_item_tools_options}
+					</datalist>
+				<td>
+					<select id="slc_item_no_${item_no_holder}_type" class="form-control" onchange="IGM.SelectItemType(${item_no_holder},${existing_sub_no_count_holder});">
+						<option value=""selected disabled>Select type</option>
+						${array_item_type_options}
+					</select>
+				</td>
+				<td>
+					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
+				</td>
+				<td>
+					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
+				</td>
+				<td>
+					<input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
+				</td>
+				<td id="td_item_no_${item_no_holder}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
+			</tr>`;
 
         return tr_new_item;
 
     };
 
-    this_igm.SelectItemType = (item_no, existing_sub_no_count,bg_header="th_new_igm_sub_column") => {
+    this_igm.SelectItemType = (item_no, existing_sub_no_count, bg_header = "th_new_igm_sub_column") => {
         let type = $(`#slc_item_no_${item_no}_type`).val();
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
@@ -328,12 +384,15 @@ const IGM = (() => {
     };
 
     this_igm.AddIgmItemNoInputsBetweenChangeId = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
+
         var added_item_no_between_count_holder = added_item_no_between_count;
         var added_item_no_between_count_increment = parseInt(added_item_no_between_count) + 1;
         added_item_no_between_count_holder++;
-        // PAG AADJUST NG added_item_no_between_count IDEBUG BAKA MALI MALI ANG PAG CCHANGE
-        for (let count = previous_item_no; count <= new_item_no_count; count++) {
 
+        // PAG AADJUST NG added_item_no_between_count IDEBUG BAKA MALI MALI ANG PAG CCHANGE
+        let item_no_counter = parseInt(item_no_count) - 1;
+
+        for (let count = previous_item_no; count < item_no_counter; count++) {
             if (count === previous_item_no) {
                 var next_item_no_holder = parseInt(previous_item_no) + 2;
                 var previous_item_no_holder = parseInt(previous_item_no) + 1;
@@ -356,7 +415,45 @@ const IGM = (() => {
                 $(`#slc_item_no_${previous_item_no}_type`).attr('onchange', `IGM.SelectItemType(${previous_item_no},${existing_sub_no_count});`);
 
             }
-            if (count === new_item_no_count) {
+            if (count === item_no_counter - 1) {
+                IGM.AddIgmItemNoInputsBetweenChangeTemporaryIdToOriginalId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
+                IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type, previous_item_no);
+            }
+        }
+    };
+
+    this_igm.AddIgmItemNoInputsBetweenChangeIdWithIGM = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
+
+        var added_item_no_between_count_holder = added_item_no_between_count;
+        var added_item_no_between_count_increment = parseInt(added_item_no_between_count) + 1;
+        added_item_no_between_count_holder++;
+        // PAG AADJUST NG added_item_no_between_count IDEBUG BAKA MALI MALI ANG PAG CCHANGE
+        for (let count = previous_item_no; count < parseInt(item_no_count); count++) {
+
+            if (count === previous_item_no) {
+                var next_item_no_holder = parseInt(previous_item_no) + 2;
+                var previous_item_no_holder = parseInt(previous_item_no) + 1;
+
+                IGM.AddIgmItemNoInputsBetweenChangeIdIfStatement(type, existing_sub_no_count, previous_item_no_holder, next_item_no_holder);
+                $(`#a_add_igm_item_no_${previous_item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${previous_item_no},${existing_sub_no_count},${added_item_no_between_count_increment});`);
+
+                $(`#a_add_igm_item_no_${previous_item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${previous_item_no},${existing_sub_no_count},${added_item_no_between_count_increment});`);
+
+                $(`#slc_item_no_${previous_item_no}_type`).attr('onchange', `IGM.SelectItemType(${previous_item_no},${existing_sub_no_count});`);
+
+            } else {
+                next_item_no_holder = parseInt(count) + 2;
+                previous_item_no_holder = parseInt(count) + 1;
+
+                IGM.AddIgmItemNoInputsBetweenChangeIdIfStatement(type, existing_sub_no_count, previous_item_no_holder, next_item_no_holder);
+                $(`#a_add_igm_item_no_${previous_item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${previous_item_no},${existing_sub_no_count},${added_item_no_between_count_increment});`);
+
+                $(`#a_add_igm_item_no_${previous_item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${previous_item_no},${existing_sub_no_count},${added_item_no_between_count_increment});`);
+
+                $(`#slc_item_no_${previous_item_no}_type`).attr('onchange', `IGM.SelectItemType(${previous_item_no},${existing_sub_no_count});`);
+
+            }
+            if (count === parseInt(item_no_count) - 1) {
                 IGM.AddIgmItemNoInputsBetweenChangeTemporaryIdToOriginalId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
                 IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type, previous_item_no);
             }
@@ -390,16 +487,19 @@ const IGM = (() => {
         $(`#span_item_no_${previous_item_no_holder}_label`).attr('id', `span_item_no_${next_item_no_holder}_1_label`);
         $(`#tr_item_no_${previous_item_no_holder}`).attr('id', `tr_item_no_${next_item_no_holder}_1`);
 
+        //add item no
         $(`#a_add_igm_item_no_${previous_item_no_holder}`).attr('id', `a_add_igm_item_no_${next_item_no_holder}_1`);
         $(`#a_add_igm_item_no_${next_item_no_holder}_1`).attr('onclick', `${new_add_igm_item_no_onclick_value}`);
 
+        //add sub no
         $(`#a_add_igm_item_no_${previous_item_no_holder}_sub_no`).attr('id', `a_add_igm_item_no_${next_item_no_holder}_1_sub_no`);
         $(`#a_add_igm_item_no_${next_item_no_holder}_1_sub_no`).attr('onclick', `${new_add_igm_sub_no_onclick_value}`);
 
+        //select item type
         $(`#slc_item_no_${previous_item_no_holder}_type`).attr('id', `slc_item_no_${next_item_no_holder}_1_type`);
         $(`#slc_item_no_${next_item_no_holder}_1_type`).attr('onchange', `IGM.SelectItemType(${next_item_no_holder},${split_add_igm_item_no_onclick_value[2]});`);
 
-
+        //item no inputs
         $(`#slc_item_no_${previous_item_no_holder}_tools`).attr('id', `slc_item_no_${next_item_no_holder}_1_tools`);
         $(`#slc_item_no_${previous_item_no_holder}_type`).attr('id', `slc_item_no_${next_item_no_holder}_1_type`);
         $(`#txt_item_no_${previous_item_no_holder}_specs`).attr('id', `txt_item_no_${next_item_no_holder}_1_specs`);
@@ -407,8 +507,9 @@ const IGM = (() => {
         $(`#txt_item_no_${previous_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${next_item_no_holder}_1_lower_limit`);
         $(`#td_item_no_${previous_item_no_holder}_judgement`).attr('id', `td_item_no_${next_item_no_holder}_1_judgement`);
 
+        //remove item
         $(`#a_remove_igm_item_no_${previous_item_no_holder}`).attr('id', `a_remove_igm_item_no_${next_item_no_holder}_1`);
-        $(`#a_remove_igm_item_no_${previous_item_no_holder}_1`).attr('onclick', `IGM.RemoveIgmItemNo(${next_item_no_holder});`);
+        $(`#a_remove_igm_item_no_${next_item_no_holder}_1`).attr('onclick', `IGM.RemoveIgmItemNo(${next_item_no_holder});`);
 
         $(`#btn_validate_sub_no_count_${previous_item_no_holder}`).attr('id', `btn_validate_sub_no_count_${next_item_no_holder}_1`);
         $(`#btn_validate_sub_no_count_${next_item_no_holder}_1`).attr('onclick', `${new_validate_sub_no_count_onclick_value}`);
@@ -418,6 +519,7 @@ const IGM = (() => {
     };
 
     this_igm.AddIgmItemNoInputsBetweenChangeTemporaryIdToOriginalId = (type, previous_item_no, existing_sub_no_count, added_item_no_between_count) => {
+
         next_item_no_holder = parseInt(previous_item_no) + 2;
         added_item_no_between_count_holder = added_item_no_between_count + new_item_no_count;
 
@@ -609,13 +711,13 @@ const IGM = (() => {
     };
 
     this_igm.RemoveIgmItemNo = (item_no) => {
+
         if (new_item_no_count === 1) {
             $(`#tr_item_no_${item_no}`).remove();
             $('#tfoot_add_igm_item').prop('hidden', false);
             $('#tbl_new_igm').prop('hidden', true);
         } else {
-
-            if (item_no - 1 === 1) {
+            if (item_no === 1) {
                 $('#tr_item_no_main_column').prop('hidden', true);
                 $(`#tr_item_no_${item_no}_column`).remove();
             } else {
@@ -625,7 +727,7 @@ const IGM = (() => {
 
             if (item_no !== item_no_count) {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
-                for (let count = item_no; count <= new_item_no_count; count++) {
+                for (let count = item_no; count < new_item_no_count; count++) {
 
                     if (count === item_no) {
                         var item_no_holder = item_no;
@@ -700,11 +802,13 @@ const IGM = (() => {
                 }
             }
         }
+
         item_no_count--;
         new_item_no_count--;
     };
 
-    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count,bg_header) => {
+    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count, bg_header) => {
+
         let tr = '';
         let tr_sub_no_column = '';
         let rowspan = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
@@ -729,11 +833,10 @@ const IGM = (() => {
             }
 
 
-            tr_sub_no_column += IGM.AddIgmSubNoHeader(item_no_count, rowspan_count,bg_header);
+            tr_sub_no_column += IGM.AddIgmSubNoHeader(item_no_count, rowspan_count, bg_header);
 
             tr += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count);
             $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
-
             $(`#tr_item_no_${item_no_count}`).after(tr);
             sub_no_count++;
 
@@ -747,7 +850,7 @@ const IGM = (() => {
             $(`#btn_validate_sub_no_count_${item_no_count}`).attr('onclick', `IGM.ValidateSubNoCount(${existing_sub_no_count_per_item},${item_no_count})`);
 
             let next_number = parseInt(sub_no_count) + 1;
-            $('#th_igm_item_no_extra_column').prop('hidden', false);
+            $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
             tr += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count);
             sub_no_count++;
 
@@ -767,13 +870,13 @@ const IGM = (() => {
 
     this_igm.AddIgmSubNoHeader = (item_no_count, rowspan_count, bg_header) => {
         let tr_sub_no_column = `
-        <tr id="tr_item_no_${item_no_count}_sub_no_column" class="${bg_header}">
-            <th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
-            <th>SUB NO</th>
-            <th>COORDINATES</th>
-            <th colspan="5">DATA</th>
-            <th>JUDGEMENT</th>
-        </tr>`;
+		<tr id="tr_item_no_${item_no_count}_sub_no_column">
+			<th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
+			<th class="${bg_header}">SUB NO</th>
+			<th class="${bg_header}">COORDINATES</th>
+			<th class="${bg_header}" colspan="5">DATA</th>
+			<th class="${bg_header}">JUDGEMENT</th>
+		</tr>`;
         return tr_sub_no_column;
     };
 
@@ -783,84 +886,84 @@ const IGM = (() => {
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
             tr += `${tr_sub_no_column}
-            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
-                <td style="vertical-align: middle;" rowspan="2">
-                    <div class="dropright">
-                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
-                    <button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
-                        <div class="dropdown-menu">
-                            <a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer;text-align:center;"><i class="ti-close"></i> REMOVE</a>
-                        </div>
-                    </div>
-                </td>
-                <td style="vertical-align: middle;" rowspan="2">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
-                </td>
-                <td class="td_sub_no_input">
-                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')">
-                </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">N/A</td>
-            </tr>
-            <tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')">
-                </td>
-                <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')">
-                </td>
-            </tr>`;
+			<tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
+				<td style="vertical-align: middle;" rowspan="2">
+					<div class="dropright">
+					<span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+					<button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
+						<div class="dropdown-menu">
+							<a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer;text-align:center;"><i class="ti-close"></i> REMOVE</a>
+						</div>
+					</div>
+				</td>
+				<td style="vertical-align: middle;" rowspan="2">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
+				</td>
+				<td class="td_sub_no_input">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')">
+				</td>
+				<td class="td_sub_no_input">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')">
+				</td>
+				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">N/A</td>
+			</tr>
+			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')">
+				</td>
+				<td class="td_sub_no_input">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')">
+				</td>
+			</tr>`;
         } else {
             tr += `${tr_sub_no_column}<tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
-            <td>
-                <div class="dropright">
-                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
-                    <button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
-                    <div class="dropdown-menu">
-                        <a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer"><i class="ti-close"></i> REMOVE</a>
-                    </div>
-                </div>
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly>
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly>
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly>
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly>
-            </td>
-            <td class="td_sub_no_input">
-                <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly>
-            </td>
-            <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >N/A</td>
-            </tr`;
+			<td>
+				<div class="dropright">
+					<span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+					<button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
+					<div class="dropdown-menu">
+						<a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer"><i class="ti-close"></i> REMOVE</a>
+					</div>
+				</div>
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly>
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly>
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly>
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly>
+			</td>
+			<td class="td_sub_no_input">
+				<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly>
+			</td>
+			<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >N/A</td>
+			</tr`;
         }
         return tr;
     };

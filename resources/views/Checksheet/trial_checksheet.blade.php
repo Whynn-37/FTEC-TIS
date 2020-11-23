@@ -59,8 +59,8 @@
                                                 <div class="col-md-4 mb-3">
                                                     <label>SUPPLIER CODE / SUPPLIER NAME:</label>
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="txt_supplier_code" readonly>
-                                                        <input type="text" class="form-control" id="txt_supplier_name" readonly>
+                                                        <input type="text" class="form-control" id="txt_supplier_code" placeholder="Supplier code" readonly>
+                                                        <input type="text" class="form-control" id="txt_supplier_name" placeholder="Supplier name" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -288,7 +288,7 @@
                                     </div>
                                     <div id="accordion_igm" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
-                                            <button id="btn_validate_load_igm" type="button" class="btn btn-primary btn-block" onclick="IGM.ValidateLoadIGM();"><strong
+                                            <button id="btn_validate_load_igm" type="button" class="btn btn-primary btn-block" onclick="IGM.ValidateLoadIGM();" hidden><strong
                                                 style="font-size: 20px;"><i class="ti-reload"></i> CLICK TO LOAD IGM</strong></button>
                                             {{-- existing --}}
                                             <div class="row">
@@ -296,24 +296,7 @@
                                                     <div class="single-table">
                                                         <div class="table-responsive">
                                                             <table class="table text-center table-sm table-bordered" id="tbl_igm" hidden>
-                                                                {{-- <thead class="text-uppercase" id="thead_tbl_igm" hidden>
-                                                                    <tr class="text-white">
-                                                                        <th>ITEM NO</th>
-                                                                        <th>TOOLS</th>
-                                                                        <th>TYPE</th>
-                                                                        <th>SPECS</th>
-                                                                        <th>UPPER LIMIT</th>
-                                                                        <th>LOWER LIMIT</th>
-                                                                        <th>JUDGEMENT</th>
-                                                                        <th id="th_igm_item_no_1_extra_column" colspan="7"></th>
-                                                                    </tr>
-                                                                </thead> --}}
                                                                 <tbody id="tbody_tbl_igm" hidden></tbody>
-                                                                <tfoot id="tfoot_add_igm_item" hidden>
-                                                                   <td colspan="9"> {{--  type, current_item_no + 1, sub item count, added item no in between count--}}
-                                                                        <button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',2,0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
-                                                                    </td>
-                                                                </tfoot>
                                                             </table>
                                                         </div>
                                                     </div>
