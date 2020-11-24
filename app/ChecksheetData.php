@@ -48,4 +48,11 @@ class ChecksheetData extends Model
     {
         return ChecksheetData::find($id)->delete();
     }
+
+    public function loadTrialCheckitemsNG($id)
+    {
+        return ChecksheetData::where('checksheet_item_id', $id)
+        ->where('checksheet_data.judgment', '=', 'NG')
+        ->get();
+    }
 }

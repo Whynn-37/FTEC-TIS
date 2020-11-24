@@ -59,4 +59,15 @@ class TrialChecksheet extends Model
         ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','trial_checksheets.judgment','trial_checksheets.date_finished')
         ->get();
     }
+
+    public function loadTrialCheckitemsNG($part_number, $trial_number)
+    {
+        return TrialChecksheet::join('checksheet_items', 'checksheet_items.trial_checksheet_id','=','trial_checksheets.id')
+        ->where('trial_checksheets.judgment', '=', 'NG')
+        ->where('checksheet_items.judgment', '=', 'NG')
+        ->where('trial_checksheets.part_number', '=', $part_number)
+        ->where('trial_checksheets.trial_number', '=', $trial_number)
+        ->select('checksheet_items.*')
+        ->get();
+    }
 }

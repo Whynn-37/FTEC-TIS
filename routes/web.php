@@ -46,6 +46,7 @@ Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
+Route::get('load-igm-ng', 'TrialChecksheetController@loadIgmNg');
 
 //CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
