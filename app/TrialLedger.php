@@ -18,7 +18,8 @@ class TrialLedger extends Model
     public function loadPartnumber()
     {
         // nag add ng actual_end_date by jed
-        return TrialLedger::where('actual_end_date', '')
+        return TrialLedger::where('actual_end_date', null)
+        ->orWhere('actual_end_date', '')
         ->select('part_number')
         ->distinct()
         ->get();

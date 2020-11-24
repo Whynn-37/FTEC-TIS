@@ -8,7 +8,7 @@ use DB;
 
 class ChecksheetItem extends Model
 {
-    protected $fillable = ['trial_checksheet_id','item_number','tools','type','specification','upper_limit','lower_limit','item_type', 'judgment'];
+    protected $fillable = ['trial_checksheet_id', 'item_number', 'tools', 'type', 'specification', 'upper_limit', 'lower_limit', 'item_type', 'judgment', 'hinsei'];
 
     public function checksheet_datas()
     {
@@ -45,11 +45,14 @@ class ChecksheetItem extends Model
 
     public function loadChecksheetData($data)
     {
-        foreach ($data as $id) 
+        $result = [];
+        if (!empty($data)) 
         {
-            $result[] = ChecksheetItem::find($id['id'])->checksheet_datas;
+            foreach ($data as $id) 
+            {
+                $result[] = ChecksheetItem::find($id['id'])->checksheet_datas;
+            }
         }
-
         return $result;
     }
 

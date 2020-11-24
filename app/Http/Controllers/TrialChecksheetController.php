@@ -197,6 +197,7 @@ class TrialChecksheetController extends Controller
         $total_takt_time = $Request->total_takt_time;
         $takt_time = $Request->takt_time;
 
+
         $status = 'Error';
         $message = 'No Data';
         $result = false;
@@ -205,9 +206,11 @@ class TrialChecksheetController extends Controller
         $revision_number !== null || 
         $trial_checksheet_id !== null)
         {
-            $filename = $part_number . '_' . $revision_number;
-
-            $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/';
+            // $filename = $part_number . '_' . $revision_number;
+            $filename =$part_number.'_'.$revision_number.'(00)';
+            
+            // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
+            $path ='F:\TIS\\';
     
             $igm_files = scandir($path);
     
@@ -228,7 +231,8 @@ class TrialChecksheetController extends Controller
             {
                 $igm_file_name =  end($filtered_igm_files);
     
-                $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name;
+                // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
+                $file = 'F:\TIS\\'.$igm_file_name;
     
                 // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                 $sheet = 0;
@@ -325,12 +329,12 @@ class TrialChecksheetController extends Controller
     public function loadIgm(TrialChecksheet $trial_checksheet, ChecksheetItem $checksheet_item, Request $request)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;
-        
-        $checksheet_items = [];
-        $checksheet_datas = [];
 
         $status = 'Error';
         $message = 'Not Successfully Load ';
+
+        $checksheet_items = [];
+        $checksheet_datas = [];
 
         if($trial_checksheet_id !== null)
         {

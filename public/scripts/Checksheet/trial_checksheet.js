@@ -205,41 +205,12 @@ const CHECKSHEET = (() => {
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
-                    var target_takt_time = data.data.trial_checksheets.inspection_required_time * 60;
-                    var total_takt_time = 0;
-
-                    //existing na takt time
-                    if (data.data.takt_times.length > 0) {
-                        //last array element of target takt time
-                        array_takt_time_data = data.data.takt_times[data.data.takt_times.length - 1];
-                        target_takt_time = array_takt_time_data['takt_time'] * 60;
-
-                        // sum ng takt time para sa actual time na timer
-                        let sum_total_takt_time = 0;
-                        data.data.takt_times.forEach((value) => {
-                            sum_total_takt_time += parseFloat(value.total_takt_time);
-                        });
-
-                        total_takt_time = -Math.abs(sum_total_takt_time * 60);
-                        CHECKSHEET.LoadCycleTime();
-                        CHECKSHEET.LoadDowntime();
-                    }
-
-                    if (data.data.checksheet_items.length > 0) {
-                        IGM.LoadIGM(data.data.trial_checksheets.id);
-                    } else {
-                        $('#btn_validate_load_igm').prop('hidden', false);
-                    }
-
-                    //target takt time
-                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
-                    $("#div_target_takt_time_timer").TimeCircles().rebuild();
-                    $("#div_target_takt_time_timer").TimeCircles().stop();
-
-                    //actual time
-                    $('#div_actual_time_timer').attr('data-timer', total_takt_time);
-                    $("#div_actual_time_timer").TimeCircles().rebuild();
-                    $("#div_actual_time_timer").TimeCircles().stop();
+                    // load ng IGM
+                    IGM.LoadIGM(data.data.trial_checksheets.id);
+                    //load ng cycle time
+                    CHECKSHEET.LoadCycleTime(data.data.trial_checksheets.inspection_required_time);
+                    //load ng downtime
+                    CHECKSHEET.LoadDowntime();
 
                     $('#btn_start_time').prop('disabled', false);
 
@@ -358,7 +329,7 @@ const CHECKSHEET = (() => {
 
                     $('#trial_checksheet_id').val(data.data.trial_checksheet_id);
 
-                    CHECKSHEET.LoadCycleTime();
+                    CHECKSHEET.LoadCycleTime(0, 'start');
 
                     $('#div_accordion_igm').prop('hidden', false);
                     $('#div_card_takt_time').LoadingOverlay('hide');
@@ -370,7 +341,7 @@ const CHECKSHEET = (() => {
         FOOTER.LoadNavbarDateTimeInterval();
     };
 
-    this_checksheet.LoadCycleTime = () => {
+    this_checksheet.LoadCycleTime = (inspection_required_time, status = "load_cycle_time") => {
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
@@ -386,7 +357,21 @@ const CHECKSHEET = (() => {
                 $('#tbody_tbl_takt_time').empty();
 
                 let tbody = '';
+                var target_takt_time = inspection_required_time * 60;
+                var total_sum_total_takt_time = 0;
+
                 data.data.forEach((value) => {
+                    //last array element of target takt time
+                    array_takt_time_data = data.data[data.data.length - 1];
+                    target_takt_time = array_takt_time_data['takt_time'] * 60;
+
+                    // sum ng takt time para sa actual time na timer
+                    let sum_total_takt_time = 0;
+                    data.data.forEach((value) => {
+                        sum_total_takt_time += parseFloat(value.total_takt_time);
+                    });
+
+                    total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
 
                     tbody += `<tr>
                         <td>${value.start_date}</td>
@@ -396,6 +381,18 @@ const CHECKSHEET = (() => {
                     </tr>`;
 
                 });
+
+                if (status === 'load_cycle_time') {
+                    //target takt time
+                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+                    $("#div_target_takt_time_timer").TimeCircles().rebuild();
+                    $("#div_target_takt_time_timer").TimeCircles().stop();
+
+                    //actual time
+                    $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
+                    $("#div_actual_time_timer").TimeCircles().rebuild();
+                    $("#div_actual_time_timer").TimeCircles().stop();
+                }
                 $('#tbody_tbl_takt_time').html(tbody);
             }
         });
@@ -433,7 +430,7 @@ const CHECKSHEET = (() => {
             success: data => {
 
                 if (data.status === 'Success') {
-                    CHECKSHEET.LoadCycleTime();
+                    CHECKSHEET.LoadCycleTime(0, 'stop');
                     //checksheet details
                     $('#slc_part_number').prop('readonly', false);
                     $('#slc_revision_number').prop('readonly', false);
