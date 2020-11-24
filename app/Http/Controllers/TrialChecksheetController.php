@@ -502,4 +502,47 @@ class TrialChecksheetController extends Controller
             ]
         ];
     }  
+
+    public function loadIgmNg(TrialChecksheet $TrialChecksheet, 
+                                    ChecksheetData $ChecksheetData, 
+                                    Request $request)
+     {
+        $part_number = $request->part_number;
+        $trial_number = ($request->trial_number) - 1;
+
+        if($trial_number <= 0)
+        {
+            //less than to 0 is not applicable
+            $status  = 'Error';
+            $message = 'Not less than to 1';
+            $data ='';
+        }
+        else
+        {
+            $result_items = $TrialChecksheet->loadTrialCheckitemsNG($part_number, $trial_number);
+        
+            foreach($result_items as $checksheet_items) 
+            {
+                $data = $ChecksheetData->loadTrialCheckitemsNG($checksheet_items->id);
+                    $result_datas[] = $data[0];
+            }
+
+            $data = 
+            [
+                'items' => $result_items ,
+                'datas' => $result_datas
+            ];
+
+            $status  = 'Success';
+            $message = 'Successfully Load';
+        }
+
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $data
+            
+        ];
+    }
 }
