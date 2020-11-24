@@ -22,9 +22,8 @@ class ChecksheetDataController extends Controller
                 'sub_number'         => $sub_number,
                 'coordinates'        => null,
                 'data'               => null,
-                'judgment'           => null,
+                'judgment'           => 'N/A',
                 'remarks'            => null,
-                'hinsei'             => null
             ];
     
             $result = $ChecksheetData->updateOrCreateChecksheetData($data);
@@ -51,12 +50,21 @@ class ChecksheetDataController extends Controller
     public function deleteDatas(ChecksheetData $ChecksheetData, Request $Request)
     {
         $id = $Request->id;
+        $checksheet_item_id = $Request->checksheet_item_id;
+        $sub_number = $Request->sub_number;
 
         $status = 'Error';
         $message = 'no data';
 
         if($id !== null)
         {
+            $select_id = $ChecksheetData->selectId($checksheet_item_id, $sub_number);
+
+            if (count($select_id) !== 0)
+            {
+                $ChecksheetData->deleteUpdate($select_id);
+            }
+
             $result =  $ChecksheetData->deleteDatas($id);
 
             $status = 'Error';

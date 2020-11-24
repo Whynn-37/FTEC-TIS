@@ -52,4 +52,11 @@ class TrialChecksheet extends Model
         return TrialChecksheet::find($id)->update($data);
     }
     
+    public function loadFinishedInspection()
+    {
+        return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
+        ->where('approvals.decision', '=', 1)
+        ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','trial_checksheets.judgment','trial_checksheets.date_finished')
+        ->get();
+    }
 }

@@ -41,6 +41,7 @@ class ChecksheetItemController extends Controller
                 'specification'         => $specification,
                 'upper_limit'           => $upper_limit,
                 'lower_limit'           => $lower_limit,
+                'judgment'              => 'N/A',
                 'item_type'             => 0,
                 'judgment'              => 'N/A',
                 'remarks'               => null,
@@ -89,14 +90,23 @@ class ChecksheetItemController extends Controller
     public function deleteItem(ChecksheetItem $ChecksheetItem, Request $Request)
     {
         $id = $Request->id;
-
-        $result = $ChecksheetItem->deleteItem($id);
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $item_number = $Request->item_number;
 
         $status = 'Error';
         $message = 'No Data';
 
         if ($id !== null) 
         {
+            $select_id = $ChecksheetItem->selectId($trial_checksheet_id, $item_number);
+        
+            if (count($select_id) !== 0)
+            {
+                $ChecksheetItem->deleteUpdate($select_id);
+            }
+
+            $result = $ChecksheetItem->deleteItem($id);
+
             $status = 'Error';
             $message = 'Not Successfully Deleted';
 
@@ -111,6 +121,7 @@ class ChecksheetItemController extends Controller
         [
             'status'    => $status,
             'message'   => $message,
+            'data'      => $result
         ];
     }
 }

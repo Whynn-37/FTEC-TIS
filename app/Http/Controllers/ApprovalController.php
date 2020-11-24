@@ -58,4 +58,110 @@ class ApprovalController extends Controller
             ]
         ];
     }
+    
+    public function loadFinishedInspection(TrialChecksheet $trialchecksheet)
+    {
+        $data = $trialchecksheet->loadFinishedInspection();
+
+        $status = 'Error';
+        $message = 'Somethings Wrong!';
+        
+        if(!empty($data) == true )
+        {
+            $status = 'Success';
+            $message = 'Load Successfully!';
+        }
+
+       return
+       [
+           'status' => $status ,
+           'message' => $message,
+           'data' => $data
+        ];
+    }
+
+    public function editHinsei(ChecksheetItem $ChecksheetItem, Request $Request)
+    {
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $item_number = $Request->item_number;
+        $tools = $Request->tools;
+        $type = $Request->type;
+        $specification = $Request->specification;
+        $upper_limit = $Request->upper_limit;
+        $lower_limit = $Request->lower_limit;
+        $judgment = $Request->judgment;
+        $item_type = $Request->item_type;
+        $remarks = $Request->remarks;
+        $hinsei = $Request->hinsei;
+
+        $data = 
+        [
+            'trial_checksheet_id'   => $trial_checksheet_id,
+            'item_number'           => $item_number,
+            'tools'                 => $tools,
+            'type'                  => $type,
+            'specification'         => $specification,
+            'upper_limit'           => $upper_limit,
+            'lower_limit'           => $lower_limit,
+            'judgment'              => $judgment,
+            'item_type'             => $item_type,
+            'remarks'               => $remarks,
+            'hinsei'                => $hinsei,
+        ];
+
+        $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
+
+        $status = 'Error';
+        $message = 'Somethings Wrong!';
+
+        if ($result !== null) {
+
+            $status = 'Success';
+            $message = 'Update Successfully!';
+        }
+        return 
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $result  
+        ];
+    }
+
+    public function editData(ChecksheetData $ChecksheetData, Request $Request)
+    {
+        $checksheet_item_id = $Request->checksheet_item_id;
+        $sub_number = $Request->sub_number;
+        $coordinates = $Request->coordinates;
+        $data = $Request->data;
+        $judgment = $Request->judgment;
+        $remarks = $Request->remarks;
+
+        $dataset = 
+        [
+            'checksheet_item_id' => $checksheet_item_id,
+            'sub_number'         => $sub_number,
+            'coordinates'        => $coordinates,
+            'data'               => $data,
+            'judgment'           => $judgment,
+            'remarks'            => $remarks,
+        ];
+
+        $result = $ChecksheetData->updateOrCreateChecksheetData($dataset);
+
+        $status = 'Error';
+        $message = 'Somethings Wrong!';
+
+        if ($result !== null) {
+
+            $status = 'Success';
+            $message = 'Update Successfully!';
+        }
+        return 
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $result  
+        ];
+    }
+    
 }

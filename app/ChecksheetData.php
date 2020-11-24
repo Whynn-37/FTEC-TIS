@@ -46,4 +46,23 @@ class ChecksheetData extends Model
     {
         return ChecksheetData::find($id)->delete();
     }
+
+    public function selectId($checksheet_item_id, $sub_number)
+    {
+        return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
+        ->where('sub_number', '>', $sub_number)
+        ->select('id', 'sub_number')
+        ->get();
+    }
+
+    public function deleteUpdate($data)
+    {
+        foreach ($data as $value)
+        {
+            $result = ChecksheetData::find($value->id)
+            ->update(['sub_number' => $value->sub_number - 1]);
+        }
+
+        return $result;
+    }
 }
