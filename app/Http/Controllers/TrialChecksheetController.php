@@ -333,6 +333,9 @@ class TrialChecksheetController extends Controller
         $status = 'Error';
         $message = 'Not Successfully Load ';
 
+        $checksheet_items = [];
+        $checksheet_datas = [];
+
         if($trial_checksheet_id !== null)
         {
             $checksheet_items = $trial_checksheet->loadChecksheetItem($trial_checksheet_id);

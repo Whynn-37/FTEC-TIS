@@ -284,7 +284,7 @@
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_igm"><strong
                                                 style="font-size: 20px;"><i class="ti-layout-grid2"></i>
-                                                IGM</strong></a>
+                                                CHECKSHEET</strong></a>
                                     </div>
                                     <div id="accordion_igm" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">

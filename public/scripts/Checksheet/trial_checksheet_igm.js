@@ -248,9 +248,7 @@ const IGM = (() => {
                 }
 
             } else {
-                alert(`${previous_item_no} === ${item_no_count}`)
                 if (previous_item_no === item_no_count) {
-
                     item_no_count++;
 
                     if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
@@ -587,7 +585,7 @@ const IGM = (() => {
     };
 
     //PAG UPDATE NG SUNOD NA CHECKSHEET ITEM PAGKA NAG ADD IN BETWEEN NG CHECKSHEET ITEM
-    this_igm.UpdateNextIgmItemNo = (item_no, action) => {
+    this_igm.UpdateNextIgmItemNo = (item_no) => {
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
         let new_item_no = item_no + 1;
@@ -740,7 +738,6 @@ const IGM = (() => {
 
         for (let a_count = count_value; a_count <= item_no_count; a_count++) {
             let add_igm_tem_no_onclick_value = $(`#a_add_igm_item_no_${a_count}`).attr('onclick');
-
             let split_add_igm_tem_no_onclick_value = add_igm_tem_no_onclick_value.split(',');
 
             let existing_sub_no_count_value = split_add_igm_tem_no_onclick_value[2];
@@ -823,21 +820,40 @@ const IGM = (() => {
 
     this_igm.RemoveIgmItemNo = (item_no) => {
 
-        $(`#accordion_igm`).LoadingOverlay('show');
+        Swal.fire(
+            $.extend(swal_options, {
+                confirmButtonText: 'Yes',
+                title: `Are you sure you want to remove the item?`,
+            })
+        ).then((result) => {
+            if (result.value) {
+                $(`#accordion_igm`).LoadingOverlay('show');
 
-        let checksheet_item_id = $(`#txt_hidden_item_no_${item_no}`).val();
+                let id = $(`#txt_hidden_item_no_${item_no}`).val();
+                let trial_checksheet_id = $('#trial_checksheet_id').val();
+                let item_number = $(`#span_item_no_${item_no}_label`).text();
 
-        $.ajax({
-            url: `delete-items`,
-            type: 'delete',
-            dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                id: checksheet_item_id,
-            },
-            success: data => {
-                IGM.ProceedRemoveIgmItemNo(item_no);
+                if (id.length === 0) {
+                    IGM.ProceedRemoveIgmItemNo(item_no);
+                    $(`#accordion_igm`).LoadingOverlay('hide');
+                } else {
+                    $.ajax({
+                        url: `delete-item`,
+                        type: 'delete',
+                        dataType: 'json',
+                        cache: false,
+                        data: {
+                            _token: _TOKEN,
+                            id: id,
+                            trial_checksheet_id:trial_checksheet_id,
+                            item_number:item_number
+                        },
+                        success: data => {
+                            IGM.ProceedRemoveIgmItemNo(item_no);
+                            $(`#accordion_igm`).LoadingOverlay('hide');
+                        }
+                    });
+                }
             }
         });
     };
@@ -857,10 +873,11 @@ const IGM = (() => {
             }
             $(`#tr_item_no_${item_no}`).remove();
 
+            alert(`${item_no} !== ${item_no_count}`)
             if (item_no !== item_no_count) {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
                 for (let count = item_no; count < new_item_no_count; count++) {
-
+                    
                     if (count === item_no) {
                         var item_no_holder = item_no;
                         var next_item_no_holder = item_no + 1;
@@ -897,10 +914,14 @@ const IGM = (() => {
 
                     $(`#tr_item_no_${next_item_no_holder}_column`).attr('id', `tr_item_no_${item_no_holder}_column`);
                     $(`#th_igm_item_no_${next_item_no_holder}_extra_column`).attr('id', `th_igm_item_no_${item_no_holder}_extra_column`);
+                    $(`#tr_item_no_${next_item_no_holder}_sub_no_column`).attr('id', `tr_item_no_${item_no_holder}_sub_no_column`);
 
                     $(`#tr_item_no_${next_item_no_holder}`).attr('id', `tr_item_no_${item_no_holder}`);
                     $(`#span_item_no_${next_item_no_holder}_label`).text(item_no_holder);
                     $(`#span_item_no_${next_item_no_holder}_label`).attr('id', `span_item_no_${item_no_holder}_label`);
+
+                    $(`#txt_hidden_item_no_${next_item_no_holder}`).attr('id', `txt_hidden_item_no_${item_no_holder}`);
+                    
                     //validate sub no count
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick', `IGM.ValidateSubNoCount(${existing_sub_no_count_value},${item_no_holder});`);
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('id', `btn_validate_sub_no_count_${item_no_holder}`);
@@ -924,20 +945,22 @@ const IGM = (() => {
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                     $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
 
+
+                    new_item_no_count--;
+                    item_no_count--;
+
                     if (existing_sub_no_count_value > 0) {
                         IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
                         if (count === new_item_no_count) {
                             IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
                         }
                     }
-
                 }
+            } else{
+                new_item_no_count--;
+                item_no_count--;
             }
         }
-        //pag update ng item number sa DB, nandyan na din sa method ang item_no_count-- at new_item_no_count--
-        IGM.UpdateNextIgmItemNo(item_no, 'delete');
-        item_no_count--;
-        new_item_no_count--;
     };
 
     // SUB ITEM METHODS NA DITO
