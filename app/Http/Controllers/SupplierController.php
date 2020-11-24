@@ -10,7 +10,9 @@ class SupplierController extends Controller
         // $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
         // $file = 'C:\TIS\supplier.xlsx';
 
-        $file = 'F:\TIS\supplier.xlsx';
+        // $file = 'F:\TIS\supplier.xlsx';
+        // $file = 'F:\TIS\supplier.xlsx';
+        $file = 'D:\supplier.xlsx';
         $sheet = 0;
 
         $status = 'Error';

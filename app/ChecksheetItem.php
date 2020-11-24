@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 
 class ChecksheetItem extends Model
@@ -82,5 +83,24 @@ class ChecksheetItem extends Model
     {
         ChecksheetItem::find($id)->checksheet_datas()->delete();
         return ChecksheetItem::find($id)->delete();
+    }
+
+    public function selectId($trial_checksheet_id, $item_number)
+    {
+        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('item_number', '>', $item_number)
+        ->select('id', 'item_number')
+        ->get();
+    }
+
+    public function deleteUpdate($data)
+    {
+        foreach ($data as $value)
+        {
+            $result = ChecksheetItem::find($value->id)
+            ->update(['item_number' => $value->item_number - 1]);
+        }
+
+        return $result;
     }
 }

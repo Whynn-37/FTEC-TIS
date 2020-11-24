@@ -40,7 +40,7 @@ Route::delete('delete-item','ChecksheetItemController@deleteItem');
 
 // Checksheet Data
 Route::post('store-datas','ChecksheetDataController@storeDatas');
-Route::delete('delete-datas','ChecksheetDataController@deleteDatas');
+Route::delete('delete-data','ChecksheetDataController@deleteDatas');
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
@@ -56,5 +56,7 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
+Route::post('edit-hinsei', 'ApprovalController@editHinsei');
+Route::post('edit-data', 'ApprovalController@editData');
 
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
