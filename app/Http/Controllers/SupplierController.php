@@ -2,28 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Supplier;
-
 class SupplierController extends Controller
 {
-    public function storeSupplier(UploadController $upload,Supplier $supplier)
+    public function storeSupplier(UploadController $upload,Supplier $Supplier)
     {
         // $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
-        $file = 'C:\TIS\supplier.xlsx';
+        // $file = 'C:\TIS\supplier.xlsx';
 
+        $file = 'F:\TIS\supplier.xlsx';
         $sheet = 0;
-        $data = $upload->upload($file,$sheet);
 
-        for($i = 1; $i < count($data); $i ++)
+        $status = 'Error';
+        $message = 'No File';
+        $result = [];
+
+        if (file_exists($file)) 
         {
-            $result[] = [
-                'supplier_code'   =>  $data[$i][0],
-                'supplier_name'   =>  $data[$i][1]
-            ];
+            $data = $upload->upload($file, $sheet);
+
+            for($i = 1; $i < count($data); $i ++)
+            {
+                $result[] = [
+                    'supplier_code'   =>  $data[$i][0],
+                    'supplier_name'   =>  $data[$i][1]
+                ];
+            }
+
+            $result = $Supplier->storeSupplier($result);
+
+            $status = 'Error';
+            $message = 'Npt Successfully Save';
+
+            if ($result) 
+            {
+                $status = 'Success';
+                $message = 'Successfully Save';
+            }
         }
 
-        return $supplier->storeSupplier($result);
+        return
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
     }
 }

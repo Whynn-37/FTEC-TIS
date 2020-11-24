@@ -4,39 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\LoginUser;
-
 class PageController extends Controller
 {
 
     public function __construct()
     {
         $this->middleware("checksession")->except(['get_credentials','login_page']);
-        $this->middleware("preventback")->only(['login_page']);
-        
-    
+        $this->middleware("preventback")->only(['login_page']);    
     }
-
-   
 
     public function get_credentials($id)
     {
-            $user = new LoginUser();
+            $LoginUser = new LoginUser();
 
-            $datas  = [
+            $user = 
+            [
                 'name'   => $id ,
             ];
 
-
-            $data = $user->selectUser($datas);
+            $data = $LoginUser->selectUser($user);
         
             $result = $this->set_session($data);
 
-            if ($result) {
+            if ($result) 
                 return redirect('trial-checksheet');
-            } else {
-
+            else
                 return redirect('login');
-            }
     }
 
     public function set_session($data)
@@ -45,32 +38,29 @@ class PageController extends Controller
         {
             // set session
             // return $data;
-             session(['name' => $data->name,
-             'fullname' => $data->fullname,
-             'access_level' => $data->access_level,
-             'position' => $data->position,
-             'emailadd' => $data->emailadd,
-             ]);
+            session(
+            [
+                'name'          => $data->name,
+                'fullname'      => $data->fullname,
+                'access_level'  => $data->access_level,
+                'position'      => $data->position,
+                'email'         => $data->emailadd,
+            ]);
              $datax = request()->session()->all();
             //return session('name');
             // return $datax;
-
             return true;
-
-        }else{
+        }
+        else
             // wala na select
             // no found
             return false;
-        }
     }
-
-
-
 
     public function logout()
     {
-       request()->session()->flush();
-      return redirect('login');
+        request()->session()->flush();
+        return redirect('login');
     }
 
     public function login_page ()

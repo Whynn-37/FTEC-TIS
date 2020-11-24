@@ -17,7 +17,7 @@ class LoginUser extends Model
     public function selectUser($where = null)
     {
         return LoginUser::select('name', 'fullname', 'access_level', 'position', 'emailadd')
-                ->where($where)
-                ->first();
+        ->where($where)
+        ->first();
     }
 }

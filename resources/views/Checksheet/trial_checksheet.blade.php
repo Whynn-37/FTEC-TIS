@@ -59,8 +59,8 @@
                                                 <div class="col-md-4 mb-3">
                                                     <label>SUPPLIER CODE / SUPPLIER NAME:</label>
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="txt_supplier_code" readonly>
-                                                        <input type="text" class="form-control" id="txt_supplier_name" readonly>
+                                                        <input type="text" class="form-control" id="txt_supplier_code" placeholder="Supplier code" readonly>
+                                                        <input type="text" class="form-control" id="txt_supplier_name" placeholder="Supplier name" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -160,7 +160,6 @@
                                                                                 <thead class="text-uppercase bg-dark">
                                                                                     <tr class="text-white">
                                                                                         <th>DATE START</th>
-                                                                                        <th>DATE FINISH</th>
                                                                                         <th>START TIME</th>
                                                                                         <th>END TIME</th>
                                                                                         <th>TOTAL TAKT TIME</th>
@@ -178,7 +177,7 @@
                                                                         class="btn btn-success btn-block"
                                                                         id="btn_start_time"
                                                                         onclick="CHECKSHEET.TaktTimeTimerAction('start_takt_time');"
-                                                                        id="btn_start_time">
+                                                                        id="btn_start_time" disabled>
                                                                         <strong class="strong-font">
                                                                             <i class="ti-control-play"></i> START
                                                                         </strong>
@@ -289,64 +288,22 @@
                                     </div>
                                     <div id="accordion_igm" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
+                                            <button id="btn_validate_load_igm" type="button" class="btn btn-primary btn-block" onclick="IGM.ValidateLoadIGM();" hidden><strong
+                                                style="font-size: 20px;"><i class="ti-reload"></i> CLICK TO LOAD IGM</strong></button>
+                                            {{-- existing --}}
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="single-table">
                                                         <div class="table-responsive">
-                                                            <table class="table text-center table-sm table-bordered" id="tbl_igm">
-                                                                <thead class="text-uppercase bg-dark" id="thead_tbl_igm">
-                                                                    <tr class="text-white">
-                                                                        <th>ITEM NO</th>
-                                                                        <th>TOOLS</th>
-                                                                        <th>TYPE</th>
-                                                                        <th>SPECS</th>
-                                                                        <th>UPPER LIMIT</th>
-                                                                        <th>LOWER LIMIT</th>
-                                                                        <th>JUDGEMENT</th>
-                                                                        <th id="th_igm_item_no_extra_column" colspan="7"></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="tbody_tbl_igm">
-                                                                    <tr id="tr_item_no_1">
-                                                                        <td hidden><span id="span_item_no_1_type">MC</span></td>
-                                                                        <td hidden><span id="span_item_no_1_sub_item_count">1</span></td>
-                                                                        <td>1</td> 
-                                                                        <td id="td_item_no_1_tools">test1</td>
-                                                                        <td id="td_item_no_1_type">test2</td>
-                                                                        <td id="td_item_no_1_specs">test3</td>
-                                                                        <td id="td_item_no_1_upper_limit">test4</td>
-                                                                        <td id="td_item_no_1_lower_limit">test5</td>
-                                                                        <td id="td_item_no_1_judgement">test6</td>
-                                                                    </tr>
-                                                                    <tr id="tr_item_no_1_sub_no_column" >
-                                                                        <th id="th_tr_item_no_1_sub_no_column_rowspan" rowspan="3"></th>
-                                                                        <th class="th_igm_sub_column">SUB NO</th>
-                                                                        <th class="th_igm_sub_column">COORDINATES</th>
-                                                                        <th class="th_igm_sub_column" colspan="5">DATA</th>
-                                                                        <th class="th_igm_sub_column">JUDGEMENT</th>
-                                                                    </tr>
-                                                                    <tr id="tr_item_no_1_sub_no_1" >
-                                                                        <td>1</td>
-                                                                        <td id="td_item_no_1_sub_no_1_coordinates">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_visual_1">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_visual_2">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_visual_3">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_visual_4">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_visual_5">test</td>
-                                                                        <td id="td_item_no_1_sub_no_1_judgement">GOOD/NG</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                                <tfoot id="tfoot_add_igm_item">
-                                                                   <td colspan="9"> {{--  type, current_item_no + 1, sub item count, added item no in between count--}}
-                                                                        <button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',2,0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
-                                                                    </td>
-                                                                </tfoot>
+                                                            <table class="table text-center table-sm table-bordered" id="tbl_igm" hidden>
+                                                                <tbody id="tbody_tbl_igm" hidden></tbody>
                                                             </table>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <br>
+                                            {{-- manual adding --}}
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="single-table">

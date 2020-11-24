@@ -5,87 +5,99 @@ namespace App\Http\Controllers;
 use App\LoginUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
 class LoginUserController extends Controller
 {
 
     public function token()
     {
-        //token
         return csrf_token();
     }
-    public function selectAll(LoginUser $user)
+
+    public function selectAll(LoginUser $loginUser)
     {
-        return $user->selectAll();
+        return $loginUser->selectAll();
     }
+    
     public function selectUser($id)
     {
         $user = new LoginUser();
 
         $data = $user->selectUser($id);
 
-        if ($data != null) {
+        if ($data != null) 
+        {
             return $data;
         }
     }
 
-    public function loginAuthentication(Request $request)
+    public function loginAuthentication(LoginUser $LoginUser, Request $Request)
     {
-        $validator = Validator::make(request()->all(), [
-            'txt_employee_id' => 'required',
+        $employee_id = $Request->txt_employee_id;
+        $password = $Request->txt_employee_password;
+
+        $validator = Validator::make($Request->all(), 
+        [
+            'txt_employee_id'       => 'required',
             'txt_employee_password' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return $data = [
-                "response" => "warning",
-                "value" => $validator->errors(),
+        if ($validator->fails()) 
+        {
+            $data = 
+            [
+                'response'  => "warning",
+                'value'     => $validator->errors(),
             ];
-        } else {
-
-            $datas = request()->except('_token');
-            $datas = [
-                'name' => $request->txt_employee_id,
-                'password' => $request->txt_employee_password,
-
+        } 
+        else 
+        {
+            $data = $Request->except('_token');
+            $data = 
+            [
+                'name'      => $employee_id,
+                'password'  => $password,
             ];
 
             try
             {
+                $user = $LoginUser->selectUser($data);
 
-                $user = new LoginUser();
-                $data = $user->selectUser($datas);
+                $data = 
+                [
+                    'response' => 'fail',
+                    'value' => 'Invalid Credentials',
+                ];
 
-                if ($data) {
-
-                    session(['name' => $data->name,
-                        'fullname' => $data->fullname,
-                        'access_level' => $data->access_level,
-                        'position' => $data->position,
-                        'emailadd' => $data->emailadd,
+                if ($user) 
+                {
+                    session(
+                    [
+                        'name'          => $user->name,
+                        'fullname'      => $user->fullname,
+                        'access_level'  => $user->access_level,
+                        'position'      => $user->position,
+                        'email'         => $user->emailadd,
                     ]);
 
-                    $data = request()->session()->all();
-                    // return redirect('trial-checksheet');
-                    $data = [
-                        "response" => "success",
-                        "value" => ['access_level' => $data['access_level'], 'position' => $data['position']],
-                    ];
+                    $session = $Request->session()->all();
 
-                } else {
-                    $data = [
-                        "response" => "fail",
-                        "value" => "Invalid Credentials",
+                    $data = 
+                    [
+                        'response'  => 'success',
+                        'value'     => ['access_level' => $session['access_level'], 'position' => $session['position']],
                     ];
-                }
-
-            } catch (\Throwable $th) {
-                $data = [
-                    "response" => "error",
-                    "value" => $th->getMessage(),
+                } 
+            } 
+            catch (\Throwable $th) 
+            {
+                $data = 
+                [
+                    'response' => 'Error',
+                    'value' => $th->getMessage(),
                 ];
             }
         }
-        return response()->json($data);
+
+        return $data;
     }
 }

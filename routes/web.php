@@ -43,8 +43,9 @@ Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
-Route::get('store-igm', 'TrialChecksheetController@storeIgm');
 Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
+Route::post('store-igm', 'TrialChecksheetController@storeIgm');
+Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 
 //CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');

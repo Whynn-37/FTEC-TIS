@@ -5,43 +5,51 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\TaktTime;
 use App\TrialChecksheet;
-
 class TaktTimeController extends Controller
 {
-    public function loadCycleTime(request $request, TaktTime $takt_time)
+    public function loadCycleTime(TaktTime $TaktTime, Request $Request)
     {
-        $message = 'No data';
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+
         $status = 'Error';
+        $message = 'No data';
+        $result = [];
 
-        $result = $takt_time->loadCycleTime($request->trial_checksheet_id);
-
-        if (count($result) !== 0)
+        if ($trial_checksheet_id !== null) 
         {
-            $message = 'Takt Time table loaded successfully';
-            $status = 'Success';
+            $result = $TaktTime->loadCycleTime($trial_checksheet_id);
+
+            $status = 'Error';
+            $message = 'Not Successfully Load';
+
+            if (count($result) !== 0)
+            {
+                $status = 'Success';
+                $message = 'Successfully Load';
+            }
         }
 
-        return response()->json([
+        return 
+        [
             'status'    =>  $status,
             'message'   =>  $message,
             'data'      =>  $result
-        ]);
+        ];
     }
 
-    public function startCycleTime(TrialChecksheet $trial_checksheet,TaktTime $takt_time, Request $request)
+    public function startCycleTime(TrialChecksheet $TrialChecksheet,TaktTime $TaktTime, Request $Request)
     {
         //edited by jed
-        
-        $trial_checksheet_id = $request->trial_checksheet_id;
-        $takt_times = $request->takt_time;
-        $part_number = $request->part_number;
-        $revision_number = $request->revision_number;
-        $trial_number = $request->trial_number;
-
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $takt_times = $Request->takt_time;
+        $part_number = $Request->part_number;
+        $revision_number = $Request->revision_number;
+        $trial_number = $Request->trial_number;
 
         if($trial_checksheet_id !== null)
         {
-            $result = [
+            $data = 
+            [
                 'trial_checksheet_id'   => $trial_checksheet_id,
                 'start_date'            => date('Y/m/d'),
                 'start_time'            => date('H:i:s'),
@@ -53,15 +61,17 @@ class TaktTimeController extends Controller
         }
         else
         {
-            $data = [
+            $trial_checksheet = 
+            [
                 'part_number'           => $part_number,
                 'revision_number'       => $revision_number,
                 'trial_number'          => $trial_number
             ];
     
-            $last_id =  $trial_checksheet->storeTrialChecksheet($data);  
+            $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);  
             
-            $result = [
+            $data = 
+            [
                 'trial_checksheet_id'   => $last_id['id'],
                 'start_date'            => date('Y/m/d'),
                 'start_time'            => date('H:i:s'),
@@ -72,35 +82,41 @@ class TaktTimeController extends Controller
             ];
         }
 
-        $result_takt_time =  $takt_time->updateOrCreateTaktTime($result);
+        $result =  $TaktTime->updateOrCreateTaktTime($data);
 
         $status = "Error";
-        $message = "no data";
+        $message = "Not Successfully Updated";
 
-        if($result_takt_time != null)
+        if($result != null)
         {
             $status = "Success";
-            $message = "Successfully"; 
+            $message = "Successfully Updated"; 
         }
         
-        return response()->json([
+        return 
+        [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $result_takt_time
-        ]);
+            'data'      =>  $result
+        ];
     }
 
-    public function StopCycleTime(TaktTime $load_takt_time,Request $request)
+    public function StopCycleTime(TaktTime $TaktTime, Request $Request)
     {
-        $trial_checksheet_id    = $request->trial_checksheet_id;
-        $actual_time            = $request->actual_time;
-        $total_takt_time        = $request->total_takt_time;
-        $takt_time              = $request->takt_time;
+        $trial_checksheet_id    = $Request->trial_checksheet_id;
+        $actual_time            = $Request->actual_time;
+        $total_takt_time        = $Request->total_takt_time;
+        $takt_time              = $Request->takt_time;
 
+        $status = "Error";
+        $message = "No Data";
+        $result = [];
 
-        $start_date_time = $load_takt_time->getStartDateTime($trial_checksheet_id);
+        if ($trial_checksheet_id !== null) 
+        {
+            $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
          
-        $data = 
+            $data = 
             [
                 'trial_checksheet_id'   => $trial_checksheet_id,
                 'start_date'            => $start_date_time['start_date'],
@@ -110,22 +126,24 @@ class TaktTimeController extends Controller
                 'total_takt_time'       => $total_takt_time,
                 'takt_time'             => $takt_time,
             ];
-
-        $takt_time_result =  $load_takt_time->updateOrCreateTaktTime($data);
-
-        $status = "Error";
-        $message = "no data";
-
-        if($takt_time_result != null)
-        {
-            $status = "Success";
-            $message = "Successfully"; 
+    
+            $result =  $TaktTime->updateOrCreateTaktTime($data);
+    
+            $status = "Error";
+            $message = "Not Successfully Updated";
+    
+            if($result != null)
+            {
+                $status = "Success";
+                $message = "Successfully Updated";
+            }
         }
-        
-        return response()->json([
+
+        return 
+        [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $takt_time_result
-        ]);
+            'data'      =>  $result
+        ];
     }
 }

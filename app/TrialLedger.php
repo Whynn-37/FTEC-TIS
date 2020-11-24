@@ -15,7 +15,7 @@ class TrialLedger extends Model
         return TrialLedger::insert($result);
     }
 
-    public function loadPartnumber($id)
+    public function loadPartnumber()
     {
         // nag add ng actual_end_date by jed
         return TrialLedger::where('actual_end_date', null)
@@ -32,10 +32,10 @@ class TrialLedger extends Model
         ->get();
     }
 
-    public function loadTrialNumber($data)
+    public function loadTrialNumber($part_number, $revision_number)
     {
-        return TrialLedger::where('revision_number',$data['revision_number'])
-        ->where('part_number',$data['part_number'])
+        return TrialLedger::where('revision_number',$revision_number)
+        ->where('part_number',$part_number)
         ->select('trial_number')
         ->get();
     }

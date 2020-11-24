@@ -52,7 +52,6 @@ class ChecksheetItem extends Model
         return $result;
     }
 
-    
     public function updateOrCreateChecksheetItem($data)
     {
         return ChecksheetItem::updateOrCreate(
