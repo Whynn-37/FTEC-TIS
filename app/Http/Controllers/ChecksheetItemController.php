@@ -17,6 +17,13 @@ class ChecksheetItemController extends Controller
         $upper_limit = $Request->upper_limit;
         $lower_limit = $Request->lower_limit;
 
+        if ($type !== 'Min and Max' || $type !== 'Min and Max and Form Tolerance')
+        {
+            $specification = '-';
+            $upper_limit = '-';
+            $lower_limit = '-';
+        }
+
         $status = 'Error';
         $message = 'No Data';
 
@@ -35,8 +42,9 @@ class ChecksheetItemController extends Controller
                 'upper_limit'           => $upper_limit,
                 'lower_limit'           => $lower_limit,
                 'item_type'             => 0,
-                'created_at'            => now(),
-                'updated_at'            => now()
+                'judgment'              => 'N/A',
+                'remarks'               => null,
+                'hinsei'                => null,
             ];
     
             $checksheet_item_result =  $ChecksheetItem->updateOrCreateChecksheetItem($checksheet_item);
@@ -47,9 +55,8 @@ class ChecksheetItemController extends Controller
                 'sub_number'            => 1,
                 'coordinates'           => null,
                 'data'                  => null,
-                'judgment'              => null,
+                'judgment'              => 'N/A',
                 'remarks'               => null,
-                'hinsei'                => null,
             ];
             
             $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChecksheetData extends Model
 {
-    protected $fillable = ['checksheet_item_id','sub_number', 'coordinates', 'data', 'judgment', 'remarks', 'hinsei'];
+    protected $fillable = ['checksheet_item_id','sub_number', 'coordinates', 'data', 'judgment', 'remarks'];
 
     public function getChecksheetData($id)
     {
@@ -31,8 +31,6 @@ class ChecksheetData extends Model
                 'data'                  => $data['data'],
                 'judgment'              => $data['judgment'],
                 'remarks'               => $data['remarks'],
-                'hinsei'                => $data['hinsei'],
-
             ]
         );
     }
