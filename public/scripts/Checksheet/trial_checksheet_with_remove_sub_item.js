@@ -675,24 +675,16 @@ const IGM = (() => {
 
         if (item_no_existing_sub_no_count > 0) {
 
-            if (item_no_existing_sub_no_count > 1) {
-
-                for (let remove_sub_no_count = 2; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
-
-                    let remove_sub_no_onclick_value = $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('onclick')
-
-                    let split_remove_sub_no_onclick_value = remove_sub_no_onclick_value.split(',');
-
-                    let new_remove_sub_no_onclick_value = `${split_remove_sub_no_onclick_value[0]},${split_remove_sub_no_onclick_value[1]},${next_item_no_holder},${split_remove_sub_no_onclick_value[3]},${split_remove_sub_no_onclick_value[4]}`;
-                    $(`#a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`).attr('onclick', `${new_remove_sub_no_onclick_value}`);
-
-                }
-            }
-
             for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
 
-                $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+                let remove_sub_no_onclick_value = $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('onclick')
 
+                let split_remove_sub_no_onclick_value = remove_sub_no_onclick_value.split(',');
+
+                let new_remove_sub_no_onclick_value = `${split_remove_sub_no_onclick_value[0]},${split_remove_sub_no_onclick_value[1]},${next_item_no_holder},${split_remove_sub_no_onclick_value[3]},${split_remove_sub_no_onclick_value[4]}`;
+
+                $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+                $(`#a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`).attr('onclick', `${new_remove_sub_no_onclick_value}`);
                 $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
                 $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`);
@@ -811,24 +803,18 @@ const IGM = (() => {
     };
 
     this_igm.ValidateSubNoCount = (existing_sub_no_count, item_no_holder) => {
-        // naka comment muna baka biglang kailanganin ko
-        // if (existing_sub_no_count === 0) {
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).removeClass('disabled');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).css('color', ' black');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).css('cursor', ' pointer');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).attr('onclick', `IGM.RemoveIgmItemNo(${item_no_holder});`);
-        // } else {
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).addClass('disabled');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).removeAttr('onclick');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).css('cursor', ' context-menu');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).css('color', ' #c9cbcd');
-        //     $(`#a_remove_igm_item_no_${item_no_holder}`).removeAttr('onclick');
-        // }
-
-        $(`#a_remove_igm_item_no_${item_no_holder}`).removeClass('disabled');
-        $(`#a_remove_igm_item_no_${item_no_holder}`).css('color', ' black');
-        $(`#a_remove_igm_item_no_${item_no_holder}`).css('cursor', ' pointer');
-        $(`#a_remove_igm_item_no_${item_no_holder}`).attr('onclick', `IGM.RemoveIgmItemNo(${item_no_holder});`);
+        if (existing_sub_no_count === 0) {
+            $(`#a_remove_igm_item_no_${item_no_holder}`).removeClass('disabled');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).css('color', ' black');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).css('cursor', ' pointer');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).attr('onclick', `IGM.RemoveIgmItemNo(${item_no_holder});`);
+        } else {
+            $(`#a_remove_igm_item_no_${item_no_holder}`).addClass('disabled');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).removeAttr('onclick');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).css('cursor', ' context-menu');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).css('color', ' #c9cbcd');
+            $(`#a_remove_igm_item_no_${item_no_holder}`).removeAttr('onclick');
+        }
     };
 
     this_igm.RemoveIgmItemNo = (item_no) => {
@@ -858,13 +844,11 @@ const IGM = (() => {
                         data: {
                             _token: _TOKEN,
                             id: id,
-                            trial_checksheet_id: trial_checksheet_id,
-                            item_number: item_number
+                            trial_checksheet_id:trial_checksheet_id,
+                            item_number:item_number
                         },
                         success: data => {
-
                             IGM.ProceedRemoveIgmItemNo(item_no);
-
                             $(`#accordion_igm`).LoadingOverlay('hide');
                         }
                     });
@@ -874,24 +858,12 @@ const IGM = (() => {
     };
 
     this_igm.ProceedRemoveIgmItemNo = (item_no) => {
-        
-        //para sa pag alis ng mga sub items
-        let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
-        let existing_sub_no_count = split_add_item_no_onlick[2];
-        console.log(split_add_item_no_onlick)
-        $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-        for (let index = 1; index <= existing_sub_no_count; index++) {
-            $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
-        }
 
         if (new_item_no_count === 1) {
             $(`#tr_item_no_${item_no}`).remove();
             $('#tfoot_add_igm_item').prop('hidden', false);
             $('#tbl_new_igm').prop('hidden', true);
-            new_item_no_count--;
-            item_no_count--;
         } else {
-
             if (item_no === 1) {
                 $('#tr_item_no_main_column').prop('hidden', true);
                 $(`#tr_item_no_${item_no}_column`).remove();
@@ -903,7 +875,7 @@ const IGM = (() => {
             if (item_no !== item_no_count) {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
                 for (let count = item_no; count < new_item_no_count; count++) {
-
+                    
                     if (count === item_no) {
                         var item_no_holder = item_no;
                         var next_item_no_holder = item_no + 1;
@@ -947,7 +919,7 @@ const IGM = (() => {
                     $(`#span_item_no_${next_item_no_holder}_label`).attr('id', `span_item_no_${item_no_holder}_label`);
 
                     $(`#txt_hidden_item_no_${next_item_no_holder}`).attr('id', `txt_hidden_item_no_${item_no_holder}`);
-
+                    
                     //validate sub no count
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick', `IGM.ValidateSubNoCount(${existing_sub_no_count_value},${item_no_holder});`);
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('id', `btn_validate_sub_no_count_${item_no_holder}`);
@@ -971,17 +943,18 @@ const IGM = (() => {
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                     $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
 
+
                     new_item_no_count--;
                     item_no_count--;
 
-                    // if (existing_sub_no_count_value > 0) {
-                    //     IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
-                    //     if (count === new_item_no_count) {
-                    //         IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
-                    //     }
-                    // }
+                    if (existing_sub_no_count_value > 0) {
+                        IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
+                        if (count === new_item_no_count) {
+                            IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
+                        }
+                    }
                 }
-            } else {
+            } else{
                 new_item_no_count--;
                 item_no_count--;
             }
@@ -1069,28 +1042,21 @@ const IGM = (() => {
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id) => {
         let tr = '';
         let new_sub_no = existing_sub_no_count_per_item;
-        let td_remove_sub_no_button = '';
-        let margin_left = '';
-
-        if (new_sub_no > 1) {
-            td_remove_sub_no_button += `<button class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
-            <div class="dropdown-menu">
-                <a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer"><i class="ti-close"></i> REMOVE</a>
-            </div>`;
-
-            margin_left += 'margin-left:5%;';
-        }
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
-                <td>
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
-                    <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
-                        ${td_remove_sub_no_button}
-                    </div>
-                </td>
+				<td style="vertical-align: middle;" rowspan="2">
+					<div class="dropright">
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}
+                        <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                    </span>
+					<button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
+						<div class="dropdown-menu">
+							<a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer;text-align:center;"><i class="ti-close"></i> REMOVE</a>
+						</div>
+					</div>
+				</td>
 				<td style="vertical-align: middle;" rowspan="2">
 					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
 				</td>
@@ -1132,10 +1098,14 @@ const IGM = (() => {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
                 <td>
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label"  style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
-                        ${td_remove_sub_no_button}
+                        <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}
+                            <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                        </span>
+                        <button style="margin-left: 20%;" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown"></button>
+                        <div class="dropdown-menu">
+                            <a id="a_remove_item_no_${item_no_count}_sub_no_${new_sub_no}" class="dropdown-item" onclick="IGM.RemoveSubNo('${type}',${new_sub_no},${item_no_count},${added_item_no_between_count},${existing_sub_no_count_per_item});" style="cursor: pointer"><i class="ti-close"></i> REMOVE</a>
+                        </div>
                     </div>
                 </td>
                 <td class="td_sub_no_input">

@@ -47,7 +47,6 @@ class ChecksheetData extends Model
         return ChecksheetData::find($id)->delete();
     }
 
-<<<<<<< HEAD
     public function selectId($checksheet_item_id, $sub_number)
     {
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
@@ -66,12 +65,10 @@ class ChecksheetData extends Model
 
         return $result;
     }
-=======
     public function loadTrialCheckitemsNG($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
         ->where('checksheet_data.judgment', '=', 'NG')
         ->get();
     }
->>>>>>> local
 }
