@@ -515,7 +515,7 @@ const IGM = (() => {
             }
             if (count === item_no_counter - 1) {
                 IGM.AddIgmItemNoInputsBetweenChangeTemporaryIdToOriginalId(type, previous_item_no, existing_sub_no_count, added_item_no_between_count);
-                IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type, previous_item_no);
+                IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type, previous_item_no, 'add');
             }
         }
     };
@@ -686,12 +686,12 @@ const IGM = (() => {
                     let new_remove_sub_no_onclick_value = `${split_remove_sub_no_onclick_value[0]},${split_remove_sub_no_onclick_value[1]},${next_item_no_holder},${split_remove_sub_no_onclick_value[3]},${split_remove_sub_no_onclick_value[4]}`;
                     $(`#a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`).attr('onclick', `${new_remove_sub_no_onclick_value}`);
 
+                    $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+
                 }
             }
 
             for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
-
-                $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `a_remove_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
                 $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
@@ -740,10 +740,18 @@ const IGM = (() => {
         }
     };
 
-    this_igm.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId = (type, previous_item_no) => {
+    this_igm.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId = (type, previous_item_no, action) => {
+
         let count_value = parseInt(previous_item_no) + 2;
 
-        for (let a_count = count_value; a_count <= item_no_count; a_count++) {
+        if (action === 'add') {
+            var new_item_no_counter = item_no_count;
+        } else {
+            new_item_no_counter = parseInt(item_no_count) - 1;
+        }
+
+        for (let a_count = count_value; a_count <= new_item_no_counter; a_count++) {
+
             let add_igm_tem_no_onclick_value = $(`#a_add_igm_item_no_${a_count}`).attr('onclick');
             let split_add_igm_tem_no_onclick_value = add_igm_tem_no_onclick_value.split(',');
 
@@ -754,7 +762,10 @@ const IGM = (() => {
             if (existing_sub_no_count_value > 0) {
                 for (let b_count = 1; b_count <= existing_sub_no_count_value; b_count++) {
 
-                    $(`#a_remove_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `a_remove_item_no_${a_count}_sub_no_${b_count}`);
+                    if (b_count > 1) {
+                        $(`#a_remove_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `a_remove_item_no_${a_count}_sub_no_${b_count}`);
+                    }
+
                     $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`)
 
                     $(`#th_tr_item_no_${a_count}_sub_no_column_rowspan_1`).attr('id', `th_tr_item_no_${a_count}_sub_no_column_rowspan`)
@@ -874,11 +885,11 @@ const IGM = (() => {
     };
 
     this_igm.ProceedRemoveIgmItemNo = (item_no) => {
-        
+
         //para sa pag alis ng mga sub items
         let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
         let existing_sub_no_count = split_add_item_no_onlick[2];
-        console.log(split_add_item_no_onlick)
+
         $(`#tr_item_no_${item_no}_sub_no_column`).remove();
         for (let index = 1; index <= existing_sub_no_count; index++) {
             $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
@@ -971,16 +982,16 @@ const IGM = (() => {
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                     $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
 
-                    new_item_no_count--;
-                    item_no_count--;
-
-                    // if (existing_sub_no_count_value > 0) {
-                    //     IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
-                    //     if (count === new_item_no_count) {
-                    //         IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2);
-                    //     }
-                    // }
+                    if (existing_sub_no_count_value > 0) {
+                        IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
+                        if (count === new_item_no_count - 1) {
+                            IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, item_no_holder - 2, 'remove');
+                        }
+                    }
                 }
+
+                new_item_no_count--;
+                item_no_count--;
             } else {
                 new_item_no_count--;
                 item_no_count--;
