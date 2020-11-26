@@ -1,6 +1,6 @@
 <div id="modal_view_inspection_data" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
+        <div class="modal-content" id="div_modal_content">
             <div class="modal-header" id="modal_header">
                 <h3 class="modal-title" id="modal_title"></h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -20,40 +20,66 @@
                             <div id="accordion_details" class="collapse show" data-parent="#accordion4">
                                 <div class="card-body">
                                     <div class="row">
+                                        {{-- HIDDEN ID REQUEST NI JED --}}
+                                        <input type="text" id="trial_checksheet_id" hidden>
                                         <div class="col-md-4">
-                                            <label>PART NO:</label>&nbsp;
+                                            <label>PART NUMBER:</label>&nbsp;
                                             <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
-                                            <input class="form-control mb-3" type="text" placeholder="Part No"
-                                                id="txt_part_no" disabled>
-                                            <label>PART NAME:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Part Name"
-                                                id="txt_part_name" disabled>
-                                            <label>SUPPLIER:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Supplier"
-                                                id="txt_supplier" disabled>
+                                            <input type="text" class="form-control" id="txt_part_number" placeholder="Part number" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label>REVISION:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Revision"
-                                                disabled>
-                                            <label>TRIAL APPLICATION:</label>
-                                            <input class="form-control mb-3" type="text"
-                                                placeholder="Trial Application" id="txt_trial_application"
-                                                disabled>
-                                            <label>KIND OF DIE:</label>
-                                            <input class="form-control mb-3" type="text"
-                                                placeholder="Kind of Die" id="txt_kind_of_die" disabled>
+                                            <input type="text" class="form-control" id="txt_revision" placeholder="Revision" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>TRIAL NUMBER:</label>
+                                            <input type="text" class="form-control" id="txt_trial_number" placeholder="Trial number" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label>PART NAME:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Part name" id="txt_part_name" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>MODEL NAME:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Model name" id="txt_model_name" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>SUPPLIER CODE / SUPPLIER NAME:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="txt_supplier_code" placeholder="Supplier code" readonly>
+                                                <input type="text" class="form-control" id="txt_supplier_name" placeholder="Supplier name" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label>RECEIVED DATE:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_received_date" readonly>
                                         </div>
                                         <div class="col-md-4">
-                                            <label>MODEL NAME:</label>
-                                            <input class="form-control mb-3" type="text"
-                                                placeholder="Model Name" id="txt_model_name" disabled>
-                                            <label>TRIAL STAGE:</label>
-                                            <input class="form-control mb-3" type="text"
-                                                placeholder="Trial Stage" id="txt_trial_stage" disabled>
-                                            <label>JUDGEMENT:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Judgement"
-                                                id="txt_judgement" disabled>
+                                            <label>INSPECTION COMPLETION DATE:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Inspection completion date" id="txt_inspection_completion_date" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>ACTUAL INSPECTION TIME:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Actual inspection time" id="txt_actual_inspection_time" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label>TRIAL INSPECTION REASON (INSPECTION TYPE):</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Trial inspection reason" id="txt_inspection_reason" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>KIND OF DIE:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Kind of die" id="txt_die_kind" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="">INSPECTOR:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Inspector" id="txt_inspector" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -69,38 +95,7 @@
                             </div>
                             <div id="accordion_attach_files" class="collapse show" data-parent="#accordion_attachment">
                                 <div class="card-body"><br>
-                                    <div class="row">
-                                        <div class="vertical-rectangle">
-                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
-                                            <div class="file-options">
-                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-rectangle">
-                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
-                                            <div class="file-options">
-                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-rectangle">
-                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
-                                            <div class="file-options">
-                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-rectangle">
-                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
-                                            <div class="file-options">
-                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-rectangle">
-                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
-                                            <div class="file-options">
-                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
-                                            </div>
-                                        </div>
-                                    </div><br>
+                                    <div class="row" id="div_attachments"></div><br>
                                 </div>
                             </div>
                         </div>
