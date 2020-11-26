@@ -443,7 +443,7 @@ const IGM = (() => {
         $(`#accordion_igm`).LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
-
+        alert(`item_no: ${item_no}`)
         $.ajax({
             url: `store-items`,
             type: 'post',
@@ -601,7 +601,7 @@ const IGM = (() => {
             //pagkuha ng existing sub no count
             let split_item_no_onclick = $(`#a_add_igm_item_no_${item_no_index}`).attr('onclick').split(',');
             let existing_sub_no_count = split_item_no_onclick[2];
-
+            alert(`UpdateNextIgmItemNo item_no: ${item_no_index}`)
             $.ajax({
                 url: `store-items`,
                 type: 'post',
@@ -624,29 +624,29 @@ const IGM = (() => {
                     $(`#txt_hidden_item_no_${item_no_index}`).val(item_no_checksheet_id);
 
                     //pag update ng checksheet id ng next checksheet datas
-                    // if (existing_sub_no_count > 0) {
-                    //     for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) {
-                    //         $.ajax({
-                    //             url: `store-datas`,
-                    //             type: 'post',
-                    //             dataType: 'json',
-                    //             cache: false,
-                    //             data: {
-                    //                 _token: _TOKEN,
-                    //                 checksheet_item_id: item_no_checksheet_id - 1,
-                    //                 sub_number: sub_no_index
-                    //             },
-                    //             success: data => {
-                    //                 let checksheet_item_id = data.data;
-                    //                 //paglalagay ng hidden id
-                    //                 alert(`store-datas: ${checksheet_item_id}`)
-                    //                 $(`#txt_hidden_item_no_${item_no_index}_sub_no_${sub_no_index}`).val(checksheet_item_id);
+                    if (existing_sub_no_count > 0) {
+                        for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) {
+                            $.ajax({
+                                url: `store-datas`,
+                                type: 'post',
+                                dataType: 'json',
+                                cache: false,
+                                data: {
+                                    _token: _TOKEN,
+                                    checksheet_item_id: item_no_checksheet_id - 1,
+                                    sub_number: sub_no_index
+                                },
+                                success: data => {
+                                    let checksheet_item_id = data.data;
+                                    //paglalagay ng hidden id
+                                    alert(`store-datas: ${checksheet_item_id}`)
+                                    $(`#txt_hidden_item_no_${item_no_index}_sub_no_${sub_no_index}`).val(checksheet_item_id);
 
-                    //                 $(`#accordion_igm`).LoadingOverlay('hide');
-                    //             }
-                    //         });
-                    //     }
-                    // }
+                                    $(`#accordion_igm`).LoadingOverlay('hide');
+                                }
+                            });
+                        }
+                    }
                     $(`#accordion_igm`).LoadingOverlay('hide');
 
                 }

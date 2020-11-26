@@ -14,52 +14,46 @@ const EVALUATE = (() => {
 
     this_evaluate.LoadFinishedInspectionData = () => {
 
-        // $('#tbl_finished_inspection_data').LoadingOverlay('show');
-        // $.ajax({
-        //     url: `load-inspection-finished`,
-        //     type: 'post',
-        //     dataType: 'json',
-        //     cache: false,
-        //     success: data => {
+        $('#tbl_finished_inspection_data').LoadingOverlay('show');
+        $.ajax({
+            url: `load-inspection-finished`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            success: data => {
 
-        //         $('#tbl_pending_request_list').DataTable().destroy();
-        //         $('#tbody_tbl_pending_request_list').empty();
+                if (data.status === 'Success') {
+                    $('#tbl_finished_inspection_data').DataTable().destroy();
+                    $('#tbody_tbl_finished_inspection_data').empty();
 
-        //         let tbody = '';
-        //         data.response.forEach((val) => {
-        //             tbody += 
-        //             `<tr>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>
-        //                     <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-        //                 </td>
-        //             </tr>`;
-        //         });
+                    let tbody = '';
+                    data.data.forEach((value) => {
+                        tbody +=
+                            `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.date_finished}</td>
+                            <td>${value.judgment}</td>
+                            <td>
+                                <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                        </tr>`;
+                    });
 
+                    $('#tbody_tbl_finished_inspection_data').html(tbody);
 
-        //         $('#tbody_tbl_pending_request_list').html(tbody);
-        //         $('#tbl_finished_inspection_data').DataTable({
-        //             "paging": true,
-        //             "lengthChange": true,
-        //             "searching": true,
-        //             "ordering": true,
-        //             "info": true,
-        //             "autoWidth": true,
-        //         });
-        //         $('#tbl_finished_inspection_data').LoadingOverlay('hide');
-        //     }
-        // });
-        $('#tbl_finished_inspection_data').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
+                    $('#tbl_finished_inspection_data').DataTable({
+                        "paging": true,
+                        "lengthChange": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": true,
+                    });
+                    $('#tbl_finished_inspection_data').LoadingOverlay('hide');
+                }
+            }
         });
     };
 
@@ -114,7 +108,7 @@ const EVALUATE = (() => {
         });
     };
 
-    this_evaluate.ViewFinishedInspectionData = (status) => {
+    this_evaluate.ViewFinishedInspectionData = (id, status) => {
         $('#modal_view_inspection_data').modal('show');
 
         if (status === 'finished') {
@@ -126,6 +120,24 @@ const EVALUATE = (() => {
             $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
             $('#modal_title').html('EVALUATION (DISAPPROVED INSPECTION DATA)');
         }
+
+        $('#div_modal_content').LoadingOverlay('show');
+
+        $.ajax({
+            url: `load-inspection-data`,
+            type: 'post',
+            dataType: 'json',
+            cache: false,
+            data:{
+                _token:_TOKEN,
+                id:id
+            },
+            success: data => {
+
+                $('#div_modal_content').LoadingOverlay('hide');
+
+            }
+        });
     };
 
     this_evaluate.LoadAttachments = () => {

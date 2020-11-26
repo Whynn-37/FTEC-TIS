@@ -34,7 +34,7 @@
                                             <input type="text" id="trial_checksheet_id" hidden>
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <label>PART NO:</label>&nbsp;
+                                                    <label>PART NUMBER:</label>&nbsp;
                                                     <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
                                                     <select class="form-control mb-3 select2 form_trial_checksheet_field" name="slc_part_number" id="slc_part_number" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
                                                 </div>
