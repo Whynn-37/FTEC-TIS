@@ -17,6 +17,13 @@ class ChecksheetDataController extends Controller
 
         if ($checksheet_item_id !== null && $sub_number !== null)
         {
+            $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>=');
+
+            if (count($select_id) !== 0)
+            {
+                $ChecksheetData->updateId($select_id, $action = 'update');
+            }
+
             $data = [
                 'checksheet_item_id' => $checksheet_item_id,
                 'sub_number'         => $sub_number,
@@ -58,11 +65,11 @@ class ChecksheetDataController extends Controller
 
         if($id !== null)
         {
-            $select_id = $ChecksheetData->selectId($checksheet_item_id, $sub_number);
+            $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>');
 
             if (count($select_id) !== 0)
             {
-                $ChecksheetData->deleteUpdate($select_id);
+                $ChecksheetData->updateId($select_id, $action = 'delete');
             }
 
             $result =  $ChecksheetData->deleteDatas($id);

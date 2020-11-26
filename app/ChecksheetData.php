@@ -35,6 +35,30 @@ class ChecksheetData extends Model
         );
     }
 
+    public function updateId($data, $action)
+    {
+        foreach ($data as $value)
+        {
+            if ($action === 'update')
+                $sub_number = $value->sub_number + 1;
+            else
+                $sub_number = $value->sub_number - 1;
+
+            $result = ChecksheetData::find($value->id)
+            ->update(['sub_number' => $sub_number]);
+        }
+
+        return $result;
+    }
+
+    public function selectUpdateId($checksheet_item_id, $sub_number, $operation)
+    {
+        return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
+        ->where('sub_number', $operation, $sub_number)
+        ->select('id', 'sub_number')
+        ->get();
+    }
+
     public function updateAutoJudgmentData($id, $sub_number, $data)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
@@ -45,25 +69,6 @@ class ChecksheetData extends Model
     public function deleteDatas($id)
     {
         return ChecksheetData::find($id)->delete();
-    }
-
-    public function selectId($checksheet_item_id, $sub_number)
-    {
-        return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
-        ->where('sub_number', '>', $sub_number)
-        ->select('id', 'sub_number')
-        ->get();
-    }
-
-    public function deleteUpdate($data)
-    {
-        foreach ($data as $value)
-        {
-            $result = ChecksheetData::find($value->id)
-            ->update(['sub_number' => $value->sub_number - 1]);
-        }
-
-        return $result;
     }
     public function loadTrialCheckitemsNG($id)
     {

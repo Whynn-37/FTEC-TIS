@@ -7,6 +7,9 @@ use App\Approval;
 use App\ChecksheetItem;
 use App\TrialChecksheet;
 use App\ChecksheetData;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TrialEvaluationResultExport;
+
 class ApprovalController extends Controller
 {
     public function loadInspectionData(ChecksheetData $ChecksheetData, 
@@ -163,5 +166,9 @@ class ApprovalController extends Controller
             'data'      => $result  
         ];
     }
-    
+
+    public function generateTrialEvaluationResult()
+    {
+        return Excel::download(new TrialEvaluationResultExport, 'trial_evaluation_result.xlsx');
+    }
 }
