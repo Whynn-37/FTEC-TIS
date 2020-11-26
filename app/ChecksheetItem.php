@@ -74,6 +74,30 @@ class ChecksheetItem extends Model
         );
     }
 
+    public function updateId($data, $action)
+    {
+        foreach ($data as $value)
+        {
+            if ($action === 'update')
+                $item_number = $value->item_number + 1;
+            else
+                $item_number = $value->item_number - 1;
+
+            $result = ChecksheetItem::find($value->id)
+            ->update(['item_number' => $item_number]);
+        }
+
+        return $result;
+    }
+
+    public function selectUpdateId($trial_checksheet_id, $item_number, $operation)
+    {
+        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('item_number', $operation, $item_number)
+        ->select('id', 'item_number')
+        ->get();
+    }
+
     public function updateAutoJudgmentItem($id, $data)
     {
         return ChecksheetItem::find($id)->update($data);
@@ -83,24 +107,5 @@ class ChecksheetItem extends Model
     {
         ChecksheetItem::find($id)->checksheet_datas()->delete();
         return ChecksheetItem::find($id)->delete();
-    }
-
-    public function selectId($trial_checksheet_id, $item_number)
-    {
-        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
-        ->where('item_number', '>', $item_number)
-        ->select('id', 'item_number')
-        ->get();
-    }
-
-    public function deleteUpdate($data)
-    {
-        foreach ($data as $value)
-        {
-            $result = ChecksheetItem::find($value->id)
-            ->update(['item_number' => $value->item_number - 1]);
-        }
-
-        return $result;
     }
 }
