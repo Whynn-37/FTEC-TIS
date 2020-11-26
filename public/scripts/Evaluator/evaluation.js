@@ -128,11 +128,29 @@ const EVALUATE = (() => {
             type: 'post',
             dataType: 'json',
             cache: false,
-            data:{
-                _token:_TOKEN,
-                id:id
+            data: {
+                _token: _TOKEN,
+                id: id
             },
             success: data => {
+
+                //checksheet details
+                data.data.checksheet_details.forEach((value) => {
+                    $('#txt_part_number').val(value.part_number);
+                    $('#txt_revision').val(value.revision_number);
+                    $('#txt_trial_number').val(value.trial_number);
+                    $('#txt_part_name').val(value.part_name);
+                    $('#txt_model_name').val(value.model_name);
+                    $('#txt_supplier_code').val(value.supplier_code);
+                    $('#txt_supplier_name').val();//hindi pa kasama sa returned data
+                    $('#txt_received_date').val(value.received_date);
+                    $('#txt_inspection_completion_date').val(value.date_finished);
+                    $('#txt_actual_inspection_time').val(value.inspection_actual_time);
+                    $('#txt_inspection_reason').val(value.inspection_reason);
+                    $('#txt_die_kind').val(value.die_class);
+                    $('#txt_inspector').val(value.inspector_id); 
+                });
+                
 
                 $('#div_modal_content').LoadingOverlay('hide');
 
