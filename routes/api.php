@@ -55,4 +55,5 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
-
+Route::post('load-approval', 'ApprovalController@loadApproval');
+Route::post('load-disapproved', 'ApprovalController@loadDisapproved');

@@ -9,13 +9,13 @@ class TrialLedger extends Model
 {
     protected $fillable = ['application_date', 'supplier_code', 'part_number', 'part_name',  'revision_number', 'inspection_reason', 'die_class', 'trial_number'];
 
-    public function storeTrialLedger($result)
+    public function storeTrialLedger($datas)
     {
         TrialLedger::truncate();
-        return TrialLedger::insert($result);
+        return TrialLedger::insert($datas);
     }
 
-    public function loadPartnumber()
+    public function loadPartnumber($id)
     {
         // nag add ng actual_end_date by jed
         return TrialLedger::where('actual_end_date', null)
@@ -47,4 +47,17 @@ class TrialLedger extends Model
         ->where('trial_number',$data['trial_number'])
         ->first();
     }
+
+    public function getTrialLedgerFromDatabase()
+    {
+        return TrialLedger::select(['part_number', 'revision_number', 'trial_number'])
+        ->get();
+    }
+
+    public function insertTrialLedger($data)
+    {
+
+        return TrialLedger::insert($data);
+    }
+
 }

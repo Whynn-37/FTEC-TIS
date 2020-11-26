@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\UploadController;
 use App\TrialLedger;
+
 class TrialLedgerController extends Controller
 {
     public function storeTrialLedger(UploadController $Upload, TrialLedger $TrialLedger)
     {
-        // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
-        $file = 'F:\TIS\trial_ledger.xlsx';
+        $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
+        // $file = 'F:\TIS\trial_ledger.xlsx';
 
         $status = 'Error';
         $message = 'No file in Directory';
@@ -18,11 +19,15 @@ class TrialLedgerController extends Controller
 
         if(file_exists($file))
         {
+            $status = 'Success';
+            $message = 'File exist';
+            
             $data = $Upload->upload($file,$sheet);
 
             for($i=1; $i < count($data); $i++)
             {
-                $datas[] = [
+                $datas[] = 
+                [
                     'application_date'              =>  $data[$i][1], //APPL_DATE
                     'received_date'                 =>  $data[$i][2], //RECV_DATE
                     'supplier_code'                 =>  $data[$i][3], //SUP_CD
@@ -44,23 +49,15 @@ class TrialLedgerController extends Controller
                 ];
             }
 
-            $result = $TrialLedger->storeTrialLedger($datas);
+            $store_trial_ledger = $TrialLedger->storeTrialLedger($datas);
 
-            $status = 'Error';
-            $message = 'Not Successfully Save';
-
-            if ($result) 
-            {
-                $status = 'Success';
-                $message = 'Successfully Save';
-            }
         }
 
         return 
         [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $result
+            'data'      =>  $store_trial_ledger
         ];
     }
 }
