@@ -26,12 +26,5 @@ class Approval extends Model
         ->get();
     }
 
-    public function loadDisapproved()
-    {
-        return DB::table('trial_checksheets')
-        ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        ->where('approvals.decision', 3)
-        ->select(['trial_checksheets.part_number', 'trial_checksheets.revision_number', 'trial_checksheets.trial_number', 'approvals.disapproved_by', 'approvals.disapproved_datetime', 'approvals.reason'])
-        ->get();
-    }
+
 }
