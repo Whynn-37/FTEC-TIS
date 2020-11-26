@@ -163,5 +163,24 @@ class ApprovalController extends Controller
             'data'      => $result  
         ];
     }
-    
+    public function loadDisapproved(TrialChecksheet $trialchecksheet)
+    {
+        $data = $trialchecksheet->loadDisapproved();
+
+        $status = 'Error';
+        $message = 'Somethings Wrong!';
+        
+        if(!empty($data) == true )
+        {
+            $status = 'Success';
+            $message = 'Load Successfully!';
+        }
+
+       return
+       [
+           'status' => $status ,
+           'message' => $message,
+           'data' => $data
+        ];
+    }
 }
