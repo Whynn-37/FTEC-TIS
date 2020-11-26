@@ -2,8 +2,37 @@ $(document).ready(function () {
     CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.InitializeCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
+
 });
 
+let logVisit = function () {
+
+    let trial_checksheet_id = $('#trial_checksheet_id').val();
+
+    let remaining_target_takt_time = $('#div_target_takt_time_timer').TimeCircles().getTime();
+    let converted_remaining_target_takt_time = remaining_target_takt_time / 60;
+
+    let remaining_takt_time = $("#div_takt_time_timer").TimeCircles().getTime();
+    let absolute_value_remaining_takt_time = Math.abs(Math.floor(remaining_takt_time));
+    let converted_remaining_takt_time = absolute_value_remaining_takt_time / 60;
+
+    let remaining_actual_time = $("#div_actual_time_timer").TimeCircles().getTime();
+    let absolute_value_remaining_actual_time = Math.abs(Math.floor(remaining_actual_time));
+    let converted_remaining_actual_time = absolute_value_remaining_actual_time / 60;
+    
+    // URL to send the data to
+    let url = `api/stop-cycle-time?trial_checksheet_id=${trial_checksheet_id}&actual_time=${converted_remaining_actual_time.toFixed(2)}&total_takt_time=${converted_remaining_takt_time.toFixed(2)}&takt_time=${converted_remaining_target_takt_time.toFixed(2)}`;
+
+    let result = navigator.sendBeacon(url);
+
+    if (result) {
+        console.log('Successfully queued!');
+    } else {
+        console.log('Failure.');
+    }
+};
+
+window.addEventListener('beforeunload', logVisit);
 const CHECKSHEET = (() => {
     let this_checksheet = {};
 
@@ -13,6 +42,8 @@ const CHECKSHEET = (() => {
     let array_sub_item = [];
     let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
     let array_files = [];
+
+
 
     // pang refresh ng trial ledger
     this_checksheet.LoadRefreshAlert = () => {

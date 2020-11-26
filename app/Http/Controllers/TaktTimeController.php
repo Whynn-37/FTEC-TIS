@@ -115,27 +115,30 @@ class TaktTimeController extends Controller
         if ($trial_checksheet_id !== null) 
         {
             $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
-         
-            $data = 
-            [
-                'trial_checksheet_id'   => $trial_checksheet_id,
-                'start_date'            => $start_date_time['start_date'],
-                'start_time'            => $start_date_time['start_time'],
-                'end_time'              => date('H:i:s'),
-                'actual_time'           => $actual_time,
-                'total_takt_time'       => $total_takt_time,
-                'takt_time'             => $takt_time,
-            ];
-    
-            $result =  $TaktTime->updateOrCreateTaktTime($data);
-    
-            $status = "Error";
-            $message = "Not Successfully Updated";
-    
-            if($result != null)
+            
+            if (count($start_date_time) !== 0) 
             {
-                $status = "Success";
-                $message = "Successfully Updated";
+                $data = 
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'start_date'            => $start_date_time['start_date'],
+                    'start_time'            => $start_date_time['start_time'],
+                    'end_time'              => date('H:i:s'),
+                    'actual_time'           => $actual_time,
+                    'total_takt_time'       => $total_takt_time,
+                    'takt_time'             => $takt_time,
+                ];
+        
+                $result =  $TaktTime->updateOrCreateTaktTime($data);
+        
+                $status = "Error";
+                $message = "Not Successfully Updated";
+        
+                if($result != null)
+                {
+                    $status = "Success";
+                    $message = "Successfully Updated";
+                }
             }
         }
 
