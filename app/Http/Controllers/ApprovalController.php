@@ -171,4 +171,32 @@ class ApprovalController extends Controller
     {
         return Excel::download(new TrialEvaluationResultExport, 'trial_evaluation_result.xlsx');
     }
+
+    public function loadApproval(Approval $approval)
+    {
+        $message = 'Load Successfully';
+        $status = 'Success';
+
+        $approval_decision = $approval->loadApproval();
+
+        return response()->json([
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $approval_decision
+        ]);
+    }
+
+    public function loadDisapproved(Approval $approval)
+    {
+        $message = 'Load Successfully';
+        $status = 'Success';
+
+        $disapproved_decision = $approval->loadDisapproved();
+
+        return response()->json([
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $disapproved_decision
+        ]);
+    }
 }
