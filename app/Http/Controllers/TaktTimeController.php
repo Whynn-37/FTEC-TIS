@@ -116,7 +116,7 @@ class TaktTimeController extends Controller
         {
             $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
             
-            if (count($start_date_time) !== 0) 
+            if (!empty($start_date_time)) 
             {
                 $data = 
                 [
