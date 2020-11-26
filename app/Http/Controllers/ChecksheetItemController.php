@@ -32,6 +32,13 @@ class ChecksheetItemController extends Controller
 
         if ($trial_checksheet_id !== null) 
         {
+            $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
+
+            if (count($select_id) !== 0)
+            {
+                $ChecksheetItem->updateId($select_id, $action = 'update');
+            }
+
             $checksheet_item = 
             [
                 'trial_checksheet_id'   => $trial_checksheet_id,
@@ -49,7 +56,7 @@ class ChecksheetItemController extends Controller
             ];
     
             $checksheet_item_result =  $ChecksheetItem->updateOrCreateChecksheetItem($checksheet_item);
-            
+
             $checksheet_data = 
             [
                 'checksheet_item_id'    => $checksheet_item_result->id,
@@ -98,11 +105,11 @@ class ChecksheetItemController extends Controller
 
         if ($id !== null) 
         {
-            $select_id = $ChecksheetItem->selectId($trial_checksheet_id, $item_number);
+            $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>');
         
             if (count($select_id) !== 0)
             {
-                $ChecksheetItem->deleteUpdate($select_id);
+                $ChecksheetItem->updateId($select_id, $action = 'delete');
             }
 
             $result = $ChecksheetItem->deleteItem($id);

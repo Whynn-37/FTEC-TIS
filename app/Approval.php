@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class Approval extends Model
 {
 
@@ -13,5 +12,4 @@ class Approval extends Model
     {
         return Approval::create($data);
     }
-    
 }
