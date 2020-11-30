@@ -50,17 +50,4 @@ class TrialLedger extends Model
         ->where('trial_number',$data['trial_number'])
         ->first();
     }
-
-    public function getTrialLedgerFromDatabase()
-    {
-        return TrialLedger::select(['part_number', 'revision_number', 'trial_number'])
-        ->get();
-    }
-
-    public function insertTrialLedger($data)
-    {
-
-        return TrialLedger::insert($data);
-    }
-
 }

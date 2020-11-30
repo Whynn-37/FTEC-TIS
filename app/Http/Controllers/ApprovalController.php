@@ -9,6 +9,7 @@ use App\TrialChecksheet;
 use App\ChecksheetData;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TrialEvaluationResultExport;
+use App\TrialLedger;
 
 class ApprovalController extends Controller
 {
@@ -167,8 +168,9 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function generateTrialEvaluationResult()
+    public function generateTrialEvaluationResult(TrialEvaluationResultExport $trial_evaluation_result)
     {
+        return $trial_evaluation_result->registerEvents();
         return Excel::download(new TrialEvaluationResultExport, 'trial_evaluation_result.xlsx');
     }
 
