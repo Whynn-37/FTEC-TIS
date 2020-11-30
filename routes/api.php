@@ -49,7 +49,7 @@ Route::post('store-supplier', 'SupplierController@storeSupplier');
 //Cycle Time
 Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
-Route::patch('stop-cycle-time', 'TaktTimeController@stopCycleTime');
+Route::post('stop-cycle-time', 'TaktTimeController@stopCycleTime');
 
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');
@@ -62,4 +62,4 @@ Route::post('edit-data', 'ApprovalController@editData');
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::post('load-approval', 'ApprovalController@loadApproval');
-Route::post('load-disapproved', 'ApprovalController@loadDisapproved');
+Route::get('load-disapproved','ApprovalController@loadDisapproved');

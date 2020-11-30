@@ -69,7 +69,38 @@
                             </div>
                             <div id="accordion_attach_files" class="collapse show" data-parent="#accordion_attachment">
                                 <div class="card-body"><br>
-                                    <div class="row" id="div_attachments"></div><br>
+                                    <div class="row">
+                                        <div class="vertical-rectangle">
+                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                            <div class="file-options">
+                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                            </div>
+                                        </div>
+                                        <div class="vertical-rectangle">
+                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                            <div class="file-options">
+                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                            </div>
+                                        </div>
+                                        <div class="vertical-rectangle">
+                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                            <div class="file-options">
+                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                            </div>
+                                        </div>
+                                        <div class="vertical-rectangle">
+                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                            <div class="file-options">
+                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                            </div>
+                                        </div>
+                                        <div class="vertical-rectangle">
+                                            <img src="{{ asset('template/assets/images/icon/file.png') }}" alt="Avatar" class="file-image" style="width:100%">
+                                            <div class="file-options">
+                                                <button type="button" class="btn btn-green"><i class="ti-eye"></i> VIEW FILE</button>
+                                            </div>
+                                        </div>
+                                    </div><br>
                                 </div>
                             </div>
                         </div>

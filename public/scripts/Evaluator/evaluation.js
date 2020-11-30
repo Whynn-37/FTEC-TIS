@@ -1,60 +1,59 @@
 $(document).ready(function () {
     EVALUATE.LoadFinishedInspectionData();
     EVALUATE.LoadDisapprovedInspectionData();
+    EVALUATE.LoadAttachments();
 });
 
 const EVALUATE = (() => {
     let this_evaluate = {};
     let onkeyup_number_only = 'onkeypress="return event.charCode >= 48 && event.charCode <= 57;"';
 
+    let attachment_count = 5;
+    let array_add_to_pdf = [];
+    let add_to_pdf_count = 1;
+
     this_evaluate.LoadFinishedInspectionData = () => {
 
-        // $('#tbl_finished_inspection_data').LoadingOverlay('show');
-        // $.ajax({
-        //     url: `load-inspection-finished`,
-        //     type: 'post',
-        //     dataType: 'json',
-        //     cache: false,
-        //     success: data => {
+        $('#tbl_finished_inspection_data').LoadingOverlay('show');
+        $.ajax({
+            url: `load-inspection-finished`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            success: data => {
 
-        //         $('#tbl_pending_request_list').DataTable().destroy();
-        //         $('#tbody_tbl_pending_request_list').empty();
+                if (data.status === 'Success') {
+                    $('#tbl_finished_inspection_data').DataTable().destroy();
+                    $('#tbody_tbl_finished_inspection_data').empty();
 
-        //         let tbody = '';
-        //         data.response.forEach((val) => {
-        //             tbody += 
-        //             `<tr>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>test</td>
-        //                 <td>
-        //                     <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-        //                 </td>
-        //             </tr>`;
-        //         });
+                    let tbody = '';
+                    data.data.forEach((value) => {
+                        tbody +=
+                            `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.date_finished}</td>
+                            <td>${value.judgment}</td>
+                            <td>
+                                <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                        </tr>`;
+                    });
 
+                    $('#tbody_tbl_finished_inspection_data').html(tbody);
 
-        //         $('#tbody_tbl_pending_request_list').html(tbody);
-        //         $('#tbl_finished_inspection_data').DataTable({
-        //             "paging": true,
-        //             "lengthChange": true,
-        //             "searching": true,
-        //             "ordering": true,
-        //             "info": true,
-        //             "autoWidth": true,
-        //         });
-        //         $('#tbl_finished_inspection_data').LoadingOverlay('hide');
-        //     }
-        // });
-        $('#tbl_finished_inspection_data').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
+                    $('#tbl_finished_inspection_data').DataTable({
+                        "paging": true,
+                        "lengthChange": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": true,
+                    });
+                    $('#tbl_finished_inspection_data').LoadingOverlay('hide');
+                }
+            }
         });
     };
 
@@ -109,7 +108,7 @@ const EVALUATE = (() => {
         });
     };
 
-    this_evaluate.ViewFinishedInspectionData = (status) => {
+    this_evaluate.ViewFinishedInspectionData = (id, status) => {
         $('#modal_view_inspection_data').modal('show');
 
         if (status === 'finished') {
@@ -121,6 +120,116 @@ const EVALUATE = (() => {
             $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
             $('#modal_title').html('EVALUATION (DISAPPROVED INSPECTION DATA)');
         }
+
+        $('#div_modal_content').LoadingOverlay('show');
+
+        $.ajax({
+            url: `load-inspection-data`,
+            type: 'post',
+            dataType: 'json',
+            cache: false,
+            data: {
+                _token: _TOKEN,
+                id: id
+            },
+            success: data => {
+
+                //checksheet details
+                data.data.checksheet_details.forEach((value) => {
+                    $('#txt_part_number').val(value.part_number);
+                    $('#txt_revision').val(value.revision_number);
+                    $('#txt_trial_number').val(value.trial_number);
+                    $('#txt_part_name').val(value.part_name);
+                    $('#txt_model_name').val(value.model_name);
+                    $('#txt_supplier_code').val(value.supplier_code);
+                    $('#txt_supplier_name').val();//hindi pa kasama sa returned data
+                    $('#txt_received_date').val(value.received_date);
+                    $('#txt_inspection_completion_date').val(value.date_finished);
+                    $('#txt_actual_inspection_time').val(value.inspection_actual_time);
+                    $('#txt_inspection_reason').val(value.inspection_reason);
+                    $('#txt_die_kind').val(value.die_class);
+                    $('#txt_inspector').val(value.inspector_id); 
+                });
+                
+
+                $('#div_modal_content').LoadingOverlay('hide');
+
+            }
+        });
+    };
+
+    this_evaluate.LoadAttachments = () => {
+
+        let files = '';
+
+        for (let index = 1; index <= attachment_count; index++) {
+            files += `<div class="vertical-rectangle">
+                <img id="img_attachment_${index}" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
+                <div class="file-options">
+                    <button type="button" class="btn btn-green mb-3"><i class="ti-eye"></i> VIEW FILE</button>
+                    <button id="btn_add_to_pdf_${index}" type="button" class="btn btn-green"  onclick="EVALUATE.AddToPdf(${index},'','file_${index}','unchecked');"><i class="ti-plus"></i> ADD TO PDF</button>
+                </div>
+            </div>`;
+        }
+
+        $('#div_attachments').html(files);
+    };
+
+    this_evaluate.AddToPdf = (file_no, check_file_no, file_name, status) => {
+
+        if (status === 'unchecked') {
+
+            $(`#img_attachment_${file_no}`).attr('src', `${EVALUATE.AddToPdfCheckedImage(add_to_pdf_count)}`);
+            $(`#btn_add_to_pdf_${file_no}`).attr('onclick', `EVALUATE.AddToPdf(${file_no},${add_to_pdf_count},'${file_name}','checked');`);
+            $(`#btn_add_to_pdf_${file_no}`).html('<i class="ti-close"></i> REMOVE')
+            array_add_to_pdf.push(file_name);
+            add_to_pdf_count++;
+
+        } else {
+            let onclick_value = $(`#btn_add_to_pdf_${file_no}`).attr('onclick');
+            let split_onclick_value = onclick_value.split(',');
+            let check_file_no_value = split_onclick_value[1];
+
+            if (parseInt(check_file_no_value) === add_to_pdf_count - 1) {
+                $(`#img_attachment_${file_no}`).attr('src', `${base_url}/template/assets/images/icon/file.png`);
+                $(`#btn_add_to_pdf_${file_no}`).attr('onclick', `EVALUATE.AddToPdf(${file_no},'','${file_name}','unchecked');`)
+                $(`#btn_add_to_pdf_${file_no}`).html('<i class="ti-plus"></i> ADD TO PDF')
+            } else {
+
+                $(`#img_attachment_${file_no}`).attr('src', `${base_url}/template/assets/images/icon/file.png`);
+                $(`#btn_add_to_pdf_${file_no}`).attr('onclick', `EVALUATE.AddToPdf(${file_no},'','${file_name}','unchecked');`)
+                $(`#btn_add_to_pdf_${file_no}`).html('<i class="ti-plus"></i> ADD TO PDF')
+
+                if (array_add_to_pdf.length > 1) {
+
+                    for (let index = 1; index <= attachment_count; index++) {
+
+                        let onclick_value = $(`#btn_add_to_pdf_${index}`).attr('onclick');
+                        let split_onclick_value = onclick_value.split(',');
+                        let check_file_no_value = split_onclick_value[1];
+                        let check_file_name_value = split_onclick_value[2];
+
+                        if (check_file_no_value !== '') {
+                            if (parseInt(check_file_no_value) > check_file_no) {
+                                $(`#img_attachment_${index}`).attr('src', `${EVALUATE.AddToPdfCheckedImage(parseInt(check_file_no_value) - 1)}`);
+                                $(`#btn_add_to_pdf_${index}`).attr('onclick', `EVALUATE.AddToPdf(${index},${parseInt(check_file_no_value) - 1},${check_file_name_value},'checked');`);
+                            }
+                        }
+                    }
+                }
+            }
+
+            array_add_to_pdf = $.grep(array_add_to_pdf, function (value) {
+                return value != file_name;
+            });
+            add_to_pdf_count--;
+        }
+
+        console.log(array_add_to_pdf)
+    };
+
+    this_evaluate.AddToPdfCheckedImage = (count) => {
+        return `${base_url}/template/assets/images/icon/check_file_${count}.png`;
     };
 
     this_evaluate.Hinsei = (item_no, tools, type, specs, upper_limit, lower_limit) => {

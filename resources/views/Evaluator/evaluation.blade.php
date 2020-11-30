@@ -32,18 +32,7 @@
                                                        <th>ACTION</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="tbody_tbl_finished_inspection_data">
-                                                    <tr>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>
-                                                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData('finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
+                                                <tbody id="tbody_tbl_finished_inspection_data"></tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -75,19 +64,7 @@
                                                        <th>ACTION</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="tbody_tbl_disapproved_inspection_data">
-                                                    <tr>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>test</td>
-                                                        <td>
-                                                            <button class="btn btn-danger btn-block" onclick="EVALUATE.ViewFinishedInspectionData('disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
+                                                <tbody id="tbody_tbl_disapproved_inspection_data"></tbody>
                                             </table>
                                         </div>
                                     </div>

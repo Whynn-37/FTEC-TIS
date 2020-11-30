@@ -188,17 +188,25 @@ class ApprovalController extends Controller
         ]);
     }
 
-    public function loadDisapproved(Approval $approval)
+
+    public function loadDisapproved(TrialChecksheet $trialchecksheet)
     {
-        $message = 'Load Successfully';
-        $status = 'Success';
+        $data = $trialchecksheet->loadDisapproved();
 
-        $disapproved_decision = $approval->loadDisapproved();
+        $status = 'Error';
+        $message = 'Somethings Wrong!';
+        
+        if(!empty($data) == true )
+        {
+            $status = 'Success';
+            $message = 'Load Successfully!';
+        }
 
-        return response()->json([
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $disapproved_decision
-        ]);
+       return
+       [
+           'status' => $status ,
+           'message' => $message,
+           'data' => $data
+        ];
     }
 }
