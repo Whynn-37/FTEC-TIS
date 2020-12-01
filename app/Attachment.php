@@ -12,4 +12,11 @@ class Attachment extends Model
     {
         return Attachment::create($data);
     }
+
+    public function getAttachment($id)
+    {
+        return Attachment::where('trial_checksheet_id', $id)
+        ->select('file_folder')
+        ->first();
+    }
 }

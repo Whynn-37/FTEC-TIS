@@ -75,3 +75,5 @@ Route::post('edit-data', 'ApprovalController@editData');
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::get('load-disapproved','ApprovalController@loadDisapproved');
+
+Route::get('approved','ApprovalController@approved');

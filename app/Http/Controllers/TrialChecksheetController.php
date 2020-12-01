@@ -525,6 +525,8 @@ class TrialChecksheetController extends Controller
         {
             $result_items = $TrialChecksheet->loadTrialCheckitemsNG($part_number, $trial_number);
         
+     
+           
             foreach($result_items as $checksheet_items) 
             {
                 $data = $ChecksheetData->loadTrialCheckitemsNG($checksheet_items->id);
