@@ -26,5 +26,9 @@ class Approval extends Model
         ->get();
     }
 
+    public function approved($id, $data)
+    {
+        return Approval::find($id)->update($data);
+    }
 
 }
