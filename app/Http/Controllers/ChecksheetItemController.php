@@ -9,6 +9,7 @@ class ChecksheetItemController extends Controller
 {
     public function storeItems(ChecksheetItem $ChecksheetItem,ChecksheetData $ChecksheetData,Request $Request)
     {
+        $id = $Request->id;
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $item_number = $Request->item_number;
         $tools = $Request->tools;
@@ -17,28 +18,31 @@ class ChecksheetItemController extends Controller
         $upper_limit = $Request->upper_limit;
         $lower_limit = $Request->lower_limit;
 
-        if ($type !== 'Min and Max' || $type !== 'Min and Max and Form Tolerance')
+        if ($type !== 'Min and Max' || $type === 'Min and Max and Form Tolerance')
         {
             $specification = '-';
             $upper_limit = '-';
             $lower_limit = '-';
         }
-
+        
         $status = 'Error';
         $message = 'No Data';
 
         $checksheet_item_id = [];
         $checksheet_data_id = [];
-
+        
         if ($trial_checksheet_id !== null) 
         {
-            $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
+            if ($id === null)
+            {   
+                $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
 
-            if (count($select_id) !== 0)
-            {
-                $ChecksheetItem->updateId($select_id, $action = 'update');
+                if (count($select_id) !== 0)
+                {
+                    $ChecksheetItem->updateId($select_id, $action = 'update');
+                }
             }
-
+            
             $checksheet_item = 
             [
                 'trial_checksheet_id'   => $trial_checksheet_id,
@@ -81,7 +85,7 @@ class ChecksheetItemController extends Controller
                 $checksheet_data_id = $checksheet_data_result->id;
             }
         }
-
+     
         return 
         [
             'status'    => $status,
@@ -89,7 +93,7 @@ class ChecksheetItemController extends Controller
             'data'      => 
             [
                 'checksheet_item_id' => $checksheet_item_id,
-                'checksheet_data_id' => $checksheet_data_id
+                'checksheet_data_id' => $checksheet_data_id,
             ]
         ];
     }

@@ -345,7 +345,7 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
+					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder});">
 				</td>
 				<td>
 					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
@@ -362,24 +362,66 @@ const IGM = (() => {
 
     this_igm.SelectItemTools = (item_no) => {
 
-        let tools = $(`#slc_item_no_${item_no}_tools`).val();
-        $(`#slc_item_no_${item_no}_tools`).attr('onchange', `IGM.SelectItemTools(${item_no},'${tools}');`)
-        let type = $(`#slc_item_no_${item_no}_type`).val();
+        let tools                       = $(`#slc_item_no_${item_no}_tools`).val();
+        let type                        = $(`#slc_item_no_${item_no}_type`).val();
+        let hidden_item_no_id           = $(`#txt_hidden_item_no_${item_no}`).val();
+        let split_type_onchange_value   = $(`#slc_item_no_${item_no}_type`).attr('onchange').split(',');
+        let split_existing_sub_item     = split_type_onchange_value[1].split(')');
+        let existing_sub_item_count     = split_existing_sub_item[0];
+
+        $(`#slc_item_no_${item_no}_tools`).attr('onchange', `IGM.SelectItemTools(${item_no},'${tools}');`);
 
         //check if nasa array yung piniling tools
-        if (array_item_tools.indexOf(tools) === -1) {
+        if (array_item_tools.indexOf(tools) === -1) 
+        {
             $(`#span_error_item_no_${item_no}_tools`).remove();
             $(`#slc_item_no_${item_no}_tools`).after(`<span id="span_error_item_no_${item_no}_tools" class="span-error">Invalid tools</span>`);
-        } else {
-            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                alert('ara ara')
-            } else {
-                if (type === null) {
-                    $(`#span_error_item_no_${item_no}_type`).remove();
-                    $(`#slc_item_no_${item_no}_type`).after(`<span id="span_error_item_no_${item_no}_type" class="span-error">Required</span>`);
-                } else {
+
+            //pag remove ng existing rows
+            $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+            for (let index = 1; index <= existing_sub_item_count; index++) 
+            {
+                $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+            }
+        } 
+        else 
+        {
+            if (type === null) 
+            {
+                $(`#span_error_item_no_${item_no}_type`).remove();
+                $(`#slc_item_no_${item_no}_type`).after(`<span id="span_error_item_no_${item_no}_type" class="span-error">Required</span>`);
+            } 
+            else 
+            {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
                     $(`#span_error_item_no_${item_no}_tools`).remove();
-                    IGM.ProceedAddIgmItemNo(item_no, tools, type, null, null, null, 'th_new_igm_sub_column');
+                    
+                    let specs       = $(`#txt_item_no_${item_no}_specs`).val();
+                    let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
+                    let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
+   
+                    //pag remove ng existing rows
+                    // $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+                    // for (let index = 1; index <= existing_sub_item_count; index++) 
+                    // {
+                    //     $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+                    //     $(`#tr_item_no_${item_no}_sub_no_max_${index}`).remove();
+                    // }
+                    //pag insert sa DB ng item at data
+                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column');
+                } 
+                else {
+                    $(`#span_error_item_no_${item_no}_tools`).remove();
+                    
+                    //pag remove ng existing rows
+                    // $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+                    // for (let index = 1; index <= existing_sub_item_count; index++) 
+                    // {
+                    //     $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+                    // }
+                    //pag insert sa DB ng item at data
+                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column');
                 }
             }
         }
@@ -392,84 +434,208 @@ const IGM = (() => {
 
         $(`#span_error_item_no_${item_no}_type`).remove();
 
-        if (tools !== '') {
-            if (array_item_tools.indexOf(tools) === -1) {
+        if (tools !== '') 
+        {
+            if (array_item_tools.indexOf(tools) === -1) 
+            {
                 $(`#span_error_item_no_${item_no}_tools`).remove();
                 $(`#slc_item_no_${item_no}_tools`).after(`<span id="span_error_item_no_${item_no}_tools" class="span-error">Invalid tools</span>`);
-            } else {
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
+            } 
+            else 
+            {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
                     $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
                     $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', false);
                     $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', false);
-
-                } else {
+                } 
+                else 
+                {
                     $(`#txt_item_no_${item_no}_specs`).prop('disabled', true);
                     $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
                     $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', true);
+                    $(`#txt_item_no_${item_no}_specs`).val('');
+                    $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                    $(`#txt_item_no_${item_no}_lower_limit`).val('');
                 }
 
-                if (existing_sub_no_count === 1) {
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                        $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-                        $(`#tr_item_no_${item_no}_sub_no_1`).remove();
-                        $(`#tr_item_no_${item_no}_sub_no_1`).remove();
-                        $(`#tr_item_no_${item_no}_sub_no_max_1`).remove();
-                    } else {
-                        $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-                        $(`#tr_item_no_${item_no}_sub_no_1`).remove();
-                        $(`#tr_item_no_${item_no}_sub_no_max_1`).remove();
-                    }
+                if (existing_sub_no_count === 1) 
+                {
+                    // if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                    // {
+                    //     // $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+                    //     // $(`#tr_item_no_${item_no}_sub_no_1`).remove();
+                    //     //pag insert sa DB ng item at data
+                    //     IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type');
+                    // } 
+                    // else 
+                    // {
+                    //     // $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+                    //     // $(`#tr_item_no_${item_no}_sub_no_min_1`).remove();
+                    //     // $(`#tr_item_no_${item_no}_sub_no_max_1`).remove();
+                    //     //pag insert sa DB ng item at data
+                    //     IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type');
 
-                    // $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},0);`)
+                    // }
+                    IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type');
+
+                    $(`#span_error_item_no_${item_no}_tools`).remove();
+                    $(`#span_error_item_no_${item_no}_type`).remove();
+                } 
+                else 
+                {
                     $(`#span_error_item_no_${item_no}_tools`).remove();
                     $(`#span_error_item_no_${item_no}_type`).remove();
 
-                    IGM.ProceedAddIgmItemNo(item_no, tools, type, null, null, null, bg_header);
-                } else {
-                    $(`#span_error_item_no_${item_no}_tools`).remove();
-                    $(`#span_error_item_no_${item_no}_type`).remove();
-
-                    IGM.ProceedAddIgmItemNo(item_no, tools, type, null, null, null, bg_header);
+                    //pag insert sa DB ng item at data
+                    IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type');
                 }
             }
-        } else {
+        } 
+        else 
+        {
             $(`#span_error_item_no_${item_no}_tools`).remove();
             $(`#slc_item_no_${item_no}_tools`).after(`<span id="span_error_item_no_${item_no}_tools" class="span-error">Required</span>`);
         }
 
     };
     // pag insert ng item sa DB, dito narin gumagawa ng hidden checksheet_item_id
-    this_igm.ProceedAddIgmItemNo = (item_no, tools, type, specification, upper_limit, lower_limit, bg_header) => {
-        $(`#accordion_igm`).LoadingOverlay('show');
+    this_igm.ValidateAddIgmItemNo = (item_no, bg_header,action) => {
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let id                  = $(`#txt_hidden_item_no_${item_no}`).val();
+        let tools               = $(`#slc_item_no_${item_no}_tools`).val();
+        let type                = $(`#slc_item_no_${item_no}_type`).val();
+        let specification       = $(`#txt_item_no_${item_no}_specs`).val();
+        let upper_limit         = $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit         = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        
+        if (action === 'select_item_type')
+        {   
+            //pag update or create ng checksheet item
+            IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+        }
+        else
+        {
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+            {
+                if (specification !== '' || upper_limit !== '' || lower_limit !== '')
+                {
+                    $(`#accordion_igm`).LoadingOverlay('hide');
+                    //pag update or create ng checksheet item
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                }
+            }
+            else
+            {
+                IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,'select_item_type');
+            }
+        }
+    };
+
+    this_igm.ProceedAddIgmItemNo = (id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action) =>{
+
+        let split_existing_sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',');
+        let existing_sub_no_count = split_existing_sub_no_count[2];
+
+        $(`#accordion_igm`).LoadingOverlay('show');
+
         $.ajax({
-            url: `store-items`,
-            type: 'post',
+            url     : `store-items`,
+            type    : 'post',
             dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                trial_checksheet_id: trial_checksheet_id,
-                item_number: item_no,
-                tools: tools,
-                type: type,
-                specification: specification,
-                upper_limit: upper_limit,
-                lower_limit: lower_limit,
+            cache   : false,
+            data    : {
+                _token              : _TOKEN,
+                id                  : id,
+                trial_checksheet_id : trial_checksheet_id,
+                item_number         : item_no,
+                tools               : tools,
+                type                : type,
+                specification       : specification,
+                upper_limit         : upper_limit,
+                lower_limit         : lower_limit,
             },
             success: data => {
-                //paglalagay ng hidden id sa checksheet item
-                $(`#txt_hidden_item_no_${item_no}`).val(data.data.checksheet_item_id)
-                //paglalagay ng sub item row
-                IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header, data.data.checksheet_data_id);
-                // adjustment ng onclick methods
-                $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
-                $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
-                $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
+                //meron nito para malaman kung sa select type ang function. ginagamit din kase tong ProceedAddIgmItemNo() function para sa pag uupdate ng specs , upper and lower limit. kaya nilagyan ko ng action para hindi gagawin ang ang mga process na nasa baba. 
+                if (action === 'select_item_type')
+                {   
+                    //para malaman kung may existing ng unang insert ng item at data
+                    if (id === '')
+                    {
+                        //paglalagay ng hidden id sa checksheet item
+                        $(`#txt_hidden_item_no_${item_no}`).val(data.data.checksheet_item_id)
+                        //paglalagay ng sub item row
+                        IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header, data.data.checksheet_data_id,action);
+                        // adjustment ng onclick methods
+                        $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
+                        $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
+                        $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
 
-                $(`#a_add_igm_item_no_${item_no}_sub_no`).prop('hidden', false);
+                        $(`#a_add_igm_item_no_${item_no}_sub_no`).prop('hidden', false);
+                    } 
+                    else
+                    {
+                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                        {
+                            $(`#accordion_igm`).LoadingOverlay('show');
 
+                            //pag remove ng mga sub item based sa kung ilan
+                            if ($(`#tr_item_no_${item_no}_sub_no_1`).length > 0)
+                            {
+                                $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+
+                                for (let index = 1; index <= existing_sub_no_count; index++) 
+                                {
+                                    //remove muna yung checksheet data sa DB
+                                    IGM.ProceedRemoveSubNo(item_no, index);
+                                    //pag remove ng tr
+                                    $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+                                }
+                            }
+
+                            if ($(`#tr_item_no_${item_no}_sub_no_min_1`).length === 0 && $(`#tr_item_no_${item_no}_sub_no_max_1`).length === 0)
+                            {
+                                IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header, data.data.checksheet_data_id);
+                                // adjustment ng onclick methods
+                                $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
+                                $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
+                                $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
+                            }
+                            $(`#accordion_igm`).LoadingOverlay('hide');
+                        }
+                        else
+                        {
+                            $(`#accordion_igm`).LoadingOverlay('show');
+
+                            //pag remove ng mga sub item based sa kung ilan
+                            if ($(`#tr_item_no_${item_no}_sub_no_min_1`).length > 0 && $(`#tr_item_no_${item_no}_sub_no_max_1`).length > 0)
+                            {   
+                                $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+
+                                for (let index = 1; index <= existing_sub_no_count; index++) 
+                                {
+                                    //remove muna yung checksheet data sa DB
+                                    IGM.ProceedRemoveSubNo(item_no, index);
+                                    //pag remove ng tr
+                                    $(`#tr_item_no_${item_no}_sub_no_min_${index}`).remove();
+                                    $(`#tr_item_no_${item_no}_sub_no_max_${index}`).remove();
+                                } 
+                            }
+
+                            if ($(`#tr_item_no_${item_no}_sub_no_1`).length === 0)
+                            {
+                                IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header, data.data.checksheet_data_id);
+                                // adjustment ng onclick methods
+                                $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
+                                $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
+                                $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
+                            }
+
+                            $(`#accordion_igm`).LoadingOverlay('hide');
+                        }
+                    }
+                }
                 $(`#accordion_igm`).LoadingOverlay('hide');
             }
         });
@@ -534,9 +700,9 @@ const IGM = (() => {
         $(`#th_igm_item_no_${previous_item_no_holder}_extra_column`).attr('id', `th_igm_item_no_${next_item_no_holder}_1_extra_column`);
 
         $(`#tr_item_no_${previous_item_no_holder}_column`).attr('id', `tr_item_no_${next_item_no_holder}_1_column`);
-
+        
         $(`#tr_item_no_${previous_item_no_holder}_sub_no_column`).attr('id', `tr_item_no_${next_item_no_holder}_1_sub_no_column`);
-
+        
         //item no label
         $(`#span_item_no_${previous_item_no_holder}_label`).text(`${next_item_no_holder}`);
         $(`#span_item_no_${previous_item_no_holder}_label`).attr('id', `span_item_no_${next_item_no_holder}_1_label`);
@@ -561,7 +727,11 @@ const IGM = (() => {
         //item no inputs
         $(`#slc_item_no_${previous_item_no_holder}_tools`).attr('id', `slc_item_no_${next_item_no_holder}_1_tools`);
         $(`#slc_item_no_${previous_item_no_holder}_type`).attr('id', `slc_item_no_${next_item_no_holder}_1_type`);
+        
         $(`#txt_item_no_${previous_item_no_holder}_specs`).attr('id', `txt_item_no_${next_item_no_holder}_1_specs`);
+        //ValidateAddIgmItemNo
+        $(`#txt_item_no_${next_item_no_holder}_1_specs`).attr('onkeyup', `IGM.ValidateAddIgmItemNo(${next_item_no_holder});`);
+
         $(`#txt_item_no_${previous_item_no_holder}_upper_limit`).attr('id', `txt_item_no_${next_item_no_holder}_1_upper_limit`);
         $(`#txt_item_no_${previous_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${next_item_no_holder}_1_lower_limit`);
         $(`#td_item_no_${previous_item_no_holder}_judgement`).attr('id', `td_item_no_${next_item_no_holder}_1_judgement`);
@@ -629,13 +799,15 @@ const IGM = (() => {
 
         let item_no_existing_sub_no_type = split_item_no_existing_sub_no_type[1].replace(/"|'/g, '');
 
-        if (item_no_existing_sub_no_count > 0) {
+        if (item_no_existing_sub_no_count > 0) 
+        {
 
-            if (item_no_existing_sub_no_count > 1) {
+            if (item_no_existing_sub_no_count > 1) 
+            {
 
-                for (let remove_sub_no_count = 2; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
+                for (let remove_sub_no_count = 2; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) 
+                {
 
-                    alert(`$(#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count})`)
                     let remove_sub_no_onclick_value = $(`#a_remove_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('onclick')
 
                     let split_remove_sub_no_onclick_value = remove_sub_no_onclick_value.split(',');
@@ -648,10 +820,11 @@ const IGM = (() => {
                 }
             }
 
-            for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) {
+            for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) 
+            {
 
-                $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
-
+                // $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
+                
                 $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`);
 
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).text(`${remove_sub_no_count}`);
@@ -660,9 +833,10 @@ const IGM = (() => {
                 $(`#txt_hidden_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `txt_hidden_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
 
-                if (item_no_existing_sub_no_type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
+                if (item_no_existing_sub_no_type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
 
-                    $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+                    $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
                     //coordinates
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
 
@@ -683,7 +857,9 @@ const IGM = (() => {
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_4_1`);
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_5_1`);
 
-                } else {
+                } 
+                else 
+                {
 
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
                     //coordinates
@@ -723,14 +899,17 @@ const IGM = (() => {
             let split_item_no_existing_sub_no_type = split_add_igm_tem_no_onclick_value[0].split('(');
             let item_no_existing_sub_no_type = split_item_no_existing_sub_no_type[1].replace(/"|'/g, '');
 
-            if (existing_sub_no_count_value > 0) {
+            if (existing_sub_no_count_value > 0) 
+            {
 
-                for (let b_count = 1; b_count <= existing_sub_no_count_value; b_count++) {
-                    if (b_count > 1) {
+                for (let b_count = 1; b_count <= existing_sub_no_count_value; b_count++) 
+                {
+                    if (b_count > 1) 
+                    {
                         $(`#a_remove_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `a_remove_item_no_${a_count}_sub_no_${b_count}`);
                     }
 
-                    $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`)
+                    // $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`)
 
                     $(`#th_tr_item_no_${a_count}_sub_no_column_rowspan_1`).attr('id', `th_tr_item_no_${a_count}_sub_no_column_rowspan`)
 
@@ -738,8 +917,9 @@ const IGM = (() => {
 
                     $(`#txt_hidden_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `txt_hidden_item_no_${a_count}_sub_no_${b_count}`);
 
-                    if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') {
-                        $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
+                    if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') 
+                    {
+                        $(`#tr_item_no_${a_count}_sub_no_min_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_min_${b_count}`);
                         //coordinates
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
                         //min
@@ -759,12 +939,15 @@ const IGM = (() => {
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_max_5`);
 
                         //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
-                        for (let c_count = 1; c_count <= 5; c_count++) {
+                        for (let c_count = 1; c_count <= 5; c_count++) 
+                        {
                             $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'min');`);
                             $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'max');`);
                         }
 
-                    } else {
+                    } 
+                    else 
+                    {
                         $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
                         //coordinates
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
@@ -777,10 +960,10 @@ const IGM = (() => {
                         $(`#td_item_no_${a_count}_sub_no_${b_count}_judgement_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_judgement`);
 
                         //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
-                        for (let c_count = 1; c_count <= 5; c_count++) {
+                        for (let c_count = 1; c_count <= 5; c_count++) 
+                        {
                             $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${a_count},${b_count}, ${c_count});`);
                         }
-
                     }
                 }
             }
@@ -860,31 +1043,43 @@ const IGM = (() => {
 
         // pag remove ng sub item ng niremove na item
         $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-        for (let index = 1; index <= existing_sub_no_count; index++) {
-            $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+        for (let a_count = 1; a_count <= existing_sub_no_count; a_count++) 
+        {
+            $(`#tr_item_no_${item_no}_sub_no_${a_count}`).remove();
+            $(`#tr_item_no_${item_no}_sub_no_min_${a_count}`).remove();
+            $(`#tr_item_no_${item_no}_sub_no_max_${a_count}`).remove();
         }
 
-        if (new_item_no_count === 1) {
+        if (new_item_no_count === 1) 
+        {
             $(`#tr_item_no_${item_no}`).remove();
             $('#tfoot_add_igm_item').prop('hidden', false);
             $('#tbl_new_igm').prop('hidden', true);
             new_item_no_count--;
             item_no_count--;
-        } else {
+        } 
+        else 
+        {
 
-            if (item_no === 1) {
+            if (item_no === 1) 
+            {
                 $('#tr_item_no_main_column').prop('hidden', true);
                 $(`#tr_item_no_${item_no}_column`).remove();
-            } else {
+            } 
+            else 
+            {
                 $(`#tr_item_no_${item_no}_column`).remove();
             }
             $(`#tr_item_no_${item_no}`).remove();
 
-            if (item_no !== item_no_count) {
+            if (item_no !== item_no_count) 
+            {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
-                for (let count = item_no; count < new_item_no_count; count++) {
+                for (let count = item_no; count < new_item_no_count; count++) 
+                {
 
-                    if (count === item_no) {
+                    if (count === item_no) 
+                    {
                         var item_no_holder = item_no;
                         var next_item_no_holder = item_no + 1;
 
@@ -901,7 +1096,9 @@ const IGM = (() => {
                         var split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
                         var added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
 
-                    } else {
+                    } 
+                    else 
+                    {
                         item_no_holder = count;
                         next_item_no_holder = count + 1;
 
@@ -951,9 +1148,11 @@ const IGM = (() => {
                     $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                     $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
 
-                    if (existing_sub_no_count_value > 0) {
+                    if (existing_sub_no_count_value > 0) 
+                    {
                         IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
-                        if (count === new_item_no_count - 1) {
+                        if (count === new_item_no_count - 1) 
+                        {
                             IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, new_item_no_count - item_no_holder, 'remove');
                         }
                     }
@@ -961,7 +1160,9 @@ const IGM = (() => {
 
                 new_item_no_count--;
                 item_no_count--;
-            } else {
+            } 
+            else 
+            {
                 new_item_no_count--;
                 item_no_count--;
             }
@@ -969,12 +1170,12 @@ const IGM = (() => {
     };
 
     // SUB ITEM METHODS NA DITO
-    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count, bg_header, checksheet_data_id) => {
+    this_igm.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, added_item_no_between_count, bg_header, checksheet_data_id,action) => {
 
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
         let rowspan = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
-
+     
         if (existing_sub_no_count === 0) {
             // AYUSIN ANG PAG SESET NG existing_sub_no_count_per_item NA MAKUKUHA PARIN SYA GLOBALLY
             existing_sub_no_count_per_item = 0;
@@ -996,12 +1197,23 @@ const IGM = (() => {
 
             tr_sub_no_column += IGM.AddIgmSubNoHeader(item_no_count, rowspan_count, bg_header);
 
-            tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id);
-
-            $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
-            $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
-
             sub_no_count++;
+
+            //meron nito para sa pagpapalit palit ng type if mm or mc para mag babago din ang sub item
+            if (action !== 'select_item_type')
+            {   
+        
+                // pag store ng data sa DB
+                IGM.ProceedAddIgmSubNo(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, 3);
+            }
+            else
+            {
+                tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id);
+
+                $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
+                $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
+            }
+           
 
         } else {
 
@@ -1044,6 +1256,8 @@ const IGM = (() => {
     };
 
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id) => {
+
+
         let tr = '';
         let new_sub_no = existing_sub_no_count_per_item;
         let td_remove_sub_no_button = '';
@@ -1060,16 +1274,16 @@ const IGM = (() => {
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
             tr += `${tr_sub_no_column}
-            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
-                <td>
+            <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
+                <td style="vertical-align: middle;" rowspan="2">
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+                        <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
                         ${td_remove_sub_no_button}
                     </div>
                 </td>
 				<td style="vertical-align: middle;" rowspan="2">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')">
 				</td>
 				<td class="td_sub_no_input">
 					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')">
@@ -1086,7 +1300,7 @@ const IGM = (() => {
 				<td class="td_sub_no_input">
 					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')">
 				</td>
-				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">N/A</td>
+				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input"><span class="input_text_center">N/A</span></td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input">
@@ -1107,7 +1321,7 @@ const IGM = (() => {
 			</tr>`;
         } else {
             tr += `${tr_sub_no_column}
-            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}" >
+            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
@@ -1133,7 +1347,7 @@ const IGM = (() => {
                 <td class="td_sub_no_input">
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly>
                 </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >N/A</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" ><span class="input_text_center">N/A</span></td>
 			</tr`;
         }
         return tr;
@@ -1164,12 +1378,31 @@ const IGM = (() => {
                 //para sa previous sub no
                 let previous_sub_no = parseInt(existing_sub_no_count_per_item) - 1
 
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                    $(`#tr_item_no_${item_no_count}_sub_no_max_${previous_sub_no}`).after(tr_sub_no_inputs);
-                    $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 2);
-                } else {
-                    $(`#tr_item_no_${item_no_count}_sub_no_${previous_sub_no}`).after(tr_sub_no_inputs);
-                    $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
+                    //may condtion na length para malaman kung may existing na row or wala
+                    if ($(`#tr_item_no_${item_no_count}_sub_no_max_1`).length > 0)
+                    {
+                        $(`#tr_item_no_${item_no_count}_sub_no_max_${previous_sub_no}`).after(tr_sub_no_inputs);
+                        $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 2);
+                    }
+                    else
+                    {
+                        $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
+                    }
+                } 
+                else 
+                {
+                    //may condtion na length para malaman kung may existing na row or wala
+                    if ($(`#tr_item_no_${item_no_count}_sub_no_1`).length > 0)
+                    {
+                        $(`#tr_item_no_${item_no_count}_sub_no_${previous_sub_no}`).after(tr_sub_no_inputs);
+                        $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
+                    }
+                    else
+                    {
+                        $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
+                    }
                 }
                 $(`#accordion_igm`).LoadingOverlay('hide');
             }
@@ -1187,19 +1420,21 @@ const IGM = (() => {
 
         $(`#accordion_igm`).LoadingOverlay('show');
 
-        let rowspan = $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan');
+        let rowspan                               = $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan');
         let existing_sub_no_count_per_item_holder = existing_sub_no_count_per_item - 1;
+        let sub_no_hidden_id                      = $(`#txt_hidden_item_no_${item_no}_sub_no_${sub_no}`).val();
+        let item_no_hidden_id                     = $(`#txt_hidden_item_no_${item_no}`).val();
 
         $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},${existing_sub_no_count_per_item_holder},${added_item_no_between_count});`);
         $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},${existing_sub_no_count_per_item_holder},${added_item_no_between_count});`);
         $(`#btn_validate_sub_no_count_${item_no}`).attr('onclick', `IGM.ValidateSubNoCount(${existing_sub_no_count_per_item_holder},${item_no})`);
 
         //if isa lang ang sub item sa item
-        if (existing_sub_no_count_per_item === 1) {
+        if (existing_sub_no_count_per_item === 1) 
+        {
 
             $(`#td_item_no_${item_no}_judgement`).html('N/A');
-            //dito function
-            IGM.ProceedRemoveSubNo(item_no, sub_no);
+            
 
             $(`#tr_item_no_${item_no}_sub_no_column`).remove();
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
@@ -1210,84 +1445,106 @@ const IGM = (() => {
             }
             $(`#th_igm_item_no_${item_no}_extra_column`).prop('hidden', true);
 
+            //dito function
+            // let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
+            // IGM.ProceedRemoveSubNo(item_no_hidden_id,sub_no_hidden_id, sub_no,new_item_judgement);
+
             sub_no_count--;
-
-        } else {
-            if (existing_sub_no_count_per_item === sub_no) {
-                //dito function
-                IGM.ProceedRemoveSubNo(item_no, sub_no);
-
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                    $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
+        } 
+        else 
+        {
+            if (existing_sub_no_count_per_item === sub_no) 
+            {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
+                    $(`#tr_item_no_${item_no}_sub_no_min_${sub_no}`).remove();
                     $(`#tr_item_no_${item_no}_sub_no_max_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 2);
-                } else {
+                } 
+                else 
+                {
                     $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 1);
                 }
+
+                //dito function
+                // let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
+                // IGM.ProceedRemoveSubNo(item_no_hidden_id,sub_no_hidden_id, sub_no,new_item_judgement);
 
                 sub_no_count--;
                 // existing_sub_no_count_per_item--;
 
-                for (let sub_no = 1; sub_no <= existing_sub_no_count_per_item_holder; sub_no++) {
-                    $(`#a_remove_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item_holder});`)
-                }
-
-            } else {
-                //dito function
-                IGM.ProceedRemoveSubNo(item_no, sub_no);
-
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
-                    $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
+                // for (let sub_no = 1; sub_no <= existing_sub_no_count_per_item_holder; sub_no++) 
+                // {
+                //     $(`#a_remove_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item_holder});`)
+                // } wala na to kase wala namang remove sa first sub item
+            } 
+            else 
+            {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
+                    $(`#tr_item_no_${item_no}_sub_no_min_${sub_no}`).remove();
                     $(`#tr_item_no_${item_no}_sub_no_max_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 2);
-                } else {
+                } 
+                else 
+                {
                     $(`#tr_item_no_${item_no}_sub_no_${sub_no}`).remove();
                     $(`#th_tr_item_no_${item_no}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) - 1);
                 }
-                sub_no_count--;
+
+                //dito function
+                // let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
+                // IGM.ProceedRemoveSubNo(item_no_hidden_id,sub_no_hidden_id, sub_no,new_item_judgement);
+
+                sub_no_count--; 
                 // existing_sub_no_count_per_item--;
 
                 let next_sub_no = parseInt(sub_no) + 1;
 
                 // PARA SA MGA NEXT SUB ITEM NG NIREMOVE NA SUB ITEM
-                for (let count = sub_no; count <= existing_sub_no_count_per_item; count++) {
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
+                for (let count = sub_no; count <= existing_sub_no_count_per_item; count++) 
+                {
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                    {
                         IGM.RemoveSubNoChangeIdMMAndMMF(item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item_holder);
-                    } else {
+                    } 
+                    else 
+                    {
                         IGM.RemoveSubNoChangeIdMC(item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item_holder);
                     }
                 }
                 //PARA SA MGA PREVIOUS SUB ITEM NG NIREMOVE NA SUB ITEM
-                if (sub_no > 1) {
+                if (sub_no > 1) 
+                {
                     var remaining_previous_sub_item = sub_no - 1;
-                    for (let count = 1; count <= remaining_previous_sub_item; count++) {
+                    for (let count = 1; count <= remaining_previous_sub_item; count++) 
+                    {
                         $(`#a_remove_item_no_${item_no}_sub_no_${count}`).attr('onclick', `IGM.RemoveSubNo('${type}',${count},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item_holder});`);
                     }
                 }
             }
-
         }
-        IGM.SubitemCalculateOverallJudgement(item_no, sub_no);
+        let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
+        IGM.ProceedRemoveSubNo(item_no_hidden_id,sub_no_hidden_id, sub_no,new_item_judgement);
     };
 
-    this_igm.ProceedRemoveSubNo = (item_no, sub_no) => {
+    this_igm.ProceedRemoveSubNo = (item_no_hidden_id,sub_no_hidden_id, sub_no, new_item_judgement) => {
 
-        let id = $(`#txt_hidden_item_no_${item_no}_sub_no_${sub_no}`).val();
-        let checksheet_item_id = $('#trial_checksheet_id').val();
-
-        $.ajax({
-            url: `delete-data`,
-            type: 'delete',
-            dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                id: id,
-                checksheet_item_id: checksheet_item_id,
-                sub_number: sub_no,
+        $.ajax({    
+            url         : `delete-data`,
+            type        : 'delete',
+            dataType    : 'json',
+            cache       : false,
+            data        : {
+                _token              : _TOKEN,
+                id                  : sub_no_hidden_id,
+                checksheet_item_id  : item_no_hidden_id,
+                sub_number          : sub_no,
+                judgment            : new_item_judgement
             },
-            success: result => {
+            success: result => 
+            {
                 $(`#accordion_igm`).LoadingOverlay('hide');
             }
         });
@@ -1306,6 +1563,9 @@ const IGM = (() => {
         $(`#tr_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `tr_item_no_${item_no}_sub_no_${sub_no_holder}`);
         $(`#span_item_no_${item_no}_sub_no_${next_sub_no_holder}_label`).text(sub_no_holder);
         $(`#span_item_no_${item_no}_sub_no_${next_sub_no_holder}_label`).attr('id', `span_item_no_${item_no}_sub_no_${sub_no_holder}_label`);
+        //hidden sub item id
+        $(`#txt_hidden_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `txt_hidden_item_no_${item_no}_sub_no_${sub_no_holder}`);
+
         //button
         $(`#a_remove_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no_holder},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item});`);
         $(`#a_remove_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `a_remove_item_no_${item_no}_sub_no_${sub_no_holder}`);
@@ -1334,10 +1594,13 @@ const IGM = (() => {
             var next_sub_no_holder = parseInt(count) + 1;
         }
 
-        $(`#tr_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `tr_item_no_${item_no}_sub_no_${sub_no_holder}`);
+        $(`#tr_item_no_${item_no}_sub_no_min_${next_sub_no_holder}`).attr('id', `tr_item_no_${item_no}_sub_no_min_${sub_no_holder}`);
         $(`#td_item_no_${item_no}_sub_no_${next_sub_no_holder}_judgement`).attr('id', `td_item_no_${item_no}_sub_no_${sub_no_holder}_judgement`);
         $(`#span_item_no_${item_no}_sub_no_${next_sub_no_holder}_label`).text(sub_no_holder);
         $(`#span_item_no_${item_no}_sub_no_${next_sub_no_holder}_label`).attr('id', `span_item_no_${item_no}_sub_no_${sub_no_holder}_label`);
+      
+        //hidden sub item id
+        $(`#txt_hidden_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('id', `txt_hidden_item_no_${item_no}_sub_no_${sub_no_holder}`);
 
         //button
         $(`#a_remove_item_no_${item_no}_sub_no_${next_sub_no_holder}`).attr('onclick', `IGM.RemoveSubNo('${type}',${sub_no_holder},${item_no},${added_item_no_between_count},${existing_sub_no_count_per_item});`);
@@ -1430,20 +1693,26 @@ const IGM = (() => {
         //array_overall_judgement ay  naska global
 
         //data ng visuals
-        for (let index = 1; index <= 5; index++) {
+        for (let index = 1; index <= 5; index++) 
+        {
             array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${index}`).val());
         }
 
-        if (visual_no_5 !== '') {
-            for (let index = 0; index < array_visuals.length; index++) {
+        if (visual_no_5 !== '') 
+        {
+            for (let index = 0; index < array_visuals.length; index++) 
+            {
                 if (array_visuals[index] === 'NG') {
                     visuals_NG_count++;
                 }
             }
 
-            if (visuals_NG_count > 0) {
+            if (visuals_NG_count > 0) 
+            {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-            } else {
+            } 
+            else 
+            {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
             }
 
@@ -1454,78 +1723,158 @@ const IGM = (() => {
     this_igm.ValidateItemNoUpperAndLowerLimit = (item_no) => {
         let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let specs = $(`#txt_item_no_${item_no}_specs`).val();
 
-        if (upper_limit !== '') {
-            $(`#span_upper_limit_error_${item_no}`).remove();
-            if (upper_limit > 0) {
-                let new_upper_limit = upper_limit.replace(/^0+/, '');
-                $(`#txt_item_no_${item_no}_upper_limit`).val(new_upper_limit);
+        if (specs !== '')
+        {   
+            $(`span_specs_error_${item_no}`).remove();
+
+            if (upper_limit !== '') 
+            {
+                $(`#span_upper_limit_error_${item_no}`).remove();
+                if (upper_limit > 0) {
+                    let new_upper_limit = upper_limit.replace(/^0+/, '');
+                    $(`#txt_item_no_${item_no}_upper_limit`).val(new_upper_limit);
+                }
             }
-        }
 
-        if (lower_limit !== '') {
-            $(`#span_lower_limit_error_${item_no}`).remove();
-            if (lower_limit > 0) {
-                let new_lower_limit = lower_limit.replace(/^0+/, '');
-                $(`#txt_item_no_${item_no}_lower_limit`).val(new_lower_limit);
-            }
-        }
-
-        if (upper_limit !== '' && lower_limit !== '') {
-            if (parseInt(lower_limit) > parseInt(upper_limit)) {
+            if (lower_limit !== '') 
+            {
                 $(`#span_lower_limit_error_${item_no}`).remove();
-                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
-                $(`#txt_item_no_${item_no}_lower_limit`).val('');
-            } else {
-                $(`#span_lower_limit_error_${item_no}`).remove();
+                if (lower_limit > 0) {
+                    let new_lower_limit = lower_limit.replace(/^0+/, '');
+                    $(`#txt_item_no_${item_no}_lower_limit`).val(new_lower_limit);
+                }
             }
-        }
 
+            if (upper_limit !== '' && lower_limit !== '') 
+            {
+                if (parseInt(lower_limit) > parseInt(upper_limit)) {
+                    $(`#span_lower_limit_error_${item_no}`).remove();
+                    $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
+                    $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                } else {
+                    $(`#span_lower_limit_error_${item_no}`).remove();
+                    //para sa pag update ng upper or lower limit
+                    IGM.ValidateAddIgmItemNo(item_no);
+                }
+            }
+        } 
+        else
+        {
+            $(`#span_specs_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
+            $(`#txt_item_no_${item_no}_upper_limit`).val('');
+            $(`#txt_item_no_${item_no}_lower_limit`).val('');
+        }
     };
 
     this_igm.SubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
-        if ($(`#txt_item_no_${item_no}_upper_limit`).val() === '' || $(`#txt_item_no_${item_no}_lower_limit`).val() === '') {
-            $(`#span_upper_limit_error_${item_no}`).remove();
-            $(`#span_lower_limit_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
-            $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
-        } else {
-            if ($(`#txt_item_no_${item_no}_upper_limit`).val() !== '' && $(`#txt_item_no_${item_no}_lower_limit`).val() !== '') {
-                IGM.ValidateSubItemGetMinMax(item_no, sub_no, min_max_no, min_max_type);
-            } else {
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
-            }
 
+        let upper_limit   =   $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit   =   $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let specs         =   $(`#txt_item_no_${item_no}_specs`).val();
+        let coordinates   =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        //upper limit
+        if (upper_limit === '') 
+        {
+            $(`#span_upper_limit_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
+            IGM.ValidateMinMaxType(item_no, sub_no,min_max_type,min_max_no);
+           
+        } 
+        else
+        {
+            $(`#span_upper_limit_error_${item_no}`).remove();
+        }
+        //lower limit
+        if (lower_limit === '')
+        {
+            $(`#span_lower_limit_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
+            IGM.ValidateMinMaxType(item_no, sub_no,min_max_type,min_max_no);
+        }
+        else
+        {
+            $(`#span_lower_limit_error_${item_no}`).remove();
+        }
+        //specs
+        if (specs === '')
+        {
+            $(`#span_specs_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
+            IGM.ValidateMinMaxType(item_no, sub_no,min_max_type,min_max_no);
+        }
+        else
+        {
+            $(`#span_specs_error_${item_no}`).remove();
+        }
+        
+        if (upper_limit !== '' && lower_limit !== '' && specs !== '')
+        {
+            if (coordinates !== '')
+            {
+                $(`#span_coordinates_error_${item_no}`).remove();
+                IGM.ValidateSubItemGetMinMax(item_no, sub_no, min_max_no, min_max_type);
+            }
+            else
+            {
+                IGM.ValidateMinMaxType(item_no, sub_no,min_max_type,min_max_no);
+            }
+        }
+    };
+
+    this_igm.ValidateMinMaxType = (item_no, sub_no,min_max_type,min_max_no) => {
+
+        if (min_max_type === '')
+        {
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
+        }
+        else 
+        {
+            $(`#span_coordinates_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_coordinates_error_${item_no}" class="span-error">Required</span>`)
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
         }
     };
 
     this_igm.ValidateSubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
-        if (min_max_type === 'min') {
-            if (min_max_no === 1) {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+        
+        if (min_max_type === 'min') 
+        {
+            if (min_max_no === 1) 
+            {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
+                {
                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } else {
+                } 
+                else 
+                {
                     $(`#span_min_error_${min_max_no}`).remove();
                     IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
                 }
-
-            } else {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+            } 
+            else 
+            {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
+                {
                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } else {
-                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) {
-                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') {
-
-
+                } 
+                else 
+                {
+                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
+                    {
+                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') 
+                        {
                             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val('');
-
                             IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
-
-                        } else {
-                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') {
+                        } 
+                        else 
+                        {
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') 
+                            {
                                 $(`#span_min_error_${min_max_no}`).remove();
                                 IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
                             }
@@ -1533,42 +1882,61 @@ const IGM = (() => {
                     }
                 }
             }
-        } else {
-            if (min_max_no === 1) {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') {
+        } 
+        else if (min_max_type === 'max') 
+        {
+            if (min_max_no === 1) 
+            {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
+                {
                     $(`#span_min_error_${min_max_no}`).remove();
                     $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Required</span>`);
                     $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } else {
-                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') {
+                } 
+                else 
+                {
+                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') 
+                    {
                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    } else {
+                    } 
+                    else {
                         $(`#span_min_error_${min_max_no}`).remove();
                         IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
                     }
                 }
+            } 
+            else 
+            {
+                IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
+            }
+        }
+    };
 
-            } else {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') {
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } else {
-                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) {
-                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_count}`).val() === '') {
+    this_igm.ValidateSubItemGetMinMax5 = (item_no, sub_no, min_max_no, min_max_type) => {
 
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
-
-                            IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
-
-                        } else {
-                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no - 1}`).val() !== '') {
-                                $(`#span_max_error_${min_max_no}`).remove();
-                                IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
-                            }
-                        }
+        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') 
+        {
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+        } 
+        else 
+        {
+            for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
+            {
+                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_count}`).val() === '') 
+                {
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
+                    IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
+                } 
+                else 
+                {
+                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no - 1}`).val() !== '') 
+                    {
+                        $(`#span_max_error_${min_max_no}`).remove();
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
                     }
                 }
             }
@@ -1601,104 +1969,152 @@ const IGM = (() => {
 
         let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
-        let min_max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
         let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
         let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
         let last_max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
         let array_min_max_judgement_per_sub_item = [];
+        let array_min_max_value = [];
         let array_min_max_judgement_per_sub_item_overall_NG_count = 0;
 
 
-        if (parseInt(min_value) > parseInt(max_value)) {
+        if (parseInt(min_value) > parseInt(max_value)) 
+        {
 
             $(`#span_min_error_${min_max_no}`).remove();
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Invalid min and max</span>`);
-        } else {
+        } 
+        else 
+        {
             $(`#span_min_error_${min_max_no}`).remove();
 
-            if (last_max_value !== '') {
-                for (let a_count = 1; a_count <= 5; a_count++) {
+            if (last_max_value !== '') 
+            {
+                for (let a_count = 1; a_count <= 5; a_count++) 
+                {
+
                     let min_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
                     let max_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
 
                     // checking ng min
-                    if (min_value !== '') {
-                        if (parseInt(min_value_loop) > parseInt(upper_limit)) {
+                    if (min_value !== '') 
+                    {
+                        if (parseInt(min_value_loop) > parseInt(upper_limit)) 
+                        {
                             array_min_max_judgement_per_sub_item.push('NG');
-                        } else {
-                            if (parseInt(min_value_loop) < parseInt(lower_limit)) {
+                        } 
+                        else 
+                        {
+                            if (parseInt(min_value_loop) < parseInt(lower_limit)) 
+                            {
                                 array_min_max_judgement_per_sub_item.push('NG');
-                            } else {
+                            } 
+                            else 
+                            {
                                 array_min_max_judgement_per_sub_item.push('OK');
                             }
                         }
                     }
 
                     // checking ng max
-                    if (max_value !== '') {
-                        if (parseInt(max_value_loop) > parseInt(upper_limit)) {
+                    if (max_value !== '') 
+                    {
+                        if (parseInt(max_value_loop) > parseInt(upper_limit)) 
+                        {
                             array_min_max_judgement_per_sub_item.push('NG');
-                        } else {
-                            if (parseInt(max_value_loop) < parseInt(lower_limit)) {
+                        } 
+                        else 
+                        {
+                            if (parseInt(max_value_loop) < parseInt(lower_limit)) 
+                            {
                                 array_min_max_judgement_per_sub_item.push('NG');
-                            } else {
+                            } 
+                            else 
+                            {
                                 array_min_max_judgement_per_sub_item.push('OK');
                             }
                         }
                     }
 
-                    if (a_count === 5) {
-
-                        if (array_min_max_judgement_per_sub_item.length !== 10) {
+                    if (a_count === 5) 
+                    {
+                        if (array_min_max_judgement_per_sub_item.length !== 10) 
+                        {
 
                             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                             $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        } else {
+                        } 
+                        else 
+                        {
                             // counting ng NG
-                            for (let b_count = 0; b_count < array_min_max_judgement_per_sub_item.length; b_count++) {
-                                if (array_min_max_judgement_per_sub_item[b_count] === 'NG') {
+                            for (let b_count = 0; b_count < array_min_max_judgement_per_sub_item.length; b_count++) 
+                            {
+                                if (array_min_max_judgement_per_sub_item[b_count] === 'NG') 
+                                {
                                     array_min_max_judgement_per_sub_item_overall_NG_count++;
                                 }
                             }
-                            array_min_max_judgement_per_sub_item = [];
+
                         }
 
-                        for (let c_count = 1; c_count <= 5; c_count++) {
+                        for (let c_count = 1; c_count <= 5; c_count++) 
+                        {
                             let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
                             let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
 
                             //pagka nagbura sa gitna na may last value
-                            if (min_value === '') {
+                            if (min_value === '') 
+                            {
                                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                                 $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                            } else {
+                            } 
+                            else
+                            {
                                 //pagka nagbura sa gitna na may last value
-                                if (max_value === '') {
+                                if (max_value === '') 
+                                {
                                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                } else {
+                                } 
+                                else 
+                                {
                                     //pag lalagay ng sub item judgement
-                                    if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) {
+                                    if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) 
+                                    {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                                    } else {
+                                    } 
+                                    else 
+                                    {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
                                     }
 
-                                    if (c_count === 5) {
-                                        IGM.SubitemCalculateOverallJudgement(item_no);
+                                    //pagkuha ng min and max data
+                                    let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
+                                    let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
+                                    //pagpush ng min and max data
+                                    array_min_max_value.push(min_value);
+                                    array_min_max_value.push(max_value);
+
+                                    if (c_count === 5) 
+                                    {
+                                        //pagkuha ng overall judgement para sa checksheet item 
+                                        IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        array_min_max_judgement_per_sub_item = [];
+                                        array_min_max_value = [];
                                     }
                                 }
                             }
                         }
                     }
                 }
-            } else {
+            } 
+            else 
+            {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
             }
         }
     };
 
-    this_igm.SubitemCalculateOverallJudgement = (item_no, sub_no, array_visuals) => {
+    this_igm.SubitemCalculateOverallJudgement = (item_no, sub_no, array_data) => {
 
         //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
         let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
@@ -1711,45 +2127,62 @@ const IGM = (() => {
 
         let overall_NG_count = 0;
 
-        for (let index = 1; index <= total_sub_no_count; index++) {
+        for (let index = 1; index <= total_sub_no_count; index++) 
+        {
             array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
         }
 
-        for (let index = 0; index < array_overall_judgement.length; index++) {
-            if (array_overall_judgement[index] === 'NG') {
+        for (let index = 0; index < array_overall_judgement.length; index++) 
+        {
+            if (array_overall_judgement[index] === 'NG') 
+            {
                 overall_NG_count++;
             }
         }
 
-        if (array_overall_judgement.length === 0) {
-            $(`#td_item_no_${item_no}_judgement`).html('N/A');
-        } else {
-            if (array_overall_judgement.length === 1) {
-                if (array_overall_judgement[0] === '') {
-                    $(`#td_item_no_${item_no}_judgement`).html('N/A');
-                } else {
-                    if (overall_NG_count > 0) {
+        if (array_overall_judgement.length === 0) 
+        {
+            $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+        } 
+        else 
+        {
+            if (array_overall_judgement.length === 1) 
+            {
+                if (array_overall_judgement[0] === '') 
+                {
+                    $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+                } 
+                else {
+                    if (overall_NG_count > 0) 
+                    {
                         $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
                         //auto judgement papunta sa DB
-                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_visuals, judgment_datas)
+                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_data, judgment_datas)
                         array_overall_judgement = [];
-                    } else {
+                    } 
+                    else 
+                    {
                         $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
                         //auto judgement papunta sa DB
-                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_visuals, judgment_datas)
+                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_data, judgment_datas)
                         array_overall_judgement = [];
                     }
                 }
-            } else {
-                if (overall_NG_count > 0) {
+            } 
+            else 
+            {
+                if (overall_NG_count > 0) 
+                {
                     $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
                     //auto judgement papunta sa DB
-                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_visuals, judgment_datas)
+                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_data, judgment_datas)
                     array_overall_judgement = [];
-                } else {
+                } 
+                else 
+                {
                     $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
                     //auto judgement papunta sa DB
-                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_visuals, judgment_datas)
+                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_data, judgment_datas)
                     array_overall_judgement = [];
                 }
             }
@@ -1757,34 +2190,66 @@ const IGM = (() => {
     };
 
     this_igm.ProceedSubitemCalculateOverallJudgement = (id, sub_no, judgment_items, coordinates, data, judgment_datas) => {
-        console.log(`
-        id:${id}
-        sub_no:${sub_no}
-        judgment_items:${judgment_items}
-        coordinates:${coordinates}
-        data:${data}
-        judgment_datas:${judgment_datas}
-        `)
+
+        $(`#accordion_igm`).LoadingOverlay('show');
+     
         $.ajax({
-            url: `update-judgment`,
-            type: 'patch',
-            dataType: 'json',
-            cache: false,
-            data: {
+            url         : `update-judgment`,
+            type        : 'patch',
+            dataType    : 'json',
+            cache       : false,
+            data        : {
                 _token: _TOKEN,
-                id: id,
-                sub_number: sub_no,
-                judgment_items: judgment_items,
-                coordinates: coordinates,
-                data: data.toString(),
-                judgment_datas: judgment_datas,
+                id              : id,
+                sub_number      : sub_no,
+                judgment_items  : judgment_items,
+                coordinates     : coordinates,
+                data            : data.toString(),
+                judgment_datas  : judgment_datas,
             },
-            success: result => {
+            success: result => 
+            {
                 $(`#accordion_igm`).LoadingOverlay('hide');
             }
         });
     };
 
+    this_igm.RejudgementAfterRemoveSubNo = (item_no) => {
+
+        let judgement = '';
+        //pagkuha ng existing sub count
+        let split_total_sub_no_count    = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',');
+        let total_sub_no_count          = parseInt(split_total_sub_no_count[2]);
+        let array_overall_judgement     = [];
+
+        for (let index = 1; index <= total_sub_no_count; index++) 
+        {
+            array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+        }
+       
+        if ($.inArray('N/A',array_overall_judgement) === -1)
+        {
+            if ($.inArray('NG', array_overall_judgement) === - 1)
+            {
+                
+                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
+                judgement += 'OK'
+            }
+            else
+            {
+                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                judgement += 'NG'
+            }
+        }
+        else
+        {
+            $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+            judgement += 'N/A'
+        }
+
+        return judgement;
+        
+    };
 
     return this_igm;
 })();

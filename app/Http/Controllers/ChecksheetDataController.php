@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\ChecksheetData;
+use App\ChecksheetItem;
+
 class ChecksheetDataController extends Controller
 {
     public function storeDatas(ChecksheetData $ChecksheetData, Request $Request)
@@ -54,17 +56,28 @@ class ChecksheetDataController extends Controller
         ];
     }
 
-    public function deleteDatas(ChecksheetData $ChecksheetData, Request $Request)
+    public function deleteDatas(ChecksheetData $ChecksheetData, ChecksheetItem $ChecksheetItem, Request $Request)
     {
-        $id = $Request->id;
+        $id                 = $Request->id;
         $checksheet_item_id = $Request->checksheet_item_id;
-        $sub_number = $Request->sub_number;
+        $sub_number         = $Request->sub_number;
+        $judgment           = $Request->judgment;
 
         $status = 'Error';
         $message = 'no data';
-
+        $test = 0;
         if($id !== null)
         {
+            if ($judgment !== null)
+            {
+                $items = 
+                [
+                    'judgment'              => $judgment
+                ];
+
+                $test = $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
+            }
+
             $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>');
 
             if (count($select_id) !== 0)
@@ -88,7 +101,8 @@ class ChecksheetDataController extends Controller
         [
             'status'    => $status,
             'message'   => $message,
-            'data'      => $result
+            'data'      => $result,
+            'test'      => $test,
         ];
     }
 }
