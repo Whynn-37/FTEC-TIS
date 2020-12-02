@@ -13,6 +13,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TrialEvaluationResultExport;
 use App\TrialLedger;
 
+use App\Http\Controllers\FpdfController;
+
 class ApprovalController extends Controller
 {
 
@@ -221,7 +223,7 @@ class ApprovalController extends Controller
          $selected_file = $Request->selected_file;
 
 
-      return  $data = [
+        $data = [
             'evaluated_by' => Session::get('fullname'),
             'evaluated_datetime' => date('Y/m/d H:i:s'),
             'decision' => 2
@@ -231,10 +233,11 @@ class ApprovalController extends Controller
          // $result =  $Approval->approved($trial_checksheet_id,$data);
          
          //  --- select method        
-         //$attachment  =  $Attachment->getAttachment($trial_checksheet_id);
+         return $attachment  =  $Attachment->getAttachment($trial_checksheet_id);
 
          // pdf merge method    
-
+        
+         
         $status = 'Error';
         $message = 'Somethings Wrong!';
         
