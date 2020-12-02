@@ -39,7 +39,7 @@ const IGM = (() => {
                 let tfoot_tbl_igm = `
 				<tfoot id="tfoot_add_igm_item">
 					<td colspan="9"> 
-						<button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+						<button id="btn_add_new_igm_item_no" type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
 					</td>
 				</tfoot>
 				`;
@@ -104,7 +104,7 @@ const IGM = (() => {
                     var tfoot_tbl_igm = `
                     <tfoot id="tfoot_add_igm_item">
                         <td colspan="9"> 
-                            <button type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+                            <button id="btn_add_new_igm_item_no" type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
                         </td>
                     </tfoot>
                     `;
@@ -134,28 +134,28 @@ const IGM = (() => {
         }
 
         //pagkuha ng items
+        // <a id="a_add_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a> add item to inalis muna kase baka hindi need
         data.data.items.forEach((value) => {
             tr_new_item += `${IGM.AddIgmItemNoHeader(value.item_number - 1,'th_new_igm_sub_column_dark')}
 			<tr id="tr_item_no_${value.item_number}">
                 <td>
-			        <input type="text" id="txt_hidden_item_no_${value.item_number}" value="${value.id}">
+			        <input type="text" id="txt_hidden_item_no_${value.item_number}" value="${value.id}" hidden>
 					<div class="dropright">
 						<span id="span_item_no_${value.item_number}_label">${value.item_number}</span>
 						<button id="btn_validate_sub_no_count_${value.item_number}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.item_number});"></button>
 						<div class="dropdown-menu">
-							<a id="a_add_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
 							<a id="a_add_igm_item_no_${value.item_number}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
 							<a id="a_remove_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.item_number});"><i class="ti-close"></i> REMOVE</a>
 						</div>
 					</div>
 				</td> 
 				<td>
-					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
+					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" disabled>
 					<datalist id="item_tools_list">
 						${array_item_tools_options}
 					</datalist>
 				<td>
-					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);">
+					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" disabled>
 						<option value=""selected disabled>Select type</option>
 						${array_item_type_options}
 					</select>
@@ -181,16 +181,16 @@ const IGM = (() => {
             $(`#slc_item_no_${value.item_number}_tools`).val(value.tools);
             $(`#slc_item_no_${value.item_number}_type`).val(value.type);
 
-            if (value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance') {
-                $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
-                $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', false);
-                $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
+            // if (value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance') { INALIS KO MUNA PARA NAKA DISABLE LANG LAHAT PARA HINDI MABAGO
+            //     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
+            //     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', false);
+            //     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
 
-            } else {
-                $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', true);
-                $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
-                $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
-            }
+            // } else {
+            //     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', true);
+            //     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
+            //     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
+            // }
             //nilagay ko sa array para magamit sa paglalagay naman ng sub items nila 
             array_load_igm_type.push(value.type)
             array_load_igm_item_number.push(value.item_number)
@@ -212,7 +212,7 @@ const IGM = (() => {
 
         for (let index = 0; index < array_hidden_checksheet_data_id.length; index++) {
             //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
-            IGM.AddIgmSubNo(`'${array_load_igm_type[index]}'`, array_load_igm_item_number[index], 0, 0, bg_header,array_hidden_checksheet_data_id[index],'select_item_type');
+            IGM.AddIgmSubNo(array_load_igm_type[index], array_load_igm_item_number[index], 0, 0, bg_header,array_hidden_checksheet_data_id[index],'select_item_type');
 
             $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}`).attr('onclick', `IGM.AddIgmItemNo('${array_load_igm_type[index]}',${array_load_igm_item_number[index]},1,0);`)
             $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${array_load_igm_type[index]}',${array_load_igm_item_number[index]},1,0);`)
@@ -221,7 +221,6 @@ const IGM = (() => {
             $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}_sub_no`).prop('hidden', false);
             $(`#th_igm_item_no_${array_load_igm_item_number[index]}_extra_column`).prop('hidden', false);
             //pag increment
-            new_item_no_count++;
             //nasa load igm yung paglalagay ng item count
         }
     };
@@ -1025,7 +1024,7 @@ const IGM = (() => {
                     IGM.ProceedRemoveIgmItemNo(item_no);
                     $(`#accordion_igm`).LoadingOverlay('hide');
                 } else {
-                    // $(`#accordion_igm`).LoadingOverlay('show');
+                    $(`#accordion_igm`).LoadingOverlay('show');
 
                     $.ajax({
                         url: `delete-item`,
@@ -1053,9 +1052,19 @@ const IGM = (() => {
     this_igm.ProceedRemoveIgmItemNo = (item_no) => {
 
         //para sa pag alis ng mga sub items
-        let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
-        let existing_sub_no_count = split_add_item_no_onlick[2];
-
+        if ($(`#a_add_igm_item_no_${item_no}`).length === 0)
+        {
+            //para sa pag niload ang igm from trial_ledger file. wala kase tayong add item no dito
+            let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',');
+            var existing_sub_no_count = split_add_item_no_onlick[1]; 
+        }
+        else
+        {
+            //para sa hindi niload ang igm from trial_ledger file. may add item dito.
+            let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
+            existing_sub_no_count = split_add_item_no_onlick[2]; 
+        }
+        
         // pag remove ng sub item ng niremove na item
         $(`#tr_item_no_${item_no}_sub_no_column`).remove();
         for (let a_count = 1; a_count <= existing_sub_no_count; a_count++) 
@@ -1064,7 +1073,7 @@ const IGM = (() => {
             $(`#tr_item_no_${item_no}_sub_no_min_${a_count}`).remove();
             $(`#tr_item_no_${item_no}_sub_no_max_${a_count}`).remove();
         }
-
+        
         if (new_item_no_count === 1) 
         {
             $(`#tr_item_no_${item_no}`).remove();
@@ -1075,7 +1084,8 @@ const IGM = (() => {
         } 
         else 
         {
-            if (item_no === 1) 
+            //yung item_no === parseInt(item_no_count) + 1 ay para sa niload na igm tapos nag click ako sa add item button. sa mismong table walang add item.
+            if (item_no === 1 || item_no === parseInt(item_no_count) -1) 
             {
                 $('#tr_item_no_main_column').prop('hidden', true);
                 $(`#tr_item_no_${item_no}_column`).remove();
@@ -1089,9 +1099,8 @@ const IGM = (() => {
             if (item_no !== item_no_count) 
             {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
-                for (let count = item_no; count < new_item_no_count; count++) 
+                for (let count = item_no; count < item_no_count; count++) 
                 {
-
                     if (count === item_no) 
                     {
                         var item_no_holder = item_no;
@@ -1173,15 +1182,22 @@ const IGM = (() => {
                     }
                 }
 
-                new_item_no_count--;
+                if (new_item_no_count !== 0)
+                {
+                    new_item_no_count--;
+                }
                 item_no_count--;
             } 
             else 
             {
-                new_item_no_count--;
+                if (new_item_no_count !== 0)
+                {
+                    new_item_no_count--;
+                }
                 item_no_count--;
             }
         }
+        $('#btn_add_new_igm_item_no').attr('onclick',`IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0);`)
     };
 
     // SUB ITEM METHODS NA DITO
@@ -1270,8 +1286,7 @@ const IGM = (() => {
     };
 
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id) => {
-
-
+       
         let tr = '';
         let new_sub_no = existing_sub_no_count_per_item;
         let td_remove_sub_no_button = '';
@@ -1290,7 +1305,7 @@ const IGM = (() => {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" >
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
                         <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
                         ${td_remove_sub_no_button}
@@ -1337,7 +1352,7 @@ const IGM = (() => {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
                 <td>
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" >
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
                         <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label"  style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
                         ${td_remove_sub_no_button}
