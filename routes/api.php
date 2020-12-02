@@ -65,6 +65,7 @@ Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialE
 Route::post('load-approval', 'ApprovalController@loadApproval');
 Route::get('load-disapproved','ApprovalController@loadDisapproved');
 
-Route::get('approved','ApprovalController@approved');
+Route::post('approved','ApprovalController@approved');
 
 
+Route::get('pdf-test', 'FpdfController@pdfTest');
