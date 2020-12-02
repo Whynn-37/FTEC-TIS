@@ -7,8 +7,10 @@ use App\Approval;
 use App\ChecksheetItem;
 use App\TrialChecksheet;
 use App\ChecksheetData;
+use App\TaktTime;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TrialEvaluationResultExport;
+use App\Supplier;
 use App\TrialLedger;
 
 class ApprovalController extends Controller
@@ -34,8 +36,8 @@ class ApprovalController extends Controller
             
             foreach($checksheet_items as $checksheet_items_value) 
             {
-                $data = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
-                $checksheet_data[] = $data[0];
+                $checksheet_data = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
+                // $checksheet_data[] = $data[0];
             }
 
             $status = 'Error';
@@ -160,6 +162,7 @@ class ApprovalController extends Controller
             $status = 'Success';
             $message = 'Update Successfully!';
         }
+
         return 
         [
             'status'    => $status ,
@@ -168,10 +171,58 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function generateTrialEvaluationResult(TrialEvaluationResultExport $trial_evaluation_result)
+    public function generateTrialEvaluationResult(TrialChecksheet $TrialChecksheet, 
+                                                    ChecksheetItem $ChecksheetItem,
+                                                    TaktTime $TaktTime,
+                                                    Supplier $Supplier,
+                                                    Approval $Approval,
+                                                    Request $Request)
     {
-        return $trial_evaluation_result->registerEvents();
-        return Excel::download(new TrialEvaluationResultExport, 'trial_evaluation_result.xlsx');
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+
+        $status = 'Error';
+        $message = 'No Data';
+        $result = false;
+
+        if ($trial_checksheet_id !== null) 
+        {
+            $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
+            $data_supplier      = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
+
+            $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
+
+            $checksheet_items = $TrialChecksheet->loadChecksheetItem($trial_checksheet_id);
+            $checksheet_datas = $ChecksheetItem->loadChecksheetData($checksheet_items);
+
+            $takt_time = $TaktTime->loadCycleTime($trial_checksheet_id);
+
+            $approval = $Approval->getApproval($trial_checksheet_id);
+
+            $data =  [
+                'details' => $data_trial_ledger_merge,
+                'takt_time' => $takt_time,
+                'items' => $checksheet_items,
+                'datas' => $checksheet_datas,
+                'approval' => $approval,
+            ];
+
+            if ($data) 
+            {
+                $status = 'Success';
+                $message = 'Successfully Save';
+                $result = true;
+                return (new TrialEvaluationResultExport($data))->download($data_trial_ledger_merge['part_number']. '_' . $data_trial_ledger_merge['revision_number'] .'.xlsx');
+
+            }
+        }
+
+        return 
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $result  
+        ];
+
     }
 
     public function loadApproval(Approval $approval)

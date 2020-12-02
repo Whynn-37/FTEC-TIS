@@ -26,5 +26,9 @@ class Approval extends Model
         ->get();
     }
 
-
+    public function getApproval($id)
+    {
+        return Approval::where('trial_checksheet_id', $id)
+        ->first();
+    }
 }
