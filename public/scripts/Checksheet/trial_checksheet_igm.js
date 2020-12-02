@@ -14,6 +14,8 @@ const IGM = (() => {
     let array_item_tools = ['BF', 'BG', 'BM', 'CM', 'CMM', 'CS', 'DC', 'DG', 'DI', 'DM', 'DPG', 'DSM', 'EG', 'GB', 'GM', 'GT', 'HG', 'HS', 'HT', 'IR', 'JIG', 'K', 'LS', 'MJ', 'MM', 'MP', 'PG', 'PJ', 'PLG', 'PM', 'PPS', 'PR', 'PS', 'RG', 'RHT', 'RT', 'RW', 'SDC', 'SF', 'SG', 'SR', 'ST', 'TD', 'TG', 'TI', 'TM', 'VAM', 'VHT', 'VSL'];
     let array_item_type = ['Actual', 'Belt Fit', 'Gauge', 'Material Check', 'Min and Max', 'Min and Max and Form Tolerance', 'Material Thickness', 'Press Fit', 'Rivet A'];
     let array_overall_judgement = [];
+    let array_load_igm_type = [];
+    let array_load_igm_item_number = [];
 
     this_igm.ValidateLoadIGM = () => {
 
@@ -88,12 +90,11 @@ const IGM = (() => {
                 //pagkuha ng checksheet items
                 IGM.GetChecksheetItems(data);
 
-
-
                 //pagkuha ng max item number
                 if (data.data.items.length > 0) {
                     let count = 1;
                     data.data.items.forEach((value) => {
+                        //paglalagay ng item count
                         if (count === data.data.items.length) {
                             item_no_count += value.item_number;
                         }
@@ -108,7 +109,6 @@ const IGM = (() => {
                     </tfoot>
                     `;
                 } else {
-                    item_no_count += 0;
                     $('#btn_validate_load_igm').prop('hidden', false);
                     tfoot_tbl_igm = '';
                 }
@@ -135,41 +135,41 @@ const IGM = (() => {
 
         //pagkuha ng items
         data.data.items.forEach((value) => {
-            tr_new_item += `${IGM.AddIgmItemNoHeader(value.id - 1,'th_new_igm_sub_column_dark')}
-			<tr id="tr_item_no_${value.id}">
-			<input type="text" id="item_id_${value.id}" >
-				<td>
+            tr_new_item += `${IGM.AddIgmItemNoHeader(value.item_number - 1,'th_new_igm_sub_column_dark')}
+			<tr id="tr_item_no_${value.item_number}">
+                <td>
+			        <input type="text" id="txt_hidden_item_no_${value.item_number}" value="${value.id}">
 					<div class="dropright">
-						<span id="span_item_no_${value.id}_label">${value.item_number}</span>
-						<button id="btn_validate_sub_no_count_${value.id}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.id});"></button>
+						<span id="span_item_no_${value.item_number}_label">${value.item_number}</span>
+						<button id="btn_validate_sub_no_count_${value.item_number}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.item_number});"></button>
 						<div class="dropdown-menu">
-							<a id="a_add_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.id},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
-							<a id="a_add_igm_item_no_${value.id}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.id},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
-							<a id="a_remove_igm_item_no_${value.id}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.id});"><i class="ti-close"></i> REMOVE</a>
+							<a id="a_add_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a>
+							<a id="a_add_igm_item_no_${value.item_number}_sub_no" class="dropdown-item" onclick="IGM.AddIgmSubNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer" hidden><i class="ti-plus"></i> ADD SUB ITEM</a>
+							<a id="a_remove_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.item_number});"><i class="ti-close"></i> REMOVE</a>
 						</div>
 					</div>
 				</td> 
 				<td>
-					<input list="item_tools_list" id="slc_item_no_${value.id}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
+					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools">
 					<datalist id="item_tools_list">
 						${array_item_tools_options}
 					</datalist>
 				<td>
-					<select id="slc_item_no_${value.id}_type" class="form-control" onchange="IGM.SelectItemType(${value.id},1);">
+					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);">
 						<option value=""selected disabled>Select type</option>
 						${array_item_type_options}
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${value.id}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
+					<input id="txt_item_no_${value.item_number}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled>
 				</td>
 				<td>
-					<input id="txt_item_no_${value.id}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+					<input id="txt_item_no_${value.item_number}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.id}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.id});">
+					<input id="txt_item_no_${value.item_number}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
-				<td id="td_item_no_${value.id}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
+				<td id="td_item_no_${value.item_number}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
             </tr>`;
         });
 
@@ -178,37 +178,52 @@ const IGM = (() => {
 
         //pag fill ng data sa inputs
         data.data.items.forEach((value) => {
-            $(`#slc_item_no_${value.id}_tools`).val(value.tools);
-            $(`#slc_item_no_${value.id}_type`).val(value.type);
+            $(`#slc_item_no_${value.item_number}_tools`).val(value.tools);
+            $(`#slc_item_no_${value.item_number}_type`).val(value.type);
 
             if (value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance') {
-                $(`#txt_item_no_${value.id}_specs`).prop('disabled', false);
-                $(`#txt_item_no_${value.id}_upper_limit`).prop('disabled', false);
-                $(`#txt_item_no_${value.id}_lower_limit`).prop('disabled', false);
+                $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
+                $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', false);
+                $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
 
             } else {
-                $(`#txt_item_no_${value.id}_specs`).prop('disabled', true);
-                $(`#txt_item_no_${value.id}_upper_limit`).prop('disabled', true);
-                $(`#txt_item_no_${value.id}_lower_limit`).prop('disabled', true);
+                $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', true);
+                $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
+                $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
             }
+            //nilagay ko sa array para magamit sa paglalagay naman ng sub items nila 
+            array_load_igm_type.push(value.type)
+            array_load_igm_item_number.push(value.item_number)
         });
 
         //pagkuha ng checksheet datas
-        data.data.datas.forEach((value) => {
-            IGM.GetChecksheetDatas(value.checksheet_item_id, 1, 'th_new_igm_sub_column_dark');
-        });
+        IGM.GetChecksheetDatas('th_new_igm_sub_column_dark',data);
+
     };
 
-    this_igm.GetChecksheetDatas = (item_no, existing_sub_no_count, bg_header = "th_new_igm_sub_column") => {
+    this_igm.GetChecksheetDatas = (bg_header = "th_new_igm_sub_column",data) => {
 
-        let type = $(`#slc_item_no_${item_no}_type`).val();
+        let array_hidden_checksheet_data_id = [];
+        
+        //pagkuha ng data id
+        data.data.datas.forEach((value) => {
+            array_hidden_checksheet_data_id.push(value.id)
+        });
 
-        IGM.AddIgmSubNo(`${type}`, item_no, 0, 0, bg_header);
-        $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0);`)
-        $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
-        $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
-        $(`#a_add_igm_item_no_${item_no}_sub_no`).prop('hidden', false);
+        for (let index = 0; index < array_hidden_checksheet_data_id.length; index++) {
+            //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
+            IGM.AddIgmSubNo(`'${array_load_igm_type[index]}'`, array_load_igm_item_number[index], 0, 0, bg_header,array_hidden_checksheet_data_id[index],'select_item_type');
 
+            $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}`).attr('onclick', `IGM.AddIgmItemNo('${array_load_igm_type[index]}',${array_load_igm_item_number[index]},1,0);`)
+            $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${array_load_igm_type[index]}',${array_load_igm_item_number[index]},1,0);`)
+            $(`#slc_item_no_${array_load_igm_item_number[index]}_type`).attr('onchange', `IGM.SelectItemType(${array_load_igm_item_number[index]},1);`);
+
+            $(`#a_add_igm_item_no_${array_load_igm_item_number[index]}_sub_no`).prop('hidden', false);
+            $(`#th_igm_item_no_${array_load_igm_item_number[index]}_extra_column`).prop('hidden', false);
+            //pag increment
+            new_item_no_count++;
+            //nasa load igm yung paglalagay ng item count
+        }
     };
 
     // PARA SA MANUAL NA PAG AADD
@@ -1010,7 +1025,7 @@ const IGM = (() => {
                     IGM.ProceedRemoveIgmItemNo(item_no);
                     $(`#accordion_igm`).LoadingOverlay('hide');
                 } else {
-                    $(`#accordion_igm`).LoadingOverlay('show');
+                    // $(`#accordion_igm`).LoadingOverlay('show');
 
                     $.ajax({
                         url: `delete-item`,
@@ -1060,7 +1075,6 @@ const IGM = (() => {
         } 
         else 
         {
-
             if (item_no === 1) 
             {
                 $('#tr_item_no_main_column').prop('hidden', true);
@@ -1114,12 +1128,13 @@ const IGM = (() => {
                         split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
                         added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
                     }
-
+                    //pagpapalita ng id
                     $(`#tr_item_no_${next_item_no_holder}_column`).attr('id', `tr_item_no_${item_no_holder}_column`);
                     $(`#th_igm_item_no_${next_item_no_holder}_extra_column`).attr('id', `th_igm_item_no_${item_no_holder}_extra_column`);
                     $(`#tr_item_no_${next_item_no_holder}_sub_no_column`).attr('id', `tr_item_no_${item_no_holder}_sub_no_column`);
 
                     $(`#tr_item_no_${next_item_no_holder}`).attr('id', `tr_item_no_${item_no_holder}`);
+                    //paglalagay ng bagong numbering sa label
                     $(`#span_item_no_${next_item_no_holder}_label`).text(item_no_holder);
                     $(`#span_item_no_${next_item_no_holder}_label`).attr('id', `span_item_no_${item_no_holder}_label`);
 
@@ -1202,7 +1217,6 @@ const IGM = (() => {
             //meron nito para sa pagpapalit palit ng type if mm or mc para mag babago din ang sub item
             if (action !== 'select_item_type')
             {   
-        
                 // pag store ng data sa DB
                 IGM.ProceedAddIgmSubNo(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, 3);
             }
@@ -1276,7 +1290,7 @@ const IGM = (() => {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" >
                     <div class="dropright">
                         <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
                         ${td_remove_sub_no_button}
@@ -1323,7 +1337,7 @@ const IGM = (() => {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
                 <td>
-                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" >
                     <div class="dropright">
                         <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label"  style="margin-right: 20%; ${margin_left}">${new_sub_no}</span>
                         ${td_remove_sub_no_button}
