@@ -12,6 +12,7 @@ use App\ChecksheetData;
 use App\TaktTime;
 use App\Approval;
 use App\Attachment;
+use Session;
 class TrialChecksheetController extends Controller
 {
     public function loadPartnumber(TrialLedger $TrialLedger)
@@ -326,7 +327,7 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function loadIgm(TrialChecksheet $trial_checksheet, ChecksheetItem $checksheet_item, Request $request)
+    public function loadIgm(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, Request $request)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;
 
@@ -338,8 +339,8 @@ class TrialChecksheetController extends Controller
 
         if($trial_checksheet_id !== null)
         {
-            $checksheet_items = $trial_checksheet->loadChecksheetItem($trial_checksheet_id);
-            $checksheet_datas = $checksheet_item->loadChecksheetData($checksheet_items);
+            $checksheet_items = $TrialChecksheet->loadChecksheetItem($trial_checksheet_id);
+            $checksheet_datas = $ChecksheetItem->loadChecksheetData($checksheet_items);
 
             $status = 'Success';
             $message = 'Successfully Load';
@@ -360,6 +361,7 @@ class TrialChecksheetController extends Controller
     public function finishedChecksheet(TrialChecksheet $TrialChecksheet,
                                         Approval $Approval,
                                         Attachment $Attachment,
+                                        TaktTime $TaktTime,
                                         Request $Request)
     {
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
@@ -370,7 +372,10 @@ class TrialChecksheetController extends Controller
                                                 'humidity',
                                                 'judgment',
                                                 'part_number',
-                                                'revision_number'))->keys();
+                                                'revision_number',
+                                                'actual_time',
+                                                'total_takt_time',
+                                                'takt_time'))->keys();
 
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $date_inspected = $Request->date_inspected;
@@ -379,6 +384,10 @@ class TrialChecksheetController extends Controller
         $judgment = $Request->judgment;
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
+
+        $actual_time            = $Request->actual_time;
+        $total_takt_time        = $Request->total_takt_time;
+        $takt_time              = $Request->takt_time;
 
         $folder_name = date('Y-m-d') . '_' . $part_number . '_' . $revision_number;
 
@@ -393,9 +402,12 @@ class TrialChecksheetController extends Controller
         {
             for($i=0; $i < count($request_keys); $i++)
             {
-                $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
+                if ($Request->file($file_names[$i]) !== null) 
+                {
+                    $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
 
-                $file_upload = $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                    $file_upload = $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                }
             }
 
             $trial_checksheet_data = 
@@ -412,6 +424,8 @@ class TrialChecksheetController extends Controller
             $approval_data =
             [
                 'trial_checksheet_id'      => $trial_checksheet_id,
+                'inspect_by'               => Session::get('fullname'), // session name
+                'inspect_datetime'         => now(),
                 'decision'                 => 1
             ];
 
@@ -426,12 +440,28 @@ class TrialChecksheetController extends Controller
 
             $attachment_result = $Attachment->storeAttachments($attachment_data);
 
+            $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
+
+            $takt_time_data = 
+            [
+                'trial_checksheet_id'   => $trial_checksheet_id,
+                'start_date'            => $start_date_time['start_date'],
+                'start_time'            => $start_date_time['start_time'],
+                'end_time'              => date('H:i:s'),
+                'actual_time'           => $actual_time,
+                'total_takt_time'       => $total_takt_time,
+                'takt_time'             => $takt_time,
+            ];
+    
+            $takt_time_result =  $TaktTime->updateOrCreateTaktTime($takt_time_data);
+
             $status  = 'Error';
             $message = 'Not Successfully Saved';
 
             if ($file_upload && 
                 $trial_checksheet_data && 
                 $approval_data && 
+                $takt_time_data && 
                 $attachment_data) 
             {
                 $status  = 'Success';
@@ -447,7 +477,8 @@ class TrialChecksheetController extends Controller
             [
                 'trial_checksheet_result'   => $trial_checksheet_result,
                 'approval_result'           => $approval_result,
-                'attachment_result'         => $attachment_result
+                'attachment_result'         => $attachment_result,
+                'takt_time_result'          => $takt_time_result
             ]    
         ];
     }

@@ -28,6 +28,7 @@ Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
+Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');

@@ -16,6 +16,8 @@ class CreateApprovalsTable extends Migration
         Schema::create('approvals', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trial_checksheet_id');
+            $table->string('inspect_by')->nullable();
+            $table->string('inspect_datetime')->nullable();
             $table->string('evaluated_by')->nullable();
             $table->string('evaluated_datetime')->nullable();
             $table->string('approved_by')->nullable();

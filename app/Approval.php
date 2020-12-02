@@ -31,4 +31,9 @@ class Approval extends Model
         return Approval::find($id)->update($data);
     }
 
+    public function getApproval($id)
+    {
+        return Approval::where('trial_checksheet_id', $id)
+        ->first();
+    }
 }

@@ -2,30 +2,40 @@
 
 namespace App\Exports;
 
-use App\TrialLedger;
-use App\Supplier;
-use App\TrialChecksheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\Exportable;
 
 class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
 {
-    // ...
+    private $data;
+    use Exportable;
+
+    public function __construct($data)
+    {
+        $this->data  = $data;
+    }
 
     /**
      * @return array
      */
     public function registerEvents(): array
     {
-        return [
-            AfterSheet::class    => function(AfterSheet $event) {
-                $border_with_center_value = [
-                    'borders' => [
-                        'outline' => ['borderStyle' => 'thin'],
-                        'color' => ['argb' => '000000'],
+        // dd($this->data);
+        return 
+        [
+            AfterSheet::class    => function(AfterSheet $event) 
+            {
+                $border_with_center_value = 
+                [
+                    'borders' => 
+                    [
+                        'outline'   => ['borderStyle' => 'thin'],
+                        'color'     => ['argb' => '000000'],
                     ],
-                    'alignment' => [
+                    'alignment' => 
+                    [
                         'vertical'     => 'center',
                         'horizontal'   => 'center',
                     ]
@@ -51,7 +61,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($part_number_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($part_number_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($part_number_value_cell);
-                $event->sheet->getDelegate()->setCellValue('F3', '');
+                $event->sheet->getDelegate()->setCellValue('F3', $this->data['details']['part_number']);
                 
                 $part_name_cell = 'H3:J4';
                 $event->sheet->getDelegate()->getStyle($part_name_cell)->applyFromArray($border_with_center_value);
@@ -63,7 +73,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($part_name_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($part_name_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($part_name_value_cell);
-                $event->sheet->getDelegate()->setCellValue('K3', '');
+                $event->sheet->getDelegate()->setCellValue('K3', $this->data['details']['part_name']);
 
                 $supplier_cell = 'N3:P4';
                 $event->sheet->getDelegate()->getStyle($supplier_cell)->applyFromArray($border_with_center_value);
@@ -75,7 +85,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($supplier_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($supplier_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($supplier_value_cell);
-                $event->sheet->getDelegate()->setCellValue('Q3', '');
+                $event->sheet->getDelegate()->setCellValue('Q3', $this->data['details']['supplier_name']);
 
                 $revision_number_cell = 'U3:W4';
                 $event->sheet->getDelegate()->getStyle($revision_number_cell)->applyFromArray($border_with_center_value);
@@ -83,11 +93,11 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->mergeCells($revision_number_cell);
                 $event->sheet->getDelegate()->setCellValue('U3', 'REV. NO:');
 
-                $revision_mumber_value_cell = 'X3:Y4';
-                $event->sheet->getDelegate()->getStyle($revision_mumber_value_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($revision_mumber_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
-                $event->sheet->getDelegate()->mergeCells($revision_mumber_value_cell);
-                $event->sheet->getDelegate()->setCellValue('X3', '');
+                $revision_number_value_cell = 'X3:Y4';
+                $event->sheet->getDelegate()->getStyle($revision_number_value_cell)->applyFromArray($border_with_center_value);
+                $event->sheet->getDelegate()->getStyle($revision_number_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                $event->sheet->getDelegate()->mergeCells($revision_number_value_cell);
+                $event->sheet->getDelegate()->setCellValue('X3', $this->data['details']['revision_number']);
 
                 $date_cell = 'B5:E6';
                 $event->sheet->getDelegate()->getStyle($date_cell)->applyFromArray($border_with_center_value);
@@ -99,7 +109,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($date_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($date_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($date_value_cell);
-                $event->sheet->getDelegate()->setCellValue('F5', '');
+                $event->sheet->getDelegate()->setCellValue('F5', $this->data['details']['date_finished']);
 
                 $temp_cell = 'H5:J6';
                 $event->sheet->getDelegate()->getStyle($temp_cell)->applyFromArray($border_with_center_value);
@@ -111,7 +121,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($temp_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($temp_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($temp_value_cell);
-                $event->sheet->getDelegate()->setCellValue('K5', '');
+                $event->sheet->getDelegate()->setCellValue('K5', $this->data['details']['temperature']);
 
                 $trial_app_cell = 'N5:P6';
                 $event->sheet->getDelegate()->getStyle($trial_app_cell)->applyFromArray($border_with_center_value);
@@ -123,7 +133,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($trial_app_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($trial_app_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($trial_app_value_cell);
-                $event->sheet->getDelegate()->setCellValue('Q5', '');
+                $event->sheet->getDelegate()->setCellValue('Q5', $this->data['details']['inspection_reason']);
 
                 $judgment_cell = 'U5:W6';
                 $event->sheet->getDelegate()->getStyle($judgment_cell)->applyFromArray($border_with_center_value);
@@ -135,9 +145,14 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($judgment_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($judgment_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($judgment_value_cell);
-                $event->sheet->getDelegate()->setCellValue('X5', '');
+                $event->sheet->getDelegate()->setCellValue('X5', $this->data['details']['judgment']);
 
                 // third row
+                for ($i=0; $i < count($this->data['takt_time']); $i++) 
+                { 
+                    $time_sum[] = $this->data['takt_time'][$i]['total_takt_time'];
+                }
+
                 $time_cell = 'B7:E8';
                 $event->sheet->getDelegate()->getStyle($time_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($time_cell)->getFont('Calibri')->setSize(12)->setBold(true);
@@ -148,7 +163,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($time_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($time_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($time_value_cell);
-                $event->sheet->getDelegate()->setCellValue('F7', '');
+                $event->sheet->getDelegate()->setCellValue('F7', round(array_sum($time_sum)/1440, 2) . 'DAYS');
 
                 $humidity_cell = 'H7:J8';
                 $event->sheet->getDelegate()->getStyle($humidity_cell)->applyFromArray($border_with_center_value);
@@ -160,7 +175,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($humidity_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($humidity_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($humidity_value_cell);
-                $event->sheet->getDelegate()->setCellValue('K7', '');
+                $event->sheet->getDelegate()->setCellValue('K7', $this->data['details']['humidity']);
 
                 $die_remarks_cell = 'N7:P8';
                 $event->sheet->getDelegate()->getStyle($die_remarks_cell)->applyFromArray($border_with_center_value);
@@ -172,7 +187,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($die_remarks_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($die_remarks_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($die_remarks_value_cell);
-                $event->sheet->getDelegate()->setCellValue('Q7', '');
+                $event->sheet->getDelegate()->setCellValue('Q7', $this->data['details']['die_class']);
 
                 $trial_stage_cell = 'U7:W8';
                 $event->sheet->getDelegate()->getStyle($trial_stage_cell)->applyFromArray($border_with_center_value);
@@ -180,11 +195,18 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->mergeCells($trial_stage_cell);
                 $event->sheet->getDelegate()->setCellValue('U7', 'TRIAL STAGE:');
 
+                // ordinal suffix
+                $ends = array('TH','ST','ND','RD','TH','TH','TH','TH','TH','TH');
+                if (($this->data['details']['trial_number'] %100) >= 11 && ($this->data['details']['trial_number']%100) <= 13)
+                    $abbreviation = $this->data['details']['trial_number']. 'TH';
+                else
+                    $abbreviation = $this->data['details']['trial_number']. $ends[$this->data['details']['trial_number'] % 10];
+
                 $trial_stage_value_cell = 'X7:Y8';
                 $event->sheet->getDelegate()->getStyle($trial_stage_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($trial_stage_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($trial_stage_value_cell);
-                $event->sheet->getDelegate()->setCellValue('x7', '');
+                $event->sheet->getDelegate()->setCellValue('x7', $abbreviation);
 
                 // fourth row
                 $inspectors_cell = 'B9:E12';
@@ -197,7 +219,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($inspectors_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($inspectors_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($inspectors_value_cell);
-                $event->sheet->getDelegate()->setCellValue('F9', '');
+                $event->sheet->getDelegate()->setCellValue('F9', $this->data['approval']['inspect_by']);
 
                 $evaluated_by_cell = 'H9:M9';
                 $event->sheet->getDelegate()->getStyle($evaluated_by_cell)->applyFromArray($border_with_center_value);
@@ -209,7 +231,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($evaluated_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('H10', '');
+                $event->sheet->getDelegate()->setCellValue('H10', $this->data['approval']['evaluated_by']);
 
                 $checked_by_cell = 'N9:S9';
                 $event->sheet->getDelegate()->getStyle($checked_by_cell)->applyFromArray($border_with_center_value);
@@ -221,7 +243,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($checked_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('N10', '');
+                $event->sheet->getDelegate()->setCellValue('N10', $this->data['approval']['evaluated_by']);
 
                 $approved_by_cell = 'T9:Y9';
                 $event->sheet->getDelegate()->getStyle($approved_by_cell)->applyFromArray($border_with_center_value);
@@ -233,7 +255,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($approved_by_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($approved_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($approved_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('T10', '');
+                $event->sheet->getDelegate()->setCellValue('T10', $this->data['approval']['approved_by']);
 
                 // fifth row
                 $number_cell = 'B13:C14';
@@ -342,115 +364,161 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->mergeCells($remarks_cell);
                 $event->sheet->getDelegate()->setCellValue('W13', 'REMARKS');
 
-                // data cells
-                for($i = 15; $i <= 100; $i++)
+                for ($i=0; $i < count($this->data['datas']); $i++) 
+                { 
+                    for ($z=0; $z < count($this->data['items']); $z++) 
+                    { 
+                        if ($i === $z) 
+                        {
+                            if ($this->data['items'][$i][0]) 
+                            {
+                                $data[] = 
+                                [
+                                    'tools'         => $this->data['items'][$i]['tools'],
+                                    'specification' => $this->data['items'][$i]['specification'],
+                                    'type'          => $this->data['items'][$i]['type'],
+                                    'upper_limit'   => $this->data['items'][$i]['upper_limit'],
+                                    'lower_limit'   => $this->data['items'][$i]['lower_limit'],
+                                    'coordinates'   => $this->data['datas'][$i][0]['coordinates'],
+                                    'data'          => explode(",",$this->data['datas'][$i][0]['data']),
+                                    'judgment'      => $this->data['datas'][$i][0]['judgment'],
+                                    'remarks'       => $this->data['datas'][$i][0]['remarks'],
+                                ];
+                            }
+                            else
+                            {
+                                for ($q=0; $q < count($this->data['datas'][$i]); $q++) 
+                                { 
+                                    $data[] = 
+                                    [
+                                        'tools'         => $this->data['items'][$i]['tools'],
+                                        'specification' => $this->data['items'][$i]['specification'],
+                                        'type'          => $this->data['items'][$i]['type'],
+                                        'upper_limit'   => $this->data['items'][$i]['upper_limit'],
+                                        'lower_limit'   => $this->data['items'][$i]['lower_limit'],
+                                        'coordinates'   => $this->data['datas'][$i][$q]['coordinates'],
+                                        'data'          => explode(",",$this->data['datas'][$i][$q]['data']),
+                                        'judgment'      => $this->data['datas'][$i][$q]['judgment'],
+                                        'remarks'       => $this->data['datas'][$i][$q]['remarks'],
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $row = 15;
+                $number = 1;
+
+                foreach ($data as $value) 
                 {
-                    $number_value_cell = 'B'.$i.':C'.$i;
+                    $number_value_cell = 'B'.$row.':C'.$row;
                     $event->sheet->getDelegate()->getStyle($number_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($number_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
                     $event->sheet->getDelegate()->mergeCells($number_value_cell);
-                    $event->sheet->getDelegate()->setCellValue('B'.$i, '');
+                    $event->sheet->getDelegate()->setCellValue('B'.$row, $number);
 
-                    $page_value_cell = 'D'.$i;
+                    $page_value_cell = 'D'.$row;
                     $event->sheet->getDelegate()->getStyle($page_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($page_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('D'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($page_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('D'.$row, 1);
 
-                    $tools_value_cell = 'E'.$i;
+                    $tools_value_cell = 'E'.$row;
                     $event->sheet->getDelegate()->getStyle($tools_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($tools_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('E'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($tools_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('E'.$row, $value['tools']);
 
-                    $coordinates_value_cell = 'F'.$i;
+                    $coordinates_value_cell = 'F'.$row;
                     $event->sheet->getDelegate()->getStyle($coordinates_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($coordinates_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('F'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($coordinates_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('F'.$row, $value['coordinates']);
 
-                    $specifications_value_cell = 'G'.$i;
+                    $specifications_value_cell = 'G'.$row;
                     $event->sheet->getDelegate()->getStyle($specifications_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($specifications_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('G'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($specifications_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('G'.$row, $value['specification']);
 
-                    $tolerance_upper_value_cell = 'H'.$i;
+                    $tolerance_upper_value_cell = 'H'.$row;
                     $event->sheet->getDelegate()->getStyle($tolerance_upper_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($tolerance_upper_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('H'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($tolerance_upper_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('H'.$row, $value['upper_limit']);
 
-                    $tolerance_lower_value_cell = 'I'.$i;
+                    $tolerance_lower_value_cell = 'I'.$row;
                     $event->sheet->getDelegate()->getStyle($tolerance_lower_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($tolerance_lower_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('I'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($tolerance_lower_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('I'.$row, $value['lower_limit']);
 
-                    $type_value_cell = 'J'.$i;
+                    $type_value_cell = 'J'.$row;
                     $event->sheet->getDelegate()->getStyle($type_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($type_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('J'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($type_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('J'.$row, $value['type']);
 
-                    $point_area_value_cell = 'K'.$i;
+                    $point_area_value_cell = 'K'.$row;
                     $event->sheet->getDelegate()->getStyle($point_area_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($point_area_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('K'.$i, '');
+                    $event->sheet->getDelegate()->getStyle($point_area_value_cell)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('K'.$row, '');
 
-                    $sample_one_value_cell1 = 'L'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_one_value_cell1)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_one_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('L'.$i, '');
+                    $letter = 'L';
+                    $indication = 0;
+                    $increment = 0;
+                    $data_value = '';
+                    
+                    for ($c=0; $c < 10; $c++) 
+                    {
+                        if (count($value['data']) === 10)
+                        {
+                            $data_value = $value['data'][$c];
+                        }
+                        else
+                        {
+                            if($indication === 0)
+                            {
+                                $indication = 1;
+                                $data_value = $value['data'][$increment++];
+                            }
+                            else
+                            {
+                                $indication = 0;
+                                $data_value = '';
+                            }
+                        }
 
-                    $sample_one_value_cell2 = 'M'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_one_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_one_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('M'.$i, '');
+                        $sample_one_value_cell1 = $letter.$row;
+                        $event->sheet->getDelegate()->getStyle($sample_one_value_cell1)->applyFromArray($border_with_center_value);
+                        $event->sheet->getDelegate()->getStyle($sample_one_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
+                        $event->sheet->getDelegate()->getStyle($sample_one_value_cell1)->getAlignment()->setWrapText(true);
+                        $event->sheet->getDelegate()->setCellValue($letter.$row, $data_value);
 
-                    $sample_two_value_cell1 = 'N'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_two_value_cell1)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_two_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('N'.$i, '');
-
-                    $sample_two_value_cell2 = 'O'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_two_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_two_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('O'.$i, '');
-
-                    $sample_three_value_cell1 = 'P'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_three_value_cell1)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_three_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('P'.$i, '');
-
-                    $sample_three_value_cell2 = 'Q'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_three_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_three_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('Q'.$i, '');
-
-                    $sample_four_value_cell1 = 'R'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_four_value_cell1)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_four_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('R'.$i, '');
-
-                    $sample_four_value_cell2 = 'S'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_four_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_four_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('S'.$i, '');
-
-                    $sample_five_value_cell1 = 'T'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_five_value_cell1)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_five_value_cell1)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('T'.$i, '');
-
-                    $sample_five_value_cell2 = 'U'.$i;
-                    $event->sheet->getDelegate()->getStyle($sample_five_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($sample_five_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('U'.$i, '');
-
-                    $judgment_value_cell2 = 'V'.$i;
+                        $letter++;
+                    }
+                    
+                    $judgment_value_cell2 = 'V'.$row;
                     $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->applyFromArray($border_with_center_value);
-                    $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
-                    $event->sheet->getDelegate()->setCellValue('V'.$i, '');
 
-                    $remarks_value_cell = 'W'.$i.':Y'.$i;
+                    if ($value['judgment'] === 'NG')
+                        $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false)->getColor()->setRGB('FF0000');
+                    else
+                        $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->getFont('Calibri')->setSize(11)->setBold(false);
+                        
+                    $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->getAlignment()->setWrapText(true);
+                    $event->sheet->getDelegate()->setCellValue('V'.$row, $value['judgment']);
+
+                    $remarks_value_cell = 'W'.$row.':Y'.$row;
                     $event->sheet->getDelegate()->getStyle($remarks_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($remarks_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
                     $event->sheet->getDelegate()->mergeCells($remarks_value_cell);
-                    $event->sheet->getDelegate()->setCellValue('W'.$i, '');
+                    $event->sheet->getDelegate()->setCellValue('W'.$row, $value['remarks']);
+
+                    $row ++;
+                    $number ++;
                 }
             },
         ];

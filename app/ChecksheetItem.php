@@ -12,7 +12,7 @@ class ChecksheetItem extends Model
 
     public function checksheet_datas()
     {
-        return $this->hasOne('App\ChecksheetData');
+        return $this->hasMany('App\ChecksheetData');
     }
 
     public function getChecksheetItem($id)

@@ -36,15 +36,28 @@ class TrialChecksheet extends Model
     public function getChecksheetDetails($id)
     {
        
-     return   $data = TrialChecksheet::join('trial_ledgers', function($join)
+     return TrialChecksheet::join('trial_ledgers', function($join)
         {
             $join->on('trial_ledgers.part_number', '=', 'trial_checksheets.part_number')
                 ->on('trial_ledgers.trial_number', '=', 'trial_checksheets.trial_number')
                 ->on('trial_ledgers.revision_number', '=', 'trial_checksheets.revision_number');
         })
         ->where('trial_checksheets.id', $id)
-        ->select(['trial_checksheets.*','trial_ledgers.*'])
-        ->get();
+        ->select([
+            'trial_checksheets.part_number', 
+            'trial_checksheets.revision_number',
+            'trial_checksheets.trial_number',
+            'trial_checksheets.date_finished',
+            'trial_checksheets.judgment',
+            'trial_checksheets.date_inspected',
+            'trial_checksheets.temperature',
+            'trial_checksheets.humidity',
+            'trial_ledgers.part_name',
+            'trial_ledgers.die_class',
+            'trial_ledgers.supplier_code',
+            'trial_ledgers.inspection_reason',
+            ])
+        ->first();
     }
 
     public function updateTrialChecksheet($id,$data)
