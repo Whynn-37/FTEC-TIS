@@ -1056,7 +1056,7 @@ const IGM = (() => {
         {
             //para sa pag niload ang igm from trial_ledger file. wala kase tayong add item no dito
             let split_add_item_no_onlick = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',');
-            var existing_sub_no_count = split_add_item_no_onlick[1]; 
+            var existing_sub_no_count = split_add_item_no_onlick[2]; 
         }
         else
         {
@@ -1074,7 +1074,8 @@ const IGM = (() => {
             $(`#tr_item_no_${item_no}_sub_no_max_${a_count}`).remove();
         }
         
-        if (new_item_no_count === 1) 
+        // if (new_item_no_count === 1) 
+        if (item_no_count === 1) 
         {
             $(`#tr_item_no_${item_no}`).remove();
             $('#tfoot_add_igm_item').prop('hidden', false);
@@ -1085,40 +1086,67 @@ const IGM = (() => {
         else 
         {
             //yung item_no === parseInt(item_no_count) + 1 ay para sa niload na igm tapos nag click ako sa add item button. sa mismong table walang add item.
-            if (item_no === 1 || item_no === parseInt(item_no_count) -1) 
+            if (item_no === 1) 
             {
                 $('#tr_item_no_main_column').prop('hidden', true);
                 $(`#tr_item_no_${item_no}_column`).remove();
             } 
             else 
             {
+                if (item_no === parseInt(item_no_count) + 1)
+                {
+                    $('#tr_item_no_main_column').prop('hidden', true);
+                }
                 $(`#tr_item_no_${item_no}_column`).remove();
             }
             $(`#tr_item_no_${item_no}`).remove();
-
+ 
             if (item_no !== item_no_count) 
             {
                 // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
+                // for (let count = item_no; count < new_item_no_count; count++) 
                 for (let count = item_no; count < item_no_count; count++) 
                 {
                     if (count === item_no) 
                     {
-                        var item_no_holder = item_no;
+                        var item_no_holder      = item_no;
                         var next_item_no_holder = item_no + 1;
 
                         //VALIDATE SUB NO COUNT
-                        var btn_validate_sub_no_count_onclick_value = $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick');
-                        var split_btn_validate_sub_no_count_onclick_value = btn_validate_sub_no_count_onclick_value.split('(');
+                        var btn_validate_sub_no_count_onclick_value             = $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick');
+                        var split_btn_validate_sub_no_count_onclick_value       = btn_validate_sub_no_count_onclick_value.split('(');
                         var split_split_btn_validate_sub_no_count_onclick_value = split_btn_validate_sub_no_count_onclick_value[1].split(',');
-                        var existing_sub_no_count_value = split_split_btn_validate_sub_no_count_onclick_value[0];
+                        var existing_sub_no_count_value                         = split_split_btn_validate_sub_no_count_onclick_value[0];
                         //ADD IGM ITEM NO
-                        var a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
-                        var split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
-                        var split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
-                        var type_value = split_split_a_add_igm_item_no_onclick_value[0];
-                        var split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
-                        var added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
-
+                        
+                        // var a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
+                        // var split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
+                        // var split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
+                        // var type_value = split_split_a_add_igm_item_no_onclick_value[0];
+                        // var split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
+                        // var added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
+                        if ($(`#a_add_igm_item_no_${item_no}`).length === 0)
+                        {
+                            // type, item_no_count, existing_sub_no_count, added_item_no_between_count
+                            //para sa pag niload ang igm from trial_ledger file. wala kase tayong add item no dito
+                            var split_add_item_no_onlick            = $(`#a_add_igm_item_no_${next_item_no_holder}_sub_no`).attr('onclick').split(',');
+                            var split_type_value                    = split_add_item_no_onlick[0].split('(');
+                            var type_value                          = split_type_value[1];
+                            var split_added_item_in_between_value   = split_add_item_no_onlick[3].split(')'); 
+                            var added_item_in_between_value         = split_added_item_in_between_value[0]; 
+                        }
+                        else
+                        {
+                            //para sa hindi niload ang igm from trial_ledger file. may add item dito.
+                            var a_add_igm_item_no_onclick_value                     = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
+                            split_add_item_no_onlick                                = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick').split(',');
+                            var split_a_add_igm_item_no_onclick_value               = a_add_igm_item_no_onclick_value.split('(');
+                            var split_split_a_add_igm_item_no_onclick_value         = split_a_add_igm_item_no_onclick_value[1].split(',');
+                            type_value                                              = split_split_a_add_igm_item_no_onclick_value[0];
+                            
+                            var split_split_split_a_add_igm_item_no_onclick_value   = split_split_a_add_igm_item_no_onclick_value[3].split(')');
+                            added_item_in_between_value                             = split_split_split_a_add_igm_item_no_onclick_value[0];
+                        }
                     } 
                     else 
                     {
@@ -1130,14 +1158,37 @@ const IGM = (() => {
                         split_split_btn_validate_sub_no_count_onclick_value = split_btn_validate_sub_no_count_onclick_value[1].split(',');
                         existing_sub_no_count_value = split_split_btn_validate_sub_no_count_onclick_value[0];
 
-                        a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
-                        split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
-                        split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
-                        type_value = split_split_a_add_igm_item_no_onclick_value[0];
-                        split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
-                        added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
+                        // a_add_igm_item_no_onclick_value = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
+                        // split_a_add_igm_item_no_onclick_value = a_add_igm_item_no_onclick_value.split('(');
+                        // split_split_a_add_igm_item_no_onclick_value = split_a_add_igm_item_no_onclick_value[1].split(',');
+                        // type_value = split_split_a_add_igm_item_no_onclick_value[0];
+                        // split_split_split_a_add_igm_item_no_onclick_value = split_split_a_add_igm_item_no_onclick_value[3].split(')');
+                        // added_item_in_between_value = split_split_split_a_add_igm_item_no_onclick_value[0];
+
+                        if ($(`#a_add_igm_item_no_${item_no}`).length === 0)
+                        {
+                            // type, item_no_count, existing_sub_no_count, added_item_no_between_count
+                            //para sa pag niload ang igm from trial_ledger file. wala kase tayong add item no dito
+                            var split_add_item_no_onlick            = $(`#a_add_igm_item_no_${next_item_no_holder}_sub_no`).attr('onclick').split(',');
+                            var split_type_value                    = split_add_item_no_onlick[0].split('(');
+                            var type_value                          = split_type_value[1];
+                            var split_added_item_in_between_value   = split_add_item_no_onlick[3].split(')'); 
+                            var added_item_in_between_value         = split_added_item_in_between_value[0];          
+                        }
+                        else
+                        {
+                            //para sa hindi niload ang igm from trial_ledger file. may add item dito.
+                            var a_add_igm_item_no_onclick_value                     = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick');
+                            split_add_item_no_onlick                                = $(`#a_add_igm_item_no_${next_item_no_holder}`).attr('onclick').split(',');
+                            var split_a_add_igm_item_no_onclick_value               = a_add_igm_item_no_onclick_value.split('(');
+                            var split_split_a_add_igm_item_no_onclick_value         = split_a_add_igm_item_no_onclick_value[1].split(',');
+                            type_value                                              = split_split_a_add_igm_item_no_onclick_value[0];
+                            
+                            var split_split_split_a_add_igm_item_no_onclick_value   = split_split_a_add_igm_item_no_onclick_value[3].split(')');
+                            added_item_in_between_value                             = split_split_split_a_add_igm_item_no_onclick_value[0];
+                        }
                     }
-                    //pagpapalita ng id
+                    //pagpapalit ng id
                     $(`#tr_item_no_${next_item_no_holder}_column`).attr('id', `tr_item_no_${item_no_holder}_column`);
                     $(`#th_igm_item_no_${next_item_no_holder}_extra_column`).attr('id', `th_igm_item_no_${item_no_holder}_extra_column`);
                     $(`#tr_item_no_${next_item_no_holder}_sub_no_column`).attr('id', `tr_item_no_${item_no_holder}_sub_no_column`);
@@ -1148,7 +1199,7 @@ const IGM = (() => {
                     $(`#span_item_no_${next_item_no_holder}_label`).attr('id', `span_item_no_${item_no_holder}_label`);
 
                     $(`#txt_hidden_item_no_${next_item_no_holder}`).attr('id', `txt_hidden_item_no_${item_no_holder}`);
-
+                   
                     //validate sub no count
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('onclick', `IGM.ValidateSubNoCount(${existing_sub_no_count_value},${item_no_holder});`);
                     $(`#btn_validate_sub_no_count_${next_item_no_holder}`).attr('id', `btn_validate_sub_no_count_${item_no_holder}`);
@@ -1174,7 +1225,9 @@ const IGM = (() => {
 
                     if (existing_sub_no_count_value > 0) 
                     {
-                        IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
+                        // IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
+                        
+                        IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, split_add_item_no_onlick, next_item_no_holder, item_no_holder);
                         if (count === new_item_no_count - 1) 
                         {
                             IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, new_item_no_count - item_no_holder, 'remove');
