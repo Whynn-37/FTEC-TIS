@@ -13,48 +13,49 @@ use App\TaktTime;
 use App\Approval;
 use App\Attachment;
 use Session;
+use DB;
 class TrialChecksheetController extends Controller
 {
     public function loadPartnumber(TrialLedger $TrialLedger)
     {
-        $result = $TrialLedger->loadPartnumber();
+        $data = $TrialLedger->loadPartnumber();
 
         $status = 'Error';
-        $message = 'No part number';
+        $message = 'No Part Number';
 
-        if (count($result) !== 0) 
+        if (count($data) !== 0) 
         {
             $status = 'Success';
-            $message = 'Successfully load';
+            $message = 'Part Number Successfully Load';
         }
 
         return 
         [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $result
+            'data'      =>  $data
         ];
     }
 
-    public function loadRevision(TrialLedger $trial_ledger, Request $Request)
+    public function loadRevision(TrialLedger $TrialLedger, Request $Request)
     {
         $part_number = $Request->part_number;
 
         $status = 'Error';
-        $message = 'No Data';
-        $result = [];
+        $message = 'Part Number Required';
+        $data = [];
 
         if ($part_number !== null) 
         {
-            $result = $trial_ledger->loadRevision($part_number);
+            $data = $TrialLedger->loadRevision($part_number);
 
             $status = 'Error';
             $message = 'No Revision Number';
 
-            if (count($result) !== 0) 
+            if (count($data) !== 0) 
             {
                 $status = 'Success';
-                $message = 'Successfully load';
+                $message = 'Revision Number Successfully load';
             }
         }
 
@@ -62,7 +63,7 @@ class TrialChecksheetController extends Controller
         [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $result
+            'data'      =>  $data
         ];
     }
 
@@ -72,7 +73,7 @@ class TrialChecksheetController extends Controller
         $revision_number = $Request->revision_number;
 
         $status = 'Error';
-        $message = 'No Data';
+        $message = 'Part Number and Revision Number Required';
 
         if ($part_number !== null && $revision_number !== null) 
         {
@@ -84,7 +85,7 @@ class TrialChecksheetController extends Controller
             if (count($result) !== 0) 
             {
                 $status = 'Success';
-                $message = 'Successfully load';
+                $message = 'Trial Number Successfully load';
             }
         }
         
@@ -99,10 +100,6 @@ class TrialChecksheetController extends Controller
     public function loadDetails(TrialLedger $TrialLedger,
                                 Supplier $Supplier,
                                 TrialChecksheet $TrialChecksheet,
-                                // ChecksheetItem $checksheet_item,
-                                // ChecksheetData $checksheet_data, 
-                                // TaktTime $takt_time,
-                                // DownTime $down_time,
                                 Request $Request)
     {
         $part_number = $Request->part_number;
@@ -110,16 +107,13 @@ class TrialChecksheetController extends Controller
         $trial_number = $Request->trial_number;
 
         $status = 'Error';
-        $message = 'No Data';
+        $message = 'Required Fields';
         $result = [];
 
         if ($part_number != null || 
         $revision_number != null || 
         $trial_number != null) 
         {
-            $message = 'Successfully Load';
-            $status = 'Success';
-
             $data = 
             [
                 'part_number'       => $part_number,
@@ -127,32 +121,17 @@ class TrialChecksheetController extends Controller
                 'trial_number'      => $trial_number
             ];
 
-            $data_trial_ledger  = json_decode(json_encode($TrialLedger->getTrialLedger($data)),true);
-            $data_supplier      = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
+            $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($data)),true);
+            $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
-            $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
+            $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
 
-            $data_trial_checksheet  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($data)),true);
-            
-            // $data_checksheet_item = [];
-            // $data_checksheet_data = [];
-            // $data_takt_time = [];
-            // $data_down_time = [];
+            $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($data)),true);
 
-            if($data_trial_checksheet)
+            if($trial_checksheet_data)
             {
                 // if exist
-                $data_trial_checksheet_merge = array_merge($data_trial_ledger_merge, $data_trial_checksheet);
-
-                // $data_checksheet_item = json_decode(json_encode($checksheet_item->getChecksheetItem($data_trial_checksheet['id'])),true);
-
-                // for ($i=0; $i < count($data_checksheet_item); $i++) 
-                // { 
-                //     $data_checksheet_data [] = json_decode(json_encode($checksheet_data->getChecksheetData($data_checksheet_item[$i]['id'])),true);
-                // }
-                
-                // $data_takt_time = json_decode(json_encode($takt_time->loadCycleTime($data_trial_checksheet['id'])),true);
-                // $data_down_time = json_decode(json_encode($down_time->loadDownTime($data_trial_checksheet['id'])),true);
+                $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
             }
             else
             {
@@ -162,16 +141,21 @@ class TrialChecksheetController extends Controller
                     'id' => null
                 ];
                 
-                $data_trial_checksheet_merge = array_merge($data_trial_ledger_merge, $id);
+                $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
+            }
+
+            $status = 'Error';
+            $message = 'No Details';
+
+            if ($trial_checksheet_data_merge) 
+            {
+                $status = 'Success';
+                $message = 'Details Successfully Load';
             }
 
             $result = 
             [
-                'trial_checksheets' => $data_trial_checksheet_merge,
-                // 'checksheet_items'  => $data_checksheet_item,
-                // 'checksheet_datas'  => $data_checksheet_data,
-                // 'takt_times'        => $data_takt_time,
-                // 'down_times'        => $data_down_time
+                'trial_checksheets' => $trial_checksheet_data_merge,
             ];
         }
 
@@ -184,11 +168,11 @@ class TrialChecksheetController extends Controller
     }
 
    
-    public function storeIgm (UploadController $Upload, 
-                                ChecksheetItem $ChecksheetItem,
-                                ChecksheetData $ChecksheetData, 
-                                TaktTime $TaktTime,
-                                Request $Request)
+    public function storeIgm(UploadController $Upload, 
+                            ChecksheetItem $ChecksheetItem,
+                            ChecksheetData $ChecksheetData, 
+                            TaktTime $TaktTime,
+                            Request $Request)
     {
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
@@ -198,9 +182,8 @@ class TrialChecksheetController extends Controller
         $total_takt_time = $Request->total_takt_time;
         $takt_time = $Request->takt_time;
 
-
         $status = 'Error';
-        $message = 'No Data';
+        $message = 'Required Fields';
         $result = false;
 
         if($part_number !== null || 
@@ -208,10 +191,12 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id !== null)
         {
             // $filename = $part_number . '_' . $revision_number;
-            $filename =$part_number.'_'.$revision_number.'(00)';
+            // $filename =$part_number.'_'.$revision_number.'(00)';
+            $filename = 'igm';
             
             // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
-            $path ='F:\TIS\\';
+            // $path ='F:\TIS\\';
+            $path ='D:\\';
     
             $igm_files = scandir($path);
     
@@ -220,7 +205,7 @@ class TrialChecksheetController extends Controller
             { 
                if(strpos($igm_files[$i],$filename) !== false)
                {
-                  $filtered_igm_files [] = $igm_files[$i];
+                    $filtered_igm_files[] = $igm_files[$i];
                }
             }
     
@@ -230,91 +215,97 @@ class TrialChecksheetController extends Controller
     
             if(!empty($filtered_igm_files))
             {
-                $igm_file_name =  end($filtered_igm_files);
-    
-                // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
-                $file = 'F:\TIS\\'.$igm_file_name;
-    
-                // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
-                $sheet = 0;
-    
-                if(file_exists($file))
+                DB::beginTransaction();
+
+                try 
                 {
-                    $data = $Upload->upload($file, $sheet);
+                    $igm_file_name =  end($filtered_igm_files);
     
-                    for($i=6; $i < count($data); $i++)
-                    {  
-                        $igm_data [] =
-                        [
-                            'item_number'       => $data[$i][26],//sub no
-                            'type'              => $data[$i][28],//type
-                            'specification'     => $data[$i][29],//nominal
-                            'upper_limit'       => $data[$i][31],//ul
-                            'lower_limit'       => $data[$i][32],//ll
-                            'tools'             => $data[$i][37]//tools
-                        ];
-                    }
-    
-                    for($i=0; $i < count($igm_data); $i++)
-                    {  
-                        if($igm_data[$i]['item_number'] !== null && $igm_data[$i]['item_number'] !== 'Sub Seq')
-                        {
-                            $checksheet_items[] = 
+                    // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
+                    $file = 'D:\\'.$igm_file_name;
+        
+                    // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
+                    $sheet = 0;
+        
+                    if(file_exists($file))
+                    {
+                        $data = $Upload->upload($file, $sheet);
+        
+                        for($i=6; $i < count($data); $i++)
+                        {  
+                            $igm_data[] =
                             [
-                                'trial_checksheet_id'   => $trial_checksheet_id,
-                                'item_number'           => intval($igm_data[$i]['item_number']),
-                                'tools'                 => $igm_data[$i]['tools'],
-                                'type'                  => $igm_data[$i]['type'],
-                                'specification'         => $igm_data[$i]['specification'],
-                                'upper_limit'           => $igm_data[$i]['upper_limit'],
-                                'lower_limit'           => $igm_data[$i]['lower_limit'],
-                                'item_type'             => 1,
+                                'item_number'       => $data[$i][26],//sub no
+                                'type'              => $data[$i][28],//type
+                                'specification'     => $data[$i][29],//nominal
+                                'upper_limit'       => $data[$i][31],//ul
+                                'lower_limit'       => $data[$i][32],//ll
+                                'tools'             => $data[$i][37]//tools
+                            ];
+                        }
+        
+                        for($i=0; $i < count($igm_data); $i++)
+                        {  
+                            if($igm_data[$i]['item_number'] !== null && $igm_data[$i]['item_number'] !== 'Sub Seq')
+                            {
+                                $checksheet_item[] = 
+                                [
+                                    'trial_checksheet_id'   => $trial_checksheet_id,
+                                    'item_number'           => intval($igm_data[$i]['item_number']),
+                                    'tools'                 => $igm_data[$i]['tools'],
+                                    'type'                  => $igm_data[$i]['type'],
+                                    'specification'         => $igm_data[$i]['specification'],
+                                    'upper_limit'           => $igm_data[$i]['upper_limit'],
+                                    'lower_limit'           => $igm_data[$i]['lower_limit'],
+                                    'item_type'             => 1,
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
+                        }
+        
+                        $checksheet_item_data =  $ChecksheetItem->storeChecksheetItems($checksheet_item);
+        
+                        for($i=0; $i< count($checksheet_item_data);$i++)
+                        {   
+                            $checksheet_datas [] = 
+                            [
+                                'checksheet_item_id'    => $checksheet_item_data[$i],
+                                'sub_number'            => 1,
                                 'created_at'            => now(),
                                 'updated_at'            => now()
                             ];
                         }
-                    }
-    
-                    $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
-    
-                    for($i=0; $i< count($checksheet_item_result);$i++)
-                    {   
-                        $checksheet_datas [] = 
+
+                        $ChecksheetData->storeChecksheetDatas($checksheet_datas);
+
+                        $start_date_time_data = $TaktTime->getStartDateTime($trial_checksheet_id);
+            
+                        $takt_time_data = 
                         [
-                            'checksheet_item_id'    => $checksheet_item_result[$i],
-                            'sub_number'            => 1,
-                            'created_at'            => now(),
-                            'updated_at'            => now()
+                            'trial_checksheet_id'   => $trial_checksheet_id,
+                            'start_date'            => $start_date_time_data['start_date'],
+                            'start_time'            => $start_date_time_data['start_time'],
+                            'end_time'              => date('H:i:s'),
+                            'actual_time'           => $actual_time,
+                            'total_takt_time'       => $total_takt_time,
+                            'takt_time'             => $takt_time,
                         ];
-                    }
 
-                    $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
-
-                    $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
-         
-                    $data = 
-                    [
-                        'trial_checksheet_id'   => $trial_checksheet_id,
-                        'start_date'            => $start_date_time['start_date'],
-                        'start_time'            => $start_date_time['start_time'],
-                        'end_time'              => date('H:i:s'),
-                        'actual_time'           => $actual_time,
-                        'total_takt_time'       => $total_takt_time,
-                        'takt_time'             => $takt_time,
-                    ];
-
-                    $takt_time_result =  $TaktTime->updateOrCreateTaktTime($data);
-    
-                    $status = 'Error';
-                    $message = 'Not Successfully Save';
-                    $result = false;
-    
-                    if ($checksheet_item_result && $checksheet_data_result && $takt_time_result)
-                    {
+                        $TaktTime->updateOrCreateTaktTime($takt_time_data);
+        
                         $status = 'Success';
                         $message = 'Successfully Save';
                         $result = true;
                     }
+                    
+                    DB::commit();
+                } 
+                catch (\Throwable $th) 
+                {
+                    $status = 'Error';
+                    $message = $th->getMessage();
+                    DB::rollback();
                 }
             }
         }
@@ -400,72 +391,75 @@ class TrialChecksheetController extends Controller
 
         if(count($request_keys) !== 0)
         {
-            for($i=0; $i < count($request_keys); $i++)
+            DB::beginTransaction();
+
+            try 
             {
-                if ($Request->file($file_names[$i]) !== null) 
+                for($i=0; $i < count($request_keys); $i++)
                 {
-                    $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
+                    if ($Request->file($file_names[$i]) !== null) 
+                    {
+                        $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
 
-                    $file_upload = $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                        $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                    }
                 }
-            }
 
-            $trial_checksheet_data = 
-            [
-                'date_finished'    => now(),
-                'judgment'         => $judgment,
-                'date_inspected'   => $date_inspected,
-                'temperature'      => $temperature,
-                'humidity'         => $humidity,
-            ];
+                $trial_checksheet_data = 
+                [
+                    'date_finished'    => now(),
+                    'judgment'         => $judgment,
+                    'date_inspected'   => $date_inspected,
+                    'temperature'      => $temperature,
+                    'humidity'         => $humidity,
+                ];
 
-            $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
+                $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
 
-            $approval_data =
-            [
-                'trial_checksheet_id'      => $trial_checksheet_id,
-                'inspect_by'               => Session::get('fullname'), // session name
-                'inspect_datetime'         => now(),
-                'decision'                 => 1
-            ];
+                $approval_data =
+                [
+                    'trial_checksheet_id'      => $trial_checksheet_id,
+                    'inspect_by'               => Session::get('fullname'), // session name
+                    'inspect_datetime'         => now(),
+                    'decision'                 => 1
+                ];
 
-            $approval_result = $Approval->storeApproval($approval_data);
+                $approval_result = $Approval->storeApproval($approval_data);
 
-            $attachment_data =
-            [
-                'trial_checksheet_id'   => $trial_checksheet_id,
-                'file_folder'           => $folder_name,
-                'file_name'             => implode(',',$files)
-            ];
+                $attachment_data =
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'file_folder'           => $folder_name,
+                    'file_name'             => implode(',',$files)
+                ];
 
-            $attachment_result = $Attachment->storeAttachments($attachment_data);
+                $attachment_result = $Attachment->storeAttachments($attachment_data);
 
-            $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
+                $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
 
-            $takt_time_data = 
-            [
-                'trial_checksheet_id'   => $trial_checksheet_id,
-                'start_date'            => $start_date_time['start_date'],
-                'start_time'            => $start_date_time['start_time'],
-                'end_time'              => date('H:i:s'),
-                'actual_time'           => $actual_time,
-                'total_takt_time'       => $total_takt_time,
-                'takt_time'             => $takt_time,
-            ];
-    
-            $takt_time_result =  $TaktTime->updateOrCreateTaktTime($takt_time_data);
+                $takt_time_data = 
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'start_date'            => $start_date_time['start_date'],
+                    'start_time'            => $start_date_time['start_time'],
+                    'end_time'              => date('H:i:s'),
+                    'actual_time'           => $actual_time,
+                    'total_takt_time'       => $total_takt_time,
+                    'takt_time'             => $takt_time,
+                ];
+        
+                $takt_time_result =  $TaktTime->updateOrCreateTaktTime($takt_time_data);
 
-            $status  = 'Error';
-            $message = 'Not Successfully Saved';
-
-            if ($file_upload && 
-                $trial_checksheet_data && 
-                $approval_data && 
-                $takt_time_data && 
-                $attachment_data) 
-            {
                 $status  = 'Success';
                 $message = 'Successfully Saved';
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
 
@@ -501,28 +495,41 @@ class TrialChecksheetController extends Controller
 
         if ($id !== null) 
         {
-            $items = 
-            [
-                'judgment'              => $judgment_items
-            ];
+            DB::beginTransaction();
 
-            $datas = 
-            [
-                'coordinates' => $coordinates,
-                'data' => $data,
-                'judgment' => $judgment_datas,
-            ];
-
-            $checksheet_item_result = $ChecksheetItem->updateAutoJudgmentItem($id, $items);
-            $checksheet_data_result = $ChecksheetData->updateAutoJudgmentData($id, $sub_number, $datas);
-
-            $status  = 'Error';
-            $message = 'Not Successfully Save';
-
-            if ($checksheet_item_result && $checksheet_data_result)
+            try 
             {
-                $status  = 'Success';
-                $message = 'Successfully Save';
+                $items = 
+                [
+                    'judgment'              => $judgment_items
+                ];
+
+                $datas = 
+                [
+                    'coordinates' => $coordinates,
+                    'data' => $data,
+                    'judgment' => $judgment_datas,
+                ];
+
+                $checksheet_item_result = $ChecksheetItem->updateAutoJudgmentItem($id, $items);
+                $checksheet_data_result = $ChecksheetData->updateAutoJudgmentData($id, $sub_number, $datas);
+
+                $status  = 'Error';
+                $message = 'Not Successfully Save';
+
+                if ($checksheet_item_result && $checksheet_data_result)
+                {
+                    $status  = 'Success';
+                    $message = 'Successfully Save';
+                }
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
 
@@ -550,23 +557,21 @@ class TrialChecksheetController extends Controller
             //less than to 0 is not applicable
             $status  = 'Error';
             $message = 'Not less than to 1';
-            $data ='';
+            $data = [];
         }
         else
         {
             $result_items = $TrialChecksheet->loadTrialCheckitemsNG($part_number, $trial_number);
-        
-     
            
             foreach($result_items as $checksheet_items) 
             {
                 $data = $ChecksheetData->loadTrialCheckitemsNG($checksheet_items->id);
-                    $result_datas[] = $data[0];
+                $result_datas[] = $data[0];
             }
 
             $data = 
             [
-                'items' => $result_items ,
+                'items' => $result_items,
                 'datas' => $result_datas
             ];
 
