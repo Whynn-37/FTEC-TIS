@@ -11,7 +11,7 @@ class ChecksheetData extends Model
     public function getChecksheetData($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
-        ->get();
+        ->first();
     }
 
     public function storeChecksheetDatas($data)

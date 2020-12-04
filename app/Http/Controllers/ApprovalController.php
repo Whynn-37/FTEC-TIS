@@ -26,7 +26,7 @@ class ApprovalController extends Controller
         $trial_checksheet_id = $Request->id;
 
         $status = 'Error';
-        $message = 'No data';
+        $message = 'No Trial Checksheet ID';
 
         $checksheet_details = [];
         $checksheet_items = [];
@@ -39,14 +39,13 @@ class ApprovalController extends Controller
             
             foreach($checksheet_items as $checksheet_items_value) 
             {
-                $checksheet_data = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
-                // $checksheet_data[] = $data[0];
+                $checksheet_data[] = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
             }
 
             $status = 'Error';
             $message = 'Somethings Wrong!';
 
-            if((!empty($checksheet_details) === true ) && 
+            if((!empty($checksheet_details) === true) && 
             (!empty($checksheet_items) === true)  && 
             (!empty($checksheet_data) === true)) 
             {
@@ -123,8 +122,8 @@ class ApprovalController extends Controller
         $status = 'Error';
         $message = 'Somethings Wrong!';
 
-        if ($result !== null) {
-
+        if ($result !== null) 
+        {
             $status = 'Success';
             $message = 'Update Successfully!';
         }
@@ -145,7 +144,7 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $remarks = $Request->remarks;
 
-        $dataset = 
+        $data = 
         [
             'checksheet_item_id' => $checksheet_item_id,
             'sub_number'         => $sub_number,
@@ -155,7 +154,7 @@ class ApprovalController extends Controller
             'remarks'            => $remarks,
         ];
 
-        $result = $ChecksheetData->updateOrCreateChecksheetData($dataset);
+        $result = $ChecksheetData->updateOrCreateChecksheetData($data);
 
         $status = 'Error';
         $message = 'Somethings Wrong!';
@@ -208,13 +207,13 @@ class ApprovalController extends Controller
                 'datas' => $checksheet_datas,
                 'approval' => $approval,
             ];
-
+            // $data_trial_ledger_merge['part_number']. '_' . $data_trial_ledger_merge['revision_number'] .'.xlsx'
             if ($data) 
             {
                 $status = 'Success';
                 $message = 'Successfully Save';
                 $result = true;
-                return (new TrialEvaluationResultExport($data))->download($data_trial_ledger_merge['part_number']. '_' . $data_trial_ledger_merge['revision_number'] .'.xlsx');
+                return (new TrialEvaluationResultExport($data))->download("{$data_trial_ledger_merge['part_number']}_{$data_trial_ledger_merge['revision_number']}.xlsx");
             }
         }
 
@@ -228,16 +227,23 @@ class ApprovalController extends Controller
 
     public function loadApproval(Approval $approval)
     {
-        $message = 'Load Successfully';
-        $status = 'Success';
+        $data = $approval->loadApproval();
 
-        $approval_decision = $approval->loadApproval();
+        $status = 'Error';
+        $message = 'Not Load Successfully';
 
-        return response()->json([
+        if ($data) 
+        {
+            $status = 'Success';
+            $message = 'Load Successfully';
+        }
+
+        return 
+        [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $approval_decision
-        ]);
+            'data'      =>  $data
+        ];
     }
 
 

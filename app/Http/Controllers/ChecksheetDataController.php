@@ -14,37 +14,44 @@ class ChecksheetDataController extends Controller
         $sub_number = $Request->sub_number;
 
         $status = 'Error';
-        $message = 'no data';
+        $message = 'No Trial Checksheet ID Or Sub Number';
         $result = [];
 
         if ($checksheet_item_id !== null && $sub_number !== null)
         {
-            $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>=');
+            DB::beginTransaction();
 
-            if (count($select_id) !== 0)
+            try 
             {
-                $ChecksheetData->updateId($select_id, $action = 'update');
-            }
+                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>=');
 
-            $data = [
-                'checksheet_item_id' => $checksheet_item_id,
-                'sub_number'         => $sub_number,
-                'coordinates'        => null,
-                'data'               => null,
-                'judgment'           => 'N/A',
-                'remarks'            => null,
-            ];
-    
-            $result = $ChecksheetData->updateOrCreateChecksheetData($data);
+                if (count($select_id) !== 0)
+                {
+                    $ChecksheetData->updateId($select_id, $action = 'update');
+                }
 
-            $status = 'Error';
-            $message = 'Not Successfully Saved';
+                $data = [
+                    'checksheet_item_id' => $checksheet_item_id,
+                    'sub_number'         => $sub_number,
+                    'coordinates'        => null,
+                    'data'               => null,
+                    'judgment'           => 'N/A',
+                    'remarks'            => null,
+                ];
+        
+                $result = $ChecksheetData->updateOrCreateChecksheetData($data);
 
-            if ($result) 
-            {
                 $status = 'Success';
                 $message = 'Successfully Saved';
                 $result = $result->id;
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
 
@@ -64,36 +71,44 @@ class ChecksheetDataController extends Controller
         $judgment           = $Request->judgment;
 
         $status = 'Error';
-        $message = 'no data';
-        $test = 0;
+        $message = 'No ID';
+        $result = false;
+
         if($id !== null)
         {
-            if ($judgment !== null)
+            DB::beginTransaction();
+
+            try 
             {
-                $items = 
-                [
-                    'judgment'              => $judgment
-                ];
+                if ($judgment !== null)
+                {
+                    $items = 
+                    [
+                        'judgment'              => $judgment
+                    ];
 
-                $test = $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
-            }
+                    $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
+                }
 
-            $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>');
+                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>');
 
-            if (count($select_id) !== 0)
-            {
-                $ChecksheetData->updateId($select_id, $action = 'delete');
-            }
+                if (count($select_id) !== 0)
+                {
+                    $ChecksheetData->updateId($select_id, $action = 'delete');
+                }
 
-            $result =  $ChecksheetData->deleteDatas($id);
+                $result =  $ChecksheetData->deleteDatas($id);
 
-            $status = 'Error';
-            $message = 'Not Successfully Deleted';
-
-            if ($result) 
-            {
                 $status = 'Success';
                 $message = 'Successfully Deleted';
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
 
@@ -102,7 +117,6 @@ class ChecksheetDataController extends Controller
             'status'    => $status,
             'message'   => $message,
             'data'      => $result,
-            'test'      => $test,
         ];
     }
 }
