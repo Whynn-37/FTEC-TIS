@@ -94,7 +94,7 @@ class TaktTimeController extends Controller
             $checksheet_item_result = [];
             $checksheet_data_result = [];
 
-            if($trial_number !== 1)
+            if($trial_number !== "1")
             {
                 $trial_number_minus = $trial_number - 1;
 

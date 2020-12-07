@@ -11,6 +11,7 @@ class ChecksheetData extends Model
     public function getChecksheetData($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
+        ->orderBy('id', 'asc')
         ->get();
     }
 
@@ -56,6 +57,7 @@ class ChecksheetData extends Model
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
         ->where('sub_number', $operation, $sub_number)
         ->select('id', 'sub_number')
+        ->orderBy('id', 'asc')
         ->get();
     }
 
@@ -74,6 +76,16 @@ class ChecksheetData extends Model
     {
         return ChecksheetData::where('checksheet_item_id', $id)
         ->where('checksheet_data.judgment', '=', 'NG')
+        ->orderBy('id', 'asc')
+        ->get();
+    }
+
+    public function getDataNg($checksheet_item_id)
+    {
+        return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
+        ->where('judgment', 'NG')
+        ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks')
+        ->orderBy('id', 'asc')
         ->get();
     }
 }

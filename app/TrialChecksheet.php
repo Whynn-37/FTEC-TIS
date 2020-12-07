@@ -91,4 +91,13 @@ class TrialChecksheet extends Model
         ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','approvals.disapproved_by','approvals.disapproved_datetime','approvals.reasons')
         ->get();
     }
+
+    public function getAllNg($part_number, $revision)
+    {
+        return TrialChecksheet::where('part_number', $part_number)
+        ->where('revision_number', $revision)
+        ->where('judgment', 'NG')
+        ->select('id', 'trial_number', 'date_finished', 'judgment', 'revision_number')
+        ->get();
+    }
 }

@@ -18,6 +18,7 @@ class ChecksheetItem extends Model
     public function getChecksheetItem($id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $id)
+        ->orderBy('id', 'asc')
         ->get();
     }
 
@@ -98,6 +99,7 @@ class ChecksheetItem extends Model
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $operation, $item_number)
         ->select('id', 'item_number')
+        ->orderBy('id', 'asc')
         ->get();
     }
 
@@ -110,5 +112,13 @@ class ChecksheetItem extends Model
     {
         ChecksheetItem::find($id)->checksheet_datas()->delete();
         return ChecksheetItem::find($id)->delete();
+    }
+
+    public function getItemNg($trial_checksheet_id)
+    {
+        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('judgment', 'NG')
+        ->select('id', 'trial_checksheet_id', 'tools', 'specification')
+        ->first();
     }
 }

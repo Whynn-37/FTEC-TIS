@@ -14,7 +14,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TrialEvaluationResultExport;
 use App\Supplier;
 use App\TrialLedger;
-
 use App\Http\Controllers\FpdfController;
 
 class ApprovalController extends Controller
@@ -211,6 +210,8 @@ class ApprovalController extends Controller
                 'approval' => $approval,
             ];
 
+            return $data;
+
             if ($data) 
             {
                 $status = 'Success';
@@ -226,6 +227,94 @@ class ApprovalController extends Controller
             'message'   => $message,
             'data'      => $result  
         ];
+    }
+
+    public function generateSecondPage(TrialChecksheet $TrialChecksheet, 
+                                        ChecksheetItem $ChecksheetItem,
+                                        ChecksheetData $ChecksheetData,
+                                        Supplier $Supplier,
+                                        Approval $Approval,
+                                        FpdfController $FpdfController,
+                                        Request $Request)
+    {
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+
+        $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
+        $data_supplier      = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
+        $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
+
+        if ($data_trial_ledger_merge['trial_number'] !== 1)
+        {
+            $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number'], $data_trial_ledger_merge['revision_number']);
+
+            foreach ($details_data as $details_value) 
+            {
+                $checksheet_items[] = json_decode(json_encode($ChecksheetItem->getItemNg($details_value['id'])),true);
+            }
+
+            foreach ($checksheet_items as $item_value) 
+            {
+                $checksheet_datas[] = json_decode(json_encode($ChecksheetData->getDataNg($item_value['id'])),true);
+            }
+
+            for ($i=0; $i < count($checksheet_datas); $i++) 
+            { 
+                for ($z=0; $z < count($checksheet_items); $z++) 
+                {
+                    for ($y=0; $y < count($details_data); $y++) 
+                    { 
+                        if ($i === $z && $i === $y) 
+                        {
+                            if (count($checksheet_datas[$i]) < 2) 
+                            {
+                                $checksheet_data[] = 
+                                [
+                                    'trial_number'      => $details_data[0]['trial_number'],
+                                    'date_finished'     => $details_data[0]['date_finished'],
+                                    'judgment'          => $details_data[0]['judgment'],
+                                    'revision_number'   => $details_data[0]['revision_number'],
+                                    'tools'             => $checksheet_items[0]['tools'],
+                                    'specification'     => $checksheet_items[0]['specification'],
+                                    'coordinates'       => $checksheet_datas[0][0]['coordinates'],
+                                    'data'              => explode(",",$checksheet_datas[0][0]['data']),
+                                    'judgment'          => $checksheet_datas[0][0]['judgment'],
+                                    'remarks'           => $checksheet_datas[0][0]['remarks'],
+                                ];
+                            }
+                            else
+                            {
+                                for ($q=0; $q < count($checksheet_datas[$i]); $q++) 
+                                { 
+                                    $checksheet_data[] = 
+                                    [
+                                        'trial_number'      => $details_data[$y]['trial_number'],
+                                        'date_finished'     => $details_data[$y]['date_finished'],
+                                        'judgment'          => $details_data[$y]['judgment'],
+                                        'revision_number'   => $details_data[$y]['revision_number'],
+                                        'tools'             => $checksheet_items[$z]['tools'],
+                                        'specification'     => $checksheet_items[$z]['specification'],
+                                        'coordinates'       => $checksheet_datas[$i][$q]['coordinates'],
+                                        'data'              => explode(",",$checksheet_datas[$i][$q]['data']),
+                                        'judgment'          => $checksheet_datas[$i][$q]['judgment'],
+                                        'remarks'           => $checksheet_datas[$i][$q]['remarks'],
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $approval_data = json_decode(json_encode($Approval->getApproval($trial_checksheet_id)),true);
+
+            $data = [
+                'checksheet_details'    =>  $data_trial_ledger_merge,
+                'checksheets'           =>  $checksheet_data,
+                'approval'              =>  $approval_data,
+            ];
+            // return $data;
+            return $FpdfController->secondPage($data);
+        }
     }
 
     public function loadApproval(Approval $approval)
