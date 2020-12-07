@@ -331,8 +331,12 @@ class TrialChecksheetController extends Controller
         if($trial_checksheet_id !== null)
         {
             $checksheet_items = $TrialChecksheet->loadChecksheetItem($trial_checksheet_id);
-            $checksheet_datas = $ChecksheetItem->loadChecksheetData($checksheet_items);
 
+            foreach ($checksheet_items as $checksheet_items_value) 
+            {
+                $checksheet_datas[] = $ChecksheetItem->loadChecksheetData($checksheet_items_value['id']);
+            }
+            return $checksheet_datas;
             $status = 'Success';
             $message = 'Successfully Load';
         }

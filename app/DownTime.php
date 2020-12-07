@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class DownTime extends Model
 {
-    protected $fillable = ['trial_checksheet_id', 'type', 'start_time', 'down_time', 'total_down_time'];
+    protected $guarded = [];
 
     public function loadDownTime($trial_checksheet_id)
     {
         return DownTime::where('trial_checksheet_id', $trial_checksheet_id)
+        ->orderBy('id', 'asc')
         ->get();
     }
 

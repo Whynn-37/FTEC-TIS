@@ -15,6 +15,7 @@ class CreateTrialChecksheetsTable extends Migration
     {
         Schema::create('trial_checksheets', function (Blueprint $table) {
             $table->id();
+            $table->string('application_date');
             $table->string('part_number');
             $table->string('revision_number');
             $table->integer('trial_number');

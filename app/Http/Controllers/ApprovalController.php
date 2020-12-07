@@ -8,17 +8,13 @@ use App\Attachment;
 use App\ChecksheetItem;
 use App\TrialChecksheet;
 use App\ChecksheetData;
-use Session;
 use App\TaktTime;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\TrialEvaluationResultExport;
 use App\Supplier;
-use App\TrialLedger;
-use App\Http\Controllers\FpdfController;
+use App\Exports\TrialEvaluationResultExport;
+use Session;
 
 class ApprovalController extends Controller
 {
-
     public function loadInspectionData(ChecksheetData $ChecksheetData, 
                                         ChecksheetItem $ChecksheetItem,
                                         TrialChecksheet $TrialChecksheet, 
@@ -63,7 +59,7 @@ class ApprovalController extends Controller
             [
                 'checksheet_details'    => $checksheet_details,
                 'checksheet_items'      => $checksheet_items,
-                'checksheet_data'       =>$checksheet_data
+                'checksheet_data'       => $checksheet_data
             ]
         ];
     }
@@ -80,12 +76,12 @@ class ApprovalController extends Controller
             $status = 'Success';
             $message = 'Load Successfully!';
         }
-
-       return
-       [
-           'status' => $status ,
-           'message' => $message,
-           'data' => $data
+    
+        return
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $data
         ];
     }
 
@@ -128,6 +124,7 @@ class ApprovalController extends Controller
             $status = 'Success';
             $message = 'Update Successfully!';
         }
+
         return 
         [
             'status'    => $status ,
@@ -343,7 +340,7 @@ class ApprovalController extends Controller
         $status = 'Error';
         $message = 'Somethings Wrong!';
         
-        if(!empty($data) == true )
+        if(!empty($data) === true)
         {
             $status = 'Success';
             $message = 'Load Successfully!';
@@ -357,19 +354,17 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function approved(Approval $Approval,Attachment $Attachment,Request $Request)
+    public function approved(Approval $Approval, Attachment $Attachment, Request $Request)
     {
-      
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $selected_file = $Request->selected_file;
 
-         $trial_checksheet_id = $Request->trial_checksheet_id;
-         $selected_file = $Request->selected_file;
-
-
-        $data = [
+        $data = 
+        [
             'evaluated_by' => Session::get('fullname'),
             'evaluated_datetime' => date('Y/m/d H:i:s'),
             'decision' => 2
-            ];
+        ];
 
          // --- update method 
          // $result =  $Approval->approved($trial_checksheet_id,$data);

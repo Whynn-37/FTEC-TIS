@@ -12,7 +12,7 @@ class ChecksheetItem extends Model
 
     public function checksheet_datas()
     {
-        return $this->hasMany('App\ChecksheetData');
+        return $this->hasOne('App\ChecksheetData');
     }
 
     public function getChecksheetItem($id)
@@ -44,17 +44,9 @@ class ChecksheetItem extends Model
         return $id;
     }
 
-    public function loadChecksheetData($data)
+    public function loadChecksheetData($id)
     {
-        $result = [];
-        if (!empty($data)) 
-        {
-            foreach ($data as $id) 
-            {
-                $result[] = ChecksheetItem::find($id['id'])->checksheet_datas;
-            }
-        }
-        return $result;
+        return ChecksheetItem::find($id)->checksheet_datas;
     }
 
     public function updateOrCreateChecksheetItem($data)

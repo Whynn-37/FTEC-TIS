@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ChecksheetData;
 use App\ChecksheetItem;
+use DB;
 
 class ChecksheetDataController extends Controller
 {
@@ -23,11 +24,11 @@ class ChecksheetDataController extends Controller
 
             try 
             {
-                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>=');
+                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, '>=');
 
                 if (count($select_id) !== 0)
                 {
-                    $ChecksheetData->updateId($select_id, $action = 'update');
+                    $ChecksheetData->updateId($select_id, 'update');
                 }
 
                 $data = [
@@ -90,11 +91,11 @@ class ChecksheetDataController extends Controller
                     $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
                 }
 
-                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, $operation = '>');
+                $select_id = $ChecksheetData->selectUpdateId($checksheet_item_id, $sub_number, '>');
 
                 if (count($select_id) !== 0)
                 {
-                    $ChecksheetData->updateId($select_id, $action = 'delete');
+                    $ChecksheetData->updateId($select_id, 'delete');
                 }
 
                 $result =  $ChecksheetData->deleteDatas($id);

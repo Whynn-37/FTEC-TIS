@@ -35,8 +35,7 @@ class TrialChecksheet extends Model
 
     public function getChecksheetDetails($id)
     {
-       
-     return TrialChecksheet::join('trial_ledgers', function($join)
+        return TrialChecksheet::join('trial_ledgers', function($join)
         {
             $join->on('trial_ledgers.part_number', '=', 'trial_checksheets.part_number')
                 ->on('trial_ledgers.trial_number', '=', 'trial_checksheets.trial_number')
