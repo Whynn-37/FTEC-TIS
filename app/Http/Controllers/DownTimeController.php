@@ -58,12 +58,12 @@ class DownTimeController extends Controller
             }
             else
             {
-                $start_time = $DownTime->getLatestDownTime($trial_checksheet_id);
+                $start_time_data = $DownTime->getLatestDownTime($trial_checksheet_id);
     
                 $data = [
                     'trial_checksheet_id'   =>  $trial_checksheet_id,
                     'type'                  =>  $type,
-                    'start_time'            =>  $start_time['start_time'],
+                    'start_time'            =>  $start_time_data['start_time'],
                     'down_time'             =>  date('H:i:s'),
                     'total_down_time'       =>  $total_down_time,
                 ];

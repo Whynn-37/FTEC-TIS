@@ -57,10 +57,10 @@ Route::get('load-down-time', 'DownTimeController@loadDownTime');
 Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
-Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
+Route::get('load-inspection-data', 'ApprovalController@loadInspectionData');
 Route::post('edit-hinsei', 'ApprovalController@editHinsei');
 Route::post('edit-data', 'ApprovalController@editData');
-Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
+Route::get('load-finished-inspection','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page','ApprovalController@generateSecondPage');
 Route::post('load-approval', 'ApprovalController@loadApproval');

@@ -33,56 +33,63 @@ class ChecksheetItemController extends Controller
         
         if ($trial_checksheet_id !== null) 
         {
-            if ($id === null)
-            {   
-                $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
+            DB::beginTransaction();
 
-                if (count($select_id) !== 0)
-                {
-                    $ChecksheetItem->updateId($select_id, $action = 'update');
-                }
-            }
-            
-            $checksheet_item = 
-            [
-                'trial_checksheet_id'   => $trial_checksheet_id,
-                'item_number'           => $item_number,
-                'tools'                 => $tools,
-                'type'                  => $type,
-                'specification'         => $specification,
-                'upper_limit'           => $upper_limit,
-                'lower_limit'           => $lower_limit,
-                'judgment'              => 'N/A',
-                'item_type'             => 0,
-                'judgment'              => 'N/A',
-                'remarks'               => null,
-                'hinsei'                => null,
-            ];
-    
-            $checksheet_item_result =  $ChecksheetItem->updateOrCreateChecksheetItem($checksheet_item);
-
-            $checksheet_data = 
-            [
-                'checksheet_item_id'    => $checksheet_item_result->id,
-                'sub_number'            => 1,
-                'coordinates'           => null,
-                'data'                  => null,
-                'judgment'              => 'N/A',
-                'remarks'               => null,
-            ];
-            
-            $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);
-    
-            $status = 'Error';
-            $message = 'Not Successfully Save';
-    
-            if ($checksheet_item_result && $checksheet_data_result)
+            try 
             {
+                if ($id === null)
+                {   
+                    $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
+
+                    if (count($select_id) !== 0)
+                    {
+                        $ChecksheetItem->updateId($select_id, $action = 'update');
+                    }
+                }
+                
+                $checksheet_item = 
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'item_number'           => $item_number,
+                    'tools'                 => $tools,
+                    'type'                  => $type,
+                    'specification'         => $specification,
+                    'upper_limit'           => $upper_limit,
+                    'lower_limit'           => $lower_limit,
+                    'judgment'              => 'N/A',
+                    'item_type'             => 0,
+                    'judgment'              => 'N/A',
+                    'remarks'               => null,
+                    'hinsei'                => null,
+                ];
+        
+                $checksheet_item_result =  $ChecksheetItem->updateOrCreateChecksheetItem($checksheet_item);
+
+                $checksheet_data = 
+                [
+                    'checksheet_item_id'    => $checksheet_item_result->id,
+                    'sub_number'            => 1,
+                    'coordinates'           => null,
+                    'data'                  => null,
+                    'judgment'              => 'N/A',
+                    'remarks'               => null,
+                ];
+                
+                $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);
+        
                 $status = 'Success';
                 $message = 'Successfully Save';
 
                 $checksheet_item_id = $checksheet_item_result->id;
                 $checksheet_data_id = $checksheet_data_result->id;
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
      
@@ -109,22 +116,29 @@ class ChecksheetItemController extends Controller
 
         if ($id !== null) 
         {
-            $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>');
-        
-            if (count($select_id) !== 0)
+            DB::beginTransaction();
+
+            try 
             {
-                $ChecksheetItem->updateId($select_id, $action = 'delete');
-            }
+                $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>');
+            
+                if (count($select_id) !== 0)
+                {
+                    $ChecksheetItem->updateId($select_id, $action = 'delete');
+                }
 
-            $result = $ChecksheetItem->deleteItem($id);
+                $result = $ChecksheetItem->deleteItem($id);
 
-            $status = 'Error';
-            $message = 'Not Successfully Deleted';
-
-            if ($result)
-            {
                 $status = 'Success';
                 $message = 'Successfully Deleted';
+
+                DB::commit();
+            } 
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
             }
         }
         
