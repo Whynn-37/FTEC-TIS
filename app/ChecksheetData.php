@@ -11,12 +11,8 @@ class ChecksheetData extends Model
     public function getChecksheetData($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
-<<<<<<< HEAD
         ->orderBy('id', 'asc')
         ->get();
-=======
-        ->first();
->>>>>>> 8d5d9d692a26ce93c54fe300b1b10f6fcc68abe0
     }
 
     public function storeChecksheetDatas($data)
