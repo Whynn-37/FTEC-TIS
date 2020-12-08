@@ -81,7 +81,8 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Laravel 
+                    <button onclick="myFunction()">Try it</button>
                 </div>
 
                 <div class="links">
@@ -97,3 +98,8 @@
         </div>
     </body>
 </html>
+<script>
+    function myFunction() {
+      var myWindow = window.open("http://10.164.58.94/TIS/public/approved", "", "width=1200,height=600, left = 2300,top = 200");
+    }
+    </script>

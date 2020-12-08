@@ -264,44 +264,49 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function approved(Approval $Approval,Attachment $Attachment,Request $Request)
+    public function approved(Approval $Approval,Attachment $Attachment,Request $Request, FpdfController $FpdfController)
     {
-      
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $selected_file = $Request->selected_file;
 
-         $trial_checksheet_id = $Request->trial_checksheet_id;
-         $selected_file = $Request->selected_file;
-
-
-        $data = [
+        $data = 
+        [
             'evaluated_by' => Session::get('fullname'),
-            'evaluated_datetime' => date('Y/m/d H:i:s'),
+            'evaluated_datetime' => now(),
             'decision' => 2
-            ];
+        ];
 
-         // --- update method 
-         // $result =  $Approval->approved($trial_checksheet_id,$data);
-         
-         //  --- select method        
-         return $attachment  =  $Attachment->getAttachment($trial_checksheet_id);
-
-         // pdf merge method    
-        
-         
+        // --- update method 
+        $result =  $Approval->approved($trial_checksheet_id,$data);
         $status = 'Error';
         $message = 'Somethings Wrong!';
         
-        if(!empty($result) == true )
+        if($result)
         {
+            $status = 'Success';
+            $message = 'Load Successfully!';
+            $result  = '';
+            //  --- select method        
+            $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+            // pdf merge method  
+            $datax= 
+            [
+                'folder_name' =>  $folder_name,
+                'file_name' =>  explode(',', $selected_file)
+            ];
+         
+            $FpdfController->pdfTest($datax);
+
             $status = 'Success';
             $message = 'Load Successfully!';
             $result  = '';
         }
 
-       return
-       [
-           'status' => $status ,
-           'message' => $message,
-           'data' => $result
+        return
+        [
+           'status'     => $status ,
+           'message'    => $message,
+           'data'       => $result
         ];
     }
 }
