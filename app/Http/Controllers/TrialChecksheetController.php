@@ -171,16 +171,16 @@ class TrialChecksheetController extends Controller
     public function storeIgm(UploadController $Upload, 
                             ChecksheetItem $ChecksheetItem,
                             ChecksheetData $ChecksheetData, 
-                            TaktTime $TaktTime,
+                            // TaktTime $TaktTime,
                             Request $Request)
     {
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
         $trial_checksheet_id = $Request->trial_checksheet_id;
 
-        $actual_time = $Request->actual_time;
-        $total_takt_time = $Request->total_takt_time;
-        $takt_time = $Request->takt_time;
+        // $actual_time = $Request->actual_time;
+        // $total_takt_time = $Request->total_takt_time;
+        // $takt_time = $Request->takt_time;
 
         $status = 'Error';
         $message = 'Required Fields';
@@ -226,7 +226,10 @@ class TrialChecksheetController extends Controller
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
-        
+                    $igm_data = [];
+                    $checksheet_item = [];
+                    $checksheet_datas = [];
+
                     if(file_exists($file))
                     {
                         $data = $Upload->upload($file, $sheet);
@@ -257,6 +260,7 @@ class TrialChecksheetController extends Controller
                                     'specification'         => $igm_data[$i]['specification'],
                                     'upper_limit'           => $igm_data[$i]['upper_limit'],
                                     'lower_limit'           => $igm_data[$i]['lower_limit'],
+                                    'judgment'              => 'N/A',
                                     'item_type'             => 1,
                                     'created_at'            => now(),
                                     'updated_at'            => now()
@@ -268,10 +272,11 @@ class TrialChecksheetController extends Controller
         
                         for($i=0; $i< count($checksheet_item_data);$i++)
                         {   
-                            $checksheet_datas [] = 
+                            $checksheet_datas[] = 
                             [
                                 'checksheet_item_id'    => $checksheet_item_data[$i],
                                 'sub_number'            => 1,
+                                'judgment'              => 'N/A',
                                 'created_at'            => now(),
                                 'updated_at'            => now()
                             ];
@@ -279,20 +284,20 @@ class TrialChecksheetController extends Controller
 
                         $ChecksheetData->storeChecksheetDatas($checksheet_datas);
 
-                        $start_date_time_data = $TaktTime->getStartDateTime($trial_checksheet_id);
+                        // $start_date_time_data = $TaktTime->getStartDateTime($trial_checksheet_id);
             
-                        $takt_time_data = 
-                        [
-                            'trial_checksheet_id'   => $trial_checksheet_id,
-                            'start_date'            => $start_date_time_data['start_date'],
-                            'start_time'            => $start_date_time_data['start_time'],
-                            'end_time'              => date('H:i:s'),
-                            'actual_time'           => $actual_time,
-                            'total_takt_time'       => $total_takt_time,
-                            'takt_time'             => $takt_time,
-                        ];
+                        // $takt_time_data = 
+                        // [
+                        //     'trial_checksheet_id'   => $trial_checksheet_id,
+                        //     'start_date'            => $start_date_time_data['start_date'],
+                        //     'start_time'            => $start_date_time_data['start_time'],
+                        //     'end_time'              => date('H:i:s'),
+                        //     'actual_time'           => $actual_time,
+                        //     'total_takt_time'       => $total_takt_time,
+                        //     'takt_time'             => $takt_time,
+                        // ];
 
-                        $TaktTime->updateOrCreateTaktTime($takt_time_data);
+                        // $TaktTime->updateOrCreateTaktTime($takt_time_data);
         
                         $status = 'Success';
                         $message = 'Successfully Save';
@@ -318,7 +323,7 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function loadIgm(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, Request $request)
+    public function loadIgm(ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $request)
     {
         $trial_checksheet_id = $request->trial_checksheet_id;
 
@@ -330,8 +335,12 @@ class TrialChecksheetController extends Controller
 
         if($trial_checksheet_id !== null)
         {
-            $checksheet_items = $TrialChecksheet->loadChecksheetItem($trial_checksheet_id);
-            $checksheet_datas = $ChecksheetItem->loadChecksheetData($checksheet_items);
+            $checksheet_items = $ChecksheetItem->getChecksheetItem($trial_checksheet_id);
+
+            foreach ($checksheet_items as $checksheet_items_value) 
+            {
+                $checksheet_datas[] = $ChecksheetData->getChecksheetData($checksheet_items_value['id']);
+            }
 
             $status = 'Success';
             $message = 'Successfully Load';
@@ -388,6 +397,7 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_result = [];
         $approval_result = [];
         $attachment_result = [];
+        $takt_time_result = [];
 
         if(count($request_keys) !== 0)
         {
@@ -419,7 +429,8 @@ class TrialChecksheetController extends Controller
                 $approval_data =
                 [
                     'trial_checksheet_id'      => $trial_checksheet_id,
-                    'inspect_by'               => Session::get('fullname'), // session name
+                    // 'inspect_by'               => Session::get('fullname'), // session name
+                    'inspect_by'               => 'JED RELATOR', // session name
                     'inspect_datetime'         => now(),
                     'decision'                 => 1
                 ];

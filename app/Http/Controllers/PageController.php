@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\LoginUser;
 class PageController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware("checksession")->except(['get_credentials','login_page']);

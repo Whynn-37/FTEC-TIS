@@ -8,17 +8,14 @@ use App\Attachment;
 use App\ChecksheetItem;
 use App\TrialChecksheet;
 use App\ChecksheetData;
-use Session;
 use App\TaktTime;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\TrialEvaluationResultExport;
 use App\Supplier;
-use App\TrialLedger;
-use App\Http\Controllers\FpdfController;
+use App\Exports\TrialEvaluationResultExport;
+use Session;
+use DB;
 
 class ApprovalController extends Controller
 {
-
     public function loadInspectionData(ChecksheetData $ChecksheetData, 
                                         ChecksheetItem $ChecksheetItem,
                                         TrialChecksheet $TrialChecksheet, 
@@ -63,7 +60,7 @@ class ApprovalController extends Controller
             [
                 'checksheet_details'    => $checksheet_details,
                 'checksheet_items'      => $checksheet_items,
-                'checksheet_data'       =>$checksheet_data
+                'checksheet_data'       => $checksheet_data
             ]
         ];
     }
@@ -73,19 +70,19 @@ class ApprovalController extends Controller
         $data = $trialchecksheet->loadFinishedInspection();
 
         $status = 'Error';
-        $message = 'Somethings Wrong!';
+        $message = 'No Data';
         
-        if(!empty($data) == true )
+        if(!empty($data) == true)
         {
             $status = 'Success';
             $message = 'Load Successfully!';
         }
-
-       return
-       [
-           'status' => $status ,
-           'message' => $message,
-           'data' => $data
+    
+        return
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $data
         ];
     }
 
@@ -101,7 +98,6 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $item_type = $Request->item_type;
         $remarks = $Request->remarks;
-        $hinsei = $Request->hinsei;
 
         $data = 
         [
@@ -115,7 +111,7 @@ class ApprovalController extends Controller
             'judgment'              => $judgment,
             'item_type'             => $item_type,
             'remarks'               => $remarks,
-            'hinsei'                => $hinsei,
+            'hinsei'                => 'HINSEI',
         ];
 
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
@@ -128,6 +124,7 @@ class ApprovalController extends Controller
             $status = 'Success';
             $message = 'Update Successfully!';
         }
+
         return 
         [
             'status'    => $status ,
@@ -136,34 +133,54 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editData(ChecksheetData $ChecksheetData, Request $Request)
+    public function editData(ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
     {
         $checksheet_item_id = $Request->checksheet_item_id;
         $sub_number = $Request->sub_number;
         $coordinates = $Request->coordinates;
         $data = $Request->data;
-        $judgment = $Request->judgment;
+        $judgment_datas = $Request->judgment_datas;
         $remarks = $Request->remarks;
 
-        $data = 
-        [
-            'checksheet_item_id' => $checksheet_item_id,
-            'sub_number'         => $sub_number,
-            'coordinates'        => $coordinates,
-            'data'               => $data,
-            'judgment'           => $judgment,
-            'remarks'            => $remarks,
-        ];
-
-        $result = $ChecksheetData->updateOrCreateChecksheetData($data);
+        $judgment_items = $Request->judgment_items;
 
         $status = 'Error';
         $message = 'Somethings Wrong!';
+        $result = false;
 
-        if ($result !== null) {
+        DB::beginTransaction();
+
+        try 
+        {
+            $items = 
+            [
+                'judgment'              => $judgment_items
+            ];
+
+            $data = 
+            [
+                'checksheet_item_id' => $checksheet_item_id,
+                'sub_number'         => $sub_number,
+                'coordinates'        => $coordinates,
+                'data'               => $data,
+                'judgment'           => $judgment_datas,
+                'remarks'            => $remarks,
+            ];
+
+            $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
+            $ChecksheetData->updateOrCreateChecksheetData($data);
 
             $status = 'Success';
             $message = 'Update Successfully!';
+            $result = true;
+            
+            DB::commit();
+        } 
+        catch (\Throwable $th) 
+        {
+            $status = 'Error';
+            $message = $th->getMessage();
+            DB::rollback();
         }
 
         return 
@@ -208,8 +225,6 @@ class ApprovalController extends Controller
                 'datas' => $checksheet_datas,
                 'approval' => $approval,
             ];
-
-            return $data;
 
             if ($data) 
             {
@@ -345,7 +360,7 @@ class ApprovalController extends Controller
         $status = 'Error';
         $message = 'Somethings Wrong!';
         
-        if(!empty($data) == true )
+        if(!empty($data) === true)
         {
             $status = 'Success';
             $message = 'Load Successfully!';
@@ -359,19 +374,17 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function approved(Approval $Approval,Attachment $Attachment,Request $Request)
+    public function approved(Approval $Approval, Attachment $Attachment, Request $Request)
     {
-      
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $selected_file = $Request->selected_file;
 
-         $trial_checksheet_id = $Request->trial_checksheet_id;
-         $selected_file = $Request->selected_file;
-
-
-        $data = [
+        $data = 
+        [
             'evaluated_by' => Session::get('fullname'),
             'evaluated_datetime' => date('Y/m/d H:i:s'),
             'decision' => 2
-            ];
+        ];
 
          // --- update method 
          // $result =  $Approval->approved($trial_checksheet_id,$data);

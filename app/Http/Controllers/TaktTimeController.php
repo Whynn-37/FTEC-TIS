@@ -73,7 +73,7 @@ class TaktTimeController extends Controller
         {
             DB::beginTransaction();
 
-            if($trial_number !== "1")
+            try
             {
                 $trial_checksheet = 
                 [
@@ -95,7 +95,7 @@ class TaktTimeController extends Controller
                     'takt_time'             => $takt_times,
                 ];
                 
-                if($trial_number != 1)
+                if($trial_number >= 2)
                 {
                     $trial_number_minus = $trial_number - 1;
 
@@ -167,12 +167,12 @@ class TaktTimeController extends Controller
 
                 DB::commit();
             } 
-            // catch (\Throwable $th) 
-            // {
-            //     $status = 'Error';
-            //     $message = $th->getMessage();
-            //     DB::rollback();
-            // }
+            catch (\Throwable $th) 
+            {
+                $status = 'Error';
+                $message = $th->getMessage();
+                DB::rollback();
+            }
         }
 
         $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);

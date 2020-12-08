@@ -23,6 +23,7 @@ class Approval extends Model
         ->where('trial_checksheets.date_finished', '!=', null)
         ->where('approvals.decision', 2)
         ->select(['trial_checksheets.id', 'trial_checksheets.part_number', 'trial_checksheets.revision_number', 'trial_checksheets.trial_number', 'trial_checksheets.date_finished', 'trial_checksheets.judgment'])
+        ->orderBy('id', 'asc')
         ->get();
     }
 

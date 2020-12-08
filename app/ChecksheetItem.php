@@ -8,17 +8,17 @@ use DB;
 
 class ChecksheetItem extends Model
 {
-    protected $fillable = ['trial_checksheet_id', 'item_number', 'tools', 'type', 'specification', 'upper_limit', 'lower_limit', 'item_type', 'judgment', 'hinsei'];
+    protected $guarded = [];
 
     public function checksheet_datas()
     {
-        return $this->hasMany('App\ChecksheetData');
+        return $this->hasOne('App\ChecksheetData');
     }
 
     public function getChecksheetItem($id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $id)
-        ->orderBy('id', 'asc')
+        ->orderBy('item_number', 'asc')
         ->get();
     }
 
@@ -35,6 +35,7 @@ class ChecksheetItem extends Model
                 'specification'         => $row['specification'],
                 'upper_limit'           => $row['upper_limit'],
                 'lower_limit'           => $row['lower_limit'],
+                'judgment'              => $row['judgment'],
                 'item_type'             => $row['item_type'],
                 'created_at'            => $row['created_at'],
                 'updated_at'            => $row['updated_at']
@@ -44,17 +45,9 @@ class ChecksheetItem extends Model
         return $id;
     }
 
-    public function loadChecksheetData($data)
+    public function loadChecksheetData($id)
     {
-        $result = [];
-        if (!empty($data)) 
-        {
-            foreach ($data as $id) 
-            {
-                $result[] = ChecksheetItem::find($id['id'])->checksheet_datas;
-            }
-        }
-        return $result;
+        return ChecksheetItem::find($id)->checksheet_datas;
     }
 
     public function updateOrCreateChecksheetItem($data)
@@ -99,7 +92,7 @@ class ChecksheetItem extends Model
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $operation, $item_number)
         ->select('id', 'item_number')
-        ->orderBy('id', 'asc')
+        ->orderBy('item_number', 'asc')
         ->get();
     }
 

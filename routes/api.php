@@ -34,8 +34,6 @@ Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
 Route::get('load-igm-ng', 'TrialChecksheetController@loadIgmNg');
 
-
-
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
 Route::delete('delete-item','ChecksheetItemController@deleteItem');
@@ -58,16 +56,13 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
 Route::get('load-inspection-data', 'ApprovalController@loadInspectionData');
-Route::post('edit-hinsei', 'ApprovalController@editHinsei');
-Route::post('edit-data', 'ApprovalController@editData');
+Route::patch('edit-hinsei', 'ApprovalController@editHinsei');
+Route::patch('edit-data', 'ApprovalController@editData');
 Route::get('load-finished-inspection','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page','ApprovalController@generateSecondPage');
 Route::post('load-approval', 'ApprovalController@loadApproval');
 Route::get('load-disapproved','ApprovalController@loadDisapproved');
-
 Route::post('approved','ApprovalController@approved');
 
-
 Route::get('pdf-test', 'FpdfController@pdfTest');
-// Route::get('second-page', 'FpdfController@secondPage');

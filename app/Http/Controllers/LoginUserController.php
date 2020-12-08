@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 class LoginUserController extends Controller
 {
-
     public function token()
     {
         return csrf_token();

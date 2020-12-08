@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ChecksheetItem;
 use App\ChecksheetData;
+use DB;
 class ChecksheetItemController extends Controller
 {
     public function storeItems(ChecksheetItem $ChecksheetItem,ChecksheetData $ChecksheetData,Request $Request)
@@ -17,13 +18,6 @@ class ChecksheetItemController extends Controller
         $specification = $Request->specification;
         $upper_limit = $Request->upper_limit;
         $lower_limit = $Request->lower_limit;
-
-        if ($type !== 'Min and Max' || $type === 'Min and Max and Form Tolerance')
-        {
-            $specification = '-';
-            $upper_limit = '-';
-            $lower_limit = '-';
-        }
         
         $status = 'Error';
         $message = 'No Data';
@@ -39,11 +33,11 @@ class ChecksheetItemController extends Controller
             {
                 if ($id === null)
                 {   
-                    $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>=');
+                    $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, '>=');
 
                     if (count($select_id) !== 0)
                     {
-                        $ChecksheetItem->updateId($select_id, $action = 'update');
+                        $ChecksheetItem->updateId($select_id, 'update');
                     }
                 }
                 
@@ -120,11 +114,11 @@ class ChecksheetItemController extends Controller
 
             try 
             {
-                $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, $operation = '>');
+                $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, '>');
             
                 if (count($select_id) !== 0)
                 {
-                    $ChecksheetItem->updateId($select_id, $action = 'delete');
+                    $ChecksheetItem->updateId($select_id, 'delete');
                 }
 
                 $result = $ChecksheetItem->deleteItem($id);
