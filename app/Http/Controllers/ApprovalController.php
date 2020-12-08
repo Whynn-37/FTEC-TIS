@@ -208,13 +208,9 @@ class ApprovalController extends Controller
                 'datas' => $checksheet_datas,
                 'approval' => $approval,
             ];
-<<<<<<< HEAD
 
             return $data;
 
-=======
-            // $data_trial_ledger_merge['part_number']. '_' . $data_trial_ledger_merge['revision_number'] .'.xlsx'
->>>>>>> 8d5d9d692a26ce93c54fe300b1b10f6fcc68abe0
             if ($data) 
             {
                 $status = 'Success';
