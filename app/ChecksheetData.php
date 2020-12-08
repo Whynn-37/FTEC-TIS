@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChecksheetData extends Model
 {
-    protected $fillable = ['checksheet_item_id','sub_number', 'coordinates', 'data', 'judgment', 'remarks'];
+    protected $guarded = [];
 
     public function getChecksheetData($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
-        ->orderBy('id', 'asc')
+        ->orderBy('sub_number', 'asc')
         ->get();
     }
 

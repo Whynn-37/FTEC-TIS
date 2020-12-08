@@ -46,13 +46,14 @@ Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
+Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
 Route::get('load-igm-ng', 'TrialChecksheetController@loadIgmNg');
 
-//CHecksheet Item
+// CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
 Route::delete('delete-item','ChecksheetItemController@deleteItem');
 
-//Checksheet Data
+// Checksheet Data
 Route::post('store-datas','ChecksheetDataController@storeDatas');
 Route::delete('delete-data','ChecksheetDataController@deleteDatas');
 
@@ -62,22 +63,21 @@ Route::post('store-supplier', 'SupplierController@storeSupplier');
 //Cycle Time
 Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');
 Route::post('start-cycle-time','TaktTimeController@startCycleTime');
-Route::patch('stop-cycle-time', 'TaktTimeController@stopCycleTime');
+Route::post('stop-cycle-time', 'TaktTimeController@stopCycleTime');
 
 //DownTime
 Route::get('load-down-time', 'DownTimeController@loadDownTime');
 Route::post('downtime', 'DownTimeController@startDownTime');
 
 //approval
-Route::post('load-inspection-data', 'ApprovalController@loadInspectionData');
-Route::post('edit-hinsei', 'ApprovalController@editHinsei');
-Route::post('edit-data', 'ApprovalController@editData');
-Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
+Route::get('load-inspection-data', 'ApprovalController@loadInspectionData');
+Route::patch('edit-hinsei', 'ApprovalController@editHinsei');
+Route::patch('edit-data', 'ApprovalController@editData');
+Route::get('load-finished-inspection','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
+Route::get('generate-second-page','ApprovalController@generateSecondPage');
+Route::post('load-approval', 'ApprovalController@loadApproval');
 Route::get('load-disapproved','ApprovalController@loadDisapproved');
-
 Route::post('approved','ApprovalController@approved');
-//fpdf tester
+
 Route::get('pdf-test', 'FpdfController@pdfTest');
-
-

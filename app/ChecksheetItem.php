@@ -8,7 +8,7 @@ use DB;
 
 class ChecksheetItem extends Model
 {
-    protected $fillable = ['trial_checksheet_id', 'item_number', 'tools', 'type', 'specification', 'upper_limit', 'lower_limit', 'item_type', 'judgment', 'hinsei'];
+    protected $guarded = [];
 
     public function checksheet_datas()
     {
@@ -18,7 +18,7 @@ class ChecksheetItem extends Model
     public function getChecksheetItem($id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $id)
-        ->orderBy('id', 'asc')
+        ->orderBy('item_number', 'asc')
         ->get();
     }
 
@@ -35,6 +35,7 @@ class ChecksheetItem extends Model
                 'specification'         => $row['specification'],
                 'upper_limit'           => $row['upper_limit'],
                 'lower_limit'           => $row['lower_limit'],
+                'judgment'              => $row['judgment'],
                 'item_type'             => $row['item_type'],
                 'created_at'            => $row['created_at'],
                 'updated_at'            => $row['updated_at']
@@ -91,7 +92,7 @@ class ChecksheetItem extends Model
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $operation, $item_number)
         ->select('id', 'item_number')
-        ->orderBy('id', 'asc')
+        ->orderBy('item_number', 'asc')
         ->get();
     }
 
