@@ -65,4 +65,5 @@ Route::post('load-approval', 'ApprovalController@loadApproval');
 Route::get('load-disapproved','ApprovalController@loadDisapproved');
 Route::post('approved','ApprovalController@approved');
 
-Route::get('pdf-test', 'FpdfController@pdfTest');
+
+Route::post('pdf-test', 'FpdfController@pdfTest');
