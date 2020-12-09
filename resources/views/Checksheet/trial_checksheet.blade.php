@@ -333,35 +333,47 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-3">
+                                    <label>ATTACH FILE (NUMBERING DRAWING):</label>&nbsp;
+                                    <span id="span_attach_file_numbering_drawing" class="span-error form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_numbering_drawing" accept="application/pdf,image/*">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>ATTACH FILE (MATERIAL CERTIFICATION):</label>&nbsp;
+                                    <span id="span_attach_file_material_certification" class="span-error form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_material_certification" accept="application/pdf,image/*">
+                                </div>
                                 <div class="col-md-6">
-                                    <label>ATTACH FILE:</label>&nbsp;
-                                    <span id="span_attach_file" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,image/*" multiple onchange="CHECKSHEET.AttachFile();">
-                                    <div class="single-table" id="div_tble_attachment">
-                                        <div class="table-responsive">
-                                            <table class="table text-center table-sm table-bordered" id="tbl_attachment" hidden>
-                                                <thead class="text-uppercase bg-dark">
-                                                    <tr class="text-white">
-                                                        <th scope="col">FILE NAME</th>
-                                                        <th scope="col">ACTION</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbody_tbl_attachment"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div id="div_date_inspected">
-                                        <label>DATE INSPECTED:</label>&nbsp;
-                                        <span id="span_date_inspected" class="span-error"></span>
-                                        <input class="form-control mb-3" type="text"
-                                            placeholder="Date Inspected" id="txt_date_inspected" disabled>
-                                    </div>
+                                    <label>DATE INSPECTED:</label>&nbsp;
+                                    <span id="span_date_inspected" class="span-error"></span>
+                                    <input class="form-control mb-3" type="text" placeholder="Date Inspected" id="txt_date_inspected" disabled>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label>ATTACH FILE (SPECIAL TOOL DATA):</label>&nbsp;
+                                    <span id="span_attach_file_special_tool_data" class="span-error form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_special_tool_data" accept="application/pdf,image/*">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>ATTACH FILE (OTHERS 1):</label>&nbsp;
+                                    <span id="span_attach_file_others_1" class="span-error form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_others_1" accept="application/pdf,image/*">
                                 </div>
                                 <div class="col-md-6">
                                     <label id="lbl_temperature">TEMPERATURE:</label>&nbsp;
                                     <span id="span_temperature" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text"
-                                        placeholder="Temperature" id="txt_temperature" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Temperature" id="txt_temperature" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>ATTACH FILE (OTHERS 2):</label>&nbsp;
+                                    <span id="span_attach_file_others_2" class="span-error form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_others_2" accept="application/pdf,image/*">
+                                </div>
+                                <div class="col-md-6">
                                     <label>HUMIDITY:</label>&nbsp;
                                     <span id="span_humidity" class="span-error form_trial_checksheet_field_error"></span>
                                     <input class="form-control mb-3 form_trial_checksheet_field" type="text"

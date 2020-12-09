@@ -19,9 +19,9 @@ let logVisit = function () {
     let remaining_actual_time = $("#div_actual_time_timer").TimeCircles().getTime();
     let absolute_value_remaining_actual_time = Math.abs(Math.floor(remaining_actual_time));
     let converted_remaining_actual_time = absolute_value_remaining_actual_time / 60;
-    
+
     // URL to send the data to
-    let url = `api/stop-cycle-time?trial_checksheet_id=${trial_checksheet_id}&actual_time=${converted_remaining_actual_time.toFixed(2)}&total_takt_time=${converted_remaining_takt_time.toFixed(2)}&takt_time=${converted_remaining_target_takt_time.toFixed(2)}`;
+    let url = `api/stop-cycle-time?trial_checksheet_id=${trial_checksheet_id}&actual_time=${converted_remaining_actual_time.toFixed(2)}&total_takt_time=${converted_remaining_takt_time.toFixed(2)}&takt_time=${Math.abs(converted_remaining_target_takt_time.toFixed(2))}`;
 
     let result = navigator.sendBeacon(url);
 
@@ -33,6 +33,7 @@ let logVisit = function () {
 };
 
 window.addEventListener('beforeunload', logVisit);
+
 const CHECKSHEET = (() => {
     let this_checksheet = {};
 
@@ -42,8 +43,6 @@ const CHECKSHEET = (() => {
     let array_sub_item = [];
     let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
     let array_files = [];
-
-
 
     // pang refresh ng trial ledger
     this_checksheet.LoadRefreshAlert = () => {
@@ -323,25 +322,26 @@ const CHECKSHEET = (() => {
         $('#div_card_takt_time').LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
-        let target_takt_time = $('#div_target_takt_time_timer').attr('data-timer') / 60;
-        let part_number = $('#slc_part_number').val();
-        let revision_number = $('#slc_revision_number').val();
-        let trial_number = $('#slc_trial_number').val();
+        let target_takt_time    = $('#div_target_takt_time_timer').attr('data-timer') / 60;
+        let part_number         = $('#slc_part_number').val();
+        let revision_number     = $('#slc_revision_number').val();
+        let trial_number        = $('#slc_trial_number').val();
 
         $.ajax({
-            url: `start-cycle-time`,
-            type: 'post',
+            url     : `start-cycle-time`,
+            type    : 'post',
             dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                trial_checksheet_id: trial_checksheet_id,
-                takt_time: target_takt_time,
-                part_number: part_number,
-                revision_number: revision_number,
-                trial_number: trial_number,
+            cache   : false,
+            data    : {
+                _token              : _TOKEN,
+                trial_checksheet_id : trial_checksheet_id,
+                takt_time           : target_takt_time,
+                part_number         : part_number,
+                revision_number     : revision_number,
+                trial_number        : trial_number,
             },
-            success: data => {
+            success: data => 
+            {
 
                 if (data.status === 'Success') {
                     //checksheet details
@@ -358,7 +358,7 @@ const CHECKSHEET = (() => {
                     $("#btn_start_downtime").prop("disabled", false);
                     $("#slc_downtime_type").prop("disabled", false);
 
-                    $('#trial_checksheet_id').val(data.data.trial_checksheet_id);
+                    $('#trial_checksheet_id').val(data.data.takt_time.trial_checksheet_id);
 
                     CHECKSHEET.LoadCycleTime(0, 'start');
 
@@ -433,34 +433,35 @@ const CHECKSHEET = (() => {
 
         $('#div_card_takt_time').LoadingOverlay('show');
 
-        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let trial_checksheet_id                     = $('#trial_checksheet_id').val();
 
-        let remaining_target_takt_time = $('#div_target_takt_time_timer').TimeCircles().getTime();
-        let converted_remaining_target_takt_time = remaining_target_takt_time / 60;
+        let remaining_target_takt_time              = $('#div_target_takt_time_timer').TimeCircles().getTime();
+        let converted_remaining_target_takt_time    = Math.abs(remaining_target_takt_time / 60);
 
-        let remaining_takt_time = $("#div_takt_time_timer").TimeCircles().getTime();
-        let absolute_value_remaining_takt_time = Math.abs(Math.floor(remaining_takt_time));
-        let converted_remaining_takt_time = absolute_value_remaining_takt_time / 60;
+        let remaining_takt_time                     = $("#div_takt_time_timer").TimeCircles().getTime();
+        let absolute_value_remaining_takt_time      = Math.abs(Math.floor(remaining_takt_time));
+        let converted_remaining_takt_time           = absolute_value_remaining_takt_time / 60;
 
-        let remaining_actual_time = $("#div_actual_time_timer").TimeCircles().getTime();
-        let absolute_value_remaining_actual_time = Math.abs(Math.floor(remaining_actual_time));
-        let converted_remaining_actual_time = absolute_value_remaining_actual_time / 60;
+        let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
+        let absolute_value_remaining_actual_time    = Math.abs(Math.floor(remaining_actual_time));
+        let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
 
         $.ajax({
-            url: `stop-cycle-time`,
-            type: 'patch',
+            url     : `stop-cycle-time`,
+            type    : 'patch',
             dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                trial_checksheet_id: trial_checksheet_id,
-                total_takt_time: converted_remaining_takt_time.toFixed(2),
-                actual_time: converted_remaining_actual_time.toFixed(2),
-                takt_time: converted_remaining_target_takt_time.toFixed(2),
+            cache   : false,
+            data    : {
+                _token              : _TOKEN,
+                trial_checksheet_id : trial_checksheet_id,
+                total_takt_time     : converted_remaining_takt_time.toFixed(2),
+                actual_time         : converted_remaining_actual_time.toFixed(2),
+                takt_time           : converted_remaining_target_takt_time.toFixed(2),
             },
-            success: data => {
-
-                if (data.status === 'Success') {
+            success: data => 
+            {
+                if (data.status === 'Success') 
+                {
                     CHECKSHEET.LoadCycleTime(0, 'stop');
                     //checksheet details
                     $('#slc_part_number').prop('readonly', false);
