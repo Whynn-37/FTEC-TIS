@@ -125,7 +125,7 @@ const EVALUATE = (() => {
 
         $.ajax({
             url: `load-inspection-data`,
-            type: 'post',
+            type: 'get',
             dataType: 'json',
             cache: false,
             data: {
@@ -135,6 +135,7 @@ const EVALUATE = (() => {
             success: data => {
 
                 //checksheet details
+                //dito data na mismo yung mga values no need for foreach
                 data.data.checksheet_details.forEach((value) => {
                     $('#txt_part_number').val(value.part_number);
                     $('#txt_revision').val(value.revision_number);

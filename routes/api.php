@@ -58,7 +58,7 @@ Route::post('downtime', 'DownTimeController@startDownTime');
 Route::get('load-inspection-data', 'ApprovalController@loadInspectionData');
 Route::patch('edit-hinsei', 'ApprovalController@editHinsei');
 Route::patch('edit-data', 'ApprovalController@editData');
-Route::get('load-finished-inspection','ApprovalController@loadFinishedInspection');
+Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page','ApprovalController@generateSecondPage');
 Route::post('load-approval', 'ApprovalController@loadApproval');

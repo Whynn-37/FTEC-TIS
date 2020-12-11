@@ -448,7 +448,7 @@ const CHECKSHEET = (() => {
 
         $.ajax({
             url     : `stop-cycle-time`,
-            type    : 'patch',
+            type    : 'post',
             dataType: 'json',
             cache   : false,
             data    : {
@@ -516,6 +516,9 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.LoadDowntime = () => {
+
+        $('#div_downtime').LoadingOverlay('show');
+
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
         $.ajax({
@@ -548,6 +551,8 @@ const CHECKSHEET = (() => {
                 });
                 $('#tbody_tbl_downtime').html(tbody);
                 $('#td_total_downtime').html(sum_downtime);
+
+                $('#div_downtime').LoadingOverlay('hide');
             }
         });
     };
@@ -556,8 +561,8 @@ const CHECKSHEET = (() => {
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
-        if (status === 'start') {
-
+        if (status === 'start') 
+        {
             $("#div_downtime_timer").TimeCircles().start();
             $("#btn_finish_downtime").prop("disabled", false);
             $("#btn_start_downtime").prop("disabled", true);
@@ -566,10 +571,12 @@ const CHECKSHEET = (() => {
             $("#btn_stop_time").prop("disabled", true);
 
             var total_down_time = null;
-        } else {
-            let downtime = $("#div_downtime_timer").TimeCircles().getTime();
+        } 
+        else 
+        {
+            let downtime                = $("#div_downtime_timer").TimeCircles().getTime();
             let absolute_value_downtime = Math.abs(Math.floor(downtime));
-            total_down_time = (absolute_value_downtime / 60).toFixed(2);
+            total_down_time             = (absolute_value_downtime / 60).toFixed(2);
 
             $("#div_downtime_timer").TimeCircles().restart();
             $("#div_downtime_timer").TimeCircles().stop();
@@ -583,95 +590,23 @@ const CHECKSHEET = (() => {
         }
 
         $.ajax({
-            url: `downtime`,
-            type: 'post',
+            url     : `downtime`,
+            type    : 'post',
             dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                trial_checksheet_id: trial_checksheet_id,
-                type: downtime_type,
-                total_down_time: total_down_time,
+            cache   : false,
+            data    : {
+                _token              : _TOKEN,
+                trial_checksheet_id : trial_checksheet_id,
+                type                : downtime_type,
+                total_down_time     : total_down_time,
             },
-            success: result => {
+            success: result => 
+            {
                 CHECKSHEET.LoadDowntime();
             }
         });
 
         $("#div_takt_time_timer").TimeCircles().stop();
-    };
-
-    this_checksheet.AttachFile = () => {
-
-        $('#tbl_attachment').prop('hidden', false);
-        $('#txt_attachment').LoadingOverlay('show');
-        $('#tbl_attachment').LoadingOverlay('show');
-        $('#div_date_inspected').remove();
-
-        let date_inspected_input = `<div id="div_date_inspected">
-            <label>DATE INSPECTED:</label>&nbsp;
-            <span id="span_date_inspected" class="span-error"></span>
-            <input class="form-control mb-3" type="text"
-                placeholder="Date Inspected" id="txt_date_inspected" disabled>
-        </div>`;
-
-        $('#lbl_temperature').before(date_inspected_input);
-
-        let file_length = $('#txt_attachment')[0].files.length;
-        let tr = '';
-
-        for (let file_count = 0; file_count < file_length; file_count++) {
-            let file = $('#txt_attachment')[0].files[file_count];
-            let file_name = $('#txt_attachment')[0].files[file_count].name;
-            let split_file = file_name.split('.');
-
-            if (array_file_type.includes(split_file[1]) === true) {
-                array_files.push(file);
-                tr += `
-                <tr id="tr_attached_file_${file_count}">
-                    <td>${file_name}</td>
-                    <td>
-                        <button class="btn btn-danger btn-xs" onclick="CHECKSHEET.RemoveAttachedFile(${file_count},'${file_name}');"><i class="ti-close"></i> REMOVE</button>
-                    </td>
-                </tr>`;
-
-            } else {
-                $('#txt_attachment span').remove();
-                $('#txt_attachment').after(`<span class="span-error">"${file_name}" is an invalid file</span><br><br>`)
-            }
-        }
-        $('#tbody_tbl_attachment').html(tr);
-        $('#txt_attachment').LoadingOverlay('hide');
-        $('#tbl_attachment').LoadingOverlay('hide');
-    };
-
-    this_checksheet.RemoveAttachedFile = (file_no, file_name_in_table) => {
-
-        $(`#tr_attached_file_${file_no}`).remove();
-
-        for (let file_count = 0; file_count < array_files.length; file_count++) {
-
-            if (array_files[file_count].name === file_name_in_table) {
-
-                array_files = $.grep(array_files, function (value) {
-                    return value.name != file_name_in_table;
-                });
-            }
-        }
-
-        if (array_files.length === 0) {
-            $('#txt_attachment').val('');
-            $('#div_date_inspected').remove();
-            $('#tbl_attachment').prop('hidden', true);
-            let date_inspected_input = `<div id="div_date_inspected">
-                <label>DATE INSPECTED:</label>&nbsp;
-                <span id="span_date_inspected" class="span-error"></span>
-                <input class="form-control mb-3" type="text"
-                    placeholder="Date Inspected" id="txt_date_inspected" disabled>
-            </div>`;
-
-            $('#div_tble_attachment').after(date_inspected_input);
-        }
     };
 
     this_checksheet.SaveTrialChecksheet = () => {
@@ -681,113 +616,169 @@ const CHECKSHEET = (() => {
         let temperature = $('#txt_temperature').val();
         let humidity = $('#txt_humidity').val();
 
-        $('.form_trial_checksheet_field').each(function () {
-            if ($(this).val() === '' || $(this).val() === null) {
+        $('.form_trial_checksheet_field').each(function () 
+        {
+            if ($(this).val() === '' || $(this).val() === null) 
+            {
                 $('.form_trial_checksheet_field_error').text('Required');
-            } else {
-                if (part_no !== null) {
-                    $('#span_part_no').prop('hidden', true);
-                }
-                if (attachment !== '') {
-                    $('#span_attach_file').prop('hidden', true);
-                }
-                if (temperature !== '') {
-                    $('#span_temperature').prop('hidden', true);
-                }
-                if (humidity !== '') {
-                    $('#span_humidity').prop('hidden', true);
-                }
-                if (part_no !== null && attachment !== '' && temperature !== '' && humidity !== '') {
+            } 
+            else 
+            {
+                (part_no !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
+                (temperature !== '')? $('#span_temperature').prop('hidden', true)   :'';
+                (humidity !== '')   ? $('#span_humidity').prop('hidden', true)      : '';
+
+                if (part_no !== null && attachment !== '' && temperature !== '' && humidity !== '') 
+                {
                     Swal.fire(
                         $.extend(swal_options, {
                             title: "Are you sure?",
                         })
-                    ).then((result) => {
-                        if (result.value) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Saved Successfully',
-                            })
-                            CHECKSHEET.SaveTrialChecksheetGetExistingIGMItem();
-                            CHECKSHEET.SaveTrialChecksheetGetAddedIGMItem();
+                    ).then((result) => 
+                    {
+                        if (result.value) 
+                        {
+                            // Swal.fire({
+                            //     icon: 'success',
+                            //     title: 'Success',
+                            //     text: 'Saved Successfully',
+                            // })
+                            CHECKSHEET.SaveTrialChecksheetGetChecksheetItemAndData();
+                            // CHECKSHEET.SaveTrialChecksheetGetAddedIGMItem();
                             console.log(array_item)
                             console.log(array_sub_item)
-                            $('#form_trial_checksheet')[0].reset();
-                            $('#slc_part_no').val('').trigger('change');
+                            // $('#form_trial_checksheet')[0].reset();
+                            // $('#slc_part_no').val('').trigger('change');
+                            // $('.form_trial_checksheet_field_error').remove();
                         }
                     });
                 }
             }
         });
     };
+    //pagkuha ng checksheet item
+    this_checksheet.SaveTrialChecksheetGetChecksheetItemAndData = () => {
 
-    this_checksheet.SaveTrialChecksheetGetExistingIGMItem = () => {
+        // let existing_item_no_count = item_no_count - new_item_no_count;
+        let empty_inputs_count = 0;
 
-        let existing_item_no_count = item_no_count - new_item_no_count;
-
-        for (let item_count = 1; item_count <= existing_item_no_count; item_count++) {
-            array_item.push({
-                item_no: item_count,
-                item_tools: $(`#td_item_no_${item_count}_tools`).html(),
-                item_type: $(`#td_item_no_${item_count}_type`).html(),
-                item_specs: $(`#td_item_no_${item_count}_specs`).html(),
-                item_upper_limit: $(`#td_item_no_${item_count}_upper_limit`).html(),
-                item_lower_limit: $(`#td_item_no_${item_count}_lower_limit`).html(),
-                item_judgement: $(`#td_item_no_${item_count}_judgement`).html()
+        for (let item_count = 1; item_count <= item_no_count; item_count++) 
+        {
+            array_item.push
+            ({
+                item_no         : item_count,
+                item_tools      : $(`#slc_item_no_${item_count}_tools`).val(),
+                item_type       : $(`#slc_item_no_${item_count}_type`).val(),
+                item_specs      : $(`#txt_item_no_${item_count}_specs`).val(),
+                item_upper_limit: $(`#txt_item_no_${item_count}_upper_limit`).val(),
+                item_lower_limit: $(`#txt_item_no_${item_count}_lower_limit`).val(),
+                item_judgement  : $(`#td_item_no_${item_count}_judgement span`).text()
             });
 
-            let item_no_type = $(`#span_item_no_${item_count}_type`).text();
-            let sub_item_count_per_item = $(`#span_item_no_${item_count}_sub_item_count`).text();
+            let add_igm_item_sub_no_onclick_value            = $(`#a_add_igm_item_no_${item_count}_sub_no`).attr('onclick').split(',');02
+            let split_item_type = add_igm_item_sub_no_onclick_value[0].split('(');
+            let item_no_type = split_item_type[1].replace(/"|'/g, '');
 
-            for (let sub_item_count = 1; sub_item_count <= sub_item_count_per_item; sub_item_count++) {
+            let sub_item_count_per_item = add_igm_item_sub_no_onclick_value[2];
 
-                if (item_no_type === 'MC') {
+            for (let sub_item_count = 1; sub_item_count <= sub_item_count_per_item; sub_item_count++) 
+            {
+                if (item_no_type === 'Min and Max' || item_no_type === 'Min and Max and Form Tolerance') 
+                {
+                    let sub_item_coordinates    = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val();
+                    //min
+                    let sub_item_min_1          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_1`).val();
+                    let sub_item_min_2          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_2`).val();
+                    let sub_item_min_3          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_3`).val();
+                    let sub_item_min_4          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_4`).val();
+                    let sub_item_min_5          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_5`).val();
+                    //max
+                    let sub_item_max_1          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_1`).val();
+                    let sub_item_max_2          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_2`).val();
+                    let sub_item_max_3          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_3`).val();
+                    let sub_item_max_4          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_4`).val();
+                    let sub_item_max_5          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_5`).val();
 
-                    array_sub_item.push({
-                        item_no: item_count,
-                        sub_no: sub_item_count,
+                    if (sub_item_coordinates === '' || sub_item_min_1 === '' || sub_item_min_2 === ''|| sub_item_min_3 === ''|| sub_item_min_4 === ''|| sub_item_min_5 === ''|| sub_item_max_1 === ''|| sub_item_max_2 === ''|| sub_item_max_3 === ''|| sub_item_max_4 === ''|| sub_item_max_5 === '')
+                    {
+                        empty_inputs_count++;
+                    }
+
+                    array_sub_item.push
+                    ({
+                        item_no             : item_count,
+                        sub_no              : sub_item_count,
                         //coordinates
-                        sub_item_coordinates: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).html(),
-                        //data
-                        sub_item_visual_1: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_visual_1`).html(),
-                        sub_item_visual_2: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_visual_2`).html(),
-                        sub_item_visual_3: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_visual_3`).html(),
-                        sub_item_visual_4: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_visual_4`).html(),
-                        sub_item_visual_5: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_visual_5`).html(),
-                        //judgment
-                        sub_item_judgement: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement`).html(),
-                    });
-
-                } else {
-
-                    array_sub_item.push({
-                        item_no: item_count,
-                        sub_no: sub_item_count,
-                        //coordinates
-                        sub_item_coordinates: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).html(),
+                        sub_item_coordinates: $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val(),
                         //min
-                        sub_item_min_1: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_min_1`).html(),
-                        sub_item_min_2: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_min_2`).html(),
-                        sub_item_min_3: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_min_3`).html(),
-                        sub_item_min_4: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_min_4`).html(),
-                        sub_item_min_5: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_min_5`).html(),
+                        sub_item_min_1      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_1`).val(),
+                        sub_item_min_2      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_2`).val(),
+                        sub_item_min_3      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_3`).val(),
+                        sub_item_min_4      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_4`).val(),
+                        sub_item_min_5      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_5`).val(),
                         //max
-                        sub_item_max_1: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_max_1`).html(),
-                        sub_item_max_2: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_max_2`).html(),
-                        sub_item_max_3: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_max_3`).html(),
-                        sub_item_max_4: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_max_4`).html(),
-                        sub_item_max_5: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_max_5`).html(),
+                        sub_item_max_1      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_1`).val(),
+                        sub_item_max_2      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_2`).val(),
+                        sub_item_max_3      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_3`).val(),
+                        sub_item_max_4      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_4`).val(),
+                        sub_item_max_5      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_5`).val(),
                         //judgement
-                        sub_item_judgement: $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement`).html()
+                        sub_item_judgement  : $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement span`).text()
                     });
+                } 
+                else 
+                {
+                    let sub_item_coordinates    = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val();
+                    //data
+                    let sub_item_visual_1       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_1`).val();
+                    let sub_item_visual_2       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_2`).val();
+                    let sub_item_visual_3       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_3`).val();
+                    let sub_item_visual_4       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_4`).val();
+                    let sub_item_visual_5       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_5`).val();
 
+                    if (sub_item_coordinates === '' || sub_item_visual_1 === '' || sub_item_visual_2 === ''|| sub_item_visual_3 === ''|| sub_item_visual_4 === ''|| sub_item_visual_5 === '')
+                    {
+                        empty_inputs_count++;
+                    }
+
+                    array_sub_item.push
+                    ({
+                        item_no             : item_count,
+                        sub_no              : sub_item_count,
+                        //coordinates
+                        sub_item_coordinates: $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val(),
+                        //data
+                        sub_item_visual_1   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_1`).val(),
+                        sub_item_visual_2   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_2`).val(),
+                        sub_item_visual_3   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_3`).val(),
+                        sub_item_visual_4   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_4`).val(),
+                        sub_item_visual_5   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_5`).val(),
+                        //judgment
+                        sub_item_judgement  : $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement span`).text(),
+                    });
                 }
+            }
+        }
+
+        if (item_count = item_no_count)
+        {
+            if (empty_inputs_count > 0)
+            {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete data',
+                    text: 'Please check if all the data has been filled up in your checksheet.',
+                })
+            }
+            else
+            {
+                //dito ajax para sa pag save
+                alert('pawer')
 
             }
         }
     };
-
+    //pagkuha ng checksheet item
     this_checksheet.SaveTrialChecksheetGetAddedIGMItem = () => {
 
         let item_no = (item_no_count - new_item_no_count) + 1;

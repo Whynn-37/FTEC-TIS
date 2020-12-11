@@ -195,11 +195,12 @@ const IGM = (() => {
         $('#tbody_tbl_igm').html(tr_new_item);
 
         //pag fill ng data sa inputs
-        data.data.items.forEach((value) => {
+        data.data.items.forEach((value) => 
+        {
             $(`#slc_item_no_${value.item_number}_tools`).val(value.tools);
             $(`#slc_item_no_${value.item_number}_type`).val(value.type);
 
-            $(`#slc_item_no_${value.item_number}_tools`).attr('onchange',`onchange="IGM.SelectItemTools(${value.item_number},'${value.tools}');"`);
+            $(`#slc_item_no_${value.item_number}_tools`).attr('onchange',`IGM.SelectItemTools(${value.item_number},'${value.tools}');`);
             // if (value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance') { INALIS KO MUNA PARA NAKA DISABLE LANG LAHAT PARA HINDI MABAGO
             //     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
             //     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', false);
@@ -619,11 +620,25 @@ const IGM = (() => {
         {
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
             {
-                if (specification !== '' || upper_limit !== '' || lower_limit !== '')
+                if (specification !== '' && upper_limit !== '' && lower_limit !== '')
                 {
+                    let new_upper_limit = parseFloat(upper_limit);
+                    let new_lower_limit = parseFloat(lower_limit);
+
+                    //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
+                    if (parseFloat(upper_limit) > 0)
+                    {
+                        new_upper_limit =  `+${parseFloat(upper_limit)}`;
+                    }
+                    
+                    if (parseFloat(lower_limit) > 0)
+                    {
+                        new_lower_limit =  `+${parseFloat(lower_limit)}`;
+                    }
+
                     $(`#accordion_igm`).LoadingOverlay('hide');
                     //pag update or create ng checksheet item
-                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action);
                 }
             }
             else
@@ -1578,7 +1593,7 @@ const IGM = (() => {
                 tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates);
    
                 $(`#tr_item_no_${item_no_count}_sub_no_${existing_sub_no_count_per_item - 1}`).after(tr_sub_no_inputs);
-                $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 2);
+                $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
 
                 //para sa pag papalit ng kulay ng visuals data
                 IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
@@ -1679,7 +1694,7 @@ const IGM = (() => {
                     </div>
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}" onkeyup="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no});">
                 </td>
                 <td class="td_sub_no_input">
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${IGM.ChecksheetDataInputData(array_data,0)}">
@@ -1699,7 +1714,7 @@ const IGM = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
             </tr`;
         }
-        //NATAPOS SA PAGLALAGAY NG JUDGEMENT NG SUB ITEMS, NEXT NA AY PAG LALAGAY NG JUDGEMENT SA ITEMS TAPOS YUNG PAG LALAGAY NG MGA KULAY NG JUDGEMENT
+
         return tr;
     };
 
@@ -1980,94 +1995,100 @@ const IGM = (() => {
     };
 
     this_igm.SubItemSelectVisual = (item_no, sub_no, visual_no) => {
-
-        let visual_value    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
+        //para to sa coordinates since wala namang pinapasa na visual_no
+        if (visual_no !== 'undefined')
+        {
+            var visual_value    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
+        }
         let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
 
         if (coordinates !== '')
         {
             $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
 
-            if (visual_no === 1) 
+            if (visual_no !== 'undefined')
             {
-                $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+                if (visual_no === 1) 
+                {
+                    $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
 
-                if (visual_value === '') 
-                {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
-
-                } 
-                else if (visual_value === 'OK') 
-                {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
-                } 
-                else if (visual_value === 'NA') 
-                {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                } 
-                else 
-                {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
-                }
-            } 
-            else 
-            {
-
-                for (let visual_count = visual_no - 1; visual_count < visual_no; visual_count++) 
-                {
-                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_count}`).val() === '') 
+                    if (visual_value === '') 
                     {
-                        for (let error_count = 1; error_count < visual_no; error_count++) 
-                        {
-                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).val() === '') 
-                            {
-                                $(`#span_visual_item_no_${item_no}_error_${error_count}`).remove();
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).after(`<span id="span_visual_item_no_${item_no}_error_${error_count}" class="span-error">Required</span>`);
-                            }
-                        }
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+
+                    } 
+                    else if (visual_value === 'OK') 
+                    {
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                    } 
+                    else if (visual_value === 'NA') 
+                    {
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
                     } 
                     else 
                     {
-                        $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
-
-                        if (visual_value === '') 
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                    }
+                } 
+                else 
+                {
+                    for (let visual_count = visual_no - 1; visual_count < visual_no; visual_count++) 
+                    {
+                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_count}`).val() === '') 
                         {
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
-
-                        } 
-                        else if (visual_value === 'OK') 
-                        {
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
-                        } 
-                        else if (visual_value === 'NA') 
-                        {
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                            for (let error_count = 1; error_count < visual_no; error_count++) 
+                            {
+                                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).val() === '') 
+                                {
+                                    $(`#span_visual_item_no_${item_no}_error_${error_count}`).remove();
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).after(`<span id="span_visual_item_no_${item_no}_error_${error_count}" class="span-error">Required</span>`);
+                                }
+                            }
                         } 
                         else 
                         {
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                            $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+
+                            if (visual_value === '') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+
+                            } 
+                            else if (visual_value === 'OK') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                            } 
+                            else if (visual_value === 'NA') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                            } 
+                            else 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                            }
                         }
                     }
                 }
             }
+            
+            //proceed sa pag kuha ng visuals then deretso sa ajax
+            IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
         }
         else
         {
             $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
         }
-        
-        IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
     };
 
     this_igm.SubitemCalculateVisualJudgement = (item_no, sub_no) => {
@@ -2107,6 +2128,7 @@ const IGM = (() => {
     }
 
     this_igm.ValidateItemNoUpperAndLowerLimit = (item_no) => {
+
         let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
         let specs = $(`#txt_item_no_${item_no}_specs`).val();
@@ -2135,7 +2157,7 @@ const IGM = (() => {
 
             if (upper_limit !== '' && lower_limit !== '') 
             {
-                if (parseInt(lower_limit) > parseInt(upper_limit)) {
+                if (parseFloat(lower_limit) > parseFloat(upper_limit)) {
                     $(`#span_lower_limit_error_${item_no}`).remove();
                     $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
                     $(`#txt_item_no_${item_no}_lower_limit`).val('');
@@ -2212,14 +2234,21 @@ const IGM = (() => {
 
     this_igm.ValidateMinMaxType = (item_no, sub_no,min_max_type,min_max_no) => {
 
+        let coordinates         = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+
         if (min_max_type === '')
         {
+            if (coordinates === '')
+            {
+                $(`#span_coordinates_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_coordinates_error_${item_no}" class="span-error">Required</span>`);
+            }
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
         }
         else 
         {
             $(`#span_coordinates_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_coordinates_error_${item_no}" class="span-error">Required</span>`)
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_coordinates_error_${item_no}" class="span-error">Required</span>`);
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
         }
     };
@@ -2299,6 +2328,56 @@ const IGM = (() => {
                 IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
             }
         }
+        else
+        {
+            //itong else para pagka pinalitan ng value ang coordinates, dapat complete ma lahat ng min max value
+            let last_max_value              = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
+            let array_min_max_value         = [];
+            let empty_min_max_inputs_count  = 0 ; 
+
+            if (last_max_value !== '')
+            {
+                for (let c_count = 1; c_count <= 5; c_count++) 
+                {
+                    //pagkuha ng min and max data
+                    let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
+                    let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
+                    
+                    //para malaman kung may empty na inputs para hindi poproceed sa function
+                    if (min_value === '' || max_value === '')
+                    {
+                        empty_min_max_inputs_count++;
+                    }
+                    
+                    if (empty_min_max_inputs_count === 0)
+                    {
+                        let new_min_value = parseFloat(min_value);
+                        let new_max_value = parseFloat(max_value);
+
+                        //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
+                        if (parseFloat(min_value) > 0)
+                        {
+                            new_min_value =  `+${parseFloat(min_value)}`;
+                        }
+                        
+                        if (parseFloat(max_value) > 0)
+                        {
+                            new_max_value =  `+${parseFloat(max_value)}`;
+                        }
+                        //pagpush ng min and max data
+                        array_min_max_value.push(new_min_value);
+                        array_min_max_value.push(new_max_value);
+
+                        if (c_count === 5) 
+                        {
+                            //pagkuha ng overall judgement para sa checksheet item 
+                            IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                            array_min_max_value = [];
+                        }
+                    }
+                }
+            }
+        }
     };
 
     this_igm.ValidateSubItemGetMinMax5 = (item_no, sub_no, min_max_no, min_max_type) => {
@@ -2346,9 +2425,7 @@ const IGM = (() => {
             } else {
                 $(`#span_max_error_${error_count}`).remove();
             }
-
         }
-
     };
 
     this_igm.ValidateSubItemGetMinMaxWithUpperAndLowerLimit = (item_no, sub_no, min_max_no, min_max_type) => {
@@ -2477,8 +2554,8 @@ const IGM = (() => {
                                     let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
                                     let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
                                     //pagpush ng min and max data
-                                    array_min_max_value.push(min_value);
-                                    array_min_max_value.push(max_value);
+                                    array_min_max_value.push(parseFloat(min_value));
+                                    array_min_max_value.push(parseFloat(max_value));
 
                                     if (c_count === 5) 
                                     {

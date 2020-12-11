@@ -198,7 +198,7 @@
                                                 </div>
                                                 <div class="col-md-5">
                                                     <div class="card shadow mb-4">
-                                                        <div class="card-body">
+                                                        <div class="card-body" id="div_downtime">
                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <h5 class="header-title"><i class="ti-timer"></i>
