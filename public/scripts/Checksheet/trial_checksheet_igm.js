@@ -36,6 +36,7 @@ const IGM = (() => {
                 $('#tbody_tbl_igm').prop('hidden', false);
 
                 item_no_count += 0;
+                alert(item_no_count)
                 let tfoot_tbl_igm = `
 				<tfoot id="tfoot_add_igm_item">
 					<td colspan="9"> 
@@ -44,6 +45,13 @@ const IGM = (() => {
 				</tfoot>
 				`;
                 $('#tbody_tbl_igm').after(tfoot_tbl_igm);
+
+                //pag show ng attachments at ssave button
+                $('#div_row_numbering_drawing').prop('hidden',false);
+                $('#div_row_special_tool_data').prop('hidden',false);
+                $('#div_row_others_2').prop('hidden',false);
+                $('#div_row_save_inspection').prop('hidden',false);
+
                 $('#accordion_igm').LoadingOverlay('hide');
             }
         });
@@ -1140,9 +1148,12 @@ const IGM = (() => {
             $.extend(swal_options, {
                 confirmButtonText: 'Yes',
                 title: `Are you sure you want to remove the item?`,
+                text: ''
             })
-        ).then((result) => {
-            if (result.value) {
+        ).then((result) => 
+        {
+            if (result.value) 
+            {
 
                 let id = $(`#txt_hidden_item_no_${item_no}`).val();
                 let trial_checksheet_id = $('#trial_checksheet_id').val();
@@ -1155,18 +1166,18 @@ const IGM = (() => {
                     $(`#accordion_igm`).LoadingOverlay('show');
 
                     $.ajax({
-                        url: `delete-item`,
-                        type: 'delete',
+                        url     : `delete-item`,
+                        type    : 'delete',
                         dataType: 'json',
-                        cache: false,
-                        data: {
-                            _token: _TOKEN,
-                            id: id,
-                            trial_checksheet_id: trial_checksheet_id,
-                            item_number: item_number
+                        cache   : false,
+                        data    : {
+                            _token              : _TOKEN,
+                            id                  : id,
+                            trial_checksheet_id : trial_checksheet_id,
+                            item_number         : item_number
                         },
-                        success: data => {
-
+                        success: data => 
+                        {
                             IGM.ProceedRemoveIgmItemNo(item_no,remove_status);
 
                             $(`#accordion_igm`).LoadingOverlay('hide');
@@ -1648,37 +1659,37 @@ const IGM = (() => {
 					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')" value="${new_coordinates}">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(array_data,0)}">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" min="-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(array_data,2)}">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(array_data,4)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(array_data,6)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(array_data,8)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" min="<-999" max="999">
 				</td>
 				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(array_data,1)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(array_data,3)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(array_data,5)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(array_data,7)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" min="<-999" max="999">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(array_data,9)}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" min="<-999" max="999">
 				</td>
 			</tr>`;
         } 
@@ -1697,19 +1708,19 @@ const IGM = (() => {
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}" onkeyup="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no});">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${IGM.ChecksheetDataInputData(array_data,0)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,0)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly value="${IGM.ChecksheetDataInputData(array_data,1)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,1)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly value="${IGM.ChecksheetDataInputData(array_data,2)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,2)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly value="${IGM.ChecksheetDataInputData(array_data,3)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,3)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly value="${IGM.ChecksheetDataInputData(array_data,4)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,4)}">
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
             </tr`;
@@ -2580,13 +2591,13 @@ const IGM = (() => {
     this_igm.SubitemCalculateOverallJudgement = (item_no, sub_no, array_data) => {
 
         //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
-        let sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
-        let split_total_sub_no_count = sub_no_count.split(',');
-        let total_sub_no_count = split_total_sub_no_count[2];
+        let sub_no_count                = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick');
+        let split_total_sub_no_count    = sub_no_count.split(',');
+        let total_sub_no_count          = split_total_sub_no_count[2];
 
-        let id = $(`#txt_hidden_item_no_${item_no}`).val();
-        let coordinates = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-        let judgment_datas = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
+        let id              = $(`#txt_hidden_item_no_${item_no}`).val();
+        let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let judgment_datas  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
 
         let overall_NG_count = 0;
 
@@ -2713,7 +2724,8 @@ const IGM = (() => {
         
     };
 
-    this_igm.ChecksheetDataInputData = (array_data,number) => {
+    this_igm.ChecksheetDataInputData = (type,array_data,number) => {
+
         let data = '';
 
         if (array_data != undefined)
@@ -2727,8 +2739,7 @@ const IGM = (() => {
         {
             data = '';
         }
-        
-        return data;
+        return (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') ? parseFloat(data) : data;
     };
 
     this_igm.ChecksheetDataInputJudgement = (judgement) => {

@@ -191,12 +191,12 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id !== null)
         {
             // $filename = $part_number . '_' . $revision_number;
-            // $filename =$part_number.'_'.$revision_number.'(00)';
-            $filename = 'igm';
+            $filename =$part_number.'_'.$revision_number.'(00)';
+            // $filename = 'igm';
             
             // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
-            // $path ='F:\TIS\\';
-            $path ='D:\\';
+            $path ='F:\TIS\\';
+            // $path ='D:\\';
     
             $igm_files = scandir($path);
     
@@ -222,7 +222,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
-                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'D:\\'.$igm_file_name;
+                    $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
@@ -361,21 +362,9 @@ class TrialChecksheetController extends Controller
     public function finishedChecksheet(TrialChecksheet $TrialChecksheet,
                                         Approval $Approval,
                                         Attachment $Attachment,
-                                        TaktTime $TaktTime,
                                         Request $Request)
     {
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
-
-        $request_keys = collect($Request->except('trial_checksheet_id',
-                                                'date_inspected',
-                                                'temperature',
-                                                'humidity',
-                                                'judgment',
-                                                'part_number',
-                                                'revision_number',
-                                                'actual_time',
-                                                'total_takt_time',
-                                                'takt_time'))->keys();
 
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $date_inspected = $Request->date_inspected;
@@ -385,10 +374,6 @@ class TrialChecksheetController extends Controller
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
 
-        $actual_time            = $Request->actual_time;
-        $total_takt_time        = $Request->total_takt_time;
-        $takt_time              = $Request->takt_time;
-
         $folder_name = date('Y-m-d') . '_' . $part_number . '_' . $revision_number;
 
         $status  = 'Error';
@@ -397,17 +382,16 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_result = [];
         $approval_result = [];
         $attachment_result = [];
-        $takt_time_result = [];
 
-        if(count($request_keys) !== 0)
+        if(count($Request->file()) !== 0)
         {
             DB::beginTransaction();
 
             try 
             {
-                for($i=0; $i < count($request_keys); $i++)
+                for($i=0; $i < count($Request->file()); $i++)
                 {
-                    if ($Request->file($file_names[$i]) !== null) 
+                    if ($Request->file($file_names[$i]) !== '') 
                     {
                         $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
 
@@ -429,8 +413,8 @@ class TrialChecksheetController extends Controller
                 $approval_data =
                 [
                     'trial_checksheet_id'      => $trial_checksheet_id,
-                    // 'inspect_by'               => Session::get('fullname'), // session name
-                    'inspect_by'               => 'JED RELATOR', // session name
+                    'inspect_by'               => Session::get('fullname'), // session name
+                    // 'inspect_by'               => 'JED RELATOR', // session name
                     'inspect_datetime'         => now(),
                     'decision'                 => 1
                 ];
@@ -445,21 +429,6 @@ class TrialChecksheetController extends Controller
                 ];
 
                 $attachment_result = $Attachment->storeAttachments($attachment_data);
-
-                $start_date_time = $TaktTime->getStartDateTime($trial_checksheet_id);
-
-                $takt_time_data = 
-                [
-                    'trial_checksheet_id'   => $trial_checksheet_id,
-                    'start_date'            => $start_date_time['start_date'],
-                    'start_time'            => $start_date_time['start_time'],
-                    'end_time'              => date('H:i:s'),
-                    'actual_time'           => $actual_time,
-                    'total_takt_time'       => $total_takt_time,
-                    'takt_time'             => $takt_time,
-                ];
-        
-                $takt_time_result =  $TaktTime->updateOrCreateTaktTime($takt_time_data);
 
                 $status  = 'Success';
                 $message = 'Successfully Saved';
@@ -483,7 +452,6 @@ class TrialChecksheetController extends Controller
                 'trial_checksheet_result'   => $trial_checksheet_result,
                 'approval_result'           => $approval_result,
                 'attachment_result'         => $attachment_result,
-                'takt_time_result'          => $takt_time_result
             ]    
         ];
     }

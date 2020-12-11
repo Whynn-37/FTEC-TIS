@@ -41,7 +41,7 @@ const CHECKSHEET = (() => {
 
     let array_item = [];
     let array_sub_item = [];
-    let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf', 'xlsx', 'xls'];
+    let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf'];
     let array_files = [];
 
     // pang refresh ng trial ledger
@@ -305,6 +305,7 @@ const CHECKSHEET = (() => {
             $.extend(swal_options, {
                 confirmButtonText: 'Yes',
                 title: `Are you sure you want to ${text}?`,
+                text: ''
             })
         ).then((result) => {
             if (result.value) {
@@ -342,7 +343,6 @@ const CHECKSHEET = (() => {
             },
             success: data => 
             {
-
                 if (data.status === 'Success') {
                     //checksheet details
                     $('#slc_part_number').prop('readonly', true);
@@ -362,6 +362,13 @@ const CHECKSHEET = (() => {
 
                     CHECKSHEET.LoadCycleTime(0, 'start');
 
+                    //pag show ng attachments at ssave button
+                    $('#div_row_numbering_drawing').prop('hidden',false);
+                    $('#div_row_special_tool_data').prop('hidden',false);
+                    $('#div_row_others_2').prop('hidden',false);
+                    $('#div_row_save_inspection').prop('hidden',false);
+
+                    //pag show ng igm
                     $('#div_accordion_igm').prop('hidden', false);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
@@ -429,7 +436,7 @@ const CHECKSHEET = (() => {
         });
     };
 
-    this_checksheet.StopCycleTime = (actual_time) => {
+    this_checksheet.StopCycleTime = () => {
 
         $('#div_card_takt_time').LoadingOverlay('show');
 
@@ -480,6 +487,12 @@ const CHECKSHEET = (() => {
                     $("#slc_downtime_type").prop("disabled", true);
                     $("#btn_start_downtime").prop("disabled", true);
 
+                    //pag show ng attachments at ssave button
+                    $('#div_row_numbering_drawing').prop('hidden',true);
+                    $('#div_row_special_tool_data').prop('hidden',true);
+                    $('#div_row_others_2').prop('hidden',true);
+                    $('#div_row_save_inspection').prop('hidden',true);
+
                     $('#div_accordion_igm').prop('hidden', true);
                     $('#div_card_takt_time').LoadingOverlay('hide');
                 }
@@ -506,6 +519,7 @@ const CHECKSHEET = (() => {
             Swal.fire(
                 $.extend(swal_options, {
                     title: `Are you sure you want to ${text} downtime?`,
+                    text: ''
                 })
             ).then((result) => {
                 if (result.value) {
@@ -517,44 +531,48 @@ const CHECKSHEET = (() => {
 
     this_checksheet.LoadDowntime = () => {
 
-        $('#div_downtime').LoadingOverlay('show');
-
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
-        $.ajax({
-            url: `load-down-time`,
-            type: 'get',
-            dataType: 'json',
-            cache: false,
-            data: {
-                trial_checksheet_id: trial_checksheet_id,
-            },
-            success: data => {
-                $('#tbody_tbl_downtime').empty();
+        if (trial_checksheet_id !== '')
+        {
+            $('#div_downtime').LoadingOverlay('show');
 
-                // sum ng downtime
-                let sum_downtime = 0;
-                data.data.forEach((value) => {
-                    sum_downtime += parseFloat(value.total_down_time);
-                });
+            $.ajax({
+                url: `load-down-time`,
+                type: 'get',
+                dataType: 'json',
+                cache: false,
+                data: {
+                    trial_checksheet_id: trial_checksheet_id,
+                },
+                success: data => 
+                {
+                    $('#tbody_tbl_downtime').empty();
 
-                let tbody = '';
-                data.data.forEach((value) => {
+                    // sum ng downtime
+                    let sum_downtime = 0;
+                    data.data.forEach((value) => {
+                        sum_downtime += parseFloat(value.total_down_time);
+                    });
 
-                    tbody += `<tr>
-                        <td>${value.type}</td>
-                        <td>${value.start_time}</td>
-                        <td>${value.down_time}</td>
-                        <td>${value.total_down_time}</td>
-                    </tr>`;
+                    let tbody = '';
+                    data.data.forEach((value) => {
 
-                });
-                $('#tbody_tbl_downtime').html(tbody);
-                $('#td_total_downtime').html(sum_downtime);
+                        tbody += `<tr>
+                            <td>${value.type}</td>
+                            <td>${value.start_time}</td>
+                            <td>${value.down_time}</td>
+                            <td>${value.total_down_time}</td>
+                        </tr>`;
 
-                $('#div_downtime').LoadingOverlay('hide');
-            }
-        });
+                    });
+                    $('#tbody_tbl_downtime').html(tbody);
+                    $('#td_total_downtime').html(sum_downtime);
+
+                    $('#div_downtime').LoadingOverlay('hide');
+                }
+            });
+        }
     };
 
     this_checksheet.Downtime = (status, downtime_type) => {
@@ -609,12 +627,42 @@ const CHECKSHEET = (() => {
         $("#div_takt_time_timer").TimeCircles().stop();
     };
 
-    this_checksheet.SaveTrialChecksheet = () => {
+    this_checksheet.ValidateAttachment = (file,file_label) => {
 
-        let part_no = $('#slc_part_no').val();
-        let attachment = $('#txt_attachment').val();
-        let temperature = $('#txt_temperature').val();
-        let humidity = $('#txt_humidity').val();
+        let split_file_type = file.split('.');
+        let file_type       = split_file_type[1];
+
+        if ($.inArray(file_type, array_file_type) === -1)
+        {
+            $(`#span_attach_file_${file_label}`).text('Invalid file');
+            $(`#txt_attachment_${file_label}`).val(null);
+        }
+        else
+        {
+            $(`#span_attach_file_${file_label}`).text('');
+        }
+    };
+
+    this_checksheet.ValidateSaveTrialChecksheet = () => {
+
+        let trial_checksheet_id     = $('#trial_checksheet_id').val();
+        let date_inspected          = $('#txt_date_inspected').val();
+        let temperature             = $('#txt_temperature').val();
+        let humidity                = $('#txt_humidity').val();
+        let part_number             = $('#slc_part_number').val();
+        let revision_number         = $('#slc_revision_number').val();
+        let na_judgement_count      = 0;
+        let ng_judgement_count      = 0;
+        
+        //attachments
+        let numbering_drawing       = $('#txt_attachment_numbering_drawing').attr('name');
+        let material_certification  = $('#txt_attachment_material_certification').attr('name');
+        let special_tool_data       = $('#txt_attachment_special_tool_data').attr('name');
+        let others_1                = $('#txt_attachment_others_1').attr('name');
+        let others_2                = $('#txt_attachment_others_2').attr('name');
+
+        //pangclear ng error texts
+        $('.form_trial_checksheet_field_error').text('');
 
         $('.form_trial_checksheet_field').each(function () 
         {
@@ -624,232 +672,140 @@ const CHECKSHEET = (() => {
             } 
             else 
             {
-                (part_no !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
-                (temperature !== '')? $('#span_temperature').prop('hidden', true)   :'';
-                (humidity !== '')   ? $('#span_humidity').prop('hidden', true)      : '';
+                (part_number !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
+                (temperature !== '')    ? $('#span_temperature').prop('hidden', true)   :'';
+                (humidity !== '')       ? $('#span_humidity').prop('hidden', true)      : '';
 
-                if (part_no !== null && attachment !== '' && temperature !== '' && humidity !== '') 
+                if (part_number !== null && numbering_drawing !== '' && material_certification !== ''&& special_tool_data !== '' && temperature !== '' && humidity !== '') 
                 {
-                    Swal.fire(
-                        $.extend(swal_options, {
-                            title: "Are you sure?",
-                        })
-                    ).then((result) => 
+                    //checking kung may niload na igm or kung hindi man niload, merong inadd na item. basta dapat may IGM
+                    if (item_no_count == 0 || item_no_count === '')
                     {
-                        if (result.value) 
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Incomplete checksheet',
+                            text: 'No IGM checksheet found',
+                        })
+                    }
+                    else
+                    {
+                        Swal.fire(
+                            $.extend(swal_options, {
+                                title   : "Are you sure?",
+                                text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
+                            })
+                        ).then((result) => 
                         {
-                            // Swal.fire({
-                            //     icon: 'success',
-                            //     title: 'Success',
-                            //     text: 'Saved Successfully',
-                            // })
-                            CHECKSHEET.SaveTrialChecksheetGetChecksheetItemAndData();
-                            // CHECKSHEET.SaveTrialChecksheetGetAddedIGMItem();
-                            console.log(array_item)
-                            console.log(array_sub_item)
-                            // $('#form_trial_checksheet')[0].reset();
-                            // $('#slc_part_no').val('').trigger('change');
-                            // $('.form_trial_checksheet_field_error').remove();
-                        }
-                    });
+                            if (result.value) 
+                            {
+                              
+                                //pagkuha ng item judgements para sa buong judgment ng trial
+                                for (let index = 1; index <= parseInt(item_no_count); index++) 
+                                {
+                                    let item_judgment = $(`#td_item_no_${index}_judgement span`).text();
+                                    
+                                    if (item_judgment === 'N/A')
+                                    {
+                                        na_judgement_count++;
+                                    }
+                                    else if (item_judgment === 'NG')
+                                    {
+                                        ng_judgement_count++;
+                                    }
+
+                                    if (index === parseInt(item_no_count))
+                                    {
+                                        if (na_judgement_count > 0)
+                                        {
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Item with no judgement has been found',
+                                                text: 'Please check your checksheet item/s.',
+                                            })
+                                        }
+                                        else
+                                        {
+                                            //checking if NG or OK
+                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'OK';
+
+                                            CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        });
+                    }
                 }
             }
         });
     };
-    //pagkuha ng checksheet item
-    this_checksheet.SaveTrialChecksheetGetChecksheetItemAndData = () => {
+    
+    this_checksheet.ProceedSaveTrialChecksheet = (final_judgment) => {
 
-        // let existing_item_no_count = item_no_count - new_item_no_count;
-        let empty_inputs_count = 0;
+        $('#div_trial_checksheet').LoadingOverlay('show');
 
-        for (let item_count = 1; item_count <= item_no_count; item_count++) 
-        {
-            array_item.push
-            ({
-                item_no         : item_count,
-                item_tools      : $(`#slc_item_no_${item_count}_tools`).val(),
-                item_type       : $(`#slc_item_no_${item_count}_type`).val(),
-                item_specs      : $(`#txt_item_no_${item_count}_specs`).val(),
-                item_upper_limit: $(`#txt_item_no_${item_count}_upper_limit`).val(),
-                item_lower_limit: $(`#txt_item_no_${item_count}_lower_limit`).val(),
-                item_judgement  : $(`#td_item_no_${item_count}_judgement span`).text()
-            });
-
-            let add_igm_item_sub_no_onclick_value            = $(`#a_add_igm_item_no_${item_count}_sub_no`).attr('onclick').split(',');02
-            let split_item_type = add_igm_item_sub_no_onclick_value[0].split('(');
-            let item_no_type = split_item_type[1].replace(/"|'/g, '');
-
-            let sub_item_count_per_item = add_igm_item_sub_no_onclick_value[2];
-
-            for (let sub_item_count = 1; sub_item_count <= sub_item_count_per_item; sub_item_count++) 
+        let form_data = new FormData($('#form_trial_checksheet')[0]);
+        form_data.append('judgment',final_judgment)
+ 
+        $.ajax({
+            url         : `finished-checksheet`,
+            type        : 'post',
+            dataType    : 'json',
+            cache       : false,
+			contentType : false,
+			processData : false,
+            data        : form_data,
+            success: result => 
             {
-                if (item_no_type === 'Min and Max' || item_no_type === 'Min and Max and Form Tolerance') 
-                {
-                    let sub_item_coordinates    = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val();
-                    //min
-                    let sub_item_min_1          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_1`).val();
-                    let sub_item_min_2          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_2`).val();
-                    let sub_item_min_3          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_3`).val();
-                    let sub_item_min_4          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_4`).val();
-                    let sub_item_min_5          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_5`).val();
-                    //max
-                    let sub_item_max_1          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_1`).val();
-                    let sub_item_max_2          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_2`).val();
-                    let sub_item_max_3          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_3`).val();
-                    let sub_item_max_4          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_4`).val();
-                    let sub_item_max_5          = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_5`).val();
+                if (result.status === 'Success')
+                {  
+                    $('.form_trial_checksheet_field_error').remove();
+                    
+                    $('#btn_validate_load_igm').prop('hidden', false);
+                    $('#tbl_igm').prop('hidden', true);
+                    $('#tbody_tbl_igm').prop('hidden', true);
 
-                    if (sub_item_coordinates === '' || sub_item_min_1 === '' || sub_item_min_2 === ''|| sub_item_min_3 === ''|| sub_item_min_4 === ''|| sub_item_min_5 === ''|| sub_item_max_1 === ''|| sub_item_max_2 === ''|| sub_item_max_3 === ''|| sub_item_max_4 === ''|| sub_item_max_5 === '')
-                    {
-                        empty_inputs_count++;
-                    }
+                    $('#tbl_new_igm').prop('hidden', true);
+                    $('#tbody_tbl_new_igm').empty();
 
-                    array_sub_item.push
-                    ({
-                        item_no             : item_count,
-                        sub_no              : sub_item_count,
-                        //coordinates
-                        sub_item_coordinates: $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val(),
-                        //min
-                        sub_item_min_1      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_1`).val(),
-                        sub_item_min_2      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_2`).val(),
-                        sub_item_min_3      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_3`).val(),
-                        sub_item_min_4      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_4`).val(),
-                        sub_item_min_5      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_min_5`).val(),
-                        //max
-                        sub_item_max_1      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_1`).val(),
-                        sub_item_max_2      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_2`).val(),
-                        sub_item_max_3      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_3`).val(),
-                        sub_item_max_4      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_4`).val(),
-                        sub_item_max_5      : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_max_5`).val(),
-                        //judgement
-                        sub_item_judgement  : $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement span`).text()
-                    });
-                } 
-                else 
-                {
-                    let sub_item_coordinates    = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val();
-                    //data
-                    let sub_item_visual_1       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_1`).val();
-                    let sub_item_visual_2       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_2`).val();
-                    let sub_item_visual_3       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_3`).val();
-                    let sub_item_visual_4       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_4`).val();
-                    let sub_item_visual_5       = $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_5`).val();
+                    //pag empty ng table sa takt time at downtime
+                    $('#tbody_tbl_takt_time').empty();
+                    $('#tbody_tbl_downtime').empty();
+                    $('#td_total_downtime').html('');
+                    
+                    // pagrestart at stop ng timer
+                    $("#div_target_takt_time_timer").TimeCircles().restart();
+                    $("#div_target_takt_time_timer").TimeCircles().stop();
 
-                    if (sub_item_coordinates === '' || sub_item_visual_1 === '' || sub_item_visual_2 === ''|| sub_item_visual_3 === ''|| sub_item_visual_4 === ''|| sub_item_visual_5 === '')
-                    {
-                        empty_inputs_count++;
-                    }
+                    $("#div_actual_time_timer").TimeCircles().restart();
+                    $("#div_actual_time_timer").TimeCircles().stop();
 
-                    array_sub_item.push
-                    ({
-                        item_no             : item_count,
-                        sub_no              : sub_item_count,
-                        //coordinates
-                        sub_item_coordinates: $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_coordinates`).val(),
-                        //data
-                        sub_item_visual_1   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_1`).val(),
-                        sub_item_visual_2   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_2`).val(),
-                        sub_item_visual_3   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_3`).val(),
-                        sub_item_visual_4   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_4`).val(),
-                        sub_item_visual_5   : $(`#txt_item_no_${item_count}_sub_no_${sub_item_count}_visual_5`).val(),
-                        //judgment
-                        sub_item_judgement  : $(`#td_item_no_${item_count}_sub_no_${sub_item_count}_judgement span`).text(),
-                    });
+                    $("#div_takt_time_timer").TimeCircles().restart();
+                    $("#div_takt_time_timer").TimeCircles().stop();
+
+                    CHECKSHEET.StopCycleTime();
+
+                    $('#form_trial_checksheet')[0].reset();
+                    $('#slc_revision_number').empty();
+                    $('#slc_trial_number').empty();
+
+                    $('#btn_start_time').prop('disabled',true);
+
+                    CHECKSHEET.LoadPartnumber();
+                    item_no_count = '';
+                    $('#div_trial_checksheet').LoadingOverlay('hide');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: result.message,
+                    })
                 }
+                
             }
-        }
-
-        if (item_count = item_no_count)
-        {
-            if (empty_inputs_count > 0)
-            {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Incomplete data',
-                    text: 'Please check if all the data has been filled up in your checksheet.',
-                })
-            }
-            else
-            {
-                //dito ajax para sa pag save
-                alert('pawer')
-
-            }
-        }
+        });
     };
-    //pagkuha ng checksheet item
-    this_checksheet.SaveTrialChecksheetGetAddedIGMItem = () => {
-
-        let item_no = (item_no_count - new_item_no_count) + 1;
-
-        for (let item_count = 1; item_count <= new_item_no_count; item_count++) {
-            array_item.push({
-                item_no: item_no,
-                item_tools: $(`#txt_item_no_${item_no}_tools`).val(),
-                item_type: $(`#txt_item_no_${item_no}_type`).val(),
-                item_specs: $(`#txt_item_no_${item_no}_specs`).val(),
-                item_upper_limit: $(`#txt_item_no_${item_no}_upper_limit`).val(),
-                item_lower_limit: $(`#txt_item_no_${item_no}_lower_limit`).val(),
-                item_judgement: $(`#td_item_no_${item_no}_judgement`).html()
-            });
-
-            let a_add_igm_item_no_onclick = $(`#a_add_igm_item_no_${item_no}`).attr('onclick');
-            let split_a_add_igm_item_no_onclick = a_add_igm_item_no_onclick.split(',');
-            let sub_item_count_per_item = split_a_add_igm_item_no_onclick[2];
-
-            let split_split_a_add_igm_item_no_onclick = split_a_add_igm_item_no_onclick[0].split('(');
-            let item_no_type = split_split_a_add_igm_item_no_onclick[1].replace(/'/g, '');
-
-            for (let sub_item_count = 1; sub_item_count <= sub_item_count_per_item; sub_item_count++) {
-
-                if (item_no_type === 'MC') {
-
-                    array_sub_item.push({
-                        item_no: item_no,
-                        sub_no: sub_item_count,
-                        //coordinates
-                        sub_item_coordinates: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_coordinates`).val(),
-                        //data
-                        sub_item_visual_1: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_visual_1`).val(),
-                        sub_item_visual_2: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_visual_2`).val(),
-                        sub_item_visual_3: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_visual_3`).val(),
-                        sub_item_visual_4: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_visual_4`).val(),
-                        sub_item_visual_5: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_visual_5`).val(),
-                        //judgment
-                        sub_item_judgement: $(`#td_item_no_${item_no}_sub_no_${sub_item_count}_judgement`).html(),
-                    });
-
-                } else {
-
-                    array_sub_item.push({
-                        item_no: item_no,
-                        sub_no: sub_item_count,
-                        //coordinates
-                        sub_item_coordinates: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_coordinates`).val(),
-                        //min
-                        sub_item_min_1: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_min_1`).val(),
-                        sub_item_min_2: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_min_2`).val(),
-                        sub_item_min_3: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_min_3`).val(),
-                        sub_item_min_4: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_min_4`).val(),
-                        sub_item_min_5: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_min_5`).val(),
-                        //max
-                        sub_item_max_1: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_max_1`).val(),
-                        sub_item_max_2: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_max_2`).val(),
-                        sub_item_max_3: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_max_3`).val(),
-                        sub_item_max_4: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_max_4`).val(),
-                        sub_item_max_5: $(`#txt_item_no_${item_no}_sub_no_${sub_item_count}_max_5`).val(),
-                        //judgement
-                        sub_item_judgement: $(`#td_item_no_${item_no}_sub_no_${sub_item_count}_judgement`).html()
-                    });
-
-                }
-
-            }
-            item_no++;
-        }
-    };
-
 
     return this_checksheet;
 })();

@@ -16,10 +16,11 @@
         <div class="row" id="div_main_content">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
-                    <div class="card-body">
+                    <div class="card-body" id="div_trial_checksheet">
                         <h4 class="header-title"><i class="ti-clipboard"></i> TRIAL CHECKSHEET</h4>
                         <form id="form_trial_checksheet" method="post" enctype="multipart/form-data">
                             {{-- CHECKSHEET --}}
+                            @csrf
                             <div id="accordion4" class="according accordion-s2 gradiant-bg mb-3">
                                 <div class="card">
                                     <div class="card-header">
@@ -31,16 +32,16 @@
                                     <div id="accordion_details" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
                                             {{-- HIDDEN ID REQUEST NI JED --}}
-                                            <input type="text" id="trial_checksheet_id" hidden>
+                                            <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label>PART NUMBER:</label>&nbsp;
                                                     <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
-                                                    <select class="form-control mb-3 select2 form_trial_checksheet_field" name="slc_part_number" id="slc_part_number" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
+                                                    <select class="form-control mb-3 select2 form_trial_checksheet_field" name="part_number" id="slc_part_number" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label>REVISION:</label>
-                                                    <select class="form-control mb-3 form_trial_checksheet_field" name="slc_revision_number" id="slc_revision_number" onchange="CHECKSHEET.LoadTrialNumber()"></select>
+                                                    <select class="form-control mb-3 form_trial_checksheet_field" name="revision_number" id="slc_revision_number" onchange="CHECKSHEET.LoadTrialNumber()"></select>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <label>TRIAL NUMBER:</label>
@@ -332,58 +333,57 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="div_row_numbering_drawing" hidden>
                                 <div class="col-md-3">
                                     <label>ATTACH FILE (NUMBERING DRAWING):</label>&nbsp;
                                     <span id="span_attach_file_numbering_drawing" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_numbering_drawing" accept="application/pdf,image/*">
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="numbering_drawing" id="txt_attachment_numbering_drawing" accept="application/pdf,image/*" onchange="CHECKSHEET.ValidateAttachment(this.value,'numbering_drawing');">
                                 </div>
                                 <div class="col-md-3">
                                     <label>ATTACH FILE (MATERIAL CERTIFICATION):</label>&nbsp;
-                                    <span id="span_attach_file_material_certification" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_material_certification" accept="application/pdf,image/*">
+                                    <span id="span_attach_file_material_certification" class="span-error  form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="material_certification" id="txt_attachment_material_certification" accept="application/pdf,image/*" onchange="CHECKSHEET.ValidateAttachment(this.value,'material_certification');">
                                 </div>
                                 <div class="col-md-6">
                                     <label>DATE INSPECTED:</label>&nbsp;
                                     <span id="span_date_inspected" class="span-error"></span>
-                                    <input class="form-control mb-3" type="text" placeholder="Date Inspected" id="txt_date_inspected" disabled>
+                                    <input class="form-control mb-3" type="text" placeholder="Date Inspected" id="txt_date_inspected" name="date_inspected" readonly>
                                 </div>
                                 
                             </div>
-                            <div class="row">
+                            <div class="row" id="div_row_special_tool_data" hidden>
                                 <div class="col-md-3">
                                     <label>ATTACH FILE (SPECIAL TOOL DATA):</label>&nbsp;
-                                    <span id="span_attach_file_special_tool_data" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_special_tool_data" accept="application/pdf,image/*">
+                                    <span id="span_attach_file_special_tool_data" class="span-error  form_trial_checksheet_field_error"></span>
+                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="special_tool_data" id="txt_attachment_special_tool_data" accept="application/pdf,image/*" onchange="CHECKSHEET.ValidateAttachment(this.value,'special_tool_data');">
                                 </div>
                                 <div class="col-md-3">
                                     <label>ATTACH FILE (OTHERS 1):</label>&nbsp;
-                                    <span id="span_attach_file_others_1" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_others_1" accept="application/pdf,image/*">
+                                    <span id="span_attach_file_others_1" class="span-error"></span>
+                                    <input type="file"  class="form-control mb-2" name="others_1" id="txt_attachment_others_1" accept="application/pdf,image/*" onchange="CHECKSHEET.ValidateAttachment(this.value,'others_1');">
                                 </div>
                                 <div class="col-md-6">
                                     <label id="lbl_temperature">TEMPERATURE:</label>&nbsp;
                                     <span id="span_temperature" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Temperature" id="txt_temperature" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" name="temperature" placeholder="Temperature" id="txt_temperature" onkeypress='return event.charCode >= 46 && event.charCode <= 57'>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="div_row_others_2" hidden>
                                 <div class="col-md-6">
                                     <label>ATTACH FILE (OTHERS 2):</label>&nbsp;
-                                    <span id="span_attach_file_others_2" class="span-error form_trial_checksheet_field_error"></span>
-                                    <input type="file"  class="form-control mb-2 form_trial_checksheet_field" name="attachment" id="txt_attachment_others_2" accept="application/pdf,image/*">
+                                    <span id="span_attach_file_others_2" class="span-error"></span>
+                                    <input type="file"  class="form-control mb-2" name="others_2" id="txt_attachment_others_2" accept="application/pdf,image/*" onchange="CHECKSHEET.ValidateAttachment(this.value,'others_2');">
                                 </div>
                                 <div class="col-md-6">
                                     <label>HUMIDITY:</label>&nbsp;
                                     <span id="span_humidity" class="span-error form_trial_checksheet_field_error"></span>
                                     <input class="form-control mb-3 form_trial_checksheet_field" type="text"
-                                        placeholder="Humidity" id="txt_humidity" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                        placeholder="Humidity" id="txt_humidity" name="humidity" onkeypress='return event.charCode >= 46 && event.charCode <= 57'>
                                 </div>
                             </div><br>
-                            <div class="row">
+                            <div class="row" id="div_row_save_inspection" hidden>
                                 <div class="col-md-12">
-                                    <button type="button" class="btn btn-primary btn-block"
-                                        onclick="CHECKSHEET.SaveTrialChecksheet();">
+                                    <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.ValidateSaveTrialChecksheet();">
                                         <h4><i class="ti-save"></i> SAVE</h4>
                                     </button>
                                 </div>
