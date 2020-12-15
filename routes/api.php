@@ -65,3 +65,5 @@ Route::post('approved','ApprovalController@approved');
 
 
 Route::post('pdf-test', 'FpdfController@pdfTest');
+
+Route::get('for-evaluator','MailController@forEvaluator');

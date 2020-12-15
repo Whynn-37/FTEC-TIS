@@ -20,4 +20,11 @@ class LoginUser extends Model
         ->where($where)
         ->first();
     }
+
+    public function getMailToLeader()
+    {
+        return LoginUser::where('Position', 'LEADER')
+        ->select('emailadd')
+        ->get();
+    }
 }
