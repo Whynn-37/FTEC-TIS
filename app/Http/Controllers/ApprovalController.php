@@ -18,7 +18,8 @@ class ApprovalController extends Controller
 {
     public function loadInspectionData(ChecksheetData $ChecksheetData, 
                                         ChecksheetItem $ChecksheetItem,
-                                        TrialChecksheet $TrialChecksheet, 
+                                        TrialChecksheet $TrialChecksheet,
+                                        Attachment $Attachment,
                                         Request $Request)
     {
         $trial_checksheet_id = $Request->id;
@@ -29,6 +30,7 @@ class ApprovalController extends Controller
         $checksheet_details = [];
         $checksheet_items = [];
         $checksheet_data = [];
+        $attachment_data = [];
 
         if ($trial_checksheet_id !== null) 
         {
@@ -39,6 +41,15 @@ class ApprovalController extends Controller
             {
                 $checksheet_data[] = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
             }
+
+            $attachment = $Attachment->getAttachment($trial_checksheet_id);
+
+            $explode_attachment = explode(',', $attachment['file_name']);
+
+            $attachment_data = [
+                'file_folder' => $attachment['file_folder'],
+                'file_name' => $explode_attachment
+            ];
 
             $status = 'Error';
             $message = 'Somethings Wrong!';
@@ -60,19 +71,22 @@ class ApprovalController extends Controller
             [
                 'checksheet_details'    => $checksheet_details,
                 'checksheet_items'      => $checksheet_items,
-                'checksheet_data'       => $checksheet_data
+                'checksheet_data'       => $checksheet_data,
+                'attachment'            => $attachment_data
             ]
         ];
     }
     
-    public function loadFinishedInspection(TrialChecksheet $trialchecksheet)
+    public function loadFinishedInspection(TrialChecksheet $TrialChecksheet, Request $Request)
     {
-        $data = $trialchecksheet->loadFinishedInspection();
+        $decision = $Request->decision;
 
+        $data = $TrialChecksheet->loadFinishedInspection($decision);
+        
         $status = 'Error';
         $message = 'No Data';
         
-        if(!empty($data) == true)
+        if(count($data) !== 0)
         {
             $status = 'Success';
             $message = 'Load Successfully!';
@@ -193,6 +207,7 @@ class ApprovalController extends Controller
 
     public function generateTrialEvaluationResult(TrialChecksheet $TrialChecksheet, 
                                                     ChecksheetItem $ChecksheetItem,
+                                                    ChecksheetData $ChecksheetData,
                                                     TaktTime $TaktTime,
                                                     Supplier $Supplier,
                                                     Approval $Approval,
@@ -211,8 +226,12 @@ class ApprovalController extends Controller
 
             $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
 
-            $checksheet_items = $TrialChecksheet->loadChecksheetItem($trial_checksheet_id);
-            $checksheet_datas = $ChecksheetItem->loadChecksheetData($checksheet_items);
+            $checksheet_items = $ChecksheetItem->getChecksheetItem($trial_checksheet_id);
+            
+            foreach($checksheet_items as $checksheet_items_value) 
+            {
+                $checksheet_datas[] = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
+            }
 
             $takt_time = $TaktTime->loadCycleTime($trial_checksheet_id);
 
@@ -254,169 +273,143 @@ class ApprovalController extends Controller
         $trial_checksheet_id = $Request->trial_checksheet_id;
 
         $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
-        $data_supplier      = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
+        $data_supplier = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
+
         $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
 
-        if ($data_trial_ledger_merge['trial_number'] !== 1)
+        $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number']);
+
+        $get_first_trial = $TrialChecksheet->getFirstTrial($data_trial_ledger_merge['part_number']);
+
+        $get_first_trial_ng = $ChecksheetItem->getfirstTrialNg($get_first_trial['id']);
+
+        for($i=0; $i < count($details_data); $i++)
         {
-            $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number'], $data_trial_ledger_merge['revision_number']);
-
-            foreach ($details_data as $details_value) 
-            {
-                $checksheet_items[] = json_decode(json_encode($ChecksheetItem->getItemNg($details_value['id'])),true);
-            }
-
-            foreach ($checksheet_items as $item_value) 
-            {
-                $checksheet_datas[] = json_decode(json_encode($ChecksheetData->getDataNg($item_value['id'])),true);
-            }
-
-            for ($i=0; $i < count($checksheet_datas); $i++) 
+            $trial_checksheet_id_result = $details_data[$i]['id'];
+            for ($z=0; $z < count($get_first_trial_ng); $z++) 
             { 
-                for ($z=0; $z < count($checksheet_items); $z++) 
-                {
-                    for ($y=0; $y < count($details_data); $y++) 
-                    { 
-                        if ($i === $z && $i === $y) 
-                        {
-                            if (count($checksheet_datas[$i]) < 2) 
-                            {
-                                $checksheet_data[] = 
-                                [
-                                    'trial_number'      => $details_data[0]['trial_number'],
-                                    'date_finished'     => $details_data[0]['date_finished'],
-                                    'judgment'          => $details_data[0]['judgment'],
-                                    'revision_number'   => $details_data[0]['revision_number'],
-                                    'tools'             => $checksheet_items[0]['tools'],
-                                    'specification'     => $checksheet_items[0]['specification'],
-                                    'coordinates'       => $checksheet_datas[0][0]['coordinates'],
-                                    'data'              => explode(",",$checksheet_datas[0][0]['data']),
-                                    'judgment'          => $checksheet_datas[0][0]['judgment'],
-                                    'remarks'           => $checksheet_datas[0][0]['remarks'],
-                                ];
-                            }
-                            else
-                            {
-                                for ($q=0; $q < count($checksheet_datas[$i]); $q++) 
-                                { 
-                                    $checksheet_data[] = 
-                                    [
-                                        'trial_number'      => $details_data[$y]['trial_number'],
-                                        'date_finished'     => $details_data[$y]['date_finished'],
-                                        'judgment'          => $details_data[$y]['judgment'],
-                                        'revision_number'   => $details_data[$y]['revision_number'],
-                                        'tools'             => $checksheet_items[$z]['tools'],
-                                        'specification'     => $checksheet_items[$z]['specification'],
-                                        'coordinates'       => $checksheet_datas[$i][$q]['coordinates'],
-                                        'data'              => explode(",",$checksheet_datas[$i][$q]['data']),
-                                        'judgment'          => $checksheet_datas[$i][$q]['judgment'],
-                                        'remarks'           => $checksheet_datas[$i][$q]['remarks'],
-                                    ];
-                                }
-                            }
-                        }
-                    }
-                }
+                $result_merge[$i][] = [
+                    'trial_checksheet_id' => $trial_checksheet_id_result,
+                    'item_number' => $get_first_trial_ng[$z]['item_number']
+                ];
             }
-
-            $approval_data = json_decode(json_encode($Approval->getApproval($trial_checksheet_id)),true);
-
-            $data = [
-                'checksheet_details'    =>  $data_trial_ledger_merge,
-                'checksheets'           =>  $checksheet_data,
-                'approval'              =>  $approval_data,
-            ];
-            // return $data;
-            return $FpdfController->secondPage($data);
         }
-    }
 
-    public function loadApproval(Approval $approval)
-    {
-        $data = $approval->loadApproval();
-
-        $status = 'Error';
-        $message = 'Not Load Successfully';
-
-        if ($data) 
+        foreach ($result_merge as $details_key => $details_value) 
         {
-            $status = 'Success';
-            $message = 'Load Successfully';
+            foreach ($details_value as $value) 
+            {
+                $checksheet_items_result[$details_key][] = json_decode(json_encode($ChecksheetItem->getItemNg($value['trial_checksheet_id'], $value['item_number'])),true);
+            }
         }
 
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $data
-        ];
-    }
-
-
-    public function loadDisapproved(TrialChecksheet $trialchecksheet)
-    {
-        $data = $trialchecksheet->loadDisapproved();
-
-        $status = 'Error';
-        $message = 'Somethings Wrong!';
-        
-        if(!empty($data) === true)
+        foreach ($checksheet_items_result as $checksheet_items_key => $item_value) 
         {
-            $status = 'Success';
-            $message = 'Load Successfully!';
+            foreach ($item_value as $value) 
+            {
+                $checksheet_datas_result[$checksheet_items_key][] = json_decode(json_encode($ChecksheetData->getDataNg($value['id'])),true);
+            }
         }
 
-       return
-       [
-           'status' => $status ,
-           'message' => $message,
-           'data' => $data
+        $approval_data = json_decode(json_encode($Approval->getApproval($trial_checksheet_id)),true);
+
+        $data = [
+            'checksheet_details'    =>  $data_trial_ledger_merge,
+            'details_data'          =>  $details_data,
+            'items'                 =>  $checksheet_items_result,
+            'datas'                 =>  $checksheet_datas_result,
+            'approval'              =>  $approval_data,
         ];
+
+        return $FpdfController->secondPage($data);
     }
 
     public function approved(Approval $Approval,Attachment $Attachment,Request $Request, FpdfController $FpdfController)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
+        $decision = $Request->decision;
+        $action = $Request->action;
         $selected_file = $Request->selected_file;
 
-        $data = 
-        [
-            'evaluated_by' => Session::get('fullname'),
-            'evaluated_datetime' => now(),
-            'decision' => 2
-        ];
+        if ($decision == 1 && $action == 1) 
+        {
+            $data = 
+            [
+                'evaluated_by' => Session::get('fullname'),
+                // 'evaluated_by' => 'TERRY BALAHADIA',
+                'evaluated_datetime' => now(),
+                'decision' => 2
+            ];
 
-        // --- update method 
-        $result =  $Approval->approved($trial_checksheet_id,$data);
+            $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+
+            $datax = 
+            [
+                'folder_name' =>  $folder_name['file_folder'],
+                'file_name' =>  explode(',', $selected_file)
+            ];
+
+            $FpdfController->pdfTest($datax);
+
+            $folder_name = $folder_name['file_folder'];
+        }
+        else if($decision == 2 && $action == 1)
+        {
+            $data = 
+            [
+                'approved_by' => Session::get('fullname'),
+                // 'approved_by' => 'JOHN JOHREL MANZANO',
+                'approved_datetime' => now(),
+                'decision' => 0
+            ];
+
+            $folder_name = '';
+        }
+        else if($decision == 2 && $action == 2)
+        {
+            $data = 
+            [
+                'approved_by' => Session::get('fullname'),
+                // 'disapproved_by' => 'JOHN JOHREL MANZANO',
+                'disapproved_datetime' => now(),
+                'decision' => 3
+            ];
+
+            $folder_name = '';
+        }
+        else if($decision == 3 && $action == 1)
+        {
+            $data = 
+            [
+                'evaluated_by' => Session::get('fullname'),
+                // 'evaluated_by' => 'TERRY BALAHADIA',
+                'evaluated_datetime' => now(),
+                'decision' => 2
+            ];
+
+            $folder_name = '';
+        }
+        
+        $result =  $Approval->approved($trial_checksheet_id, $data);
+
         $status = 'Error';
         $message = 'Somethings Wrong!';
         
         if($result)
         {
             $status = 'Success';
-            $message = 'Load Successfully!';
-            $result  = '';
-            //  --- select method        
-            $folder_name = $Attachment->getAttachment($trial_checksheet_id);
-            // pdf merge method  
-            $datax= 
-            [
-                'folder_name' =>  $folder_name,
-                'file_name' =>  explode(',', $selected_file)
-            ];
-         
-            $FpdfController->pdfTest($datax);
-
-            $status = 'Success';
-            $message = 'Load Successfully!';
-            $result  = '';
+            $message = 'Save Successfully!';
         }
 
         return
         [
            'status'     => $status ,
            'message'    => $message,
-           'data'       => $result
+           'data'       => 
+           [
+               'folder_name' => $folder_name,
+               'result'      => $result,
+           ]
         ];
     }
 }

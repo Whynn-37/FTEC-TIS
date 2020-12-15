@@ -72,6 +72,7 @@ class ChecksheetData extends Model
     {
         return ChecksheetData::find($id)->delete();
     }
+    
     public function loadTrialCheckitemsNG($id)
     {
         return ChecksheetData::where('checksheet_item_id', $id)
@@ -83,9 +84,7 @@ class ChecksheetData extends Model
     public function getDataNg($checksheet_item_id)
     {
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
-        ->where('judgment', 'NG')
         ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks')
-        ->orderBy('id', 'asc')
         ->get();
     }
 }

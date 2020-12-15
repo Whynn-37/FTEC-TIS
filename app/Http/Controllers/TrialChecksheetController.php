@@ -429,8 +429,8 @@ class TrialChecksheetController extends Controller
                 $approval_data =
                 [
                     'trial_checksheet_id'      => $trial_checksheet_id,
-                    // 'inspect_by'               => Session::get('fullname'), // session name
-                    'inspect_by'               => 'JED RELATOR', // session name
+                    'inspect_by'               => Session::get('fullname'), // session name
+                    // 'inspect_by'               => 'JED RELATOR', // session name
                     'inspect_datetime'         => now(),
                     'decision'                 => 1
                 ];
@@ -525,14 +525,8 @@ class TrialChecksheetController extends Controller
                 $checksheet_item_result = $ChecksheetItem->updateAutoJudgmentItem($id, $items);
                 $checksheet_data_result = $ChecksheetData->updateAutoJudgmentData($id, $sub_number, $datas);
 
-                $status  = 'Error';
-                $message = 'Not Successfully Save';
-
-                if ($checksheet_item_result && $checksheet_data_result)
-                {
-                    $status  = 'Success';
-                    $message = 'Successfully Save';
-                }
+                $status  = 'Success';
+                $message = 'Successfully Save';
 
                 DB::commit();
             } 

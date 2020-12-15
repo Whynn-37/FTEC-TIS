@@ -15,21 +15,10 @@ class Approval extends Model
     {
         return Approval::create($data);
     }
-    
-    public function loadApproval()
-    {
-        return DB::table('trial_checksheets')
-        ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        ->where('trial_checksheets.date_finished', '!=', null)
-        ->where('approvals.decision', 2)
-        ->select(['trial_checksheets.id', 'trial_checksheets.part_number', 'trial_checksheets.revision_number', 'trial_checksheets.trial_number', 'trial_checksheets.date_finished', 'trial_checksheets.judgment'])
-        ->orderBy('id', 'asc')
-        ->get();
-    }
 
-    public function approved($id, $data)
+    public function approved($trial_checksheet_id, $data)
     {
-        return Approval::find($id)->update($data);
+        return Approval::where('trial_checksheet_id', $trial_checksheet_id)->update($data);
     }
 
     public function getApproval($id)

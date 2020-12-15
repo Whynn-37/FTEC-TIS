@@ -107,11 +107,20 @@ class ChecksheetItem extends Model
         return ChecksheetItem::find($id)->delete();
     }
 
-    public function getItemNg($trial_checksheet_id)
+    public function getItemNg($trial_checksheet_id, $item_number)
+    {
+        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('item_number', $item_number)
+        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'judgment')
+        ->first();
+    }
+
+    public function getfirstTrialNg($trial_checksheet_id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('judgment', 'NG')
-        ->select('id', 'trial_checksheet_id', 'tools', 'specification')
-        ->first();
+        ->select('id', 'item_number')
+        ->orderBy('item_number', 'asc')
+        ->get();
     }
 }

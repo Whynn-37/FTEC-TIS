@@ -64,39 +64,38 @@ class TrialChecksheet extends Model
         return TrialChecksheet::find($id)->update($data);
     }
     
-    public function loadFinishedInspection()
+    public function loadFinishedInspection($decision)
     {
         return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
-        ->where('approvals.decision', '=', 1)
-        ->select('trial_checksheets.id', 'trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','trial_checksheets.judgment','trial_checksheets.date_finished')
+        ->where('approvals.decision', '=', $decision)
         ->get();
     }
 
-    public function loadTrialCheckitemsNG($part_number, $trial_number)
+    public function loadTrialCheckitemsNG($application_date)
     {
         return TrialChecksheet::join('checksheet_items', 'checksheet_items.trial_checksheet_id','=','trial_checksheets.id')
         ->where('trial_checksheets.judgment', '=', 'NG')
         ->where('checksheet_items.judgment', '=', 'NG')
-        ->where('trial_checksheets.part_number', '=', $part_number)
-        ->where('trial_checksheets.trial_number', '=', $trial_number)
+        ->where('trial_checksheets.application_date', '=', $application_date['application_date'])
         ->select('checksheet_items.*')
         ->get();
     }
 
-    public function loadDisapproved()
-    {
-        return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
-        ->where('approvals.decision', '=', 3)
-        ->select('trial_checksheets.part_number','trial_checksheets.revision_number','trial_checksheets.trial_number','approvals.disapproved_by','approvals.disapproved_datetime','approvals.reasons')
-        ->get();
-    }
-
-    public function getAllNg($part_number, $revision)
+    public function getAllNg($part_number)
     {
         return TrialChecksheet::where('part_number', $part_number)
-        ->where('revision_number', $revision)
         ->where('judgment', 'NG')
         ->select('id', 'trial_number', 'date_finished', 'judgment', 'revision_number')
         ->get();
     }
+
+    public function getFirstTrial($part_number)
+    {
+        return TrialChecksheet::where('part_number', $part_number)
+        ->where('judgment', 'NG')
+        ->select('id', 'trial_number')
+        ->orderBy('trial_number', 'asc')
+        ->first();
+    }
+
 }
