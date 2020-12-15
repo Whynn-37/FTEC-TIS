@@ -493,14 +493,8 @@ class TrialChecksheetController extends Controller
                 $checksheet_item_result = $ChecksheetItem->updateAutoJudgmentItem($id, $items);
                 $checksheet_data_result = $ChecksheetData->updateAutoJudgmentData($id, $sub_number, $datas);
 
-                $status  = 'Error';
-                $message = 'Not Successfully Save';
-
-                if ($checksheet_item_result && $checksheet_data_result)
-                {
-                    $status  = 'Success';
-                    $message = 'Successfully Save';
-                }
+                $status  = 'Success';
+                $message = 'Successfully Save';
 
                 DB::commit();
             } 

@@ -26,7 +26,7 @@ class TrialLedger extends Model
 
     public function loadRevision($part_number)
     {
-        return TrialLedger::where('part_number',$part_number)
+        return TrialLedger::where('part_number', $part_number)
         ->select('revision_number')
         ->distinct()
         ->get();
@@ -34,8 +34,8 @@ class TrialLedger extends Model
 
     public function loadTrialNumber($part_number, $revision_number)
     {
-        return TrialLedger::where('revision_number',$revision_number)
-        ->where('part_number',$part_number)
+        return TrialLedger::where('revision_number', $revision_number)
+        ->where('part_number', $part_number)
         ->select('trial_number')
         ->distinct()
         ->get();
@@ -43,9 +43,18 @@ class TrialLedger extends Model
 
     public function getTrialLedger($data)
     {
-        return TrialLedger::where('part_number',$data['part_number'])
-        ->where('revision_number',$data['revision_number'])
-        ->where('trial_number',$data['trial_number'])
+        return TrialLedger::where('part_number', $data['part_number'])
+        ->where('revision_number', $data['revision_number'])
+        ->where('trial_number', $data['trial_number'])
+        ->first();
+    }
+
+    public function getApplicationDate($part_number)
+    {
+        return TrialLedger::where('part_number', $part_number)
+        ->where('judgment', '不良')
+        ->where('actual_end_date', '!=', null)
+        ->select('application_date')
         ->first();
     }
 }

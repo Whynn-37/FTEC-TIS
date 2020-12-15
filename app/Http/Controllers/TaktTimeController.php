@@ -7,6 +7,7 @@ use App\TaktTime;
 use App\TrialChecksheet;
 use App\ChecksheetItem;
 use App\ChecksheetData;
+use App\TrialLedger;
 use DB;
 class TaktTimeController extends Controller
 {
@@ -40,13 +41,15 @@ class TaktTimeController extends Controller
         ];
     }
 
-    public function startCycleTime(TrialChecksheet $TrialChecksheet,
+    public function startCycleTime(TrialLedger $TrialLedger,
+                                    TrialChecksheet $TrialChecksheet,
                                     TaktTime $TaktTime,
                                     ChecksheetData $ChecksheetData,
                                     ChecksheetItem $ChecksheetItem,
                                     Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
+        $application_date = $Request->application_date;
         $takt_times = $Request->takt_time;
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
@@ -77,12 +80,13 @@ class TaktTimeController extends Controller
             {
                 $trial_checksheet = 
                 [
+                    'application_date'      => $application_date,
                     'part_number'           => $part_number,
                     'revision_number'       => $revision_number,
                     'trial_number'          => $trial_number
                 ];
         
-                $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);  
+                $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
                 
                 $data = 
                 [
@@ -97,9 +101,9 @@ class TaktTimeController extends Controller
                 
                 if($trial_number >= 2)
                 {
-                    $trial_number_minus = $trial_number - 1;
-
-                    $result_items = $TrialChecksheet->loadTrialCheckitemsNG($part_number, $trial_number_minus);
+                    $application_date = $TrialLedger->getApplicationDate($part_number);
+                    
+                    $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
     
                     foreach($result_items as $items_value) 
                     {
@@ -114,28 +118,12 @@ class TaktTimeController extends Controller
                             'specification'         => $items_value->specification,
                             'upper_limit'           => $items_value->upper_limit,
                             'lower_limit'           => $items_value->lower_limit,
+                            'judgment'              => 'N/A',
                             'item_type'             => 0,
                             'created_at'            => now(),
                             'updated_at'            => now()
                         ];
                     }
-
-                    // for($i=0; $i < count($result_items); $i++)
-                    // {  
-                    //     $checksheet_items[] = 
-                    //     [
-                    //         'trial_checksheet_id'   => $last_id['id'],
-                    //         'item_number'           => $result_items[$i]['item_number'],
-                    //         'tools'                 => $result_items[$i]['tools'],
-                    //         'type'                  => $result_items[$i]['type'],
-                    //         'specification'         => $result_items[$i]['specification'],
-                    //         'upper_limit'           => $result_items[$i]['upper_limit'],
-                    //         'lower_limit'           => $result_items[$i]['lower_limit'],
-                    //         'item_type'             => 0,
-                    //         'created_at'            => now(),
-                    //         'updated_at'            => now()
-                    //     ];
-                    // }
 
                     $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
 
@@ -156,6 +144,7 @@ class TaktTimeController extends Controller
                         $checksheet_datas[] =
                         [
                             'checksheet_item_id'    => $value['checksheet_item_id'],
+                            'coordinates'            => $value['coordinates'],
                             'sub_number'            => $value['sub_number'],
                             'created_at'            => now(),
                             'updated_at'            => now()

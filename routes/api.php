@@ -61,8 +61,6 @@ Route::patch('edit-data', 'ApprovalController@editData');
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page','ApprovalController@generateSecondPage');
-Route::post('load-approval', 'ApprovalController@loadApproval');
-Route::get('load-disapproved','ApprovalController@loadDisapproved');
 Route::post('approved','ApprovalController@approved');
 
 
