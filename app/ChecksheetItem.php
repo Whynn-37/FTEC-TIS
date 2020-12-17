@@ -111,7 +111,7 @@ class ChecksheetItem extends Model
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $item_number)
-        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'judgment')
+        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'lower_limit', 'upper_limit', 'judgment')
         ->first();
     }
 
@@ -119,6 +119,8 @@ class ChecksheetItem extends Model
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('judgment', 'NG')
+        ->where('type', 'like', '%Min and Max%')
+        ->whereOr('type', 'like', '%Min and Max and Form Tolerance%')
         ->select('id', 'item_number')
         ->orderBy('item_number', 'asc')
         ->get();

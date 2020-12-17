@@ -37,10 +37,20 @@ class FpdfController extends Controller
 
     public function secondPage($data)
     {
-        dd($data);
-        // return $data;
-        // return explode(' ', $data['approval']['inspect_datetime']);
         $pdf = new Fpdi('P', 'mm', [215.9, 300]);
+        // not completed
+        $ctr = 0;
+        foreach($data['datas'] as $row)
+        {
+            if($ctr == 3)
+            {
+                $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
+                $template = $pdf->importPage(1);
+                $pdf->AddPage();
+                $pdf->useTemplate($template);
+            }
+            $ctr++;
+        }
 
         $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
         $template = $pdf->importPage(1);
@@ -99,246 +109,310 @@ class FpdfController extends Controller
         $pdf->MultiCell(21,3, $approved_datetime[0],0,'C');
 
         $circle = storage_path('app/public/second_page/circle.png');
+        $ctr = 0;
         for ($i=0; $i < count($data['details_data']); $i++) 
         {
             $pdf->SetFont('Times');
             $pdf->SetFontSize(6);
             $date_finished = explode(" ", $data['details_data'][$i]['date_finished']);
 
-            if ($i === 0) 
+            if ($ctr === 3) 
             {
+                $ctr = 0;
+            }
+            $ctr++;
+
+            if ($ctr === 1) 
+            {
+                // trial number
                 $pdf->SetXY(75, 53);
                 $pdf->Write(0, $data['details_data'][$i]['trial_number']);
+                // date
                 $pdf->SetXY(80, 53);
                 $pdf->Write(0, $date_finished[0]);
+                // revision number
                 $pdf->SetXY(99, 53);
                 $pdf->Write(0, $data['details_data'][$i]['revision_number']);
-
+                // judgment
                 if ($data['details_data'][$i]['judgment'] === 'GOOD') 
                     $pdf->Image($circle,81,53, 10);
                 else
                     $pdf->Image($circle,94,53, 10);
             }
-            else if($i === 1)
+            else if($ctr === 2)
             {
+                // trial number
                 $pdf->SetXY(111, 53);
                 $pdf->Write(0, $data['details_data'][$i]['trial_number']);
+                // date
                 $pdf->SetXY(116, 53);
                 $pdf->Write(0, $date_finished[0]);
+                // revision number
                 $pdf->SetXY(135, 53);
                 $pdf->Write(0, $data['details_data'][$i]['revision_number']);
-
+                // judgment
                 if ($data['details_data'][$i]['judgment'] === 'GOOD') 
                     $pdf->Image($circle,116,53, 10);
                 else
                     $pdf->Image($circle,129,53, 10);
             }
+            else if($ctr === 3)
+            {
+                // trial number
+                $pdf->SetXY(146, 53);
+                $pdf->Write(0, $data['details_data'][$i]['trial_number']);
+                // date
+                $pdf->SetXY(152, 53);
+                $pdf->Write(0, $date_finished[0]);
+                // revision number
+                $pdf->SetXY(171, 53);
+                $pdf->Write(0, $data['details_data'][$i]['revision_number']);
+                // judgment
+                if ($data['details_data'][$i]['judgment'] === 'GOOD') 
+                    $pdf->Image($circle,152,53, 10);
+                else
+                    $pdf->Image($circle,165,53, 10);
+            }
+        }
+        
+        for ($a=0; $a < count($data['datas']); $a++) 
+        { 
+            for ($b=0; $b < count($data['datas'][$a]); $b++) 
+            { 
+                for ($c=0; $c < count($data['items'][0]); $c++) 
+                {
+                    if ($b === $c) 
+                    {
+                        for ($e=0; $e < count($data['datas'][$a][$b]); $e++) 
+                        { 
+                            if ($e === 0) 
+                            {
+                                $items[$a][] = 
+                                [
+                                    'tools'         => $data['items'][0][$c]['tools'],
+                                    'specification' => $data['items'][0][$c]['specification'],
+                                    'upper_limit'   => $data['items'][0][$c]['upper_limit'],
+                                    'lower_limit'   => $data['items'][0][$c]['lower_limit'],
+                                    'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
+                                ];
+                            }
+                            else
+                            {
+                                $items[$a][] = 
+                                [
+                                    'tools'         => '',
+                                    'specification' => '',
+                                    'upper_limit'   => '',
+                                    'lower_limit'   => '',
+                                    'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
+                                ];
+                            }
+
+                            $datas[$a][] = 
+                            [
+                                'data'          => explode(",",$data['datas'][$a][$b][$e]['data']),
+                                'judgment'      => $data['datas'][$a][$b][$e]['judgment'],
+                                'remarks'       => $data['datas'][$a][$b][$e]['remarks'],
+                            ];
+                        }
+                    }
+                } 
+            }
+        }
+
+        $checksheet =
+        [
+            'items' => $items[0],
+            'datas' => $datas
+        ];
+
+        $increment = 76;
+        foreach ($checksheet['items'] as $items) 
+        {
+            switch ($items['tools']) 
+            {
+                case 'Caliper':
+                    $tools = 'DC';
+                    break;
+                case 'Height Gauge':
+                    $tools = 'HG';
+                    break;
+                case 'Dial Test Indicator':
+                    $tools = 'DI';
+                    break;
+                case 'Protractor':
+                    $tools = 'PR';
+                    break;
+                case 'Plug Guage':
+                    $tools = 'PLG';
+                    break;
+                case 'Pin Gauge':
+                    $tools = 'PG';
+                    break;
+                case 'Dial Gauge':
+                    $tools = 'DG';
+                    break;
+                case 'Visual Inspection':
+                    $tools = 'VSL';
+                    break;
+                case 'Micrometer':
+                    $tools = 'DM';
+                    break;
+                case 'Projector':
+                    $tools = 'PJ';
+                    break;   
+                case 'Multimeter':
+                    $tools = 'MM';
+                    break;
+                case 'Torque Meter':
+                    $tools = 'TM';
+                    break;
+                case 'Screw Torque Meter':
+                    $tools = 'ST';
+                    break;
+                case 'CMM':
+                    $tools = 'CMM';
+                    break;
+                case 'Gear Test':
+                    $tools = 'GT';
+                    break;
+                case 'Microscope':
+                    $tools = 'MP';
+                    break;
+                case 'Laser Scan':
+                    $tools = 'LS';
+                    break;
+                case 'R Gauge':
+                    $tools = 'RG';
+                    break;
+                case 'Bore Gauge':
+                    $tools = 'BG';
+                    break;
+                case 'Depth Gauge':
+                    $tools = 'DPG';
+                    break;
+                default:
+                    $tools = $items['tools'];
+                    break;
+            }
+
+            // tools
+            $pdf->SetXY(37, $increment);
+            $pdf->MultiCell(7,6, $tools,0,'C');
+
+            // coordinates
+            $pdf->SetXY(44, $increment);
+            $pdf->MultiCell(9,6, $items['coordinates'],0,'C');
+
+            
+            $plus_minus = '';
+            if ($items['specification'] !== null && $items['specification'] !== '') 
+            {
+                $plus_minus = stripslashes(' ±');
+                $plus_minus = iconv('UTF-8', 'windows-1252', $plus_minus);
+            }
+
+            // specification
+            $pdf->SetXY(53, $increment);
+            $pdf->MultiCell(16,6, $items['specification'] .$plus_minus. substr($items['lower_limit'], 1),0,'C');
+
+            $increment+= 5.7;
         }
 
         $increment = 76;
+        $ctr = 0;
+        foreach ($checksheet['datas'] as $datas_index) 
+        {
+            if ($ctr === 3) 
+            {
+                $ctr = 0;
+            }
+            $ctr++;
 
-        
-        // for ($i=0; $i < count($data['items'][0]); $i++) 
-        // { 
-        //     switch ($data['items'][0][$i]['tools']) 
-        //     {
-        //         case 'Caliper':
-        //             $tools = 'DC';
-        //             break;
-        //         case 'Height Gauge':
-        //             $tools = 'HG';
-        //             break;
-        //         case 'Dial Test Indicator':
-        //             $tools = 'DI';
-        //             break;
-        //         case 'Protractor':
-        //             $tools = 'PR';
-        //             break;
-        //         case 'Plug Guage':
-        //             $tools = 'PLG';
-        //             break;
-        //         case 'Pin Gauge':
-        //             $tools = 'PG';
-        //             break;
-        //         case 'Dial Gauge':
-        //             $tools = 'DG';
-        //             break;
-        //         case 'Visual Inspection':
-        //             $tools = 'VSL';
-        //             break;
-        //         case 'Micrometer':
-        //             $tools = 'DM';
-        //             break;
-        //         case 'Projector':
-        //             $tools = 'PJ';
-        //             break;   
-        //         case 'Multimeter':
-        //             $tools = 'MM';
-        //             break;
-        //         case 'Torque Meter':
-        //             $tools = 'TM';
-        //             break;
-        //         case 'Screw Torque Meter':
-        //             $tools = 'ST';
-        //             break;
-        //         case 'CMM':
-        //             $tools = 'CMM';
-        //             break;
-        //         case 'Gear Test':
-        //             $tools = 'GT';
-        //             break;
-        //         case 'Microscope':
-        //             $tools = 'MP';
-        //             break;
-        //         case 'Laser Scan':
-        //             $tools = 'LS';
-        //             break;
-        //         case 'R Gauge':
-        //             $tools = 'RG';
-        //             break;
-        //         case 'Bore Gauge':
-        //             $tools = 'BG';
-        //             break;
-        //         case 'Depth Gauge':
-        //             $tools = 'DPG';
-        //             break;
-        //         default:
-        //             $data['items'][0][$i]['tools'];
-        //             break;
-        //     }
-
-        //     $pdf->SetXY(37, $increment);
-        //     $pdf->MultiCell(7,6, $tools,0,'C');
-
-        //     $pdf->SetXY(53, $increment);
-        //     $pdf->MultiCell(16,6, $data['items'][0][$i]['specification'],0,'C');
-
-        //     $increment+= 5.7;
-        // }
-
-        
-        // $var = stripslashes($data['checksheet_details']['supplier_name']);
-        // $var = iconv('UTF-8', 'windows-1252', $var);
-
-        // $dateOnly = explode(" ", $data['checksheet_details']['date_finished']);
-
-        // // HEADER DATA
-        // $pdf->AddFont('Japanese', '', 'Japanese.php');
-        // $pdf->SetFont('Japanese');
-        // $pdf->SetTextColor(0, 0, 0);
-        // $pdf->SetXY(110, 23);
-        // // $pdf->Write(0, mb_convert_encoding('(ｶﾌﾞ)ｵｵﾃ', 'UTF-8', 'html-entities') );
-        // // $pdf->Write(0, iconv('UTF-8', 'SJIS', '(ｶﾌﾞ)ｵｵﾃ') );
-        // $pdf->Write(0, '(ｶﾌﾞ)ｵｵﾃ');
-        // $pdf->SetFont('Times');
-        // $pdf->SetXY(180, 13);
-        // $pdf->Write(0, $dateOnly[0]);
-        // $pdf->SetXY(48, 30);
-        // $pdf->Write(0, $data['checksheet_details']['part_number']);
-        // $pdf->SetXY(48, 38);
-        // $pdf->Write(0, $data['checksheet_details']['part_name']);
-        // $pdf->SetXY(94, 38);
-        // $pdf->Write(0, $data['checksheet_details']['revision_number']);
-        // $pdf->SetXY(120, 38);
-        // $pdf->Write(0, 'Unit Name');
-        // $pdf->SetXY(147, 33);
-        // $pdf->Write(0, $data['approval']['inspect_by']); //$data['approval']['inspect_by']
-        // $pdf->SetFontSize(7);
-        // $pdf->SetXY(163, 33);
-        // $pdf->Write(0, $data['approval']['inspect_datetime']); //$data['approval']['inspect_datetime']
-        // $pdf->SetFontSize(12);
-        // $pdf->SetXY(185, 33);
-        // $pdf->Write(0, 'PIRMA'); //$data['approval']['approved_datetime']
-
-        // // Important item and NG item
-        // $pdf->SetFontSize(10);
-        // $pdf->SetXY(74, 53);
-        // // $pdf->Write(0, $data['checksheets'][0]['trial_number']);
-        // $pdf->SetFontSize(8);
-        // $pdf->SetXY(78, 53);
-        // $pdf->Write(0, $dateOnly[0]); //$data['checksheet_details']['date_finished']
-        // $pdf->SetFontSize(10);
-        // $pdf->SetXY(97, 53);
-        // $pdf->Write(0, $data['checksheet_details']['revision_number']);
-        // // Trial 2
-        // $pdf->SetXY(110, 53);
-        // $pdf->Write(0, $data['checksheet_details']['trial_number']);
-        // $pdf->SetXY(118, 53);
-        // $pdf->Write(0, 'Date2'); //$data['checksheet_details']['date_finished']
-        // $pdf->SetXY(133, 53);
-        // $pdf->Write(0, $data['checksheet_details']['revision_number']);
-        // // Trial 3
-        // $pdf->SetXY(145, 53);
-        // $pdf->Write(0, $data['checksheet_details']['trial_number']);
-        // $pdf->SetXY(154, 53);
-        // $pdf->Write(0, 'Date3'); //$data['checksheet_details']['date_finished']
-        // $pdf->SetXY(169, 53);
-        // $pdf->Write(0, $data['checksheet_details']['revision_number']);
-        // $pdf->SetXY(74, 65);
-        // $pdf->Write(0, 'Data1');
-        // $pdf->SetXY(110, 65);
-        // $pdf->Write(0, 'Data2');
-        // $pdf->SetXY(145, 65);
-        // $pdf->Write(0, 'Data3');
-
-        // $pdf->SetFontSize(10);
-        // $vertical = 79;
-        // for ($i=0; $i < count($data['checksheets']); $i++) 
-        // { 
-        //     $pdf->SetXY(26, $vertical);
-        //     $pdf->Write(0, '-');
-
-        //     $pdf->SetXY(36, $vertical);
-        //     $pdf->Write(0, $data['checksheets'][$i]['tools']);
-
-        //     $pdf->SetXY(44, $vertical);
-        //     $pdf->Write(0, $data['checksheets'][$i]['coordinates']);
-
-        //     $pdf->SetXY(59, $vertical);
-        //     $pdf->Write(0, $data['checksheets'][$i]['specification']);
-
-        //     // Trial 1 Difference Value
-        //     $pdf->SetXY(73, $vertical);
-        //     $pdf->Write(0, '-');
+            $minus = count($datas_index) * 5.7;
             
-        //     // // Trial 2 Difference Value
-        //     // $pdf->SetXY(108, $vertical);
-        //     // $pdf->Write(0, '-');
+            foreach ($datas_index as $datas) 
+            {
+                switch ($datas['judgment']) 
+                {
+                    case 'GOOD':
+                        $judgment = 'O';
+                        break;
+                    case 'NG':
+                        $judgment = 'X';
+                        break;
+                    default:
+                        $judgment = '';
+                        break;
+                }
 
-        //     // // Trial 3 Difference Value
-        //     // $pdf->SetXY(155, $vertical);
-        //     // $pdf->Write(0, '-');
+                $x = 0;
+                $data_value = [];
+                for ($a = 0; $a < count($datas['data']); $a++)
+                {
+                    if($a % 2 == 1)
+                    {
+                        $data_value[$x][1] = floatval($datas['data'][$a]);
+                        $x++;
+                    }
+                    else
+                    {
+                        $data_value[$x][0] = floatval($datas['data'][$a]);
+                    }
+                }
+                
+                $max = max($data_value);
 
-        //     // Trial 1 judgment
-        //     $pdf->SetXY(83, $vertical);
-        //     $pdf->Write(0, $data['checksheets'][$i]['judgment']);
+                if ($ctr === 1) 
+                {
+                    // min max
+                    $pdf->SetXY(69, $increment);
+                    $pdf->MultiCell(13,3, $max[0],0,'C');
+                    $pdf->SetXY(69, $increment+3);
+                    $pdf->MultiCell(13,3, $max[1],0,'C');
 
-        //     // // Trial 2 judgment
-        //     // $pdf->SetXY(119, $vertical);
-        //     // $pdf->Write(0, '-');
+                    // judgment
+                    $pdf->SetXY(82, $increment);
+                    $pdf->MultiCell(10,6, $judgment,0,'C');
 
-        //     // // Trial 3 judgment
-        //     // $pdf->SetXY(155, $vertical);
-        //     // $pdf->Write(0, '-');
+                    // remarks
+                    $pdf->SetXY(92, $increment);
+                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                }
+                else if ($ctr === 2) 
+                {
+                    // min max
+                    $pdf->SetXY(105, $increment-$minus);
+                    $pdf->MultiCell(13,3, $max[0],0,'C');
+                    $pdf->SetXY(105, $increment+3-$minus);
+                    $pdf->MultiCell(13,3, $max[1],0,'C');
+                    
+                    // judgment
+                    $pdf->SetXY(118, $increment-$minus);
+                    $pdf->MultiCell(10,6, $judgment,0,'C');
 
-        //     // Trial 1 Note
-        //     $pdf->SetXY(93, $vertical);
-        //     $pdf->Write(0, '-');
+                    $pdf->SetXY(128, $increment-$minus);
+                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                }
+                else if ($ctr === 3) 
+                {
+                    // min max
+                    $pdf->SetXY(140, $increment-$minus);
+                    $pdf->MultiCell(13,3, $max[0],0,'C');
+                    $pdf->SetXY(140, $increment+3-$minus);
+                    $pdf->MultiCell(13,3, $max[1],0,'C');
+                    
+                    // judgment
+                    $pdf->SetXY(153, $increment-$minus);
+                    $pdf->MultiCell(10,6, $judgment,0,'C');
 
-        //     // // Trial 2 Note
-        //     // $pdf->SetXY(130, $vertical);
-        //     // $pdf->Write(0, '-');
+                    $pdf->SetXY(163, $increment-$minus);
+                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                }
 
-        //     // // Trial 3 Note
-        //     // $pdf->SetXY(167, $vertical);
-        //     // $pdf->Write(0, '-');
-
-        //     // // Malaking Note
-        //     // $pdf->SetXY(187, $vertical);
-        //     // $pdf->Write(0, '-');
-
-        //     $vertical+= 5.7;
-        // }
+                $increment+= 5.7;
+            }
+        }
 
         $pdf->Output();
         exit;

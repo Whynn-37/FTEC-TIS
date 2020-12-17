@@ -85,6 +85,7 @@ class ChecksheetData extends Model
     {
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
         ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks')
+        ->orderBy('sub_number', 'asc')
         ->get();
     }
 }

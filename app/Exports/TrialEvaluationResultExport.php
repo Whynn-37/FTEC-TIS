@@ -370,8 +370,8 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                     { 
                         if ($i === $z) 
                         {
-                            if ($this->data['items'][$i][0]) 
-                            {
+                            for ($q=0; $q < count($this->data['datas'][$i]); $q++) 
+                            { 
                                 $data[] = 
                                 [
                                     'tools'         => $this->data['items'][$i]['tools'],
@@ -379,29 +379,11 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                                     'type'          => $this->data['items'][$i]['type'],
                                     'upper_limit'   => $this->data['items'][$i]['upper_limit'],
                                     'lower_limit'   => $this->data['items'][$i]['lower_limit'],
-                                    'coordinates'   => $this->data['datas'][$i][0]['coordinates'],
-                                    'data'          => explode(",",$this->data['datas'][$i][0]['data']),
-                                    'judgment'      => $this->data['datas'][$i][0]['judgment'],
-                                    'remarks'       => $this->data['datas'][$i][0]['remarks'],
+                                    'coordinates'   => $this->data['datas'][$i][$q]['coordinates'],
+                                    'data'          => explode(",",$this->data['datas'][$i][$q]['data']),
+                                    'judgment'      => $this->data['datas'][$i][$q]['judgment'],
+                                    'remarks'       => $this->data['datas'][$i][$q]['remarks'],
                                 ];
-                            }
-                            else
-                            {
-                                for ($q=0; $q < count($this->data['datas'][$i]); $q++) 
-                                { 
-                                    $data[] = 
-                                    [
-                                        'tools'         => $this->data['items'][$i]['tools'],
-                                        'specification' => $this->data['items'][$i]['specification'],
-                                        'type'          => $this->data['items'][$i]['type'],
-                                        'upper_limit'   => $this->data['items'][$i]['upper_limit'],
-                                        'lower_limit'   => $this->data['items'][$i]['lower_limit'],
-                                        'coordinates'   => $this->data['datas'][$i][$q]['coordinates'],
-                                        'data'          => explode(",",$this->data['datas'][$i][$q]['data']),
-                                        'judgment'      => $this->data['datas'][$i][$q]['judgment'],
-                                        'remarks'       => $this->data['datas'][$i][$q]['remarks'],
-                                    ];
-                                }
                             }
                         }
                     }

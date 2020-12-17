@@ -83,7 +83,8 @@ class TaktTimeController extends Controller
                     'application_date'      => $application_date,
                     'part_number'           => $part_number,
                     'revision_number'       => $revision_number,
-                    'trial_number'          => $trial_number
+                    'trial_number'          => $trial_number,
+                    'date_inspected'        => now(),
                 ];
         
                 $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
