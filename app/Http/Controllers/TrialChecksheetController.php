@@ -178,10 +178,6 @@ class TrialChecksheetController extends Controller
         $revision_number = $Request->revision_number;
         $trial_checksheet_id = $Request->trial_checksheet_id;
 
-        // $actual_time = $Request->actual_time;
-        // $total_takt_time = $Request->total_takt_time;
-        // $takt_time = $Request->takt_time;
-
         $status = 'Error';
         $message = 'Required Fields';
         $result = false;
@@ -284,21 +280,6 @@ class TrialChecksheetController extends Controller
                         }
 
                         $ChecksheetData->storeChecksheetDatas($checksheet_datas);
-
-                        // $start_date_time_data = $TaktTime->getStartDateTime($trial_checksheet_id);
-            
-                        // $takt_time_data = 
-                        // [
-                        //     'trial_checksheet_id'   => $trial_checksheet_id,
-                        //     'start_date'            => $start_date_time_data['start_date'],
-                        //     'start_time'            => $start_date_time_data['start_time'],
-                        //     'end_time'              => date('H:i:s'),
-                        //     'actual_time'           => $actual_time,
-                        //     'total_takt_time'       => $total_takt_time,
-                        //     'takt_time'             => $takt_time,
-                        // ];
-
-                        // $TaktTime->updateOrCreateTaktTime($takt_time_data);
         
                         $status = 'Success';
                         $message = 'Successfully Save';
@@ -367,7 +348,6 @@ class TrialChecksheetController extends Controller
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
 
         $trial_checksheet_id = $Request->trial_checksheet_id;
-        $date_inspected = $Request->date_inspected;
         $temperature = $Request->temperature;
         $humidity = $Request->humidity;
         $judgment = $Request->judgment;
@@ -403,7 +383,6 @@ class TrialChecksheetController extends Controller
                 [
                     'date_finished'    => now(),
                     'judgment'         => $judgment,
-                    'date_inspected'   => $date_inspected,
                     'temperature'      => $temperature,
                     'humidity'         => $humidity,
                 ];

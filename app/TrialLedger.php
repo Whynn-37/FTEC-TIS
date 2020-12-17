@@ -55,6 +55,7 @@ class TrialLedger extends Model
         ->where('judgment', '不良')
         ->where('actual_end_date', '!=', null)
         ->select('application_date')
+        ->orderBy('trial_number', 'desc')
         ->first();
     }
 }
