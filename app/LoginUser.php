@@ -27,4 +27,25 @@ class LoginUser extends Model
         ->select('emailadd')
         ->get();
     }
+
+    public function getMailToDirector()
+    {
+        return LoginUser::where('Position', 'DIRECTOR')
+        ->select('emailadd')
+        ->get();
+    }
+
+    public function getMailToEvaluator($evaluator)
+    {
+        return LoginUser::where('Fullname', $evaluator)
+        ->select('emailadd')
+        ->get();
+    }
+
+    public function getMailToApprover($approver)
+    {
+        return LoginUser::where('Fullname', $approver)
+        ->select('emailadd')
+        ->get();
+    }
 }
