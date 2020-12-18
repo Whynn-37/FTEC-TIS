@@ -539,4 +539,41 @@ class TrialChecksheetController extends Controller
             
         ];
     }
+
+    public function loadPartNumberColumn(Request $request, TrialChecksheet $TrialChecksheet)
+    {
+        $status = $request->status;
+        $part_number = $request->part_number;
+
+        if($status == 'Approved')
+        {
+            $column = [
+                'approved_datetime'     =>  null,
+            ];
+
+            return $TrialChecksheet->loadPartNumberColumn($column, $part_number);
+        }
+        else if($status == 'Evaluated')
+        {
+            $column = [
+                'evaluated_datetime'    =>  null,
+            ];
+        }
+        else if($status == 'finished')
+        {
+            $column = [
+                'date_inspected'        =>  date('Y/m/d'),
+            ];
+        }
+        else if($status == 'for inspection')
+        {
+            $column = [
+                'date_inspected'        =>  null,
+            ];
+        }
+        else
+        {
+            return 'Invalid status';
+        }
+    }
 }
