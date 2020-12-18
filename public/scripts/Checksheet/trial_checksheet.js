@@ -41,7 +41,7 @@ const CHECKSHEET = (() => {
 
     let array_item = [];
     let array_sub_item = [];
-    let array_file_type = ['PNG', 'JPG', 'JPEG', 'pdf'];
+    let array_file_type = ['png', 'jpg', 'jpeg','PNG', 'JPG', 'JPEG', 'pdf'];
     let array_files = [];
 
     // pang refresh ng trial ledger
@@ -224,6 +224,7 @@ const CHECKSHEET = (() => {
 
                     //checksheet details
                     $('#trial_checksheet_id').val(data.data.trial_checksheets.id);
+                    $('#trial_checksheet_application_date').val(data.data.trial_checksheets.application_date);
                     $('#txt_part_name').val(data.data.trial_checksheets.part_name);
                     $('#txt_model_name').val(data.data.trial_checksheets.model_name);
                     $('#txt_received_date').val(data.data.trial_checksheets.received_date);
@@ -323,6 +324,7 @@ const CHECKSHEET = (() => {
         $('#div_card_takt_time').LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let application_date    = $('#trial_checksheet_application_date').val();
         let target_takt_time    = $('#div_target_takt_time_timer').attr('data-timer') / 60;
         let part_number         = $('#slc_part_number').val();
         let revision_number     = $('#slc_revision_number').val();
@@ -336,6 +338,7 @@ const CHECKSHEET = (() => {
             data    : {
                 _token              : _TOKEN,
                 trial_checksheet_id : trial_checksheet_id,
+                application_date    : application_date,
                 takt_time           : target_takt_time,
                 part_number         : part_number,
                 revision_number     : revision_number,
@@ -698,7 +701,6 @@ const CHECKSHEET = (() => {
                         {
                             if (result.value) 
                             {
-                              
                                 //pagkuha ng item judgements para sa buong judgment ng trial
                                 for (let index = 1; index <= parseInt(item_no_count); index++) 
                                 {
@@ -726,13 +728,12 @@ const CHECKSHEET = (() => {
                                         else
                                         {
                                             //checking if NG or OK
-                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'OK';
+                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
 
                                             CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
                                         }
                                     }
                                 }
-                                
                             }
                         });
                     }
@@ -802,7 +803,6 @@ const CHECKSHEET = (() => {
                         text: result.message,
                     })
                 }
-                
             }
         });
     };

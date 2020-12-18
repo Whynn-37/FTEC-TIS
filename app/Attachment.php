@@ -16,7 +16,7 @@ class Attachment extends Model
     public function getAttachment($id)
     {
         return Attachment::where('trial_checksheet_id', $id)
-        ->select('id', 'file_folder', 'file_name')
+        ->select('id','file_folder','file_name')
         ->first();
     }
 }

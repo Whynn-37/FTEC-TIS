@@ -86,6 +86,7 @@
 <script src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../node_modules/select2/dist/js/select2.min.js"></script>
 <script src="{{ asset('scripts/Evaluator/evaluation.js') }}"></script>
+<script src="{{ asset('scripts/Checksheet/trial_checksheet_igm.js') }}"></script>
 <script>
     // swal
     const swal_options = {
