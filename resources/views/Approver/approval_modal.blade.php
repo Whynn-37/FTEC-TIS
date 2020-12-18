@@ -63,9 +63,7 @@
                     <div id="accordion_attachment" class="according accordion-s2 gradiant-bg-dark mb-3">
                         <div class="card">
                             <div class="card-header">
-                                <a class="card-link" data-toggle="collapse" href="#accordion_attach_files"><strong
-                                        style="font-size: 20px;"><i
-                                            class="ti-files"></i>&nbsp;ATTACHMENTS</strong></a>
+                                <a class="card-link" data-toggle="collapse" href="#accordion_attach_files"><strong style="font-size: 20px;"><i class="ti-files"></i>&nbsp;ATTACHMENTS</strong></a>       
                             </div>
                             <div id="accordion_attach_files" class="collapse show" data-parent="#accordion_attachment">
                                 <div class="card-body"><br>

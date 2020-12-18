@@ -36,7 +36,7 @@ const IGM = (() => {
                 $('#tbody_tbl_igm').prop('hidden', false);
 
                 item_no_count += 0;
-                alert(item_no_count)
+
                 let tfoot_tbl_igm = `
 				<tfoot id="tfoot_add_igm_item">
 					<td colspan="9"> 
@@ -143,8 +143,8 @@ const IGM = (() => {
 
         //pagkuha ng items
         // <a id="a_add_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.AddIgmItemNo('${value.type}',${value.item_number},1,0);" style="cursor: pointer"><i class="ti-plus"></i> ADD ITEM</a> add item to inalis muna kase baka hindi need
-        data.data.items.forEach((value) => {
-                
+        data.data.items.forEach((value) => 
+        {
             (value.specification    === null) ? specs       = '-': specs        = value.specification;
             (value.upper_limit      === null) ? upper_limit = '-': upper_limit  = value.upper_limit;
             (value.lower_limit      === null) ? lower_limit = '-': lower_limit  = value.lower_limit;
@@ -153,9 +153,9 @@ const IGM = (() => {
             {
                 var judgement = '<span>N/A</span>';
             } 
-            else if (value.judgment === 'OK')
+            else if (value.judgment === 'GOOD')
             {
-                judgement = '<span class="badge badge-success subitem-visual-judgement">OK</span>';
+                judgement = '<span class="badge badge-success subitem-visual-judgement">GOOD</span>';
             }
             else
             {
@@ -179,7 +179,8 @@ const IGM = (() => {
 					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" disabled>
 					<datalist id="item_tools_list">
 						${array_item_tools_options}
-					</datalist>
+                    </datalist>
+                </td>
 				<td>
 					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" disabled>
 						<option value=""selected disabled>Select type</option>
@@ -256,13 +257,13 @@ const IGM = (() => {
                 }
                 array_data.push(array_split_value);
             });
-
+           
             for (let b_index = 0; b_index < array_hidden_checksheet_data_id.length; b_index++) 
             {
                 existing_sub_no_count++;
 
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
-                IGM.AddIgmSubNo(array_load_igm_type[a_index], array_load_igm_item_number[a_index], existing_sub_no_count, 0, bg_header,array_hidden_checksheet_data_id[b_index],'select_item_type',array_data[b_index],array_judgement[a_index],array_coordinates[a_index]);
+                IGM.AddIgmSubNo(array_load_igm_type[a_index], array_load_igm_item_number[a_index], existing_sub_no_count, 0, bg_header,array_hidden_checksheet_data_id[b_index],'select_item_type',array_data[b_index],array_judgement[b_index],array_coordinates[b_index]);
     
                 // $(`#a_add_igm_item_no_${array_load_igm_item_number[a_index]}`).attr('onclick', `IGM.AddIgmItemNo('${array_load_igm_type[a_index]}',${array_load_igm_item_number[a_index]},1,0);`)
                 // $(`#a_add_igm_item_no_${array_load_igm_item_number[a_index]}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${array_load_igm_type[a_index]}',${array_load_igm_item_number[a_index]},1,0);`)
@@ -454,13 +455,13 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_specs" type="number" class="form-control input_text_center" placeholder="Enter specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder});">
+					<input id="txt_item_no_${item_no_holder}_specs" type="number" class="form-control input_text_center" placeholder="Enter specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
+					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});">
+					<input id="txt_item_no_${item_no_holder}_lower_limit" type="number" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td id="td_item_no_${item_no_holder}_judgement" class="input_text_center" style="vertical-align: middle;">N/A</td>
 			</tr>`;
@@ -1602,9 +1603,17 @@ const IGM = (() => {
             {
                 //pag lalagay lang ng row sa table, walang pag add sa DB
                 tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates);
-   
-                $(`#tr_item_no_${item_no_count}_sub_no_${existing_sub_no_count_per_item - 1}`).after(tr_sub_no_inputs);
-                $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
+
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                {
+                    $(`#tr_item_no_${item_no_count}_sub_no_max_${existing_sub_no_count_per_item - 1}`).after(tr_sub_no_inputs);
+                    $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 2);
+                } 
+                else 
+                {
+                    $(`#tr_item_no_${item_no_count}_sub_no_${existing_sub_no_count_per_item - 1}`).after(tr_sub_no_inputs);
+                    $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
+                }
 
                 //para sa pag papalit ng kulay ng visuals data
                 IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
@@ -1644,8 +1653,8 @@ const IGM = (() => {
         //para coordinates if ganto mga values
         (coordinates == undefined || coordinates === null) ? new_coordinates = '' : new_coordinates = coordinates;
 
-        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') {
- 
+        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+        {
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
@@ -1659,37 +1668,37 @@ const IGM = (() => {
 					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')" value="${new_coordinates}">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" min="-999" max="999">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" min="<-999" max="999">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="number" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="number" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" min="<-999" max="999">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
 				</td>
 			</tr>`;
         } 
@@ -2131,7 +2140,7 @@ const IGM = (() => {
             } 
             else 
             {
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
             }
 
             IGM.SubitemCalculateOverallJudgement(item_no, sub_no, array_visuals);
@@ -2142,7 +2151,7 @@ const IGM = (() => {
 
         let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
-        let specs = $(`#txt_item_no_${item_no}_specs`).val();
+        let specs       = $(`#txt_item_no_${item_no}_specs`).val();
 
         if (specs !== '')
         {   
@@ -2420,20 +2429,28 @@ const IGM = (() => {
     };
 
     this_igm.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit = (item_no, sub_no, min_max_no) => {
-        for (let error_count = 1; error_count <= min_max_no; error_count++) {
-            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${error_count}`).val() === '') {
+
+        for (let error_count = 1; error_count <= min_max_no; error_count++) 
+        {
+            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${error_count}`).val() === '') 
+            {
                 $(`#span_min_error_${error_count}`).remove();
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${error_count}`).after(`<span id="span_min_error_${error_count}" class="span-error">Required</span>`);
 
-            } else {
+            } 
+            else 
+            {
                 $(`#span_min_error_${error_count}`).remove();
             }
 
-            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${error_count}`).val() === '') {
+            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${error_count}`).val() === '') 
+            {
                 $(`#span_max_error_${error_count}`).remove();
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${error_count}`).after(`<span id="span_max_error_${error_count}" class="span-error">Required</span>`);
 
-            } else {
+            } 
+            else 
+            {
                 $(`#span_max_error_${error_count}`).remove();
             }
         }
@@ -2456,6 +2473,10 @@ const IGM = (() => {
 
             $(`#span_min_error_${min_max_no}`).remove();
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Invalid min and max</span>`);
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
+
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
         } 
         else 
         {
@@ -2551,25 +2572,24 @@ const IGM = (() => {
                                 } 
                                 else 
                                 {
-                                    //pag lalagay ng sub item judgement
-                                    if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) 
-                                    {
-                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                                    } 
-                                    else 
-                                    {
-                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">OK</span>`);
-                                    }
-
                                     //pagkuha ng min and max data
                                     let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
                                     let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
                                     //pagpush ng min and max data
-                                    array_min_max_value.push(parseFloat(min_value));
-                                    array_min_max_value.push(parseFloat(max_value));
+                                    array_min_max_value.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+                                    array_min_max_value.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
 
                                     if (c_count === 5) 
                                     {
+                                        //pag lalagay ng sub item judgement
+                                        if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) 
+                                        {
+                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                        } 
+                                        else 
+                                        {
+                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                        }
                                         //pagkuha ng overall judgement para sa checksheet item 
                                         IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
                                         array_min_max_judgement_per_sub_item = [];
@@ -2636,9 +2656,9 @@ const IGM = (() => {
                     } 
                     else 
                     {
-                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
+                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
                         //auto judgement papunta sa DB
-                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_data, judgment_datas)
+                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'GOOD', coordinates, array_data, judgment_datas)
                         array_overall_judgement = [];
                     }
                 }
@@ -2654,9 +2674,9 @@ const IGM = (() => {
                 } 
                 else 
                 {
-                    $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">OK</span>');
+                    $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
                     //auto judgement papunta sa DB
-                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'OK', coordinates, array_data, judgment_datas)
+                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'GOOD', coordinates, array_data, judgment_datas)
                     array_overall_judgement = [];
                 }
             }
@@ -2664,9 +2684,9 @@ const IGM = (() => {
     };
 
     this_igm.ProceedSubitemCalculateOverallJudgement = (id, sub_no, judgment_items, coordinates, data, judgment_datas) => {
-
+        
         $(`#accordion_igm`).LoadingOverlay('show');
-     
+        
         $.ajax({
             url         : `update-judgment`,
             type        : 'patch',
@@ -2739,18 +2759,18 @@ const IGM = (() => {
         {
             data = '';
         }
-        return (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') ? parseFloat(data) : data;
+        return data;
     };
 
     this_igm.ChecksheetDataInputJudgement = (judgement) => {
-  
+        
         if (judgement === null || judgement === 'N/A' || judgement === undefined || judgement === '')
         {
             var data = '<span class="input_text_center">N/A</span>';
         } 
-        else if (judgement === 'OK')
+        else if (judgement === 'GOOD')
         {
-            data = '<span class="badge badge-success subitem-visual-judgement input_text_center">OK</span>';
+            data = '<span class="badge badge-success subitem-visual-judgement input_text_center">GOOD</span>';
         }
         else
         {
@@ -2781,11 +2801,13 @@ const IGM = (() => {
                 else
                 {
                     $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
                 }
                 visual_no++;
             }
         }
     };
 
+   
     return this_igm;
 })();
