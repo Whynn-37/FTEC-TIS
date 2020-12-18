@@ -24,7 +24,7 @@ class MailController extends Controller
             // 'markjohrel.manzano@fujitsu.com',
             // 'georgebien.almenanza@fujitsu.com',
             // 'terrymerwin.balahadia@fujitsu.com',
-            'markangelo.cantalejo@fujitsu.com',
+            // 'markangelo.cantalejo@fujitsu.com',
         ];
 
         $data = 
