@@ -79,3 +79,8 @@ Route::get('generate-second-page','ApprovalController@generateSecondPage');
 Route::post('approved','ApprovalController@approved');
 
 Route::get('pdf-test', 'FpdfController@pdfTest');
+
+Route::get('for-evaluator','MailController@forEvaluator');
+Route::get('for-approval','MailController@forApproval');
+Route::get('for-disapproval','MailController@forDispproval');
+Route::get('back-to-approval','MailController@backToApproval');

@@ -10,39 +10,39 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function forEvaluator(Request $request, TrialChecksheet $trial_checksheet)
+    public function forEvaluator(Request $Request, TrialChecksheet $TrialChecksheet)
     {
-        $trial_checksheet_id = $request->trial_checksheet_id;
+        $trial_checksheet_id = $Request->trial_checksheet_id;
         
-        $trial_checksheet_data = $trial_checksheet->getAllData($trial_checksheet_id);
+        $trial_checksheet_data = $TrialChecksheet->getAllData($trial_checksheet_id);
         $LoginUser = new LoginUser();
 
         // return $receipient = $LoginUser->getMailToLeader();
         $receipient =  
         [
-            // 'jed.relator@fujitsu.com',
+            'jed.relator@fujitsu.com',
             // 'markjohrel.manzano@fujitsu.com',
             // 'georgebien.almenanza@fujitsu.com',
             // 'terrymerwin.balahadia@fujitsu.com',
-            'markangelo.cantalejo@fujitsu.com',
+            // 'markangelo.cantalejo@fujitsu.com',
         ];
 
         $data = 
         [
-            'id'                    =>  $trial_checksheet_data[0]['id'],
-            'part_number'           =>  $trial_checksheet_data[0]['part_number'],
-            'revision_number'       =>  $trial_checksheet_data[0]['revision_number'],
-            'trial_number'          =>  $trial_checksheet_data[0]['trial_number'],
-            'date_finished'         =>  $trial_checksheet_data[0]['date_finished'],
-            'judgment'              =>  $trial_checksheet_data[0]['judgment'],
-            'date_inspected'        =>  $trial_checksheet_data[0]['date_inspected'],
-            'temperature'           =>  $trial_checksheet_data[0]['temperature'],
-            'humidity'              =>  $trial_checksheet_data[0]['humidity'],
-            'created_at'            =>  $trial_checksheet_data[0]['created_at'],
-            'updated_at'            =>  $trial_checksheet_data[0]['updated_at'],
+            'id'                    =>  $trial_checksheet_data['id'],
+            'part_number'           =>  $trial_checksheet_data['part_number'],
+            'revision_number'       =>  $trial_checksheet_data['revision_number'],
+            'trial_number'          =>  $trial_checksheet_data['trial_number'],
+            'date_finished'         =>  $trial_checksheet_data['date_finished'],
+            'judgment'              =>  $trial_checksheet_data['judgment'],
+            'date_inspected'        =>  $trial_checksheet_data['date_inspected'],
+            'temperature'           =>  $trial_checksheet_data['temperature'],
+            'humidity'              =>  $trial_checksheet_data['humidity'],
+            'created_at'            =>  $trial_checksheet_data['created_at'],
+            'updated_at'            =>  $trial_checksheet_data['updated_at'],
         ];
 
-        $view = 'Mail.test';
+        $view = 'Mail.for_evaluation';
         $subject = 'For Evaluation';
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));
@@ -65,11 +65,11 @@ class MailController extends Controller
         ];
     }
 
-    public function forApproval(Request $request, TrialChecksheet $trial_checksheet)
+    public function forApproval(Request $Request, TrialChecksheet $TrialChecksheet)
     {
-        $trial_checksheet_id = $request->trial_checksheet_id;
+        $trial_checksheet_id = $Request->trial_checksheet_id;
         
-        $trial_checksheet_data = $trial_checksheet->getAllData($trial_checksheet_id);
+        $trial_checksheet_data = $TrialChecksheet->getAllData($trial_checksheet_id);
         $LoginUser = new LoginUser();
 
         // return $receipient = $LoginUser->getMailToDirector();
@@ -84,20 +84,20 @@ class MailController extends Controller
 
         $data = 
         [
-            'id'                    =>  $trial_checksheet_data[0]['id'],
-            'part_number'           =>  $trial_checksheet_data[0]['part_number'],
-            'revision_number'       =>  $trial_checksheet_data[0]['revision_number'],
-            'trial_number'          =>  $trial_checksheet_data[0]['trial_number'],
-            'date_finished'         =>  $trial_checksheet_data[0]['date_finished'],
-            'judgment'              =>  $trial_checksheet_data[0]['judgment'],
-            'date_inspected'        =>  $trial_checksheet_data[0]['date_inspected'],
-            'temperature'           =>  $trial_checksheet_data[0]['temperature'],
-            'humidity'              =>  $trial_checksheet_data[0]['humidity'],
-            'created_at'            =>  $trial_checksheet_data[0]['created_at'],
-            'updated_at'            =>  $trial_checksheet_data[0]['updated_at'],
+            'id'                    =>  $trial_checksheet_data['id'],
+            'part_number'           =>  $trial_checksheet_data['part_number'],
+            'revision_number'       =>  $trial_checksheet_data['revision_number'],
+            'trial_number'          =>  $trial_checksheet_data['trial_number'],
+            'date_finished'         =>  $trial_checksheet_data['date_finished'],
+            'judgment'              =>  $trial_checksheet_data['judgment'],
+            'date_inspected'        =>  $trial_checksheet_data['date_inspected'],
+            'temperature'           =>  $trial_checksheet_data['temperature'],
+            'humidity'              =>  $trial_checksheet_data['humidity'],
+            'created_at'            =>  $trial_checksheet_data['created_at'],
+            'updated_at'            =>  $trial_checksheet_data['updated_at'],
         ];
 
-        $view = 'Mail.test';
+        $view = 'Mail.for_approval';
         $subject = 'For Approval';
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));
@@ -120,12 +120,12 @@ class MailController extends Controller
         ];
     }
 
-    public function forDispproval(Request $request, TrialChecksheet $trial_checksheet)
+    public function forDispproval(Request $Request, TrialChecksheet $TrialChecksheet)
     {
-        $trial_checksheet_id = $request->trial_checksheet_id;
-        $evaluator = $request->evaluator;
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $evaluator = $Request->evaluator;
 
-        $trial_checksheet_data = $trial_checksheet->getAllData($trial_checksheet_id);
+        $trial_checksheet_data = $TrialChecksheet->getAllData($trial_checksheet_id);
         $LoginUser = new LoginUser();
 
         // return $receipient = $LoginUser->getMailToEvaluator($evaluator);
@@ -140,21 +140,21 @@ class MailController extends Controller
 
         $data = 
         [
-            'id'                    =>  $trial_checksheet_data[0]['id'],
-            'part_number'           =>  $trial_checksheet_data[0]['part_number'],
-            'revision_number'       =>  $trial_checksheet_data[0]['revision_number'],
-            'trial_number'          =>  $trial_checksheet_data[0]['trial_number'],
-            'date_finished'         =>  $trial_checksheet_data[0]['date_finished'],
-            'judgment'              =>  $trial_checksheet_data[0]['judgment'],
-            'date_inspected'        =>  $trial_checksheet_data[0]['date_inspected'],
-            'temperature'           =>  $trial_checksheet_data[0]['temperature'],
-            'humidity'              =>  $trial_checksheet_data[0]['humidity'],
-            'created_at'            =>  $trial_checksheet_data[0]['created_at'],
-            'updated_at'            =>  $trial_checksheet_data[0]['updated_at'],
+            'id'                    =>  $trial_checksheet_data['id'],
+            'part_number'           =>  $trial_checksheet_data['part_number'],
+            'revision_number'       =>  $trial_checksheet_data['revision_number'],
+            'trial_number'          =>  $trial_checksheet_data['trial_number'],
+            'date_finished'         =>  $trial_checksheet_data['date_finished'],
+            'judgment'              =>  $trial_checksheet_data['judgment'],
+            'date_inspected'        =>  $trial_checksheet_data['date_inspected'],
+            'temperature'           =>  $trial_checksheet_data['temperature'],
+            'humidity'              =>  $trial_checksheet_data['humidity'],
+            'created_at'            =>  $trial_checksheet_data['created_at'],
+            'updated_at'            =>  $trial_checksheet_data['updated_at'],
         ];
 
-        $view = 'Mail.test';
-        $subject = 'For Disapproval';
+        $view = 'Mail.for_disapproval';
+        $subject = 'Disapproved';
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));
 
@@ -176,12 +176,12 @@ class MailController extends Controller
         ];
     }
 
-    public function backToApproval($trial_checksheet_id, Request $request, TrialChecksheet $trial_checksheet)
+    public function backToApproval(Request $Request, TrialChecksheet $TrialChecksheet)
     {
-        $trial_checksheet_id = $request->trial_checksheet_id;
-        $approver = $equest->approver;
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $approver = $Request->approver;
 
-        $trial_checksheet_data = $trial_checksheet->getAllData($request->trial_checksheet_id);
+        $trial_checksheet_data = $TrialChecksheet->getAllData($trial_checksheet_id);
         $LoginUser = new LoginUser();
 
         // return $receipient = $LoginUser->getMailToApprover($approver);
@@ -196,20 +196,20 @@ class MailController extends Controller
 
         $data = 
         [
-            'id'                    =>  $trial_checksheet_data[0]['id'],
-            'part_number'           =>  $trial_checksheet_data[0]['part_number'],
-            'revision_number'       =>  $trial_checksheet_data[0]['revision_number'],
-            'trial_number'          =>  $trial_checksheet_data[0]['trial_number'],
-            'date_finished'         =>  $trial_checksheet_data[0]['date_finished'],
-            'judgment'              =>  $trial_checksheet_data[0]['judgment'],
-            'date_inspected'        =>  $trial_checksheet_data[0]['date_inspected'],
-            'temperature'           =>  $trial_checksheet_data[0]['temperature'],
-            'humidity'              =>  $trial_checksheet_data[0]['humidity'],
-            'created_at'            =>  $trial_checksheet_data[0]['created_at'],
-            'updated_at'            =>  $trial_checksheet_data[0]['updated_at'],
+            'id'                    =>  $trial_checksheet_data['id'],
+            'part_number'           =>  $trial_checksheet_data['part_number'],
+            'revision_number'       =>  $trial_checksheet_data['revision_number'],
+            'trial_number'          =>  $trial_checksheet_data['trial_number'],
+            'date_finished'         =>  $trial_checksheet_data['date_finished'],
+            'judgment'              =>  $trial_checksheet_data['judgment'],
+            'date_inspected'        =>  $trial_checksheet_data['date_inspected'],
+            'temperature'           =>  $trial_checksheet_data['temperature'],
+            'humidity'              =>  $trial_checksheet_data['humidity'],
+            'created_at'            =>  $trial_checksheet_data['created_at'],
+            'updated_at'            =>  $trial_checksheet_data['updated_at'],
         ];
 
-        $view = 'Mail.test';
+        $view = 'Mail.back_to_approval';
         $subject = 'For Approval';
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));

@@ -101,7 +101,7 @@ class TrialChecksheet extends Model
     public function getAllData($trial_checksheet_id)
     {
         return TrialChecksheet::where('id', $trial_checksheet_id)
-        ->get();
+        ->first();
     }
 
 }
