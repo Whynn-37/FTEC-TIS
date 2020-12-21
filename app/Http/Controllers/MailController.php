@@ -10,10 +10,12 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function sendEmail(Request $Request, TrialChecksheet $TrialChecksheet, LoginUser $LoginUser)
+    public function sendEmail($data, TrialChecksheet $TrialChecksheet, LoginUser $LoginUser)
     {
-        $trial_checksheet_id = $Request->trial_checksheet_id;
-        $status = $Request->status;
+        $trial_checksheet_id = $data['id'];
+        $status = $data['status'];
+    //    $trial_checksheet_id = $Request->trial_checksheet_id;
+    //     $status = $Request->status;
         
         $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
@@ -26,11 +28,11 @@ class MailController extends Controller
 
         if (count(Mail::failures()) > 0) 
         {
-            // $incharge = 
-            // [
-            //     'Position' => 'Leader',
-            //     'Fullname' => ,
-            // ];
+            $incharge = 
+            [
+                'Position' => 'Leader',
+                // 'Fullname' => ,
+            ];
 
             $view = 'Mail.for_evaluation';
             $subject = 'For Evaluator';

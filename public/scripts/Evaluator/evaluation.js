@@ -390,7 +390,6 @@ const EVALUATE = (() => {
                 $(`#tr_item_no_${item_no_count}_sub_no_${existing_sub_no_count_per_item - 1}`).after(tr_sub_no_inputs);
                 $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
             }
-            
 
             //para sa pag papalit ng kulay ng visuals data
             IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
@@ -2034,7 +2033,7 @@ const EVALUATE = (() => {
         }
     };
 
-    this_evaluate.ProceedApproveData = () =>{
+    this_evaluate.ProceedApproveData = () => {
 
         Swal.fire($.extend(swal_options, {
             title: 'Are you sure you want to approve?',
