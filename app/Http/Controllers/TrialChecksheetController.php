@@ -12,6 +12,7 @@ use App\ChecksheetData;
 use App\TaktTime;
 use App\Approval;
 use App\Attachment;
+use App\History;
 use Session;
 use DB;
 class TrialChecksheetController extends Controller
@@ -540,40 +541,55 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function loadPartNumberColumn(Request $request, TrialChecksheet $TrialChecksheet)
+    public function loadPartNumberColumn(History $History, Request $request)
     {
-        $status = $request->status;
         $part_number = $request->part_number;
+        $report_status = $request->report_status;
 
-        if($status == 'Approved')
+        if($part_number == null || $report_status == null)
         {
-            $column = [
-                'approved_datetime'     =>  null,
-            ];
-
-            return $TrialChecksheet->loadPartNumberColumn($column, $part_number);
-        }
-        else if($status == 'Evaluated')
-        {
-            $column = [
-                'evaluated_datetime'    =>  null,
-            ];
-        }
-        else if($status == 'finished')
-        {
-            $column = [
-                'date_inspected'        =>  date('Y/m/d'),
-            ];
-        }
-        else if($status == 'for inspection')
-        {
-            $column = [
-                'date_inspected'        =>  null,
-            ];
+            $status = 'Error';
+            $message = 'No part number/status';
+            $status_result = [];
         }
         else
         {
-            return 'Invalid status';
+            if($report_status == 'Approved')
+            {
+                $column = [
+                    'approved_datetime' =>  null,
+                ];
+            }
+            else if($report_status == 'Evaluated')
+            {
+                $column = [
+                    'evaluated_datetime'    =>  null,
+                ];
+            }
+            else if($report_status == 'Finished')
+            {
+                $column = [
+                    'inspect_datetime'  =>  now(),
+                ];
+            }
+            else if($report_status == 'For Inspection')
+            {
+                $column = [
+                    'inspect_datetime'  =>  null, // 1
+                ];
+            }
+            
+            $status_result = $History->loadPartnumberHistory($column, $part_number);
+
+            $status = 'Success';
+            $message = 'Successfully Loaded';
         }
+        
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $status_result,
+        ];
     }
 }

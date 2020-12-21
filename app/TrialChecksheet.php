@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\TrialLedger;
+// use App\TrialLedger;
 use DB;
 class TrialChecksheet extends Model
 {
@@ -108,17 +108,6 @@ class TrialChecksheet extends Model
         ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
         ->where('trial_checksheet_id', $trial_checksheet_id)
         ->select(['trial_checksheets.id', 'trial_ledgers.application_date', 'trial_checksheets.part_number', 'trial_ledgers.part_name', 'trial_ledgers.supplier_code', 'suppliers.supplier_name', 'trial_checksheets.revision_number', 'trial_checksheets.trial_number', 'trial_checksheets.judgment', 'approvals.inspect_by', 'approvals.inspect_datetime', 'approvals.evaluated_by', 'approvals.evaluated_datetime', 'approvals.approved_by', 'approvals.approved_datetime', 'approvals.disapproved_by', 'approvals.disapproved_datetime', 'approvals.decision', 'approvals.reason'])
-        ->get();
-    }
-
-    public function loadPartNumberColumn($column, $part_number)
-    {
-        return TrialChecksheet::join('trial_ledgers', function($join)
-        {
-            $join->on('trial_ledgers.part_number', 'trial_checksheets.part_number');
-        })
-        ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        // ->select('trial_checksheets.part_number', 'trial_ledgers.part_name')
         ->get();
     }
 

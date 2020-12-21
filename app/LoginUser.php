@@ -21,30 +21,9 @@ class LoginUser extends Model
         ->first();
     }
 
-    public function getMailToLeader()
+    public function sendEmailTo($incharge)
     {
-        return LoginUser::where('Position', 'LEADER')
-        ->select('emailadd')
-        ->get();
-    }
-
-    public function getMailToDirector()
-    {
-        return LoginUser::where('Position', 'DIRECTOR')
-        ->select('emailadd')
-        ->get();
-    }
-
-    public function getMailToEvaluator($evaluator)
-    {
-        return LoginUser::where('Fullname', $evaluator)
-        ->select('emailadd')
-        ->get();
-    }
-
-    public function getMailToApprover($approver)
-    {
-        return LoginUser::where('Fullname', $approver)
+        return LoginUser::where($incharge)
         ->select('emailadd')
         ->get();
     }

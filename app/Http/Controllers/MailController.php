@@ -10,12 +10,12 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function forEvaluator(Request $Request, TrialChecksheet $TrialChecksheet)
+    public function sendEmail(Request $Request, TrialChecksheet $TrialChecksheet, LoginUser $LoginUser)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
+        $status = $Request->status;
         
-        $get_all_data = $TrialChecksheet->getAllData($trial_checksheet_id);
-        $LoginUser = new LoginUser();
+        $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
         // return $receipient = $LoginUser->getMailToLeader();
         $receipient =  
@@ -51,30 +51,50 @@ class MailController extends Controller
 
         if (count(Mail::failures()) > 0) 
         {
-            $result = false;
-            $message = 'There was a problem sending the email, Please try again';
+            // $incharge = 
+            // [
+            //     'Position' => 'Leader',
+            //     'Fullname' => ,
+            // ];
+
+            $view = 'Mail.for_evaluation';
+            $subject = 'For Evaluator';
         }
-        else
+        else if($status == 'after_evaluation')
         {
-            $result = true;
-            $message = 'Successfully Send';
+            // $incharge = 
+            // [
+            //     'Position' => 'Manager',
+            //     'Fullname' => ,
+            // ];
+
+            $view = 'Mail.for_approval';
+            $subject = 'For Approver';
+        }
+        else if($status == 'approved')
+        {
+            // $incharge = 
+            // [
+            //     'Position' => 'General Manager',
+            //     'Fullname' => ,
+            // ];
+
+            $view = 'Mail.for_GM';
+            $subject = 'For GM';
+        }
+        else if($status == 'disapproved')
+        {
+            // $incharge = 
+            // [
+            //     'Position' => 'Secret',
+            //     'Fullname' => 'Inyida Ngoki',
+            // ];
+
+            $view = 'Mail.for_disapproval';
+            $subject = 'For Disapproval';
         }
 
-        return 
-        [
-            'status'    => $result,
-            'message'   => $message
-        ];
-    }
-
-    public function forApproval(Request $Request, TrialChecksheet $TrialChecksheet)
-    {
-        $trial_checksheet_id = $Request->trial_checksheet_id;
-        
-        $get_all_data = $TrialChecksheet->getAllData($trial_checksheet_id);
-        $LoginUser = new LoginUser();
-
-        // return $receipient = $LoginUser->getMailToDirector();
+        // $receipient = $LoginUser->sendEmailTo($incharge);
         $receipient =  
         [
             // 'jed.relator@fujitsu.com',
@@ -83,156 +103,6 @@ class MailController extends Controller
             // 'terrymerwin.balahadia@fujitsu.com',
             'markangelo.cantalejo@fujitsu.com',
         ];
-
-        $data = 
-        [
-            'id'                    =>  $get_all_data[0]['id'],
-            'application_date'      =>  $get_all_data[0]['application_date'],
-            'part_number'           =>  $get_all_data[0]['part_number'],
-            'part_name'             =>  $get_all_data[0]['part_name'],
-            'supplier_code'         =>  $get_all_data[0]['supplier_code'],
-            'supplier_name'         =>  $get_all_data[0]['supplier_name'],
-            'revision_number'       =>  $get_all_data[0]['revision_number'],
-            'trial_number'          =>  $get_all_data[0]['trial_number'],
-            'judgment'              =>  $get_all_data[0]['judgment'],
-            'inspect_by'            =>  $get_all_data[0]['inspect_by'],
-            'inspect_datetime'      =>  $get_all_data[0]['inspect_datetime'],
-            'evaluated_by'          =>  $get_all_data[0]['evaluated_by'],
-            'evaluated_datetime'    =>  $get_all_data[0]['judgment'],
-            'approved_by'           =>  $get_all_data[0]['approved_by'],
-            'approved_datetime'     =>  $get_all_data[0]['judgment'],
-        ];
-
-        $view = 'Mail.for_approval';
-        $subject = 'For Approval';
-
-        Mail::to($receipient)->send(new SendMail($data, $view, $subject));
-
-        if (count(Mail::failures()) > 0) 
-        {
-            $result = false;
-            $message = 'There was a problem sending the email, Please try again';
-        }
-        else
-        {
-            $result = true;
-            $message = 'Successfully Send';
-        }
-
-        return 
-        [
-            'status'    => $result,
-            'message'   => $message
-        ];
-    }
-
-    public function forDispproval(Request $Request, TrialChecksheet $TrialChecksheet)
-    {
-        $trial_checksheet_id = $Request->trial_checksheet_id;
-        $evaluator = $Request->evaluator;
-
-        $get_all_data = $TrialChecksheet->getAllData($trial_checksheet_id);
-        $LoginUser = new LoginUser();
-
-        // return $receipient = $LoginUser->getMailToEvaluator($evaluator);
-        $receipient =  
-        [
-            // 'jed.relator@fujitsu.com',
-            // 'markjohrel.manzano@fujitsu.com',
-            // 'georgebien.almenanza@fujitsu.com',
-            // 'terrymerwin.balahadia@fujitsu.com',
-            'markangelo.cantalejo@fujitsu.com',
-        ];
-
-        $data = 
-        [
-            'id'                    =>  $get_all_data[0]['id'],
-            'application_date'      =>  $get_all_data[0]['application_date'],
-            'part_number'           =>  $get_all_data[0]['part_number'],
-            'part_name'             =>  $get_all_data[0]['part_name'],
-            'supplier_code'         =>  $get_all_data[0]['supplier_code'],
-            'supplier_name'         =>  $get_all_data[0]['supplier_name'],
-            'revision_number'       =>  $get_all_data[0]['revision_number'],
-            'trial_number'          =>  $get_all_data[0]['trial_number'],
-            'judgment'              =>  $get_all_data[0]['judgment'],
-            'inspect_by'            =>  $get_all_data[0]['inspect_by'],
-            'inspect_datetime'      =>  $get_all_data[0]['inspect_datetime'],
-            'evaluated_by'          =>  $get_all_data[0]['evaluated_by'],
-            'evaluated_datetime'    =>  $get_all_data[0]['judgment'],
-            'approved_by'           =>  $get_all_data[0]['approved_by'],
-            'approved_datetime'     =>  $get_all_data[0]['judgment'],
-            'disapproved_by'        =>  $get_all_data[0]['disapproved_by'],
-            'disapproved_datetime'  =>  $get_all_data[0]['judgment'],
-            'decision'              =>  $get_all_data[0]['decision'],
-            'reason'                =>  $get_all_data[0]['reason'],
-        ];
-
-        $view = 'Mail.for_disapproval';
-        $subject = 'Disapproved';
-
-        Mail::to($receipient)->send(new SendMail($data, $view, $subject));
-
-        if (count(Mail::failures()) > 0) 
-        {
-            $result = false;
-            $message = 'There was a problem sending the email, Please try again';
-        }
-        else
-        {
-            $result = true;
-            $message = 'Successfully Send';
-        }
-
-        return 
-        [
-            'status'    => $result,
-            'message'   => $message
-        ];
-    }
-
-    public function backToApproval(Request $Request, TrialChecksheet $TrialChecksheet)
-    {
-        $trial_checksheet_id = $request->trial_checksheet_id;
-        $approver = $request->approver;
-
-        $get_all_data = $TrialChecksheet->getAllData($request->trial_checksheet_id);
-        $LoginUser = new LoginUser();
-
-        // return $receipient = $LoginUser->getMailToApprover($approver);
-        $receipient =  
-        [
-            // 'jed.relator@fujitsu.com',
-            // 'markjohrel.manzano@fujitsu.com',
-            // 'georgebien.almenanza@fujitsu.com',
-            // 'terrymerwin.balahadia@fujitsu.com',
-            'markangelo.cantalejo@fujitsu.com',
-        ];
-
-        $data = 
-        [
-            'id'                    =>  $get_all_data[0]['id'],
-            'application_date'      =>  $get_all_data[0]['application_date'],
-            'part_number'           =>  $get_all_data[0]['part_number'],
-            'part_name'             =>  $get_all_data[0]['part_name'],
-            'supplier_code'         =>  $get_all_data[0]['supplier_code'],
-            'supplier_name'         =>  $get_all_data[0]['supplier_name'],
-            'revision_number'       =>  $get_all_data[0]['revision_number'],
-            'trial_number'          =>  $get_all_data[0]['trial_number'],
-            'judgment'              =>  $get_all_data[0]['judgment'],
-            'inspect_by'            =>  $get_all_data[0]['inspect_by'],
-            'inspect_datetime'      =>  $get_all_data[0]['inspect_datetime'],
-            'evaluated_by'          =>  $get_all_data[0]['evaluated_by'],
-            'evaluated_datetime'    =>  $get_all_data[0]['judgment'],
-            'approved_by'           =>  $get_all_data[0]['approved_by'],
-            'approved_datetime'     =>  $get_all_data[0]['judgment'],
-            'disapproved_by'        =>  $get_all_data[0]['disapproved_by'],
-            'disapproved_datetime'  =>  $get_all_data[0]['judgment'],
-            'decision'              =>  $get_all_data[0]['decision'],
-            'reason'                =>  $get_all_data[0]['reason'],
-        ];
-
-        $view = 'Mail.back_to_approval';
-        $subject = 'For Approval';
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));
 
