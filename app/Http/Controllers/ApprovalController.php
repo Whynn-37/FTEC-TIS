@@ -388,7 +388,7 @@ class ApprovalController extends Controller
         {
             $data = 
             [
-                'approved_by' => Session::get('fullname'),
+                'disapproved_by' => Session::get('fullname'),
                 // 'disapproved_by' => 'JOHN JOHREL MANZANO',
                 'disapproved_datetime' => now(),
                 'decision' => 3
