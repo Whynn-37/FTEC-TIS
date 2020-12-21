@@ -84,3 +84,9 @@ Route::get('for-evaluator','MailController@forEvaluator');
 Route::get('for-approval','MailController@forApproval');
 Route::get('for-disapproval','MailController@forDispproval');
 Route::get('back-to-approval','MailController@backToApproval');
+
+
+Route::get('email_test', function () 
+{
+    return view('Mail.for_evaluation');
+});
