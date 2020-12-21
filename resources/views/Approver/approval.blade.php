@@ -24,34 +24,15 @@
                                         <table class="table text-center table-bordered" id="tbl_finished_inspection_data">
                                             <thead class="text-uppercase bg-dark">
                                                 <tr class="text-white">
-                                                   <th>PART NO</th>
-                                                   <th>PART NAME</th>
-                                                   <th>MODEL NAME</th>
-                                                   <th>SUPPLIER</th>
-                                                   <th>KIND OF DIE</th>
-                                                   <th>TRIAL APPLICATION</th>
-                                                   <th>TRIAL STAGE</th>
-                                                   <th>REVISION</th>
-                                                   <th>JUDGEMENT</th>
-                                                   <th>ACTION</th>
-                                                </tr>
+                                                    <th>PART NO</th>
+                                                    <th>REVISION</th>
+                                                    <th>TRIAL STAGE</th>
+                                                    <th>DATE FINISHED</th>
+                                                    <th>JUDGEMENT</th>
+                                                    <th>ACTION</th>
+                                                 </tr>
                                             </thead>
-                                            <tbody id="tbody_tbl_finished_inspection_data">
-                                                <tr>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>
-                                                        <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData();"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
+                                            <tbody id="tbody_tbl_finished_inspection_data"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -74,30 +55,15 @@
                                         <table class="table text-center table-bordered" id="tbl_disapproved_inspection_data">
                                             <thead class="text-uppercase bg-dark">
                                                 <tr class="text-white">
-                                                   <th>PART NO</th>
-                                                   <th>PART NAME</th>
-                                                   <th>MODEL NAME</th>
-                                                   <th>SUPPLIER</th>
-                                                   <th>KIND OF DIE</th>
-                                                   <th>TRIAL APPLICATION</th>
-                                                   <th>TRIAL STAGE</th>
-                                                   <th>REVISION</th>
-                                                   <th>JUDGEMENT</th>
-                                                </tr>
+                                                    <th>PART NO</th>
+                                                    <th>REVISION</th>
+                                                    <th>TRIAL NO</th>
+                                                    <th>DISAPPROVED BY</th>
+                                                    <th>DISAPPROVED DATE/TIME</th>
+                                                    <th>REASON</th>
+                                                 </tr>
                                             </thead>
-                                            <tbody id="tbody_tbl_disapproved_inspection_data">
-                                                <tr>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                    <td>test</td>
-                                                </tr>
-                                            </tbody>
+                                            <tbody id="tbody_tbl_disapproved_inspection_data"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -118,6 +84,8 @@
 <script src="../node_modules/select2/dist/js/select2.min.js"></script>
 <script src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{ asset('scripts/Approver/approval.js') }}"></script>
+<script src="{{ asset('scripts/Checksheet/trial_checksheet_igm.js') }}"></script>
+
 <script>
     // swal
     const swal_options = {
