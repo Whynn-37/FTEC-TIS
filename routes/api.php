@@ -66,9 +66,6 @@ Route::post('approved','ApprovalController@approved');
 
 Route::post('pdf-test', 'FpdfController@pdfTest');
 
-Route::get('for-evaluator/{id}','MailController@forEvaluator');
-Route::get('for-approval/{id}','MailController@forApproval');
-Route::get('for-disapproval/{id}','MailController@forDispproval');
-Route::get('back-to-approval/{id}','MailController@backToApproval');
+Route::get('send-email/{id}','MailController@sendEmail');
 
 Route::get('load-part-number-column', 'TrialChecksheetController@loadPartNumberColumn');
