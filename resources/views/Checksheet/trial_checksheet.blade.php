@@ -33,6 +33,7 @@
                                         <div class="card-body">
                                             {{-- HIDDEN ID REQUEST NI JED --}}
                                             <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
+                                            <input type="text" id="trial_checksheet_application_date" name="application_date" hidden>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label>PART NUMBER:</label>&nbsp;

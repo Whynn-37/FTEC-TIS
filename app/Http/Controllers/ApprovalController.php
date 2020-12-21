@@ -18,7 +18,7 @@ class ApprovalController extends Controller
 {
     public function loadInspectionData(ChecksheetData $ChecksheetData, 
                                         ChecksheetItem $ChecksheetItem,
-                                        TrialChecksheet $TrialChecksheet,
+                                        TrialChecksheet $TrialChecksheet, 
                                         Attachment $Attachment,
                                         Request $Request)
     {
@@ -100,7 +100,7 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editHinsei(ChecksheetItem $ChecksheetItem, Request $Request)
+    public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $item_number = $Request->item_number;
@@ -112,6 +112,13 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $item_type = $Request->item_type;
         $remarks = $Request->remarks;
+
+        $judgment_checksheet = $Request->judgment_checksheet;
+
+        $trial_checksheet = 
+        [
+            'judgment'              => $judgment_checksheet
+        ];
 
         $data = 
         [
@@ -127,6 +134,8 @@ class ApprovalController extends Controller
             'remarks'               => $remarks,
             'hinsei'                => 'HINSEI',
         ];
+
+        $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
 
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 
@@ -147,8 +156,9 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editData(ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
+    public function editData(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
     {
+        $trial_checksheet_id = $Request->trial_checksheet_id;
         $checksheet_item_id = $Request->checksheet_item_id;
         $sub_number = $Request->sub_number;
         $coordinates = $Request->coordinates;
@@ -158,6 +168,9 @@ class ApprovalController extends Controller
 
         $judgment_items = $Request->judgment_items;
 
+        $judgment_checksheet = $Request->judgment_checksheet;
+
+
         $status = 'Error';
         $message = 'Somethings Wrong!';
         $result = false;
@@ -166,6 +179,11 @@ class ApprovalController extends Controller
 
         try 
         {
+            $trial_checksheet = 
+            [
+                'judgment'              => $judgment_checksheet
+            ];
+
             $items = 
             [
                 'judgment'              => $judgment_items
@@ -181,6 +199,7 @@ class ApprovalController extends Controller
                 'remarks'            => $remarks,
             ];
 
+            $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
             $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
             $ChecksheetData->updateOrCreateChecksheetData($data);
 
