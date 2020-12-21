@@ -425,9 +425,19 @@ class ApprovalController extends Controller
                 'decision' => 2
             ];
 
+            $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+
+            $datax = 
+            [
+                'folder_name' =>  $folder_name['file_folder'],
+                'file_name' =>  explode(',', $selected_file)
+            ];
+
+            $FpdfController->pdfTest($datax);
+
             $status = 'after_evaluation';
 
-            $folder_name = '';
+            $folder_name = $folder_name['file_folder'];
         }
         
         $result =  $Approval->approved($trial_checksheet_id, $data);

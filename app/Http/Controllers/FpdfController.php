@@ -31,14 +31,13 @@ class FpdfController extends Controller
             }
         }
         
-        return $pdf->Output($location.'second_page.pdf', 'F');
+        return $pdf->Output($location.$folder_name.'.pdf', 'F');
         exit;
     }
 
     public function secondPage($data)
     {
         $pdf = new Fpdi('P', 'mm', [215.9, 300]);
-        // return $data['datas'];
 
         for ($a=0; $a < count($data['datas']); $a++) 
         { 
@@ -319,7 +318,7 @@ class FpdfController extends Controller
 
                         $max = $minmax['max'];
                         $min = $minmax['min'];
-                     }
+                    }
                     
                     // min max
                     $pdf->SetXY(69, $increment);
