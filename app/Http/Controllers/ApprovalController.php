@@ -283,6 +283,10 @@ class ApprovalController extends Controller
 
         $get_first_trial_ng = $ChecksheetItem->getfirstTrialNg($get_first_trial['id']);
 
+        $result_merge = [];
+        $checksheet_items_result = [];
+        $checksheet_datas_result = [];
+
         for($i=0; $i < count($details_data); $i++)
         {
             $trial_checksheet_id_result = $details_data[$i]['id'];

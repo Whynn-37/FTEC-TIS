@@ -118,7 +118,7 @@ class ChecksheetItem extends Model
     public function getfirstTrialNg($trial_checksheet_id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
-        ->where('judgment', 'NG')
+        // ->where('judgment', 'NG')
         ->where('type', 'like', '%Min and Max%')
         ->whereOr('type', 'like', '%Min and Max and Form Tolerance%')
         ->select('id', 'item_number')
