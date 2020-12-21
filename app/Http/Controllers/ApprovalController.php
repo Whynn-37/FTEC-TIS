@@ -11,8 +11,10 @@ use App\ChecksheetData;
 use App\TaktTime;
 use App\Supplier;
 use App\Exports\TrialEvaluationResultExport;
+use App\Http\Controllers\MailController;
 use Session;
 use DB;
+use Illuminate\Support\Facades\Mail;
 
 class ApprovalController extends Controller
 {
@@ -156,7 +158,10 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editData(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
+    public function editData(TrialChecksheet $TrialChecksheet, 
+                                ChecksheetItem $ChecksheetItem, 
+                                ChecksheetData $ChecksheetData, 
+                                Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $checksheet_item_id = $Request->checksheet_item_id;
@@ -347,7 +352,11 @@ class ApprovalController extends Controller
         return $FpdfController->secondPage($data);
     }
 
-    public function approved(Approval $Approval,Attachment $Attachment,Request $Request, FpdfController $FpdfController)
+    public function approved(Approval $Approval,
+                                Attachment $Attachment,
+                                FpdfController $FpdfController,
+                                MailController $MailController,
+                                Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $decision = $Request->decision;
@@ -374,6 +383,8 @@ class ApprovalController extends Controller
 
             $FpdfController->pdfTest($datax);
 
+            $status = 'after_evaluation';
+
             $folder_name = $folder_name['file_folder'];
         }
         else if($decision == 2 && $action == 1)
@@ -385,6 +396,8 @@ class ApprovalController extends Controller
                 'approved_datetime' => now(),
                 'decision' => 0
             ];
+
+            $status = 'approved';
 
             $folder_name = '';
         }
@@ -398,6 +411,8 @@ class ApprovalController extends Controller
                 'decision' => 3
             ];
 
+            $status = 'disapproved';
+
             $folder_name = '';
         }
         else if($decision == 3 && $action == 1)
@@ -410,10 +425,20 @@ class ApprovalController extends Controller
                 'decision' => 2
             ];
 
+            $status = 'after_evaluation';
+
             $folder_name = '';
         }
         
         $result =  $Approval->approved($trial_checksheet_id, $data);
+
+        $send_mail = 
+        [
+            'trial_checksheet_id' => $trial_checksheet_id,
+            'status' => $status
+        ];
+
+        $MailController->sendEmail($send_mail);
 
         $status = 'Error';
         $message = 'Somethings Wrong!';
