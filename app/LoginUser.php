@@ -24,7 +24,7 @@ class LoginUser extends Model
     public function sendEmailTo($incharge)
     {
         return LoginUser::where($incharge)
-        ->select('emailadd')
+        // ->select('emailadd')
         ->get();
     }
 }
