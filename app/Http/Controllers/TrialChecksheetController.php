@@ -13,6 +13,7 @@ use App\TaktTime;
 use App\Approval;
 use App\Attachment;
 use App\History;
+use App\LoginUser;
 use Session;
 use DB;
 class TrialChecksheetController extends Controller
@@ -541,12 +542,12 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function loadPartNumberColumn(History $History, Request $request)
+    public function loadPartNumberColumn(TrialLedger $TrialLedger, LoginUser $LoginUser, Request $request)
     {
-        $part_number = $request->part_number;
         $report_status = $request->report_status;
+        $merge = [];
 
-        if($part_number == null || $report_status == null)
+        if($report_status == null)
         {
             $status = 'Error';
             $message = 'No part number/status';
@@ -554,32 +555,270 @@ class TrialChecksheetController extends Controller
         }
         else
         {
-            if($report_status == 'Approved')
+            if($report_status == 'For Inspection')  
             {
-                $column = [
-                    'approved_datetime' =>  null,
-                ];
+                $inspector = '';
+                $status_result = $TrialLedger->forInspection();
+                foreach ($status_result as $status_result_value) 
+                {
+                    $full_name[] = $LoginUser->selectUser(['name' => $status_result_value['inspector_id']]);
+                    $full_name = array_unique($full_name);
+
+                    if ($status_result_value['inspector_id'] == null || $status_result_value['inspector_id'] == '') 
+                    {
+                        $merge[] = 
+                        [
+                            'part_number'       => $status_result_value['part_number'],
+                            'part_name'         => $status_result_value['part_name'],
+                            'supplier_name'     => $status_result_value['supplier_name'],
+                            'revision_number'   => $status_result_value['revision_number'],
+                            'trial_number'      => $status_result_value['trial_number'],
+                            'inspector'         => $inspector,
+                        ];
+                    }
+
+                    foreach ($full_name as $full_name_value) 
+                    {
+                        if ($status_result_value['inspector_id'] === $full_name_value['name']) 
+                        {
+                            $merge[] = 
+                            [
+                                'part_number'       => $status_result_value['part_number'],
+                                'part_name'         => $status_result_value['part_name'],
+                                'supplier_name'     => $status_result_value['supplier_name'],
+                                'revision_number'   => $status_result_value['revision_number'],
+                                'trial_number'      => $status_result_value['trial_number'],
+                                'inspector'         => $full_name_value['fullname'],
+                            ];
+                        }
+                        return $merge;
+                    }
+                }
             }
-            else if($report_status == 'Evaluated')
+            else if($report_status == 'For Evaluation')
             {
-                $column = [
-                    'evaluated_datetime'    =>  null,
+                $column = 
+                [
+                    'decision'    =>  1,
                 ];
+
+                $status_result = $TrialLedger->loadPartnumberHistory($column);
+                foreach ($status_result as $status_result_value) 
+                {
+                    $inspect[] = $LoginUser->selectUser(['name' => $status_result_value['inspect_by']]);
+                    $evaluated[] = $LoginUser->selectUser(['name' => $status_result_value['evaluated_by']]);
+
+                    $inspect = array_unique($inspect);
+                    $evaluated = array_unique($evaluated);
+
+                    foreach ($inspect as $inspect_value) 
+                    {
+                        if ($status_result_value['inspect_by'] === $inspect_value['name']) 
+                        {
+                            $inspector = $inspect_value['fullname'];
+                        }
+                    }
+
+                    foreach ($evaluated as $evaluated_value) 
+                    {
+                        if ($status_result_value['evaluated_by'] === $evaluated_value['name']) 
+                        {
+                            $evaluator = $evaluated_value['fullname'];
+                        }
+                    }
+
+                    $merge[] = 
+                    [
+                        'part_number'           => $status_result_value['part_number'],
+                        'part_name'             => $status_result_value['part_name'],
+                        'supplier_name'         => $status_result_value['supplier_name'],
+                        'revision_number'       => $status_result_value['revision_number'],
+                        'trial_number'          => $status_result_value['trial_number'],
+                        'judgment'              => $status_result_value['judgment'],
+                        'inspector'             => $inspector,
+                        'inspect_datetime'      => $status_result_value['inspect_datetime'],
+                        'evaluated_by'          => $evaluator,
+                        'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
+                    ];
+                }
             }
-            else if($report_status == 'Finished')
+            else if($report_status == 'For Approval')
             {
-                $column = [
-                    'inspect_datetime'  =>  now(),
+                $column = 
+                [
+                    'decision'    =>  2,
                 ];
+
+                $status_result = $TrialLedger->loadPartnumberHistory($column);
+                foreach ($status_result as $status_result_value) 
+                {
+                    $inspect[] = $LoginUser->selectUser(['name' => $status_result_value['inspect_by']]);
+                    $evaluated[] = $LoginUser->selectUser(['name' => $status_result_value['evaluated_by']]);
+                    $approved[] = $LoginUser->selectUser(['name' => $status_result_value['approved_by']]);
+
+                    $inspect = array_unique($inspect);
+                    $evaluated = array_unique($evaluated);
+                    $approved = array_unique($approved);
+
+                    foreach ($inspect as $inspect_value) 
+                    {
+                        if ($status_result_value['inspect_by'] === $inspect_value['name']) 
+                        {
+                            $inspector = $inspect_value['fullname'];
+                        }
+                    }
+
+                    foreach ($evaluated as $evaluated_value) 
+                    {
+                        if ($status_result_value['evaluated_by'] === $evaluated_value['name']) 
+                        {
+                            $evaluator = $evaluated_value['fullname'];
+                        }
+                    }
+
+                    foreach ($approved as $approved_value) 
+                    {
+                        if ($status_result_value['approved_by'] === $approved_value['name']) 
+                        {
+                            $approver = $approved_value['fullname'];
+                        }
+                    }
+
+                    $merge[] = 
+                    [
+                        'part_number'           => $status_result_value['part_number'],
+                        'part_name'             => $status_result_value['part_name'],
+                        'supplier_name'         => $status_result_value['supplier_name'],
+                        'revision_number'       => $status_result_value['revision_number'],
+                        'trial_number'          => $status_result_value['trial_number'],
+                        'judgment'              => $status_result_value['judgment'],
+                        'inspector'             => $inspector,
+                        'inspect_datetime'      => $status_result_value['inspect_datetime'],
+                        'evaluated_by'          => $evaluator,
+                        'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
+                        'approved_by'           => $approver,
+                        'approved_datetime'     => $status_result_value['approved_datetime'],
+                    ];
+                }
             }
-            else if($report_status == 'For Inspection')
+            else if($report_status == 'Approved')
             {
-                $column = [
-                    'inspect_datetime'  =>  null, // 1
+                $column = 
+                [
+                    'decision'    =>  0,
                 ];
+
+                $status_result = $TrialLedger->loadPartnumberHistory($column);
+                foreach ($status_result as $status_result_value) 
+                {
+                    $inspect[] = $LoginUser->selectUser(['name' => $status_result_value['inspect_by']]);
+                    $evaluated[] = $LoginUser->selectUser(['name' => $status_result_value['evaluated_by']]);
+                    $approved[] = $LoginUser->selectUser(['name' => $status_result_value['approved_by']]);
+
+                    $inspect = array_unique($inspect);
+                    $evaluated = array_unique($evaluated);
+                    $approved = array_unique($approved);
+
+                    foreach ($inspect as $inspect_value) 
+                    {
+                        if ($status_result_value['inspect_by'] === $inspect_value['name']) 
+                        {
+                            $inspector = $inspect_value['fullname'];
+                        }
+                    }
+
+                    foreach ($evaluated as $evaluated_value) 
+                    {
+                        if ($status_result_value['evaluated_by'] === $evaluated_value['name']) 
+                        {
+                            $evaluator = $evaluated_value['fullname'];
+                        }
+                    }
+
+                    foreach ($approved as $approved_value) 
+                    {
+                        if ($status_result_value['approved_by'] === $approved_value['name']) 
+                        {
+                            $approver = $approved_value['fullname'];
+                        }
+                    }
+
+                    $merge[] = 
+                    [
+                        'part_number'           => $status_result_value['part_number'],
+                        'part_name'             => $status_result_value['part_name'],
+                        'supplier_name'         => $status_result_value['supplier_name'],
+                        'revision_number'       => $status_result_value['revision_number'],
+                        'trial_number'          => $status_result_value['trial_number'],
+                        'judgment'              => $status_result_value['judgment'],
+                        'inspector'             => $inspector,
+                        'inspect_datetime'      => $status_result_value['inspect_datetime'],
+                        'evaluated_by'          => $evaluator,
+                        'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
+                        'approved_by'           => $approver,
+                        'approved_datetime'     => $status_result_value['approved_datetime'],
+                    ];
+                }
             }
-            
-            $status_result = $History->loadPartnumberHistory($column, $part_number);
+            else if($report_status == 'Disapproved')
+            {
+                $column = 
+                [
+                    'decision'    =>  3,
+                ];
+
+                $status_result = $TrialLedger->loadPartnumberHistory($column);
+                foreach ($status_result as $status_result_value) 
+                {
+                    $inspect[] = $LoginUser->selectUser(['name' => $status_result_value['inspect_by']]);
+                    $evaluated[] = $LoginUser->selectUser(['name' => $status_result_value['evaluated_by']]);
+                    $disapproved[] = $LoginUser->selectUser(['name' => $status_result_value['disapproved_by']]);
+
+                    $inspect = array_unique($inspect);
+                    $evaluated = array_unique($evaluated);
+                    $disapproved = array_unique($disapproved);
+
+                    foreach ($inspect as $inspect_value) 
+                    {
+                        if ($status_result_value['inspect_by'] === $inspect_value['name']) 
+                        {
+                            $inspector = $inspect_value['fullname'];
+                        }
+                    }
+
+                    foreach ($evaluated as $evaluated_value) 
+                    {
+                        if ($status_result_value['evaluated_by'] === $evaluated_value['name']) 
+                        {
+                            $evaluator = $evaluated_value['fullname'];
+                        }
+                    }
+
+                    foreach ($disapproved as $disapproved_value) 
+                    {
+                        if ($status_result_value['disapproved_by'] === $disapproved_value['name']) 
+                        {
+                            $approver = $disapproved_value['fullname'];
+                        }
+                    }
+
+                    $merge[] = 
+                    [
+                        'part_number'           => $status_result_value['part_number'],
+                        'part_name'             => $status_result_value['part_name'],
+                        'supplier_name'         => $status_result_value['supplier_name'],
+                        'revision_number'       => $status_result_value['revision_number'],
+                        'trial_number'          => $status_result_value['trial_number'],
+                        'judgment'              => $status_result_value['judgment'],
+                        'inspector'             => $inspector,
+                        'inspect_datetime'      => $status_result_value['inspect_datetime'],
+                        'evaluated_by'          => $evaluator,
+                        'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
+                        'disapproved_by'        => $approver,
+                        'disapproved_datetime'  => $status_result_value['disapproved_datetime'],
+                    ];
+                }
+            }
 
             $status = 'Success';
             $message = 'Successfully Loaded';
@@ -589,7 +828,50 @@ class TrialChecksheetController extends Controller
         [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $status_result,
+            'data'      =>  $merge,
         ];
+    }
+
+    public function loadDetailsHistory(TrialChecksheet $TrialChecksheet, LoginUser $LoginUser, TrialLedger $TrialLedger, Request $Request)
+    {
+        $status = $Request->status;
+
+        if($status == 'For Inspection')
+        {
+            $get_part_number = 
+            [
+                'trial_ledgers.part_number'    =>  $part_number,
+            ];
+        }
+        else if($status == 'For Evaluation')
+        {
+            $get_part_number = 
+            [
+                'trial_ledgers.part_number'    =>  $part_number,
+            ];
+        }
+        else if($status == 'For Approval')
+        {
+            $get_part_number = 
+            [
+                'trial_ledgers.part_number'    =>  $part_number,
+            ];
+        }
+        else if($status == 'Approved')
+        {
+            $get_part_number = 
+            [
+                'trial_ledgers.part_number'    =>  $part_number,
+            ];
+        }
+        else if($status == 'Disapproved')
+        {
+            $get_part_number = 
+            [
+                'trial_ledgers.part_number'    =>  $part_number,
+            ];
+        }
+
+        // return $load_detail_history = $TrialChecksheet->getAllData($get_part_number);
     }
 }

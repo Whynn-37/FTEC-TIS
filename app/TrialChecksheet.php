@@ -89,26 +89,38 @@ class TrialChecksheet extends Model
         ->get();
     }
 
-    public function getFirstTrial($part_number)
+    public function getFirstTrial($get_part_number)
     {
-        return TrialChecksheet::where('part_number', $part_number)
+        return TrialChecksheet::where('part_number', $get_part_number)
         ->where('judgment', 'NG')
         ->select('id', 'trial_number')
         ->orderBy('trial_number', 'asc')
         ->first();
     }
 
-    public function getAllData($trial_checksheet_id)
+    public function getAllData($where)
     {
-        return TrialChecksheet::join('trial_ledgers', function($join)
-        {
-            $join->on('trial_ledgers.application_date', 'trial_checksheets.application_date');
-        })
-        ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
         ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        ->where('trial_checksheet_id', $trial_checksheet_id)
-        ->select(['trial_checksheets.id', 'trial_ledgers.application_date', 'trial_checksheets.part_number', 'trial_ledgers.part_name', 'trial_ledgers.supplier_code', 'suppliers.supplier_name', 'trial_checksheets.revision_number', 'trial_checksheets.trial_number', 'trial_checksheets.judgment', 'approvals.inspect_by', 'approvals.inspect_datetime', 'approvals.evaluated_by', 'approvals.evaluated_datetime', 'approvals.approved_by', 'approvals.approved_datetime', 'approvals.disapproved_by', 'approvals.disapproved_datetime', 'approvals.decision', 'approvals.reason'])
-        ->get();
+        ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        ->where($where)
+        ->select(
+            'trial_ledgers.application_date', 
+            'trial_ledgers.part_number', 
+            'trial_ledgers.part_name', 
+            'trial_ledgers.revision_number', 
+            'trial_ledgers.trial_number',
+            'trial_ledgers.inspector_id', 
+            'suppliers.supplier_name',
+            'approvals.inspect_by', 
+            'approvals.inspect_datetime', 
+            'approvals.evaluated_by', 
+            'approvals.evaluated_datetime', 
+            'approvals.approved_by', 
+            'approvals.approved_datetime', 
+            'approvals.disapproved_by',
+            'approvals.disapproved_datetime',
+            'trial_checksheets.judgment')
+        ->first();
     }
-
 }

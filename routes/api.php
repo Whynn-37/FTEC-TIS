@@ -69,3 +69,4 @@ Route::post('pdf-test', 'FpdfController@pdfTest');
 Route::get('send-email/{id}','MailController@sendEmail');
 
 Route::get('load-part-number-column', 'TrialChecksheetController@loadPartNumberColumn');
+Route::get('load-details-history', 'TrialChecksheetController@loadDetailsHistory');
