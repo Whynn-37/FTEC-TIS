@@ -10,12 +10,13 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function sendEmail($data, TrialChecksheet $TrialChecksheet, LoginUser $LoginUser)
+    public function sendEmail($data)
     {
-        $trial_checksheet_id = $data['id'];
+        $TrialChecksheet = new TrialChecksheet();
+        $LoginUser = new LoginUser();
+
+        $trial_checksheet_id = $data['trial_checksheet_id'];
         $status = $data['status'];
-    //    $trial_checksheet_id = $Request->trial_checksheet_id;
-    //     $status = $Request->status;
         
         $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
@@ -49,7 +50,7 @@ class MailController extends Controller
             //     'Fullname' => ,
             // ];
 
-            $view = 'Mail.for_GM';
+            $view = 'Mail.approved';
             $subject = 'For GM';
         }
         else if($status == 'disapproved')
@@ -67,11 +68,11 @@ class MailController extends Controller
         // $receipient = $LoginUser->sendEmailTo($incharge);
         $receipient =  
         [
-            // 'jed.relator@fujitsu.com',
+            'jed.relator@fujitsu.com',
             // 'markjohrel.manzano@fujitsu.com',
             // 'georgebien.almenanza@fujitsu.com',
             // 'terrymerwin.balahadia@fujitsu.com',
-            'markangelo.cantalejo@fujitsu.com',
+            // 'markangelo.cantalejo@fujitsu.com',
         ];
 
         Mail::to($receipient)->send(new SendMail($data, $view, $subject));

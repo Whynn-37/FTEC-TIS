@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\MailController;
 use App\TrialLedger;
 use App\Supplier;
 use App\TrialChecksheet;
@@ -173,7 +174,6 @@ class TrialChecksheetController extends Controller
     public function storeIgm(UploadController $Upload, 
                             ChecksheetItem $ChecksheetItem,
                             ChecksheetData $ChecksheetData, 
-                            // TaktTime $TaktTime,
                             Request $Request)
     {
         $part_number = $Request->part_number;
@@ -345,6 +345,7 @@ class TrialChecksheetController extends Controller
     public function finishedChecksheet(TrialChecksheet $TrialChecksheet,
                                         Approval $Approval,
                                         Attachment $Attachment,
+                                        MailController $MailController,
                                         Request $Request)
     {
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
@@ -410,6 +411,14 @@ class TrialChecksheetController extends Controller
                 ];
 
                 $attachment_result = $Attachment->storeAttachments($attachment_data);
+
+                $send_mail = 
+                [
+                    'trial_checksheet_id' => $trial_checksheet_id,
+                    'status' => 'after_inspection'
+                ];
+
+                $MailController->sendEmail($send_mail);
 
                 $status  = 'Success';
                 $message = 'Successfully Saved';
