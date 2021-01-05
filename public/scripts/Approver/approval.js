@@ -2,6 +2,9 @@ $(document).ready(function () {
     
     APPROVE.LoadFinishedInspectionData();
     APPROVE.LoadDisapprovedInspectionData();
+
+    $("#accordion_attachment").remove();
+    $(".modal-footer").remove();
 });
 
 const APPROVE = (() => {

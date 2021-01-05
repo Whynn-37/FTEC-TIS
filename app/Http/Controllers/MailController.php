@@ -10,13 +10,16 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function sendEmail($data)
+    public function sendEmail($trial_checksheet_id, $status, $attachment = null)
     {
         $TrialChecksheet = new TrialChecksheet();
         $LoginUser = new LoginUser();
 
-        $trial_checksheet_id = $data['trial_checksheet_id'];
-        $status = $data['status'];
+        // $trial_checksheet_id = $data['trial_checksheet_id'];
+        // $status              = $data['status'];
+        
+        // $trial_checksheet_id = $request->trial_checksheet_id;
+        // $status              = $request->status;
         
         $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
@@ -51,7 +54,7 @@ class MailController extends Controller
             // ];
 
             $view = 'Mail.approved';
-            $subject = 'For GM';
+            $subject = 'Approved';
         }
         else if($status == 'disapproved')
         {
@@ -68,14 +71,14 @@ class MailController extends Controller
         // $receipient = $LoginUser->sendEmailTo($incharge);
         $receipient =  
         [
-            'jed.relator@fujitsu.com',
-            // 'markjohrel.manzano@fujitsu.com',
+            // 'jed.relator@fujitsu.com',
+            'markjohrel.manzano@fujitsu.com',
             // 'georgebien.almenanza@fujitsu.com',
-            // 'terrymerwin.balahadia@fujitsu.com',
+            'terrymerwin.balahadia@fujitsu.com',
             // 'markangelo.cantalejo@fujitsu.com',
         ];
 
-        Mail::to($receipient)->send(new SendMail($data, $view, $subject));
+        Mail::to($receipient)->send(new SendMail($data, $attachment, $view, $subject));
 
         if (count(Mail::failures()) > 0) 
         {

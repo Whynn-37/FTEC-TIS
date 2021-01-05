@@ -12,17 +12,20 @@ class SendMail extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+    public $attachment;
     public $view;
     public $subject;
+    public $file_path;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data, $view, $subject)
+    public function __construct($data, $attachment, $view, $subject)
     {
         $this->data = $data;
+        $this->attachment = $attachment;
         $this->view = $view;
         $this->subject = $subject;
     }
@@ -34,6 +37,8 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->subject)->view($this->view);
+        $file_path = storage_path('app/public/'.$this->attachment);
+        
+        return $this->subject($this->subject)->view($this->view)->attach($file_path);
     }
 }

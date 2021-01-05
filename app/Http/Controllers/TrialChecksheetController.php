@@ -412,13 +412,13 @@ class TrialChecksheetController extends Controller
 
                 $attachment_result = $Attachment->storeAttachments($attachment_data);
 
-                $send_mail = 
-                [
-                    'trial_checksheet_id' => $trial_checksheet_id,
-                    'status' => 'after_inspection'
-                ];
+                // $send_mail = 
+                // [
+                //     'trial_checksheet_id' => $trial_checksheet_id,
+                //     'status' => 'after_inspection'
+                // ];
 
-                $MailController->sendEmail($send_mail);
+                $MailController->sendEmail($trial_checksheet_id, 'after_inspection');
 
                 $status  = 'Success';
                 $message = 'Successfully Saved';
@@ -551,11 +551,15 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function loadPartNumberColumn(TrialLedger $TrialLedger, LoginUser $LoginUser, Request $request)
+    public function loadPartNumberColumn (TrialLedger $TrialLedger, LoginUser $LoginUser, Request $request)
     {
         $report_status = $request->report_status;
         $merge = [];
 
+
+        $inspector ='';
+        $evaluator ='';
+        $approver ='';
         if($report_status == null)
         {
             $status = 'Error';
@@ -577,12 +581,21 @@ class TrialChecksheetController extends Controller
                     {
                         $merge[] = 
                         [
-                            'part_number'       => $status_result_value['part_number'],
-                            'part_name'         => $status_result_value['part_name'],
-                            'supplier_name'     => $status_result_value['supplier_name'],
-                            'revision_number'   => $status_result_value['revision_number'],
-                            'trial_number'      => $status_result_value['trial_number'],
-                            'inspector'         => $inspector,
+                            'trial_checksheet_id'   => $status_result_value['id'],
+                            'part_number'           => $status_result_value['part_number'],
+                            'part_name'             => $status_result_value['part_name'],
+                            'supplier_name'         => $status_result_value['supplier_name'],
+                            'revision_number'       => $status_result_value['revision_number'],
+                            'trial_number'          => $status_result_value['trial_number'],
+                            'judgment'              => "-",
+                            'inspector'             => $inspector,
+                            'inspect_datetime'      => "-",
+                            'evaluated_by'          => "-",
+                            'evaluated_datetime'    => "-",
+                            'approved_by'           => "-",
+                            'approved_datetime'     => "-",
+                            'merge_pdf'             => "-",
+                         
                         ];
                     }
 
@@ -592,12 +605,20 @@ class TrialChecksheetController extends Controller
                         {
                             $merge[] = 
                             [
+                                'trial_checksheet_id'   => $status_result_value['id'],
                                 'part_number'       => $status_result_value['part_number'],
                                 'part_name'         => $status_result_value['part_name'],
                                 'supplier_name'     => $status_result_value['supplier_name'],
                                 'revision_number'   => $status_result_value['revision_number'],
                                 'trial_number'      => $status_result_value['trial_number'],
+                                'judgment'             => "-",
                                 'inspector'         => $full_name_value['fullname'],
+                                'inspect_datetime'      => "-",
+                                'evaluated_by'          => "-",
+                                'evaluated_datetime'    => "-",
+                                'approved_by'           => "-",
+                                'approved_datetime'     => "-",
+                                'merge_pdf'             => "-",
                             ];
                         }
                         return $merge;
@@ -638,6 +659,7 @@ class TrialChecksheetController extends Controller
 
                     $merge[] = 
                     [
+                        'trial_checksheet_id'   => $status_result_value['id'],
                         'part_number'           => $status_result_value['part_number'],
                         'part_name'             => $status_result_value['part_name'],
                         'supplier_name'         => $status_result_value['supplier_name'],
@@ -648,6 +670,9 @@ class TrialChecksheetController extends Controller
                         'inspect_datetime'      => $status_result_value['inspect_datetime'],
                         'evaluated_by'          => $evaluator,
                         'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
+                        'approved_by'           => "-",
+                        'approved_datetime'     => "-",
+                        'merge_pdf'             => "-",
                     ];
                 }
             }
@@ -657,7 +682,7 @@ class TrialChecksheetController extends Controller
                 [
                     'decision'    =>  2,
                 ];
-
+              
                 $status_result = $TrialLedger->loadPartnumberHistory($column);
                 foreach ($status_result as $status_result_value) 
                 {
@@ -668,7 +693,7 @@ class TrialChecksheetController extends Controller
                     $inspect = array_unique($inspect);
                     $evaluated = array_unique($evaluated);
                     $approved = array_unique($approved);
-
+      
                     foreach ($inspect as $inspect_value) 
                     {
                         if ($status_result_value['inspect_by'] === $inspect_value['name']) 
@@ -695,6 +720,7 @@ class TrialChecksheetController extends Controller
 
                     $merge[] = 
                     [
+                        'trial_checksheet_id'   => $status_result_value['id'],
                         'part_number'           => $status_result_value['part_number'],
                         'part_name'             => $status_result_value['part_name'],
                         'supplier_name'         => $status_result_value['supplier_name'],
@@ -707,6 +733,7 @@ class TrialChecksheetController extends Controller
                         'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
                         'approved_by'           => $approver,
                         'approved_datetime'     => $status_result_value['approved_datetime'],
+                        'merge_pdf'             => "-",
                     ];
                 }
             }
@@ -752,8 +779,9 @@ class TrialChecksheetController extends Controller
                         }
                     }
 
-                    $merge[] = 
+                $merge[] = 
                     [
+                        'trial_checksheet_id'   => $status_result_value['id'],
                         'part_number'           => $status_result_value['part_number'],
                         'part_name'             => $status_result_value['part_name'],
                         'supplier_name'         => $status_result_value['supplier_name'],
@@ -766,6 +794,7 @@ class TrialChecksheetController extends Controller
                         'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
                         'approved_by'           => $approver,
                         'approved_datetime'     => $status_result_value['approved_datetime'],
+                        'merge_pdf'             => storage_path('app/public/'.$status_result_value['file_folder'].'/'.$status_result_value['file_folder'].".pdf" ),
                     ];
                 }
             }
@@ -813,6 +842,7 @@ class TrialChecksheetController extends Controller
 
                     $merge[] = 
                     [
+                        'trial_checksheet_id'   => $status_result_value['id'],
                         'part_number'           => $status_result_value['part_number'],
                         'part_name'             => $status_result_value['part_name'],
                         'supplier_name'         => $status_result_value['supplier_name'],
@@ -825,6 +855,7 @@ class TrialChecksheetController extends Controller
                         'evaluated_datetime'    => $status_result_value['evaluated_datetime'],
                         'disapproved_by'        => $approver,
                         'disapproved_datetime'  => $status_result_value['disapproved_datetime'],
+                        'merge_pdf'             => storage_path('app/public/'.$status_result_value['file_folder'].'/'.$status_result_value['file_folder'].".pdf" ),
                     ];
                 }
             }
@@ -832,7 +863,7 @@ class TrialChecksheetController extends Controller
             $status = 'Success';
             $message = 'Successfully Loaded';
         }
-        
+        //return $report_status;
         return 
         [
             'status'    =>  $status,

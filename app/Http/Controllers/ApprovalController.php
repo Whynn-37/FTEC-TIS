@@ -442,13 +442,13 @@ class ApprovalController extends Controller
         
         $result =  $Approval->approved($trial_checksheet_id, $data);
 
-        $send_mail = 
-        [
-            'trial_checksheet_id' => $trial_checksheet_id,
-            'status' => $status
-        ];
+        // $send_mail = 
+        // [
+        //     'trial_checksheet_id' => $trial_checksheet_id,
+        //     'status' => $status
+        // ];
 
-        $MailController->sendEmail($send_mail);
+        $MailController->sendEmail($trial_checksheet_id, $status);
 
         $status = 'Error';
         $message = 'Somethings Wrong!';

@@ -98,21 +98,21 @@ class TrialChecksheet extends Model
         ->first();
     }
 
-    public function getAllData($where)
+    public function getAllData($trial_checksheet_id)
     {
         return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
         ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        ->where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('trial_checksheets.id', $trial_checksheet_id)
         ->select(
             'trial_checksheets.id', 
-            'trial_ledgers.application_date', 
-            'trial_checksheets.part_number', 
-            'trial_ledgers.part_name', 
-            'trial_ledgers.supplier_code', 
-            'suppliers.supplier_name', 
             'trial_checksheets.revision_number', 
             'trial_checksheets.trial_number', 
             'trial_checksheets.judgment', 
+            'trial_checksheets.part_number', 
+            'trial_ledgers.application_date', 
+            'trial_ledgers.part_name', 
+            'trial_ledgers.supplier_code', 
+            // 'suppliers.supplier_name', 
             'approvals.inspect_by', 
             'approvals.inspect_datetime', 
             'approvals.evaluated_by', 
@@ -122,7 +122,8 @@ class TrialChecksheet extends Model
             'approvals.disapproved_by', 
             'approvals.disapproved_datetime', 
             'approvals.decision', 
-            'approvals.reason')
+            'approvals.reason'
+            )
         ->first();
     }
 }

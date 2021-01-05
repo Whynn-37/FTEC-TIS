@@ -66,7 +66,7 @@ Route::post('approved','ApprovalController@approved');
 
 Route::post('pdf-test', 'FpdfController@pdfTest');
 
-Route::get('send-email','MailController@sendEmail');
+Route::get('send-email/{id}/{status}','MailController@sendEmail');
 Route::get('for-evaluator','MailController@forEvaluator');
 Route::get('for-approval','MailController@forApproval');
 Route::get('for-disapproval','MailController@forDispproval');

@@ -61,10 +61,12 @@ class TrialLedger extends Model
 
     public function forInspection()
     {
-        return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
-        ->where('actual_end_date', null)
-        ->orWhere('actual_end_date', '')
+        return TrialLedger::join('trial_checksheets', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
+        ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        // ->where('actual_end_date', null)
+        // ->orWhere('actual_end_date', '')
         ->select(
+            'trial_checksheets.id',
             'trial_ledgers.part_number', 
             'trial_ledgers.part_name', 
             'trial_ledgers.revision_number', 
@@ -72,6 +74,17 @@ class TrialLedger extends Model
             'trial_ledgers.inspector_id',
             'suppliers.supplier_name')
         ->get();
+        // return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        // ->where('actual_end_date', null)
+        // ->orWhere('actual_end_date', '')
+        // ->select(
+        //     'trial_ledgers.part_number', 
+        //     'trial_ledgers.part_name', 
+        //     'trial_ledgers.revision_number', 
+        //     'trial_ledgers.trial_number', 
+        //     'trial_ledgers.inspector_id',
+        //     'suppliers.supplier_name')
+        // ->get();
     }
 
     public function loadPartnumberHistory($column)
@@ -79,6 +92,7 @@ class TrialLedger extends Model
         return TrialLedger::join('trial_checksheets', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
         ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
         ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        ->leftJoin('attachments', 'attachments.trial_checksheet_id', 'trial_checksheets.id')
         ->where($column)
         ->select(
             'trial_ledgers.part_number', 
@@ -93,8 +107,10 @@ class TrialLedger extends Model
             'approvals.approved_datetime',
             'approvals.disapproved_by',
             'approvals.disapproved_datetime',
+            'trial_checksheets.id',
             'trial_checksheets.judgment',
-            'suppliers.supplier_name')
+            'suppliers.supplier_name',
+            'attachments.file_folder')
         ->get();
     }
 }

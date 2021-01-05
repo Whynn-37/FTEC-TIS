@@ -430,7 +430,7 @@
         // select2
         let select2 = $('.select2').select2();
         select2.data('select2').$selection.css('height', '45px');
-        select2.data('select2').$selection.css('margin-bottom', '15px');
+        select2.data('select2').$selection.css('margin-bottom', '1px');
         
     </script>
     @endsection

@@ -131,7 +131,7 @@
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> STATUS </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> STATUS </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED </td>
                                                     </tr>
                                                 </tbody>
                                         </table>
