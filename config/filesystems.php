@@ -65,6 +65,30 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'ftp' => [
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+            'root' => 'uploads/' // for example: /var/www/html/dev/images
+        ],
+
+        'sftp' => [
+            'driver' => 'sftp',
+            'host' => '10.164.30.10',
+            'username' => 'FDTP\fp181092',
+            'password' => 'fp181092',
+        
+            // Settings for SSH key based authentication...
+            // 'privateKey' => '/path/to/privateKey',
+            // 'password' => 'encryption-password',
+        
+            // Optional SFTP Settings...
+            'port' => 22,
+            // 'root' => '',
+            // 'timeout' => 30,
+        ],
+
     ],
 
     /*

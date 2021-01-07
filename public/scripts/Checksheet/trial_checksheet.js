@@ -2,7 +2,6 @@ $(document).ready(function () {
     CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.InitializeCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
-
 });
 
 let logVisit = function () {
@@ -97,12 +96,15 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.LoadPartnumber = () => {
+
         $.ajax({
             url: `load-partnumber`,
             type: 'get',
             dataType: 'json',
             cache: false,
             success: data => {
+                console.log(data.data);
+
                 $('#slc_part_number').empty();
                 let select_options = '<option value="" selected disabled>Select part no.</option>';
 
@@ -115,16 +117,49 @@ const CHECKSHEET = (() => {
         });
     };
 
-    this_checksheet.LoadRevision = (part_number) => {
+    //
+    this_checksheet.LoadInspectionReason = (part_number) => {
+        // $('#slc_inspection_reason').LoadingOverlay('show');
+        $('#slc_revision_number').empty();
+        $.ajax({
+            url: `load-inspection-reason`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                part_number: part_number
+            },
+            success: data => {
+                // console.log(data);
+                $('#slc_inspection_reason').empty();
+
+                let select_options = '<option value="" selected disabled>Select inspection reason</option>';
+
+                data.data.forEach((value) => {
+                    select_options += `<option value="${value.inspection_reason}">${value.inspection_reason}</option>`;
+                });
+
+                $('#slc_inspection_reason').append(select_options);
+                $('#slc_inspection_reason').LoadingOverlay('hide');
+            }
+        });
+    };
+
+    //
+    this_checksheet.LoadRevision = (inspection_reason) => {
         $('#slc_revision_number').LoadingOverlay('show');
         $('#slc_trial_number').empty();
+
+        let part_number = $('#slc_part_number').val();
+
         $.ajax({
             url: `load-revision`,
             type: 'get',
             dataType: 'json',
             cache: false,
             data: {
-                part_number: part_number
+                part_number: part_number,
+                inspection_reason: inspection_reason
             },
             success: data => {
                 $('#slc_revision_number').empty();
@@ -141,10 +176,11 @@ const CHECKSHEET = (() => {
         });
     };
 
-    this_checksheet.LoadTrialNumber = () => {
+    //
+    this_checksheet.LoadTrialNumber = (revision_number) => {
 
         let part_number = $('#slc_part_number').val();
-        let revision_number = $('#slc_revision_number').val();
+        let inspection_reason = $('#slc_inspection_reason').val();
 
         $('#slc_trial_number').LoadingOverlay('show');
 
@@ -155,6 +191,7 @@ const CHECKSHEET = (() => {
             cache: false,
             data: {
                 part_number: part_number,
+                inspection_reason: inspection_reason,
                 revision_number: revision_number,
             },
             success: data => {
@@ -172,11 +209,98 @@ const CHECKSHEET = (() => {
         });
     };
 
+    //
+    this_checksheet.LoadApplicationDate = () => {
+
+        let part_number = $('#slc_part_number').val();
+        let inspection_reason = $('#slc_inspection_reason').val();
+        let revision_number = $('#slc_revision_number').val();
+        let trial_number = $('#slc_trial_number').val();
+
+        $.ajax({
+            url: `load-application-date`,
+            type: 'get',
+            dataType: 'json',
+            cache: false,
+            data: {
+                part_number: part_number,
+                inspection_reason: inspection_reason,
+                revision_number: revision_number,
+                trial_number: trial_number,
+            },
+            success: data => {
+                $('#trial_checksheet_application_date').empty();
+                $('#trial_checksheet_application_date').val(data.data.application_date);
+            }
+        });
+    };
+
+    // this_checksheet.LoadRevision = (part_number) => {
+    //     $('#slc_revision_number').LoadingOverlay('show');
+    //     $('#slc_trial_number').empty();
+    //     $.ajax({
+    //         url: `load-revision`,
+    //         type: 'get',
+    //         dataType: 'json',
+    //         cache: false,
+    //         data: {
+    //             part_number: part_number
+    //         },
+    //         success: data => {
+    //             $('#slc_revision_number').empty();
+
+    //             let select_options = '<option value="" selected disabled>Select revision number</option>';
+
+    //             data.data.forEach((value) => {
+    //                 select_options += `<option value="${value.revision_number}">${value.revision_number}</option>`;
+    //             });
+
+    //             $('#slc_revision_number').append(select_options);
+    //             $('#slc_revision_number').LoadingOverlay('hide');
+    //         }
+    //     });
+    // };
+
+    // this_checksheet.LoadTrialNumber = () => {
+
+    //     let part_number = $('#slc_part_number').val();
+    //     let revision_number = $('#slc_revision_number').val();
+
+    //     $('#slc_trial_number').LoadingOverlay('show');
+
+    //     $.ajax({
+    //         url: `load-trial-number`,
+    //         type: 'get',
+    //         dataType: 'json',
+    //         cache: false,
+    //         data: {
+    //             part_number: part_number,
+    //             revision_number: revision_number,
+    //         },
+    //         success: data => {
+    //             $('#slc_trial_number').empty();
+
+    //             let select_options = '<option value="" selected disabled>Select trial number</option>';
+
+    //             data.data.forEach((value) => {
+    //                 select_options += `<option value="${value.trial_number}">${value.trial_number}</option>`;
+    //             });
+
+    //             $('#slc_trial_number').append(select_options);
+    //             $('#slc_trial_number').LoadingOverlay('hide');
+    //         }
+    //     });
+    // };
+
+    //
     this_checksheet.ValidateLoadDetails = () => {
 
         let part_number = $('#slc_part_number').val();
+        let inspection_reason = $('#slc_inspection_reason').val();
         let revision_number = $('#slc_revision_number').val();
         let trial_number = $('#slc_trial_number').val();
+
+        let application_date = $('#trial_checksheet_application_date').val();
 
         if (part_number === null && revision_number === null && trial_number === null) {
             $('#span_error_part_number').remove();
@@ -200,11 +324,39 @@ const CHECKSHEET = (() => {
             $('#span_error_part_number').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
-            CHECKSHEET.LoadDetails(part_number, revision_number, trial_number);
+            // CHECKSHEET.LoadDetails(part_number, inspection_reason, revision_number, trial_number);
+            CHECKSHEET.LoadDetails(application_date);
         }
+
+        // if (part_number === null && revision_number === null && trial_number === null) {
+        //     $('#span_error_part_number').remove();
+        //     $('#span_error_revision_number').remove();
+        //     $('#span_error_trial_number').remove();
+        //     $('#slc_part_number').before('<span id ="span_error_part_number" class="span-error">Required</span>');
+        //     $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
+        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        // } else if (revision_number === null && trial_number === null) {
+        //     $('#span_error_part_number').remove();
+        //     $('#span_error_revision_number').remove();
+        //     $('#span_error_trial_number').remove();
+        //     $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
+        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        // } else if (trial_number === null) {
+        //     $('#span_error_part_number').remove();
+        //     $('#span_error_revision_number').remove();
+        //     $('#span_error_trial_number').remove();
+        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        // } else {
+        //     $('#span_error_part_number').remove();
+        //     $('#span_error_revision_number').remove();
+        //     $('#span_error_trial_number').remove();
+        //     CHECKSHEET.LoadDetails(part_number, revision_number, trial_number);
+        // }
     };
 
-    this_checksheet.LoadDetails = (part_number, revision_number, trial_number) => {
+    //
+    // this_checksheet.LoadDetails = (part_number, inspection_reason, revision_number, trial_number) => {
+    this_checksheet.LoadDetails = (application_date) => {
 
         $('#accordion_details').LoadingOverlay('show');
         $('#div_card_takt_time').LoadingOverlay('show');
@@ -215,9 +367,11 @@ const CHECKSHEET = (() => {
             dataType: 'json',
             cache: false,
             data: {
-                part_number: part_number,
-                revision_number: revision_number,
-                trial_number: trial_number,
+                // part_number: part_number,
+                // inspection_reason: inspection_reason,
+                // revision_number: revision_number,
+                // trial_number: trial_number,
+                application_date: application_date,
             },
             success: data => {
                 if (data.status === 'Success') {
@@ -230,14 +384,14 @@ const CHECKSHEET = (() => {
                     $('#txt_received_date').val(data.data.trial_checksheets.received_date);
                     $('#txt_inspection_completion_date').val(data.data.trial_checksheets.delivery_date);
                     $('#txt_actual_inspection_time').val(data.data.trial_checksheets.inspection_actual_time);
-                    $('#txt_inspection_reason').val(data.data.trial_checksheets.inspection_reason);
+                    // $('#txt_inspection_reason').val(data.data.trial_checksheets.inspection_reason);
                     $('#txt_die_kind').val(data.data.trial_checksheets.die_class);
                     $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
                     // load ng IGM
-                    IGM.LoadIGM(data.data.trial_checksheets.id);
+                    // IGM.LoadIGM(data.data.trial_checksheets.id);
                     //load ng cycle time
                     CHECKSHEET.LoadCycleTime(data.data.trial_checksheets.inspection_required_time);
                     //load ng downtime
@@ -319,6 +473,7 @@ const CHECKSHEET = (() => {
         });
     };
 
+    //
     this_checksheet.StartCycleTime = (downtime_running_time) => {
 
         $('#div_card_takt_time').LoadingOverlay('show');
@@ -329,6 +484,8 @@ const CHECKSHEET = (() => {
         let part_number         = $('#slc_part_number').val();
         let revision_number     = $('#slc_revision_number').val();
         let trial_number        = $('#slc_trial_number').val();
+        let inspection_reason   = $('#slc_inspection_reason').val();
+        
 
         $.ajax({
             url     : `start-cycle-time`,
@@ -343,6 +500,8 @@ const CHECKSHEET = (() => {
                 part_number         : part_number,
                 revision_number     : revision_number,
                 trial_number        : trial_number,
+                //
+                inspection_reason   : inspection_reason,
             },
             success: data => 
             {
@@ -364,6 +523,8 @@ const CHECKSHEET = (() => {
                     $('#trial_checksheet_id').val(data.data.takt_time.trial_checksheet_id);
 
                     CHECKSHEET.LoadCycleTime(0, 'start');
+                    IGM.LoadIGM(data.data.takt_time.trial_checksheet_id);
+
 
                     //pag show ng attachments at ssave button
                     $('#div_row_numbering_drawing').prop('hidden',false);

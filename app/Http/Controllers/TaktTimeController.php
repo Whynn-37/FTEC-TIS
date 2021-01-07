@@ -54,10 +54,12 @@ class TaktTimeController extends Controller
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
         $trial_number = $Request->trial_number;
+        $inspection_reason = $Request->inspection_reason;
 
         $takt_time_result = [];
         $checksheet_item_result = [];
         $checksheet_data_result = [];
+        $checksheet_items = [];
 
         if($trial_checksheet_id !== null)
         {
@@ -71,6 +73,12 @@ class TaktTimeController extends Controller
                 'total_takt_time'       => null,
                 'takt_time'             => $takt_times,
             ];
+
+            $status = "Success";
+            $message = "Successfully load"; 
+
+            $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+
         }
         else
         {
@@ -102,58 +110,66 @@ class TaktTimeController extends Controller
                 
                 if($trial_number >= 2)
                 {
-                    $application_date = $TrialLedger->getApplicationDate($part_number);
+                    $application_date = $TrialLedger->getApplicationDate($part_number, $inspection_reason, $trial_number-1);
                     
                     $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
-    
-                    foreach($result_items as $items_value) 
+
+                    if (count($result_items) !== 0) 
                     {
-                        $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
-
-                        $checksheet_items[] = 
-                        [
-                            'trial_checksheet_id'   => $last_id['id'],
-                            'item_number'           => $items_value->item_number,
-                            'tools'                 => $items_value->tools,
-                            'type'                  => $items_value->type,
-                            'specification'         => $items_value->specification,
-                            'upper_limit'           => $items_value->upper_limit,
-                            'lower_limit'           => $items_value->lower_limit,
-                            'judgment'              => 'N/A',
-                            'item_type'             => 0,
-                            'created_at'            => now(),
-                            'updated_at'            => now()
-                        ];
-                    }
-
-                    $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
-
-                    $new_array = [];
-                    for($i=0; $i<count($result_datas); $i++)
-                    {
-                        $items = $result_datas[$i];
-
-                        foreach($items as $item)
+                        foreach($result_items as $items_value) 
                         {
-                            $item->checksheet_item_id = $checksheet_item_result[$i];
-                            $new_array[] = $item;
+                            $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
+    
+                            $checksheet_items[] = 
+                            [
+                                'trial_checksheet_id'   => $last_id['id'],
+                                'item_number'           => $items_value->item_number,
+                                'tools'                 => $items_value->tools,
+                                'type'                  => $items_value->type,
+                                'specification'         => $items_value->specification,
+                                'upper_limit'           => $items_value->upper_limit,
+                                'lower_limit'           => $items_value->lower_limit,
+                                'judgment'              => 'N/A',
+                                'item_type'             => 0,
+                                'created_at'            => now(),
+                                'updated_at'            => now()
+                            ];
                         }
+    
+                        $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
+    
+                        $new_array = [];
+                        for($i=0; $i<count($result_datas); $i++)
+                        {
+                            $items = $result_datas[$i];
+    
+                            foreach($items as $item)
+                            {
+                                $item->checksheet_item_id = $checksheet_item_result[$i];
+                                $new_array[] = $item;
+                            }
+                        }
+                        
+                        foreach ($new_array as $value) 
+                        {
+                            $checksheet_datas[] =
+                            [
+                                'checksheet_item_id'    => $value['checksheet_item_id'],
+                                'coordinates'            => $value['coordinates'],
+                                'sub_number'            => $value['sub_number'],
+                                'created_at'            => now(),
+                                'updated_at'            => now()
+                            ];
+                        }
+                        
+                        $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
                     }
-                    
-                    foreach ($new_array as $value) 
-                    {
-                        $checksheet_datas[] =
-                        [
-                            'checksheet_item_id'    => $value['checksheet_item_id'],
-                            'coordinates'            => $value['coordinates'],
-                            'sub_number'            => $value['sub_number'],
-                            'created_at'            => now(),
-                            'updated_at'            => now()
-                        ];
-                    }
-                    
-                    $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
                 }
+
+                $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+
+                $status = "Success";
+                $message = "Successfully Updated"; 
 
                 DB::commit();
             } 
@@ -163,17 +179,6 @@ class TaktTimeController extends Controller
                 $message = $th->getMessage();
                 DB::rollback();
             }
-        }
-
-        $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
-
-        $status = "Error";
-        $message = "Not Successfully Updated";
-
-        if($takt_time_result)
-        {
-            $status = "Success";
-            $message = "Successfully Updated"; 
         }
         
         return 

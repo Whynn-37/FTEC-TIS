@@ -32,10 +32,23 @@
                                     <div id="accordion_details" class="collapse show" data-parent="#accordion4">
                                         <div class="card-body">
                                             {{-- HIDDEN ID REQUEST NI JED --}}
-                                            <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
-                                            <input type="text" id="trial_checksheet_application_date" name="application_date" hidden>
+                                            <input type="text" id="trial_checksheet_id" name="trial_checksheet_id">
+                                            <input type="text" id="trial_checksheet_application_date" name="application_date">
                                             <div class="row">
                                                 <div class="col-md-4">
+                                                    <label>PART NUMBER:</label>&nbsp;
+                                                    <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
+                                                    <select class="form-control mb-3 select2 form_trial_checksheet_field" name="part_number" id="slc_part_number" onchange="CHECKSHEET.LoadInspectionReason(this.value)"></select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>REVISION:</label>
+                                                    <select class="form-control mb-3 form_trial_checksheet_field" name="revision_number" id="slc_revision_number" onchange="CHECKSHEET.LoadTrialNumber(this.value)"></select>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label>TRIAL NUMBER:</label>
+                                                    <select id="slc_trial_number" class="form-control mb-3" onchange="CHECKSHEET.LoadApplicationDate()"></select>
+                                                </div>
+                                                {{-- <div class="col-md-4">
                                                     <label>PART NUMBER:</label>&nbsp;
                                                     <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
                                                     <select class="form-control mb-3 select2 form_trial_checksheet_field" name="part_number" id="slc_part_number" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
@@ -47,7 +60,7 @@
                                                 <div class="col-md-4 mb-3">
                                                     <label>TRIAL NUMBER:</label>
                                                     <select id="slc_trial_number" class="form-control mb-3"></select>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
@@ -81,9 +94,14 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                {{-- <div class="col-md-4">
                                                     <label>TRIAL INSPECTION REASON (INSPECTION TYPE):</label>
                                                     <input class="form-control mb-3" type="text" placeholder="Trial inspection reason" id="txt_inspection_reason" readonly>
+                                                </div> --}}
+                                                <div class="col-md-4">
+                                                    <label>TRIAL INSPECTION REASON (INSPECTION TYPE):</label>&nbsp;
+                                                    <span id="span_insp_reason" class="span-error form_trial_checksheet_field_error"></span>
+                                                    <select class="form-control mb-3 select2 form_trial_checksheet_field" name="inspection_reason" id="slc_inspection_reason" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label>KIND OF DIE:</label>

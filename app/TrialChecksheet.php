@@ -15,12 +15,16 @@ class TrialChecksheet extends Model
         return $this->hasMany('App\ChecksheetItem');
     }
 
-    public function getTrialChecksheet($data)
+    // public function getTrialChecksheet($data)
+    // {
+    public function getTrialChecksheet($application_date)
     {
-        return TrialChecksheet::where('part_number',$data['part_number'])
-        ->where('revision_number',$data['revision_number'])
-        ->where('trial_number',$data['trial_number'])
+        return TrialChecksheet::where('application_date',$application_date)
         ->first();
+        // return TrialChecksheet::where('part_number',$data['part_number'])
+        // ->where('revision_number',$data['revision_number'])
+        // ->where('trial_number',$data['trial_number'])
+        // ->first();
     }
 
     public function storeTrialChecksheet($data)
@@ -41,6 +45,7 @@ class TrialChecksheet extends Model
                 ->on('trial_ledgers.trial_number', '=', 'trial_checksheets.trial_number')
                 ->on('trial_ledgers.revision_number', '=', 'trial_checksheets.revision_number');
         })
+        ->join('suppliers', 'trial_ledgers.supplier_code', '=', 'suppliers.supplier_code')
         ->where('trial_checksheets.id', $id)
         ->select([
             'trial_checksheets.part_number', 
@@ -55,6 +60,8 @@ class TrialChecksheet extends Model
             'trial_ledgers.die_class',
             'trial_ledgers.supplier_code',
             'trial_ledgers.inspection_reason',
+            'trial_ledgers.model_name',
+            'suppliers.supplier_name',
             ])
         ->first();
     }
