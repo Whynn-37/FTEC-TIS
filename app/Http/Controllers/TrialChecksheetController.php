@@ -136,36 +136,48 @@ class TrialChecksheetController extends Controller
         {
             $data = $TrialLedger->loadInspectionReason($part_number);
 
-            foreach ($data['ledger'] as $ledger_value) 
+            if (count($data['checksheet']) !== 0) 
             {
-                $application_date[] = $ledger_value->application_date;
-                foreach ($data['checksheet'] as $checksheet_value) 
+                foreach ($data['ledger'] as $ledger_value) 
                 {
-                    $match_application_date = false;
-
-                    if ($checksheet_value->application_date === $ledger_value->application_date)
+                    $application_date[] = $ledger_value->application_date;
+                    foreach ($data['checksheet'] as $checksheet_value) 
                     {
-                        $match_application_date[] =  $ledger_value->application_date;
+                        $match_application_date = false;
+
+                        if ($checksheet_value->application_date === $ledger_value->application_date)
+                        {
+                            $match_application_date[] =  $ledger_value->application_date;
+                        }
                     }
                 }
-            }
-            
-            $result  = [];
-            if($match_application_date !== false)
-            {
-                for($x=0; $x<count($match_application_date);$x++)
+                
+                $result  = [];
+                if($match_application_date !== false)
                 {
-                    $key = array_search($match_application_date[$x], $application_date); 
-                    unset($data['ledger'][$key]); 
+                    for($x=0; $x<count($match_application_date);$x++)
+                    {
+                        $key = array_search($match_application_date[$x], $application_date); 
+                        unset($data['ledger'][$key]); 
+                    }
+                }
+
+                foreach ($data['ledger'] as $ledger_value) 
+                { 
+                    $result[] = 
+                    [
+                        'inspection_reason' => $ledger_value->inspection_reason
+                    ];
                 }
             }
-
-            foreach ($data['ledger'] as $ledger_value) 
-            { 
-                $result[] = 
-                [
-                    'inspection_reason' => $ledger_value->inspection_reason
-                ];
+            else 
+            {
+                foreach ($data['ledger'] as $ledger_value) 
+                {
+                    $result[] = [
+                        'inspection_reason' => $ledger_value->inspection_reason
+                    ];
+                }
             }
 
             $status = 'Error';
