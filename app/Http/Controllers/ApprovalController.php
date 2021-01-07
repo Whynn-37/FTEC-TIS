@@ -22,6 +22,7 @@ class ApprovalController extends Controller
                                         ChecksheetItem $ChecksheetItem,
                                         TrialChecksheet $TrialChecksheet, 
                                         Attachment $Attachment,
+                                        TaktTime $TaktTime,
                                         Request $Request)
     {
         $trial_checksheet_id = $Request->id;
@@ -33,6 +34,7 @@ class ApprovalController extends Controller
         $checksheet_items = [];
         $checksheet_data = [];
         $attachment_data = [];
+        $takt_time_data = [];
 
         if ($trial_checksheet_id !== null) 
         {
@@ -52,6 +54,9 @@ class ApprovalController extends Controller
                 'file_folder' => $attachment['file_folder'],
                 'file_name' => $explode_attachment
             ];
+
+            $takt_time_data = $TaktTime->getTotalTaktTime($trial_checksheet_id);
+
 
             $status = 'Error';
             $message = 'Somethings Wrong!';
@@ -74,7 +79,8 @@ class ApprovalController extends Controller
                 'checksheet_details'    => $checksheet_details,
                 'checksheet_items'      => $checksheet_items,
                 'checksheet_data'       => $checksheet_data,
-                'attachment'            => $attachment_data
+                'attachment'            => $attachment_data,
+                'takt_time'             => $takt_time_data,
             ]
         ];
     }
@@ -296,30 +302,47 @@ class ApprovalController extends Controller
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
 
-        $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
+         $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
         $data_supplier = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
 
         $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
 
-        $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number']);
+         $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number']);
 
         $get_first_trial = $TrialChecksheet->getFirstTrial($data_trial_ledger_merge['part_number']);
-
-        $get_first_trial_ng = $ChecksheetItem->getfirstTrialNg($get_first_trial['id']);
 
         $result_merge = [];
         $checksheet_items_result = [];
         $checksheet_datas_result = [];
 
-        for($i=0; $i < count($details_data); $i++)
+        $get_first_trial_ng = $ChecksheetItem->getfirstTrialNg($get_first_trial['id']);
+
+        if (count($get_first_trial_ng) !== 0) 
         {
-            $trial_checksheet_id_result = $details_data[$i]['id'];
-            for ($z=0; $z < count($get_first_trial_ng); $z++) 
-            { 
-                $result_merge[$i][] = [
-                    'trial_checksheet_id' => $trial_checksheet_id_result,
-                    'item_number' => $get_first_trial_ng[$z]['item_number']
-                ];
+            if ($data_trial_ledger['trial_number'] !== 1) 
+            {
+                for($i=0; $i < count($details_data); $i++)
+                {
+                    $trial_checksheet_id_result = $details_data[$i]['id'];
+                    for ($z=0; $z < count($get_first_trial_ng); $z++) 
+                    { 
+                        $result_merge[$i][] = [
+                            'trial_checksheet_id' => $trial_checksheet_id_result,
+                            'item_number' => $get_first_trial_ng[$z]['item_number']
+                        ];
+                    }
+                }
+            }
+            else 
+            {
+                for($i=0; $i < count($details_data); $i++)
+                {
+                    $trial_checksheet_id_result = $details_data[$i]['id'];
+                    $result_merge[$i][] = [
+                        'trial_checksheet_id' => $details_data[$i]['id'],
+                        'item_number' => $get_first_trial_ng[$z]['item_number']
+                    ];
+                }
             }
         }
 

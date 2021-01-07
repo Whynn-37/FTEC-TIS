@@ -19,14 +19,98 @@ use Session;
 use DB;
 class TrialChecksheetController extends Controller
 {
+    // public function loadPartnumber(TrialLedger $TrialLedger)
+    // {
+    //     $data = $TrialLedger->loadPartnumber();
+
+    //     $status = 'Error';
+    //     $message = 'No Part Number';
+
+    //     if (count($data) !== 0) 
+    //     {
+    //         $status = 'Success';
+    //         $message = 'Part Number Successfully Load';
+    //     }
+
+    //     return 
+    //     [
+    //         'status'    =>  $status,
+    //         'message'   =>  $message,
+    //         'data'      =>  $data
+    //     ];
+    // }
+
+    public function unique_multidim_array($array, $key) { 
+        $temp_array = array(); 
+        $i = 0; 
+        $key_array = array(); 
+        
+        foreach($array as $val) { 
+            if (!in_array($val[$key], $key_array)) { 
+                $key_array[$i] = $val[$key]; 
+                $temp_array[] = $val; 
+            } 
+            $i++; 
+        } 
+
+        return $temp_array; 
+    }
+
+    public function in_array_r($needle, $haystack, $strict = false) 
+    {
+        foreach ($haystack as $item) {
+            if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array($needle, $item, $strict))) 
+            {
+                $result[] = 
+                [
+                    'inspection_reason' => $item->inspection_reason
+                ];
+            }
+            else 
+            {
+               $result = [];
+            }
+        }
+    
+        return $result;
+    }
+
     public function loadPartnumber(TrialLedger $TrialLedger)
     {
         $data = $TrialLedger->loadPartnumber();
 
+        if (count($data['checksheet']) !== 0) 
+        {
+            foreach ($data['checksheet'] as $checksheet_value) 
+            {
+                foreach ($data['ledger'] as $ledger_value) 
+                {
+                    if ($checksheet_value->application_date !== $ledger_value->application_date ) 
+                    {
+                        $result[] = 
+                        [
+                            'part_number' => $ledger_value->part_number
+                        ];
+                    }
+                }
+            }
+        }
+        else 
+        {
+            foreach ($data['ledger'] as $ledger_value) 
+            {
+                $result[] = [
+                    'part_number' => $ledger_value['part_number']
+                ];
+            }
+        }
+
+        $result = $this->unique_multidim_array($result,'part_number');
+
         $status = 'Error';
         $message = 'No Part Number';
 
-        if (count($data) !== 0) 
+        if (count($result) !== 0) 
         {
             $status = 'Success';
             $message = 'Part Number Successfully Load';
@@ -36,21 +120,84 @@ class TrialChecksheetController extends Controller
         [
             'status'    =>  $status,
             'message'   =>  $message,
-            'data'      =>  $data
+            'data'      =>  $result
+        ];
+    }
+
+    public function loadInspectionReason(TrialLedger $TrialLedger, Request $Request)
+    {
+        $part_number = $Request->part_number;
+
+        $status = 'Error';
+        $message = 'Inspection Reason Required';
+        // $data = [];
+
+        if ($part_number !== null) 
+        {
+            $data = $TrialLedger->loadInspectionReason($part_number);
+
+            foreach ($data['ledger'] as $ledger_value) 
+            {
+                $application_date[] = $ledger_value->application_date;
+                foreach ($data['checksheet'] as $checksheet_value) 
+                {
+                    $match_application_date = false;
+
+                    if ($checksheet_value->application_date === $ledger_value->application_date)
+                    {
+                        $match_application_date[] =  $ledger_value->application_date;
+                    }
+                }
+            }
+            
+            $result  = [];
+            if($match_application_date !== false)
+            {
+                for($x=0; $x<count($match_application_date);$x++)
+                {
+                    $key = array_search($match_application_date[$x], $application_date); 
+                    unset($data['ledger'][$key]); 
+                }
+            }
+
+            foreach ($data['ledger'] as $ledger_value) 
+            { 
+                $result[] = 
+                [
+                    'inspection_reason' => $ledger_value->inspection_reason
+                ];
+            }
+
+            $status = 'Error';
+            $message = 'No Inspection Reason';
+
+            if (count($result) !== 0) 
+            {
+                $status = 'Success';
+                $message = 'Inspection Reason Successfully load';
+            }
+        }
+
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
         ];
     }
 
     public function loadRevision(TrialLedger $TrialLedger, Request $Request)
     {
         $part_number = $Request->part_number;
+        $inspection_reason = $Request->inspection_reason;
 
         $status = 'Error';
         $message = 'Part Number Required';
         $data = [];
 
-        if ($part_number !== null) 
+        if ($part_number !== null && $inspection_reason !== null) 
         {
-            $data = $TrialLedger->loadRevision($part_number);
+            $data = $TrialLedger->loadRevision($part_number, $inspection_reason);
 
             $status = 'Error';
             $message = 'No Revision Number';
@@ -73,14 +220,15 @@ class TrialChecksheetController extends Controller
     public function loadTrialNumber(TrialLedger $TrialLedger, Request $Request)
     {
         $part_number = $Request->part_number;
+        $inspection_reason = $Request->inspection_reason;
         $revision_number = $Request->revision_number;
 
         $status = 'Error';
         $message = 'Part Number and Revision Number Required';
 
-        if ($part_number !== null && $revision_number !== null) 
+        if ($part_number !== null && $inspection_reason !== null && $revision_number !== null) 
         {
-            $result = $TrialLedger->loadTrialNumber($part_number, $revision_number);
+            $result = $TrialLedger->loadTrialNumber($part_number, $inspection_reason, $revision_number);
 
             $status = 'Error';
             $message = 'No Trial number';
@@ -100,36 +248,76 @@ class TrialChecksheetController extends Controller
         ];
     }
 
+    public function loadApplicationDate(TrialLedger $TrialLedger, Request $Request)
+    {
+        $part_number = $Request->part_number;
+        $inspection_reason = $Request->inspection_reason;
+        $revision_number = $Request->revision_number;
+        $trial_number = $Request->trial_number;
+
+        $status = 'Error';
+        $message = 'No Application Date';
+
+        if ($part_number !== null && $inspection_reason !== null && $revision_number !== null && $trial_number !== null) 
+        {
+            $result = $TrialLedger->loadApplicationDate($part_number, $inspection_reason, $revision_number, $trial_number);
+
+            $status = 'Error';
+            $message = 'No Application Date';
+
+            if ($result) 
+            {
+                $status = 'Success';
+                $message = 'Application Date Successfully load';
+            }
+        }
+        
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
+    }
+
     public function loadDetails(TrialLedger $TrialLedger,
                                 Supplier $Supplier,
                                 TrialChecksheet $TrialChecksheet,
                                 Request $Request)
     {
         $part_number = $Request->part_number;
+        $inspection_reason = $Request->inspection_reason;
         $revision_number = $Request->revision_number;
         $trial_number = $Request->trial_number;
+
+        $application_date = $Request->application_date;
 
         $status = 'Error';
         $message = 'Required Fields';
         $result = [];
 
-        if ($part_number != null || 
-        $revision_number != null || 
-        $trial_number != null) 
+        // if ($part_number != null || 
+        // $revision_number != null || 
+        // $trial_number != null) 
+        // {
+        if ($application_date !== null) 
         {
             $data = 
             [
                 'part_number'       => $part_number,
+                'inspection_reason' => $inspection_reason,
                 'revision_number'   => $revision_number,
                 'trial_number'      => $trial_number
             ];
 
-            $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($data)),true);
+            // $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($data)),true);
+            $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($application_date)),true);
             $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
             $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
 
-            $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($data)),true);
+            // $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($data)),true);
+            $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
             if($trial_checksheet_data)
             {
@@ -189,12 +377,12 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id !== null)
         {
             // $filename = $part_number . '_' . $revision_number;
-            $filename =$part_number.'_'.$revision_number.'(00)';
-            // $filename = 'igm';
+            // $filename =$part_number.'_'.$revision_number.'(00)';
+            $filename = 'igm';
             
             // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
-            $path ='F:\TIS\\';
-            // $path ='D:\\';
+            // $path ='F:\TIS\\';
+            $path ='D:\\';
     
             $igm_files = scandir($path);
     
@@ -220,8 +408,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;

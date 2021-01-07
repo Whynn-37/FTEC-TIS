@@ -40,8 +40,10 @@ Route::post('store-trial-ledger', 'TrialLedgerController@storeTrialLedger');
 
 //Trial Checksheet
 Route::get('load-partnumber', 'TrialChecksheetController@loadPartnumber');
+Route::get('load-inspection-reason', 'TrialChecksheetController@loadInspectionReason');
 Route::get('load-revision', 'TrialChecksheetController@loadRevision');
 Route::get('load-trial-number', 'TrialChecksheetController@loadTrialNumber');
+Route::get('load-application-date', 'TrialChecksheetController@loadApplicationDate');
 Route::get('load-details', 'TrialChecksheetController@loadDetails');
 Route::patch('update-judgment','TrialChecksheetController@updateJudgment');
 Route::post('store-igm', 'TrialChecksheetController@storeIgm');

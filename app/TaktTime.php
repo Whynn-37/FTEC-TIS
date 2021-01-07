@@ -41,6 +41,13 @@ class TaktTime extends Model
         ->first();
     }
 
+    public function getTotalTaktTime($id)
+    {
+        return TaktTime::where('trial_checksheet_id', $id)
+        ->select('total_takt_time')
+        ->get();
+    }
+
     public function updateTaktTime($id,$data)
     {
         return TaktTime::where('id',$id['id'])
