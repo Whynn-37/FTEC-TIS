@@ -16,7 +16,12 @@ class Attachment extends Model
     public function getAttachment($id)
     {
         return Attachment::where('trial_checksheet_id', $id)
-        ->select('id','file_folder','file_name')
+        ->select('id','file_folder','file_name', 'file_merge', 'file_name_merge')
         ->first();
+    }
+
+    public function storeFileMerge($id, $data)
+    {
+        return Attachment::where('trial_checksheet_id', $id)->update($data);
     }
 }

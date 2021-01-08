@@ -10,7 +10,7 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function sendEmail($trial_checksheet_id, $status, $attachment = null)
+    public function sendEmail($trial_checksheet_id, $status, $attachment = [])
     {
         $TrialChecksheet = new TrialChecksheet();
         $LoginUser = new LoginUser();
@@ -31,8 +31,7 @@ class MailController extends Controller
                 // 'Fullname' => ,
             ];
 
-            $view = 'Mail.for_evaluation';
-            $subject = 'For Evaluator';
+            $subject = 'For Evaluation';
         }
         else if($status == 'after_evaluation')
         {
@@ -42,8 +41,7 @@ class MailController extends Controller
             //     'Fullname' => ,
             // ];
 
-            $view = 'Mail.for_approval';
-            $subject = 'For Approver';
+            $subject = 'For Approval';
         }
         else if($status == 'approved')
         {
@@ -53,7 +51,6 @@ class MailController extends Controller
             //     'Fullname' => ,
             // ];
 
-            $view = 'Mail.approved';
             $subject = 'Approved';
         }
         else if($status == 'disapproved')
@@ -64,7 +61,6 @@ class MailController extends Controller
             //     'Fullname' => 'Inyida Ngoki',
             // ];
 
-            $view = 'Mail.for_disapproval';
             $subject = 'For Disapproval';
         }
 
@@ -73,12 +69,12 @@ class MailController extends Controller
         [
             'jed.relator@fujitsu.com',
             'markjohrel.manzano@fujitsu.com',
-            'georgebien.almenanza@fujitsu.com',
-            'terrymerwin.balahadia@fujitsu.com',
+            // 'georgebien.almenanza@fujitsu.com',
+            // 'terrymerwin.balahadia@fujitsu.com',
             // 'markangelo.cantalejo@fujitsu.com',
         ];
 
-        Mail::to($receipient)->send(new SendMail($data, $attachment, $view, $subject));
+        Mail::to($receipient)->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
 
         if (count(Mail::failures()) > 0) 
         {

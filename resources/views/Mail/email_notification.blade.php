@@ -23,7 +23,7 @@
                                     style="color: #1f2837; font-size: 20px; font-family: Open Sans, Helvetica, sans-serif; font-weight:400;line-height: 35px;">
                                     <!-- section text ======-->
                                     <div style="line-height: 50px;">
-                                        FOR APPROVAL <span style="text-transform: uppercase;"></span>
+                                        {{$subject}} <span style="text-transform: uppercase;"></span>
                                     </div>
                                 </td>
                             </tr>
@@ -98,26 +98,43 @@
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED DATE TIME </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['inspect_datetime']}} </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_by']}} </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_by']}} </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED DATE </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_datetime']}} </td>
-                                                    </tr>
+                                                    @if($data['evaluated_by'] !== null)
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_by']}} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
+                                                        </tr>
+                                                    @endif
+                                                    @if ($data['approved_by'] !== null)
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_by']}} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED DATE </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_datetime']}} </td>
+                                                        </tr>
+                                                    @endif
+                                                    @if ($data['disapproved_by'] !== null)
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED BY </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_by']}} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED DATE </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_datetime']}} </td>
+                                                        </tr>
+                                                    @endif
+                                                    
                                                 </tbody>
                                         </table>
                                         <tr>

@@ -18,6 +18,8 @@ class CreateAttachmentsTable extends Migration
             $table->unsignedBigInteger('trial_checksheet_id');
             $table->string('file_folder');
             $table->string('file_name');
+            $table->string('file_merge')->nullable();
+            $table->string('file_name_merge')->nullable();
             $table->timestamps();
             $table->foreign('trial_checksheet_id')->references('id')->on('trial_checksheets');
         });

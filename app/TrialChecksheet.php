@@ -48,6 +48,7 @@ class TrialChecksheet extends Model
         ->join('suppliers', 'trial_ledgers.supplier_code', '=', 'suppliers.supplier_code')
         ->where('trial_checksheets.id', $id)
         ->select([
+            'trial_checksheets.id',
             'trial_checksheets.part_number', 
             'trial_checksheets.revision_number',
             'trial_checksheets.trial_number',
