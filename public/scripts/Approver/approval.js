@@ -1,9 +1,6 @@
 $(document).ready(function () {
-    
     APPROVE.LoadFinishedInspectionData();
     APPROVE.LoadDisapprovedInspectionData();
-
-    
 });
 
 const APPROVE = (() => {
@@ -99,7 +96,6 @@ const APPROVE = (() => {
                         <td>${value.reason}</td>
                     </tr>`;
                 });
-
 
                 $('#tbody_tbl_disapproved_inspection_data').html(tbody);
                 $('#tbl_disapproved_inspection_data').DataTable({
@@ -409,21 +405,21 @@ const APPROVE = (() => {
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
                 </td>
 				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2" >${coordinates}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(type,array_data,6)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(type,array_data,8)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(array_data,0)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(array_data,2)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(array_data,4)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(array_data,6)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(array_data,8)}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(type,array_data,5)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(type,array_data,7)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(type,array_data,9)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(array_data,1)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(array_data,3)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(array_data,5)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(array_data,7)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(array_data,9)}</td>
 			</tr>`;
         } 
         else 
@@ -436,19 +432,19 @@ const APPROVE = (() => {
                 </td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,0)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,0)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,1)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,1)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,2)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,2)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,3)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,3)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,4)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,4)}" >
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
@@ -495,6 +491,7 @@ const APPROVE = (() => {
                         $('#div_modal_content').LoadingOverlay('hide');
                         $('#modal_view_inspection_data').modal('hide');
                         APPROVE.LoadFinishedInspectionData();
+                        APPROVE.LoadDisapprovedInspectionData();
                     }
                 });
             }
@@ -503,44 +500,78 @@ const APPROVE = (() => {
 
     this_approve.DisapproveData = () => {
 
-        Swal.fire($.extend(swal_options, {
-            title: 'Are you sure you want to disapprove?',
-        })).then((result) => 
+        $('#btn_approve').prop('hidden',true);
+        $('#btn_cancel').prop('hidden',true);
+        $('#btn_disapprove').prop('hidden',true);
+        $('#btn_submit_disapprove').prop('hidden',false);
+        $('#btn_cancel_disapprove').prop('hidden',false);
+        $('#accordion_disapprove_reason').prop('hidden',false);
+        $('#txt_disapprove_reason').focus();
+    };
+
+    this_approve.CancelDisapproveData = () => {
+
+        $('#btn_approve').prop('hidden',false);
+        $('#btn_cancel').prop('hidden',false);
+        $('#btn_disapprove').prop('hidden',false);
+        $('#btn_submit_disapprove').prop('hidden',true);
+        $('#btn_cancel_disapprove').prop('hidden',true);
+        $('#accordion_disapprove_reason').prop('hidden',true);
+        $('#span_error_reason').remove();
+    };
+
+    this_approve.ProceedDisapproveData = () => {
+
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let reason              = $('#txt_disapprove_reason').val();
+
+        if (reason === '')
         {
-            if (result.value) 
+            $('#span_error_reason').remove();
+            $('#txt_disapprove_reason').after(`<span id="span_error_reason" class="span-error">Required</span>`);
+        }
+        else
+        {
+            $('#span_error_reason').remove();
+
+            Swal.fire($.extend(swal_options, {
+                title: 'Are you sure you want to disapprove?',
+            })).then((result) => 
             {
-                $('#div_modal_content').LoadingOverlay('show');
+                if (result.value) 
+                {
+                    $('#div_modal_content').LoadingOverlay('show');
 
-                let trial_checksheet_id = $('#trial_checksheet_id').val();
+                    $.ajax({
+                        url     : `approved`,
+                        type    : 'post',
+                        dataType: 'json',
+                        data    : 
+                        {
+                            _token              : _TOKEN,
+                            trial_checksheet_id : trial_checksheet_id,
+                            decision            : 2,
+                            action              : 2,
+                            reason              : reason,
+                        },
+                        cache   : false,
+                        success: result => 
+                        {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Diaspprove successful',
+                            })
 
-                $.ajax({
-                    url     : `approved`,
-                    type    : 'post',
-                    dataType: 'json',
-                    data    : 
-                    {
-                        _token              : _TOKEN,
-                        trial_checksheet_id : trial_checksheet_id,
-                        decision            : 2,
-                        action              : 2,
-                    },
-                    cache   : false,
-                    success: result => 
-                    {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Diaspprove successful',
-                        })
-
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-                        APPROVE.LoadFinishedInspectionData();
-                        APPROVE.LoadDisapprovedInspectionData();
-                    }
-                });
-            }
-        })
+                            $('#div_modal_content').LoadingOverlay('hide');
+                            $('#modal_view_inspection_data').modal('hide');
+                            APPROVE.LoadFinishedInspectionData();
+                            APPROVE.LoadDisapprovedInspectionData();
+                        }
+                    });
+                }
+            })
+        }
     };
 
     return this_approve;
