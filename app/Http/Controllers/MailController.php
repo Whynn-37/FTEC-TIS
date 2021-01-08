@@ -10,7 +10,7 @@ use App\Mail\SendMail;
 
 class MailController extends Controller
 {
-    public function sendEmail($trial_checksheet_id, $status, $attachment = null)
+    public function sendEmail($trial_checksheet_id, $status, $attachment = [])
     {
         $TrialChecksheet = new TrialChecksheet();
         $LoginUser = new LoginUser();
