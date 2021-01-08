@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
-    // HISTORY.LoadHistory();
+    $("#accordion_attachment").remove();
+    $(".modal-footer").remove();
 });
 
 

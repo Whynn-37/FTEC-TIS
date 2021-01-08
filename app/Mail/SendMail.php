@@ -37,8 +37,9 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        $file_path = storage_path('app/public/'.$this->attachment);
+        // $file_path = storage_path('app/public/'.$this->attachment);
+        // ->attach($file_path)
         
-        return $this->subject($this->subject)->view($this->view)->attach($file_path);
+        return $this->subject($this->subject)->view($this->view);
     }
 }
