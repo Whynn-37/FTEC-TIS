@@ -557,7 +557,7 @@ class TrialChecksheetController extends Controller
         $part_number = $Request->part_number;
         $revision_number = $Request->revision_number;
 
-        $folder_name = date('Y-m-d') . '_' . $part_number . '_' . $revision_number;
+        $folder_name = $part_number . '-' . $revision_number . '-' . date('Ymd');
 
         $status  = 'Error';
         $message = 'No File';
@@ -596,7 +596,6 @@ class TrialChecksheetController extends Controller
                 [
                     'trial_checksheet_id'      => $trial_checksheet_id,
                     'inspect_by'               => Session::get('fullname'), // session name
-                    // 'inspect_by'               => 'JED RELATOR', // session name
                     'inspect_datetime'         => now(),
                     'decision'                 => 1
                 ];
@@ -611,12 +610,6 @@ class TrialChecksheetController extends Controller
                 ];
 
                 $attachment_result = $Attachment->storeAttachments($attachment_data);
-
-                // $send_mail = 
-                // [
-                //     'trial_checksheet_id' => $trial_checksheet_id,
-                //     'status' => 'after_inspection'
-                // ];
 
                 $MailController->sendEmail($trial_checksheet_id, 'after_inspection');
 
@@ -1076,41 +1069,41 @@ class TrialChecksheetController extends Controller
     {
         $status = $Request->status;
 
-        if($status == 'For Inspection')
-        {
-            $get_part_number = 
-            [
-                'trial_ledgers.part_number'    =>  $part_number,
-            ];
-        }
-        else if($status == 'For Evaluation')
-        {
-            $get_part_number = 
-            [
-                'trial_ledgers.part_number'    =>  $part_number,
-            ];
-        }
-        else if($status == 'For Approval')
-        {
-            $get_part_number = 
-            [
-                'trial_ledgers.part_number'    =>  $part_number,
-            ];
-        }
-        else if($status == 'Approved')
-        {
-            $get_part_number = 
-            [
-                'trial_ledgers.part_number'    =>  $part_number,
-            ];
-        }
-        else if($status == 'Disapproved')
-        {
-            $get_part_number = 
-            [
-                'trial_ledgers.part_number'    =>  $part_number,
-            ];
-        }
+        // if($status == 'For Inspection')
+        // {
+        //     $get_part_number = 
+        //     [
+        //         'trial_ledgers.part_number'    =>  $part_number,
+        //     ];
+        // }
+        // else if($status == 'For Evaluation')
+        // {
+        //     $get_part_number = 
+        //     [
+        //         'trial_ledgers.part_number'    =>  $part_number,
+        //     ];
+        // }
+        // else if($status == 'For Approval')
+        // {
+        //     $get_part_number = 
+        //     [
+        //         'trial_ledgers.part_number'    =>  $part_number,
+        //     ];
+        // }
+        // else if($status == 'Approved')
+        // {
+        //     $get_part_number = 
+        //     [
+        //         'trial_ledgers.part_number'    =>  $part_number,
+        //     ];
+        // }
+        // else if($status == 'Disapproved')
+        // {
+        //     $get_part_number = 
+        //     [
+        //         'trial_ledgers.part_number'    =>  $part_number,
+        //     ];
+        // }
 
         // return $load_detail_history = $TrialChecksheet->getAllData($get_part_number);
     }
