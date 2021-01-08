@@ -3,8 +3,7 @@ $(document).ready(function () {
     APPROVE.LoadFinishedInspectionData();
     APPROVE.LoadDisapprovedInspectionData();
 
-    $("#accordion_attachment").remove();
-    $(".modal-footer").remove();
+    
 });
 
 const APPROVE = (() => {
@@ -13,8 +12,6 @@ const APPROVE = (() => {
 
     let array_type                  = [];
     let array_item_number           = [];
-    let final_array_min_max_datas   = [];
-    let checksheet_item_count       = '';
    
     this_approve.LoadFinishedInspectionData = () => {
 
@@ -198,7 +195,7 @@ const APPROVE = (() => {
     };
 
     this_approve.OpenFile = (file_type,file_folder,file_name,trial_checksheet_id) => {
-
+    
         if (file_type === 'merged')
         {
             window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
@@ -273,8 +270,6 @@ const APPROVE = (() => {
 
             item_count++;
         });
-
-        checksheet_item_count += item_count;
 
         //pag lalagay ng tr sa table
         $('#tbody_tbl_igm').html(tr_checksheet);
@@ -535,7 +530,7 @@ const APPROVE = (() => {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Dispprove successful',
+                            text: 'Diaspprove successful',
                         })
 
                         $('#div_modal_content').LoadingOverlay('hide');

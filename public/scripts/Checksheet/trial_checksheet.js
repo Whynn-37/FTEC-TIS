@@ -666,18 +666,21 @@ const CHECKSHEET = (() => {
 
     this_checksheet.DowntimeTimerAction = (status) => {
 
-        let downtime_running_time = $("#txt_downtime_running_time").text();
-        let downtime_type = $("#slc_downtime_type").val();
+        let downtime_type           = $("#slc_downtime_type").val();
 
-        if (downtime_type === null) {
+        if (downtime_type === null) 
+        {
             $("#span_error_downtime_type").remove();
             $("#slc_downtime_type").before('<span id ="span_error_downtime_type" class="span-error">Required</span>');
-        } else {
-
+        } 
+        else {
             $("#span_error_downtime_type").remove();
-            if (status === 'start_downtime') {
+            if (status === 'start_downtime') 
+            {
                 var text = 'start';
-            } else {
+            } 
+            else 
+            {
                 text = 'stop';
             }
             Swal.fire(
@@ -685,8 +688,10 @@ const CHECKSHEET = (() => {
                     title: `Are you sure you want to ${text} downtime?`,
                     text: ''
                 })
-            ).then((result) => {
-                if (result.value) {
+            ).then((result) => 
+            {
+                if (result.value) 
+                {
                     CHECKSHEET.Downtime(text, downtime_type);
                 }
             });
@@ -751,6 +756,7 @@ const CHECKSHEET = (() => {
             $("#span_error_downtime_type").prop("disabled", true);
             $("#slc_downtime_type").prop("disabled", true);
             $("#btn_stop_time").prop("disabled", true);
+            $("#div_takt_time_timer").TimeCircles().stop();
 
             var total_down_time = null;
         } 
@@ -787,8 +793,6 @@ const CHECKSHEET = (() => {
                 CHECKSHEET.LoadDowntime();
             }
         });
-
-        $("#div_takt_time_timer").TimeCircles().stop();
     };
 
     this_checksheet.ValidateAttachment = (file,file_label) => {
@@ -809,21 +813,16 @@ const CHECKSHEET = (() => {
 
     this_checksheet.ValidateSaveTrialChecksheet = () => {
 
-        let trial_checksheet_id     = $('#trial_checksheet_id').val();
-        let date_inspected          = $('#txt_date_inspected').val();
         let temperature             = $('#txt_temperature').val();
         let humidity                = $('#txt_humidity').val();
         let part_number             = $('#slc_part_number').val();
-        let revision_number         = $('#slc_revision_number').val();
         let na_judgement_count      = 0;
         let ng_judgement_count      = 0;
         
-        //attachments
+        //attachments, ito lang kase itong tatlo ay required
         let numbering_drawing       = $('#txt_attachment_numbering_drawing').attr('name');
         let material_certification  = $('#txt_attachment_material_certification').attr('name');
         let special_tool_data       = $('#txt_attachment_special_tool_data').attr('name');
-        let others_1                = $('#txt_attachment_others_1').attr('name');
-        let others_2                = $('#txt_attachment_others_2').attr('name');
 
         //pangclear ng error texts
         $('.form_trial_checksheet_field_error').text('');
@@ -883,7 +882,7 @@ const CHECKSHEET = (() => {
                                             Swal.fire({
                                                 icon: 'warning',
                                                 title: 'Item with no judgement has been found',
-                                                text: 'Please check your checksheet item/s.',
+                                                text: 'Please check your checksheet items.',
                                             })
                                         }
                                         else
