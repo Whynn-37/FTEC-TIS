@@ -149,7 +149,7 @@ const APPROVE = (() => {
                 <div class="vertical-rectangle">
                     <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
                     <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name[0]}');"><i class="ti-eye"></i> VIEW FILE</button>
+                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.pdf');"><i class="ti-eye"></i> VIEW FILE</button>
                     </div>
                     
                     <center style="margin-top: 195px;">
@@ -159,17 +159,7 @@ const APPROVE = (() => {
                 <div class="vertical-rectangle">
                     <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
                     <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('second_page','','',${data.data.checksheet_items[0].trial_checksheet_id});"><i class="ti-eye"></i> VIEW FILE</button>
-                    </div>
-                    
-                    <center style="margin-top: 195px;">
-                        <span>Second Page</span>
-                    </center>
-                </div>
-                <div class="vertical-rectangle">
-                    <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
-                    <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','','',${data.data.checksheet_items[0].trial_checksheet_id});"><i class="ti-eye"></i> VIEW FILE</button>
+                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.xlsx');"><i class="ti-eye"></i> VIEW FILE</button>
                     </div>
                     
                     <center style="margin-top: 195px;">
@@ -190,23 +180,19 @@ const APPROVE = (() => {
 
     };
 
-    this_approve.OpenFile = (file_type,file_folder,file_name,trial_checksheet_id) => {
+    this_approve.OpenFile = (file_type,file_folder,file_name) => {
     
         if (file_type === 'merged')
         {
             window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
         }
-        else if (file_type === 'second_page')
-        {
-            window.open(`${base_url}/api/generate-second-page?trial_checksheet_id=${trial_checksheet_id}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
-        }
         else
         {
-           let popout =  window.open(`${base_url}/api/generate-trial-evaluation-result?trial_checksheet_id=${trial_checksheet_id}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
+           let popout =  window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
 
             window.setTimeout(function(){
                 popout.close();
-            }, 1000);
+            }, 500);
         }
     };
     
