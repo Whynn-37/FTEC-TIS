@@ -2,6 +2,7 @@ $(document).ready(function () {
     CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.InitializeCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
+
 });
 
 let logVisit = function () {
@@ -103,8 +104,6 @@ const CHECKSHEET = (() => {
             dataType: 'json',
             cache: false,
             success: data => {
-                console.log(data.data);
-
                 $('#slc_part_number').empty();
                 let select_options = '<option value="" selected disabled>Select part no.</option>';
 
@@ -119,8 +118,10 @@ const CHECKSHEET = (() => {
 
     //
     this_checksheet.LoadInspectionReason = (part_number) => {
-        // $('#slc_inspection_reason').LoadingOverlay('show');
+
         $('#slc_revision_number').empty();
+        $('#slc_trial_number').empty();
+
         $.ajax({
             url: `load-inspection-reason`,
             type: 'get',
@@ -140,14 +141,13 @@ const CHECKSHEET = (() => {
                 });
 
                 $('#slc_inspection_reason').append(select_options);
-                $('#slc_inspection_reason').LoadingOverlay('hide');
             }
         });
     };
 
     //
     this_checksheet.LoadRevision = (inspection_reason) => {
-        $('#slc_revision_number').LoadingOverlay('show');
+
         $('#slc_trial_number').empty();
 
         let part_number = $('#slc_part_number').val();
@@ -171,7 +171,6 @@ const CHECKSHEET = (() => {
                 });
 
                 $('#slc_revision_number').append(select_options);
-                $('#slc_revision_number').LoadingOverlay('hide');
             }
         });
     };
@@ -181,8 +180,6 @@ const CHECKSHEET = (() => {
 
         let part_number = $('#slc_part_number').val();
         let inspection_reason = $('#slc_inspection_reason').val();
-
-        $('#slc_trial_number').LoadingOverlay('show');
 
         $.ajax({
             url: `load-trial-number`,
@@ -204,7 +201,6 @@ const CHECKSHEET = (() => {
                 });
 
                 $('#slc_trial_number').append(select_options);
-                $('#slc_trial_number').LoadingOverlay('hide');
             }
         });
     };
@@ -235,72 +231,16 @@ const CHECKSHEET = (() => {
         });
     };
 
-    // this_checksheet.LoadRevision = (part_number) => {
-    //     $('#slc_revision_number').LoadingOverlay('show');
-    //     $('#slc_trial_number').empty();
-    //     $.ajax({
-    //         url: `load-revision`,
-    //         type: 'get',
-    //         dataType: 'json',
-    //         cache: false,
-    //         data: {
-    //             part_number: part_number
-    //         },
-    //         success: data => {
-    //             $('#slc_revision_number').empty();
-
-    //             let select_options = '<option value="" selected disabled>Select revision number</option>';
-
-    //             data.data.forEach((value) => {
-    //                 select_options += `<option value="${value.revision_number}">${value.revision_number}</option>`;
-    //             });
-
-    //             $('#slc_revision_number').append(select_options);
-    //             $('#slc_revision_number').LoadingOverlay('hide');
-    //         }
-    //     });
-    // };
-
-    // this_checksheet.LoadTrialNumber = () => {
-
-    //     let part_number = $('#slc_part_number').val();
-    //     let revision_number = $('#slc_revision_number').val();
-
-    //     $('#slc_trial_number').LoadingOverlay('show');
-
-    //     $.ajax({
-    //         url: `load-trial-number`,
-    //         type: 'get',
-    //         dataType: 'json',
-    //         cache: false,
-    //         data: {
-    //             part_number: part_number,
-    //             revision_number: revision_number,
-    //         },
-    //         success: data => {
-    //             $('#slc_trial_number').empty();
-
-    //             let select_options = '<option value="" selected disabled>Select trial number</option>';
-
-    //             data.data.forEach((value) => {
-    //                 select_options += `<option value="${value.trial_number}">${value.trial_number}</option>`;
-    //             });
-
-    //             $('#slc_trial_number').append(select_options);
-    //             $('#slc_trial_number').LoadingOverlay('hide');
-    //         }
-    //     });
-    // };
-
-    //
     this_checksheet.ValidateLoadDetails = () => {
 
-        let part_number = $('#slc_part_number').val();
-        let inspection_reason = $('#slc_inspection_reason').val();
-        let revision_number = $('#slc_revision_number').val();
-        let trial_number = $('#slc_trial_number').val();
+        let part_number         = $('#slc_part_number').val();
+        let inspection_reason   = $('#slc_inspection_reason').val();
+        let revision_number     = $('#slc_revision_number').val();
+        let trial_number        = $('#slc_trial_number').val();
 
-        let application_date = $('#trial_checksheet_application_date').val();
+        let application_date    = $('#trial_checksheet_application_date').val();
+
+        $('.form_trial_checksheet_field_error').text('');
 
         if (part_number === null && revision_number === null && trial_number === null) {
             $('#span_error_part_number').remove();
@@ -324,53 +264,23 @@ const CHECKSHEET = (() => {
             $('#span_error_part_number').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
-            // CHECKSHEET.LoadDetails(part_number, inspection_reason, revision_number, trial_number);
+
             CHECKSHEET.LoadDetails(application_date);
         }
-
-        // if (part_number === null && revision_number === null && trial_number === null) {
-        //     $('#span_error_part_number').remove();
-        //     $('#span_error_revision_number').remove();
-        //     $('#span_error_trial_number').remove();
-        //     $('#slc_part_number').before('<span id ="span_error_part_number" class="span-error">Required</span>');
-        //     $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
-        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        // } else if (revision_number === null && trial_number === null) {
-        //     $('#span_error_part_number').remove();
-        //     $('#span_error_revision_number').remove();
-        //     $('#span_error_trial_number').remove();
-        //     $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
-        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        // } else if (trial_number === null) {
-        //     $('#span_error_part_number').remove();
-        //     $('#span_error_revision_number').remove();
-        //     $('#span_error_trial_number').remove();
-        //     $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        // } else {
-        //     $('#span_error_part_number').remove();
-        //     $('#span_error_revision_number').remove();
-        //     $('#span_error_trial_number').remove();
-        //     CHECKSHEET.LoadDetails(part_number, revision_number, trial_number);
-        // }
     };
 
-    //
-    // this_checksheet.LoadDetails = (part_number, inspection_reason, revision_number, trial_number) => {
     this_checksheet.LoadDetails = (application_date) => {
 
         $('#accordion_details').LoadingOverlay('show');
         $('#div_card_takt_time').LoadingOverlay('show');
 
         $.ajax({
-            url: `load-details`,
-            type: 'get',
+            url     : `load-details`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
-                // part_number: part_number,
-                // inspection_reason: inspection_reason,
-                // revision_number: revision_number,
-                // trial_number: trial_number,
+            cache   : false,
+            data    : 
+            {
                 application_date: application_date,
             },
             success: data => {
@@ -384,14 +294,11 @@ const CHECKSHEET = (() => {
                     $('#txt_received_date').val(data.data.trial_checksheets.received_date);
                     $('#txt_inspection_completion_date').val(data.data.trial_checksheets.delivery_date);
                     $('#txt_actual_inspection_time').val(data.data.trial_checksheets.inspection_actual_time);
-                    // $('#txt_inspection_reason').val(data.data.trial_checksheets.inspection_reason);
                     $('#txt_die_kind').val(data.data.trial_checksheets.die_class);
                     $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
-                    // load ng IGM
-                    // IGM.LoadIGM(data.data.trial_checksheets.id);
                     //load ng cycle time
                     CHECKSHEET.LoadCycleTime(data.data.trial_checksheets.inspection_required_time);
                     //load ng downtime
@@ -425,6 +332,7 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.InitializeCycleTimeTimer = () => {
+
         $("#btn_start_time").prop("hidden", false);
         $("#btn_stop_time").prop("hidden", true);
 
@@ -486,7 +394,6 @@ const CHECKSHEET = (() => {
         let trial_number        = $('#slc_trial_number').val();
         let inspection_reason   = $('#slc_inspection_reason').val();
         
-
         $.ajax({
             url     : `start-cycle-time`,
             type    : 'post',
@@ -500,16 +407,18 @@ const CHECKSHEET = (() => {
                 part_number         : part_number,
                 revision_number     : revision_number,
                 trial_number        : trial_number,
-                //
                 inspection_reason   : inspection_reason,
             },
             success: data => 
             {
-                if (data.status === 'Success') {
+                if (data.status === 'Success') 
+                {
                     //checksheet details
                     $('#slc_part_number').prop('readonly', true);
                     $('#slc_revision_number').prop('readonly', true);
                     $('#slc_trial_number').prop('readonly', true);
+                    $('#slc_inspection_reason').prop('readonly', true);
+                    $('#btn_validate_load_details').prop('disabled', true);
                     //target takt time
                     $("#div_target_takt_time_timer").TimeCircles().start();
                     $("#div_takt_time_timer").TimeCircles().start();
@@ -524,7 +433,6 @@ const CHECKSHEET = (() => {
 
                     CHECKSHEET.LoadCycleTime(0, 'start');
                     IGM.LoadIGM(data.data.takt_time.trial_checksheet_id);
-
 
                     //pag show ng attachments at ssave button
                     $('#div_row_numbering_drawing').prop('hidden',false);
@@ -638,7 +546,8 @@ const CHECKSHEET = (() => {
                     $('#slc_part_number').prop('readonly', false);
                     $('#slc_revision_number').prop('readonly', false);
                     $('#slc_trial_number').prop('readonly', false);
-
+                    $('#slc_inspection_reason').prop('readonly', false);
+                    $('#btn_validate_load_details').prop('disabled', false);
                     //cycle time
                     $("#btn_start_time").prop("hidden", false);
                     $("#btn_stop_time").prop("hidden", true);
@@ -826,14 +735,17 @@ const CHECKSHEET = (() => {
 
         //pangclear ng error texts
         $('.form_trial_checksheet_field_error').text('');
+        let required_count = 0;
 
         $('.form_trial_checksheet_field').each(function () 
         {
             if ($(this).val() === '' || $(this).val() === null) 
             {
                 $('.form_trial_checksheet_field_error').text('Required');
-            } 
-            else 
+                required_count++;
+            }
+
+            if (required_count === 0)
             {
                 (part_number !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
                 (temperature !== '')    ? $('#span_temperature').prop('hidden', true)   :'';
@@ -852,50 +764,85 @@ const CHECKSHEET = (() => {
                     }
                     else
                     {
-                        Swal.fire(
-                            $.extend(swal_options, {
-                                title   : "Are you sure?",
-                                text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
-                            })
-                        ).then((result) => 
+                        //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
+                        for (let item_no_index = 1; item_no_index <= parseInt(item_no_count); item_no_index++) 
                         {
-                            if (result.value) 
+                            let type = $(`#slc_item_no_${item_no_index}_type`).val();
+
+                            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                             {
-                                //pagkuha ng item judgements para sa buong judgment ng trial
-                                for (let index = 1; index <= parseInt(item_no_count); index++) 
+                                //pagkuha ng sub no count
+                                let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
+                                let sub_no_count    = onclick_value[2];
+
+                                for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
                                 {
-                                    let item_judgment = $(`#td_item_no_${index}_judgement span`).text();
-                                    
-                                    if (item_judgment === 'N/A')
+                                    for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
                                     {
-                                        na_judgement_count++;
-                                    }
-                                    else if (item_judgment === 'NG')
-                                    {
-                                        ng_judgement_count++;
-                                    }
+                                        let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
+                                        let max_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
 
-                                    if (index === parseInt(item_no_count))
-                                    {
-                                        if (na_judgement_count > 0)
+                                        if (min_value === '')
                                         {
-                                            Swal.fire({
-                                                icon: 'warning',
-                                                title: 'Item with no judgement has been found',
-                                                text: 'Please check your checksheet items.',
-                                            })
+                                            $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
                                         }
-                                        else
+            
+                                        if (max_value === '')
                                         {
-                                            //checking if NG or OK
-                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
-
-                                            CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                            $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
                                         }
                                     }
                                 }
                             }
-                        });
+
+                            if (item_no_index === parseInt(item_no_count))
+                            {
+                                Swal.fire(
+                                    $.extend(swal_options, {
+                                        title   : "Are you sure?",
+                                        text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
+                                    })
+                                ).then((result) => 
+                                {
+                                    if (result.value) 
+                                    {
+                                        //pagkuha ng item judgements para sa buong judgment ng trial
+                                        for (let index = 1; index <= parseInt(item_no_count); index++) 
+                                        {
+                                            let item_judgment = $(`#td_item_no_${index}_judgement span`).text();
+                                            
+                                            if (item_judgment === 'N/A')
+                                            {
+                                                na_judgement_count++;
+                                            }
+                                            else if (item_judgment === 'NG')
+                                            {
+                                                ng_judgement_count++;
+                                            }
+        
+                                            if (index === parseInt(item_no_count))
+                                            {
+                                                if (na_judgement_count > 0)
+                                                {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Item with no judgement has been found',
+                                                        text: 'Please check your checksheet items.',
+                                                    })
+                                                }
+                                                else
+                                                {
+                                                    //checking if NG or OK
+                                                    (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
+        
+                                                    CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -908,7 +855,7 @@ const CHECKSHEET = (() => {
 
         let form_data = new FormData($('#form_trial_checksheet')[0]);
         form_data.append('judgment',final_judgment)
- 
+
         $.ajax({
             url         : `finished-checksheet`,
             type        : 'post',
@@ -950,6 +897,7 @@ const CHECKSHEET = (() => {
                     $('#form_trial_checksheet')[0].reset();
                     $('#slc_revision_number').empty();
                     $('#slc_trial_number').empty();
+                    $('#slc_inspection_reason').empty();
 
                     $('#btn_start_time').prop('disabled',true);
 
@@ -969,3 +917,5 @@ const CHECKSHEET = (() => {
 
     return this_checksheet;
 })();
+
+
