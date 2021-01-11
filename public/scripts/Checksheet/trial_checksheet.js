@@ -456,28 +456,33 @@ const CHECKSHEET = (() => {
         let trial_checksheet_id = $('#trial_checksheet_id').val();
 
         $.ajax({
-            url: `load-cycle-time`,
-            type: 'get',
+            url     : `load-cycle-time`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
+            cache   : false,
+            data    : 
+            {
                 trial_checksheet_id: trial_checksheet_id,
             },
-            success: data => {
+            success: data => 
+            {
+                $('#tbl_takt_time').DataTable().destroy();
                 $('#tbody_tbl_takt_time').empty();
 
                 let tbody = '';
                 var target_takt_time = inspection_required_time * 60;
                 var total_sum_total_takt_time = 0;
 
-                data.data.forEach((value) => {
+                data.data.forEach((value) => 
+                {
                     //last array element of target takt time
                     array_takt_time_data = data.data[data.data.length - 1];
                     target_takt_time = array_takt_time_data['takt_time'] * 60;
 
                     // sum ng takt time para sa actual time na timer
                     let sum_total_takt_time = 0;
-                    data.data.forEach((value) => {
+                    data.data.forEach((value) => 
+                    {
                         sum_total_takt_time += parseFloat(value.total_takt_time);
                     });
 
@@ -492,7 +497,8 @@ const CHECKSHEET = (() => {
 
                 });
 
-                if (status === 'load_cycle_time') {
+                if (status === 'load_cycle_time') 
+                {
                     //target takt time
                     $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
                     $("#div_target_takt_time_timer").TimeCircles().rebuild();
@@ -503,7 +509,16 @@ const CHECKSHEET = (() => {
                     $("#div_actual_time_timer").TimeCircles().rebuild();
                     $("#div_actual_time_timer").TimeCircles().stop();
                 }
+                
                 $('#tbody_tbl_takt_time').html(tbody);
+                $('#tbl_takt_time').DataTable({
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": false,
+                    "ordering": false,
+                    "info": true,
+                    "autoWidth": true,
+                });
             }
         });
     };
@@ -542,12 +557,14 @@ const CHECKSHEET = (() => {
                 if (data.status === 'Success') 
                 {
                     CHECKSHEET.LoadCycleTime(0, 'stop');
+
                     //checksheet details
                     $('#slc_part_number').prop('readonly', false);
                     $('#slc_revision_number').prop('readonly', false);
                     $('#slc_trial_number').prop('readonly', false);
                     $('#slc_inspection_reason').prop('readonly', false);
                     $('#btn_validate_load_details').prop('disabled', false);
+
                     //cycle time
                     $("#btn_start_time").prop("hidden", false);
                     $("#btn_stop_time").prop("hidden", true);
@@ -882,16 +899,6 @@ const CHECKSHEET = (() => {
                     $('#tbody_tbl_downtime').empty();
                     $('#td_total_downtime').html('');
                     
-                    // pagrestart at stop ng timer
-                    $("#div_target_takt_time_timer").TimeCircles().restart();
-                    $("#div_target_takt_time_timer").TimeCircles().stop();
-
-                    $("#div_actual_time_timer").TimeCircles().restart();
-                    $("#div_actual_time_timer").TimeCircles().stop();
-
-                    $("#div_takt_time_timer").TimeCircles().restart();
-                    $("#div_takt_time_timer").TimeCircles().stop();
-
                     CHECKSHEET.StopCycleTime();
 
                     $('#form_trial_checksheet')[0].reset();
@@ -909,6 +916,15 @@ const CHECKSHEET = (() => {
                         icon: 'success',
                         title: 'Success',
                         text: result.message,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                        allowOutsideClick: false,
+                    }).then((result) => 
+                    {
+                        if (result.value) 
+                        {
+                            location.reload();
+                        }
                     })
                 }
             }

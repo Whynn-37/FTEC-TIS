@@ -1600,6 +1600,11 @@ const EVALUATE = (() => {
                             }
                         }
                     }
+                    else
+                    {
+                        final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                        array_min_max_judgement_per_sub_item.push('NA');
+                    }
 
                     // checking ng max
                     if (max_value_loop !== '') 
@@ -1650,6 +1655,11 @@ const EVALUATE = (() => {
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                        array_min_max_judgement_per_sub_item.push('NA');
                     }
 
                     if (a_count === 5) 

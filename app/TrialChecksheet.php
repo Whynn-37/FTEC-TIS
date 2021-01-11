@@ -75,6 +75,7 @@ class TrialChecksheet extends Model
     public function loadFinishedInspection($decision)
     {
         return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
+        ->join('trial_ledgers', 'trial_ledgers.application_date','=','trial_checksheets.application_date') // pinadagdag ni jed para sa insp reason -george
         ->where('approvals.decision', '=', $decision)
         ->get();
     }

@@ -422,7 +422,7 @@
             showCancelButton: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'REFRESH',
+            confirmButtonText: 'Refresh',
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };
