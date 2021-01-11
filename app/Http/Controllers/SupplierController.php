@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 class SupplierController extends Controller
 {
     public function storeSupplier(UploadController $upload,Supplier $Supplier)
@@ -50,4 +52,121 @@ class SupplierController extends Controller
             'data'      =>  $result
         ];
     }
+
+    public function loadSupplier(Supplier $Supplier)
+    {
+        $result = $Supplier->loadSupplier();
+        
+        $status = 'Error';
+        $message = 'Not Successfully Save';
+
+        if ($result) 
+        {
+            $status = 'Success';
+            $message = 'Successfully Save';
+        }
+
+        return
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
+    }
+
+    public function updateSupplier(Request $Request,Supplier $Supplier)
+    {
+        $supplier_code = $Request->supplier_code;
+        $supplier_name = $Request->supplier_name;
+
+        $validator = Validator::make($Request->all(), 
+        [
+            'supplier_code'         => 'required',
+            'supplier_code'         => 'required',
+        ]);
+
+        if ($validator->fails()) 
+        {
+            $data = 
+            [
+                'response'  => "warning",
+                'value'     => $validator->errors(),
+            ];
+        } 
+        else 
+        {
+            //$data = $Request->except('_token','txt_supplier_id');
+            $data = 
+            [
+                'supplier_code'     => $supplier_code,
+                'supplier_name'     => $supplier_name,
+            ];
+
+            $result = $Supplier->updateOrCreateSupplier($data);     
+        }
+
+        $status = 'Error';
+        $message = 'Not Successfully Save';
+
+        if ($result) 
+        {
+            $status = 'Success';
+            $message = 'Successfully Save';
+        }
+
+        return
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
+    }
+
+    // public function addSupplier(Request $Request,Supplier $Supplier)
+    // {
+    //     $supplier_code = $Request->txt_supplier_code;
+    //     $supplier_name = $Request->txt_supplier_name;
+
+    //     $validator = Validator::make($Request->all(), 
+    //     [
+    //         'txt_supplier_code'         => 'required',
+    //         'txt_supplier_name'         => 'required',
+    //     ]);
+
+    //     if ($validator->fails()) 
+    //     {
+    //         $data = 
+    //         [
+    //             'response'  => "warning",
+    //             'value'     => $validator->errors(),
+    //         ];
+    //     } 
+    //     else 
+    //     {
+    //         //$data = $Request->except('_token',);
+    //         $data = 
+    //         [
+    //             'supplier_code'     => $supplier_code,
+    //             'supplier_name'     => $supplier_name,
+    //         ];
+    //         $result = $Supplier->updateOrCreateSupplier($data);     
+    //     }
+
+    //     $status = 'Error';
+    //     $message = 'Npt Successfully Save';
+
+    //     if ($result) 
+    //     {
+    //         $status = 'Success';
+    //         $message = 'Successfully Save';
+    //     }
+
+    //     return
+    //     [
+    //         'status'    =>  $status,
+    //         'message'   =>  $message,
+    //         'data'      =>  $result
+    //     ];
+
+    // } 
 }
