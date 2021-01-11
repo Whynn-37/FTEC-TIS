@@ -68,7 +68,7 @@ class MailController extends Controller
         $receipient =  
         [
             'jed.relator@fujitsu.com',
-            'markjohrel.manzano@fujitsu.com',
+            // 'markjohrel.manzano@fujitsu.com',
             // 'georgebien.almenanza@fujitsu.com',
             // 'terrymerwin.balahadia@fujitsu.com',
             // 'markangelo.cantalejo@fujitsu.com',
