@@ -43,6 +43,7 @@ const APPROVE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.date_finished}</td>
                         <td>${judgement}</td>
                         <td>
@@ -91,6 +92,7 @@ const APPROVE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.disapproved_by}</td>
                         <td>${value.disapproved_datetime}</td>
                         <td>${value.reason}</td>
@@ -391,21 +393,21 @@ const APPROVE = (() => {
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
                 </td>
 				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2" >${coordinates}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(array_data,0)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(array_data,2)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(array_data,4)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(array_data,6)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(array_data,8)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(type,array_data,6)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(type,array_data,8)}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(array_data,1)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(array_data,3)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(array_data,5)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(array_data,7)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(array_data,9)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(type,array_data,5)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(type,array_data,7)}</td>
+				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(type,array_data,9)}</td>
 			</tr>`;
         } 
         else 
@@ -418,19 +420,19 @@ const APPROVE = (() => {
                 </td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,0)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,0)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,1)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,1)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,2)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,2)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,3)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,3)}" >
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(array_data,4)}" >
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,4)}" >
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
@@ -468,16 +470,16 @@ const APPROVE = (() => {
                     cache   : false,
                     success: result => 
                     {
+                        $('#div_modal_content').LoadingOverlay('hide');
+                        $('#modal_view_inspection_data').modal('hide');
+                        APPROVE.LoadFinishedInspectionData();
+                        APPROVE.LoadDisapprovedInspectionData();
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
                             text: 'Approve successful',
                         })
-
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-                        APPROVE.LoadFinishedInspectionData();
-                        APPROVE.LoadDisapprovedInspectionData();
                     }
                 });
             }
@@ -543,16 +545,16 @@ const APPROVE = (() => {
                         cache   : false,
                         success: result => 
                         {
+                            $('#div_modal_content').LoadingOverlay('hide');
+                            $('#modal_view_inspection_data').modal('hide');
+                            APPROVE.LoadFinishedInspectionData();
+                            APPROVE.LoadDisapprovedInspectionData();
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success',
                                 text: 'Diaspprove successful',
                             })
-
-                            $('#div_modal_content').LoadingOverlay('hide');
-                            $('#modal_view_inspection_data').modal('hide');
-                            APPROVE.LoadFinishedInspectionData();
-                            APPROVE.LoadDisapprovedInspectionData();
                         }
                     });
                 }

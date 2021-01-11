@@ -47,6 +47,7 @@ const EVALUATE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.date_finished}</td>
                         <td>${judgement}</td>
                         <td>
@@ -95,6 +96,7 @@ const EVALUATE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.disapproved_by}</td>
                         <td>${value.disapproved_datetime}</td>
                         <td>${value.reason}</td>
@@ -2333,12 +2335,6 @@ const EVALUATE = (() => {
                     cache   : false,
                     success: result => 
                     {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Approve successful',
-                        })
-
                         array_add_to_pdf            = [];
                         add_to_pdf_count            = 1;
                         attachment_count            = '';
@@ -2349,7 +2345,14 @@ const EVALUATE = (() => {
 
                         $('#div_modal_content').LoadingOverlay('hide');
                         $('#modal_view_inspection_data').modal('hide');
+
                         EVALUATE.LoadFinishedInspectionData();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Approve successful',
+                        })
                     }
                 });
             }

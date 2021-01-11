@@ -127,7 +127,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <a class="card-link" href="#accordion_reason"><strong
-                                        style="font-size: 20px;"><i class="ti-layout-grid2"></i>
+                                        style="font-size: 20px;"><i class="ti-comment-alt"></i>
                                         DISAPPROVE REASON</strong></a>
                             </div>
                             <div id="accordion_reason" class="show" data-parent="#accordion_disapprove_reason">
