@@ -122,51 +122,24 @@ class SupplierController extends Controller
         ];
     }
 
-    // public function addSupplier(Request $Request,Supplier $Supplier)
-    // {
-    //     $supplier_code = $Request->txt_supplier_code;
-    //     $supplier_name = $Request->txt_supplier_name;
+    public function deleteSupplier($id,Supplier $Supplier)
+    {
+        $result = $Supplier->deleteSupplier($id); 
 
-    //     $validator = Validator::make($Request->all(), 
-    //     [
-    //         'txt_supplier_code'         => 'required',
-    //         'txt_supplier_name'         => 'required',
-    //     ]);
-
-    //     if ($validator->fails()) 
-    //     {
-    //         $data = 
-    //         [
-    //             'response'  => "warning",
-    //             'value'     => $validator->errors(),
-    //         ];
-    //     } 
-    //     else 
-    //     {
-    //         //$data = $Request->except('_token',);
-    //         $data = 
-    //         [
-    //             'supplier_code'     => $supplier_code,
-    //             'supplier_name'     => $supplier_name,
-    //         ];
-    //         $result = $Supplier->updateOrCreateSupplier($data);     
-    //     }
-
-    //     $status = 'Error';
-    //     $message = 'Npt Successfully Save';
-
-    //     if ($result) 
-    //     {
-    //         $status = 'Success';
-    //         $message = 'Successfully Save';
-    //     }
-
-    //     return
-    //     [
-    //         'status'    =>  $status,
-    //         'message'   =>  $message,
-    //         'data'      =>  $result
-    //     ];
-
-    // } 
+        $status = 'Error';
+        $message = 'Not Successfully Save';
+    
+        if ($result) 
+        {
+            $status = 'Success';
+            $message = 'Successfully Deleted';
+        }
+    
+        return
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
+    }
 }

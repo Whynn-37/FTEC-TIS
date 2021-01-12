@@ -39,4 +39,9 @@ class Supplier extends Model
             ]
         );
     }
+
+    public function deleteSupplier($id)
+    {
+        return Supplier::find($id)->delete();
+    }
 }
