@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-
 class SendMail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -15,7 +14,6 @@ class SendMail extends Mailable
     public $attachment;
     public $view;
     public $subject;
-    public $file_path;
 
     /**
      * Create a new message instance.
@@ -37,20 +35,12 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        // $file_path = '';
-        // if ($this->attachment !== null) 
-        // {
-        //     $file_path = storage_path('app/public/'.$this->attachment);
-        //     return $this->subject($this->subject)->view($this->view)->attach($file_path);
-        // }
-
-        // return $this->subject($this->subject)->view($this->view);
-
         $email = $this->subject($this->subject)->view($this->view);
 
         // $attachments is an array with file paths of attachments
-        foreach($this->attachment as $filePath){
-            $email->attach($filePath);
+        foreach($this->attachment as $file_path)
+        {
+            $email->attach($file_path);
         }
 
         return $email;
