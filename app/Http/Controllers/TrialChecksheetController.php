@@ -19,27 +19,6 @@ use Session;
 use DB;
 class TrialChecksheetController extends Controller
 {
-    // public function loadPartnumber(TrialLedger $TrialLedger)
-    // {
-    //     $data = $TrialLedger->loadPartnumber();
-
-    //     $status = 'Error';
-    //     $message = 'No Part Number';
-
-    //     if (count($data) !== 0) 
-    //     {
-    //         $status = 'Success';
-    //         $message = 'Part Number Successfully Load';
-    //     }
-
-    //     return 
-    //     [
-    //         'status'    =>  $status,
-    //         'message'   =>  $message,
-    //         'data'      =>  $data
-    //     ];
-    // }
-
     public function unique_multidim_array($array, $key) { 
         $temp_array = array(); 
         $i = 0; 
@@ -135,7 +114,6 @@ class TrialChecksheetController extends Controller
 
         $status = 'Error';
         $message = 'Inspection Reason Required';
-        // $data = [];
 
         if ($part_number !== null) 
         {
@@ -321,10 +299,6 @@ class TrialChecksheetController extends Controller
         $message = 'Required Fields';
         $result = [];
 
-        // if ($part_number != null || 
-        // $revision_number != null || 
-        // $trial_number != null) 
-        // {
         if ($application_date !== null) 
         {
             $data = 
@@ -335,13 +309,11 @@ class TrialChecksheetController extends Controller
                 'trial_number'      => $trial_number
             ];
 
-            // $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($data)),true);
             $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($application_date)),true);
             $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
             $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
 
-            // $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($data)),true);
             $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
             if($trial_checksheet_data)
@@ -761,7 +733,6 @@ class TrialChecksheetController extends Controller
     {
         $report_status = $request->report_status;
         $merge = [];
-
 
         $inspector ='';
         $evaluator ='';

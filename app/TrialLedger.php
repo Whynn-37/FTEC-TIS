@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
-
 class TrialLedger extends Model
 {
     protected $fillable = ['application_date', 'supplier_code', 'part_number', 'part_name',  'revision_number', 'inspection_reason', 'die_class', 'trial_number'];
@@ -14,16 +13,6 @@ class TrialLedger extends Model
         TrialLedger::truncate();
         return TrialLedger::insert($datas);
     }
-
-    // public function loadPartnumber()
-    // {
-    //     return TrialLedger::where('actual_end_date', null)
-    //     ->orWhere('actual_end_date', '')
-    //     ->select('part_number')
-    //     ->distinct()
-    //     ->get();
-    // }
-
     
     public function loadPartnumber()
     {
@@ -110,20 +99,10 @@ class TrialLedger extends Model
         ->first();
     }
 
-    // public function getTrialLedger($data)
-    // {
     public function getTrialLedger($application_date)
     {
         return TrialLedger::where('application_date', $application_date)
         ->first();
-        // return TrialLedger::where('part_number', $data['part_number'])
-        // ->where('revision_number', $data['revision_number'])
-        // ->where('trial_number', $data['trial_number'])
-        // ->where(function($query) {
-        //     $query->where('actual_end_date', null)
-        //           ->orWhere('actual_end_date', '');
-        // })
-        // ->first();
     }
 
     public function getApplicationDate($part_number, $inspection_reason, $trial_number)
@@ -131,8 +110,6 @@ class TrialLedger extends Model
         return TrialLedger::where('part_number', $part_number)
         ->where('inspection_reason', $inspection_reason)
         ->where('trial_number', $trial_number)
-        // ->where('judgment', '不良')
-        // ->where('actual_end_date', '!=', null)
         ->select('application_date')
         ->first();
     }
@@ -141,8 +118,6 @@ class TrialLedger extends Model
     {
         return TrialLedger::join('trial_checksheets', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
         ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
-        // ->where('actual_end_date', null)
-        // ->orWhere('actual_end_date', '')
         ->select(
             'trial_checksheets.id',
             'trial_ledgers.part_number', 
@@ -152,17 +127,6 @@ class TrialLedger extends Model
             'trial_ledgers.inspector_id',
             'suppliers.supplier_name')
         ->get();
-        // return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
-        // ->where('actual_end_date', null)
-        // ->orWhere('actual_end_date', '')
-        // ->select(
-        //     'trial_ledgers.part_number', 
-        //     'trial_ledgers.part_name', 
-        //     'trial_ledgers.revision_number', 
-        //     'trial_ledgers.trial_number', 
-        //     'trial_ledgers.inspector_id',
-        //     'suppliers.supplier_name')
-        // ->get();
     }
 
     public function loadPartnumberHistory($column)

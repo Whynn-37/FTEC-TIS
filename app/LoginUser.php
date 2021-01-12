@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class LoginUser extends Model
 {
     protected $connection = 'mydb';
@@ -24,7 +23,6 @@ class LoginUser extends Model
     public function sendEmailTo($incharge)
     {
         return LoginUser::where($incharge)
-        // ->select('emailadd')
         ->get();
     }
 }
