@@ -4,7 +4,7 @@ $(document).ready(function () {
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
 });
 
-let logVisit = function () {
+let logVisit = function (event) {
 
     let trial_checksheet_id = $('#trial_checksheet_id').val();
 
@@ -29,9 +29,40 @@ let logVisit = function () {
     } else {
         console.log('Failure.');
     }
+
+    event.preventDefault()
+    event.returnValue = ''
+};
+
+let logDowntime = function (event) {
+    
+
+    let trial_checksheet_id = $('#trial_checksheet_id').val();
+
+    let downtime_type = $("#slc_downtime_type").val();
+
+    let downtime                = $("#div_downtime_timer").TimeCircles().getTime();
+    let absolute_value_downtime = Math.abs(Math.floor(downtime));
+    total_down_time             = (absolute_value_downtime / 60).toFixed(2);
+
+    // URL to send the data to
+    let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
+
+    let result = navigator.sendBeacon(url);
+
+    if (result) {
+        console.log('Successfully queued!');
+
+    } else {
+        console.log('Failure.');
+    }
+
+    event.preventDefault()
+    event.returnValue = ''
 };
 
 window.addEventListener('beforeunload', logVisit);
+window.addEventListener('beforeunload', logDowntime);
 
 const CHECKSHEET = (() => {
     let this_checksheet = {};
