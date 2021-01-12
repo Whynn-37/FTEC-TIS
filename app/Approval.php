@@ -3,9 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
-use DB;
-
 class Approval extends Model
 {
 
