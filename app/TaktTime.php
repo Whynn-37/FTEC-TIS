@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class TaktTime extends Model
 {
     protected $fillable = ['trial_checksheet_id','start_date','start_time','takt_time', 'end_time', 'actual_time', 'total_takt_time', 'date_finished'];

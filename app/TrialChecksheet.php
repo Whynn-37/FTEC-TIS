@@ -3,8 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-// use App\TrialLedger;
-use DB;
 class TrialChecksheet extends Model
 {
 
@@ -15,16 +13,10 @@ class TrialChecksheet extends Model
         return $this->hasMany('App\ChecksheetItem');
     }
 
-    // public function getTrialChecksheet($data)
-    // {
     public function getTrialChecksheet($application_date)
     {
         return TrialChecksheet::where('application_date',$application_date)
         ->first();
-        // return TrialChecksheet::where('part_number',$data['part_number'])
-        // ->where('revision_number',$data['revision_number'])
-        // ->where('trial_number',$data['trial_number'])
-        // ->first();
     }
 
     public function storeTrialChecksheet($data)

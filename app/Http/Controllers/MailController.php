@@ -14,12 +14,6 @@ class MailController extends Controller
     {
         $TrialChecksheet = new TrialChecksheet();
         $LoginUser = new LoginUser();
-
-        // $trial_checksheet_id = $data['trial_checksheet_id'];
-        // $status              = $data['status'];
-        
-        // $trial_checksheet_id = $request->trial_checksheet_id;
-        // $status              = $request->status;
         
         $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
@@ -75,22 +69,5 @@ class MailController extends Controller
         ];
 
         Mail::to($receipient)->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
-
-        if (count(Mail::failures()) > 0) 
-        {
-            $result = false;
-            $message = 'There was a problem sending the email, Please try again';
-        }
-        else
-        {
-            $result = true;
-            $message = 'Successfully Send';
-        }
-
-        return 
-        [
-            'status'    => $result,
-            'message'   => $message
-        ];
     }
 }
