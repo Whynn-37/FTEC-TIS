@@ -242,28 +242,50 @@ const CHECKSHEET = (() => {
 
         $('.form_trial_checksheet_field_error').text('');
 
-        if (part_number === null && revision_number === null && trial_number === null) {
+        if (part_number === null  && inspection_reason === null && revision_number === null && trial_number === null) 
+        {
             $('#span_error_part_number').remove();
+            $('#span_error_slc_inspection_reason').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
             $('#slc_part_number').before('<span id ="span_error_part_number" class="span-error">Required</span>');
+            $('#slc_inspection_reason').before('<span id ="span_error_slc_inspection_reason" class="span-error">Required</span>');
             $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
             $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        } else if (revision_number === null && trial_number === null) {
+        } 
+        else if (inspection_reason === null && revision_number === null && trial_number === null) 
+        {
             $('#span_error_part_number').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
+            $('#span_error_slc_inspection_reason').remove();
+            $('#slc_inspection_reason').before('<span id ="span_error_slc_inspection_reason" class="span-error">Required</span>');
             $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
             $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        } else if (trial_number === null) {
+        } 
+        else if (revision_number === null && trial_number === null) 
+        {
             $('#span_error_part_number').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
+            $('#span_error_slc_inspection_reason').remove();
+            $('#slc_revision_number').before('<span id ="span_error_revision_number" class="span-error">Required</span>');
             $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
-        } else {
+        } 
+        else if (trial_number === null)
+        {
             $('#span_error_part_number').remove();
             $('#span_error_revision_number').remove();
             $('#span_error_trial_number').remove();
+            $('#span_error_slc_inspection_reason').remove();
+            $('#slc_trial_number').before('<span id ="span_error_trial_number" class="span-error">Required</span>');
+        }
+        else 
+        {
+            $('#span_error_part_number').remove();
+            $('#span_error_revision_number').remove();
+            $('#span_error_trial_number').remove();
+            $('#span_error_slc_inspection_reason').remove();
 
             CHECKSHEET.LoadDetails(application_date);
         }
@@ -292,8 +314,8 @@ const CHECKSHEET = (() => {
                     $('#txt_part_name').val(data.data.trial_checksheets.part_name);
                     $('#txt_model_name').val(data.data.trial_checksheets.model_name);
                     $('#txt_received_date').val(data.data.trial_checksheets.received_date);
-                    $('#txt_inspection_completion_date').val(data.data.trial_checksheets.delivery_date);
-                    $('#txt_actual_inspection_time').val(data.data.trial_checksheets.inspection_actual_time);
+                    $('#txt_plan_start_date').val(data.data.trial_checksheets.plan_start_date);
+                    $('#txt_inspection_required_time').val(data.data.trial_checksheets.inspection_required_time);
                     $('#txt_die_kind').val(data.data.trial_checksheets.die_class);
                     $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);

@@ -40,7 +40,7 @@
                                                     <select class="form-control mb-3 select2 form_trial_checksheet_field" name="part_number" id="slc_part_number" onchange="CHECKSHEET.LoadInspectionReason(this.value)"></select>
                                                 </div>
                                                 <div class="col-md-3 mb-3">
-                                                    <label>TRIAL INSPECTION REASON (INSPECTION TYPE):</label>&nbsp;
+                                                    <label>INSPECTION REASON (INSPECTION TYPE):</label>&nbsp;
                                                     <select class="form-control mb-3 select2_1 form_trial_checksheet_field" name="inspection_reason" id="slc_inspection_reason" onchange="CHECKSHEET.LoadRevision(this.value)"></select>
                                                 </div>
                                                 <div class="col-md-3">
@@ -75,12 +75,12 @@
                                                     <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_received_date" readonly>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label>INSPECTION COMPLETION DATE:</label>
-                                                    <input class="form-control mb-3" type="text" placeholder="Inspection completion date" id="txt_inspection_completion_date" readonly>
+                                                    <label>PLAN START DATE:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Plan start date" id="txt_plan_start_date" readonly>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    <label>ACTUAL INSPECTION TIME:</label>
-                                                    <input class="form-control mb-3" type="text" placeholder="Actual inspection time" id="txt_actual_inspection_time" readonly>
+                                                    <label>INSPECTION REQUIRED TIME:</label>
+                                                    <input class="form-control mb-3" type="text" placeholder="Inspection required time" id="txt_inspection_required_time" readonly>
                                                 </div>
                                             </div>
                                             <div class="row">
