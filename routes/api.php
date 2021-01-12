@@ -46,6 +46,9 @@ Route::delete('delete-data','ChecksheetDataController@deleteDatas');
 
 //Supplier
 Route::post('store-supplier', 'SupplierController@storeSupplier');
+Route::get('load-supplier', 'SupplierController@loadSupplier');
+Route::post('update-supplier', 'SupplierController@updateSupplier');
+
 
 //Cycle Time
 Route::get('load-cycle-time', 'TaktTimeController@loadCycleTime');

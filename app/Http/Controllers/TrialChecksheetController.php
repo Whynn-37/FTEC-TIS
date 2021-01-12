@@ -56,42 +56,47 @@ class TrialChecksheetController extends Controller
         return $temp_array; 
     }
 
-    public function in_array_r($needle, $haystack, $strict = false) 
-    {
-        foreach ($haystack as $item) {
-            if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array($needle, $item, $strict))) 
-            {
-                $result[] = 
-                [
-                    'inspection_reason' => $item->inspection_reason
-                ];
-            }
-            else 
-            {
-               $result = [];
-            }
-        }
-    
-        return $result;
-    }
-
     public function loadPartnumber(TrialLedger $TrialLedger)
     {
         $data = $TrialLedger->loadPartnumber();
 
         if (count($data['checksheet']) !== 0) 
         {
-            foreach ($data['checksheet'] as $checksheet_value) 
+            foreach ($data['ledger'] as $ledger_value) 
             {
-                foreach ($data['ledger'] as $ledger_value) 
+                $application_date[] = $ledger_value->application_date;
+                foreach ($data['checksheet'] as $checksheet_value) 
                 {
-                    if ($checksheet_value->application_date !== $ledger_value->application_date ) 
+                    if ($checksheet_value->application_date === $ledger_value->application_date)
+                    {
+                        $match_application_date[] =  $ledger_value->application_date;
+                        $result = [];
+                    }
+                    else 
                     {
                         $result[] = 
                         [
                             'part_number' => $ledger_value->part_number
                         ];
+                        $match_application_date = false;
                     }
+                }
+            }
+
+            if($match_application_date !== false)
+            {
+                for($x=0; $x<count($match_application_date);$x++)
+                {
+                    $key = array_search($match_application_date[$x], $application_date); 
+                    unset($data['ledger'][$key]); 
+                }
+
+                foreach ($data['ledger'] as $ledger_value) 
+                { 
+                    $result[] = 
+                    [
+                        'part_number' => $ledger_value->part_number
+                    ];
                 }
             }
         }
@@ -100,7 +105,7 @@ class TrialChecksheetController extends Controller
             foreach ($data['ledger'] as $ledger_value) 
             {
                 $result[] = [
-                    'part_number' => $ledger_value['part_number']
+                    'part_number' => $ledger_value->part_number
                 ];
             }
         }
@@ -143,16 +148,22 @@ class TrialChecksheetController extends Controller
                     $application_date[] = $ledger_value->application_date;
                     foreach ($data['checksheet'] as $checksheet_value) 
                     {
-                        $match_application_date = false;
-
                         if ($checksheet_value->application_date === $ledger_value->application_date)
                         {
                             $match_application_date[] =  $ledger_value->application_date;
+                            $result = [];
+                        }
+                        else
+                        {
+                            $result[] = 
+                            [
+                                'inspection_reason' => $ledger_value->inspection_reason
+                            ];
+                            $match_application_date = false;
                         }
                     }
                 }
                 
-                $result  = [];
                 if($match_application_date !== false)
                 {
                     for($x=0; $x<count($match_application_date);$x++)
@@ -160,14 +171,14 @@ class TrialChecksheetController extends Controller
                         $key = array_search($match_application_date[$x], $application_date); 
                         unset($data['ledger'][$key]); 
                     }
-                }
 
-                foreach ($data['ledger'] as $ledger_value) 
-                { 
-                    $result[] = 
-                    [
-                        'inspection_reason' => $ledger_value->inspection_reason
-                    ];
+                    foreach ($data['ledger'] as $ledger_value) 
+                    { 
+                        $result[] = 
+                        [
+                            'inspection_reason' => $ledger_value->inspection_reason
+                        ];
+                    }
                 }
             }
             else 
@@ -179,6 +190,8 @@ class TrialChecksheetController extends Controller
                     ];
                 }
             }
+
+            $result = $this->unique_multidim_array($result,'inspection_reason');
 
             $status = 'Error';
             $message = 'No Inspection Reason';

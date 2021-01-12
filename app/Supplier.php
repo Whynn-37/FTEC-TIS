@@ -21,4 +21,22 @@ class Supplier extends Model
         ->first();
     }
     
+    public function loadSupplier()
+    {
+        return Supplier::get();
+    }
+
+    public function updateOrCreateSupplier($data)
+    {
+        //return ChecksheetItem::find($id)->update($data);
+
+        return Supplier::updateOrCreate(
+            [   
+                'supplier_code'     => $data['supplier_code'],
+            ],
+            [
+                'supplier_name'     => $data['supplier_name'],
+            ]
+        );
+    }
 }
