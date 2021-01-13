@@ -155,4 +155,20 @@ class TrialLedger extends Model
             'attachments.file_folder')
         ->get();
     }
+
+    public function history()
+    {
+        $ledger = TrialLedger::where('actual_end_date', null)
+        ->orWhere('actual_end_date', '')
+        ->get();
+
+        $checksheet = DB::table('trial_checksheets')
+        ->get();
+
+        return 
+        [
+            'ledger' => $ledger,
+            'checksheet' => $checksheet,
+        ];
+    }
 }

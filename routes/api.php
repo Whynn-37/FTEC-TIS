@@ -78,5 +78,5 @@ Route::get('for-approval','MailController@forApproval');
 Route::get('for-disapproval','MailController@forDispproval');
 Route::get('back-to-approval','MailController@backToApproval');
 
-Route::get('load-part-number-column', 'TrialChecksheetController@loadPartNumberColumn');
-
+//history
+Route::get('history-search/{status}', 'HistoryController@historySearch');
