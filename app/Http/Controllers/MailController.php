@@ -55,7 +55,7 @@ class MailController extends Controller
             //     'Fullname' => 'Inyida Ngoki',
             // ];
 
-            $subject = 'For Disapproval';
+            $subject = 'Disapproved';
         }
 
         // $receipient = $LoginUser->sendEmailTo($incharge);

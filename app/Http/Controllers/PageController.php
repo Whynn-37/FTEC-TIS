@@ -81,4 +81,14 @@ class PageController extends Controller
     {
         return view('Approver.approval');
     }
+
+    public function history_page ()
+    {
+        return view('History.history');
+    }
+
+    public function supplier_page ()
+    {
+        return view('Management.supplier');
+    }
 }

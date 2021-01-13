@@ -133,6 +133,11 @@
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_datetime']}} </td>
                                                         </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
+                                                        </tr>
                                                     @endif
                                                     
                                                 </tbody>
@@ -140,6 +145,7 @@
                                         <tr>
                                             <td align="left"
                                                 style="color: #1f2837; font-size: 16px; font-family: Open Sans, Helvetica, sans-serif; line-height: 28px;">
+                                                <p>To visit Trial Inspection System, just click <a href="localhost/TIS/public">here.</a></p>
                                                 <br>
                                                 <p style="line-height: 26px; margin-bottom:15px;margin-left:15px;">
                                                     Thank you,

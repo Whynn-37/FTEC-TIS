@@ -19,6 +19,8 @@ Route::get('login', 'PageController@login_page');
 Route::get('trial-checksheet', 'PageController@trial_checksheet_page');
 Route::get('evaluation', 'PageController@evaluation_page');
 Route::get('approval', 'PageController@approver_page');
+Route::get('history', 'PageController@history_page');
+Route::get('supplier', 'PageController@supplier_page');
 Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
@@ -63,6 +65,7 @@ Route::delete('delete-data','ChecksheetDataController@deleteDatas');
 Route::post('store-supplier', 'SupplierController@storeSupplier');
 Route::get('load-supplier', 'SupplierController@loadSupplier');
 Route::post('update-supplier', 'SupplierController@updateSupplier');
+Route::delete('delete-supplier', 'SupplierController@deleteSupplier');
 
 
 //Cycle Time
@@ -91,8 +94,3 @@ Route::get('for-disapproval','MailController@forDispproval');
 Route::get('back-to-approval','MailController@backToApproval');
 
 Route::get('load-part-number-column', 'TrialChecksheetController@loadPartNumberColumn');
-
-Route::get('history', function () 
-{
-    return view('History.history');
-});
