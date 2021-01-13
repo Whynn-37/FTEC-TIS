@@ -53,7 +53,6 @@ const SUPPLIER = (() => {
                     "ordering": true,
                     "info": true,
                     "autoWidth": true,
-                    "scrollX": true,
                 });
                 $('#tbl_supplier_data').LoadingOverlay('hide');
             }
@@ -114,62 +113,76 @@ const SUPPLIER = (() => {
     this_supplier.uploadSupplierList = () =>
     {
         let formData = new FormData($('#form_supplier')[0]);
-        
-        $.ajax({
-            url         : `store-supplier`,
-            type        : 'post',
-            dataType    : 'json',
-            cache       : false,
-			contentType : false,
-			processData : false,
-            data        : formData,
-            success: result => 
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to upload this file?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sige paki upload thanks',
+            cancelButtonText: 'Confirm ko muna ha'
+          }).then((result) => {
+            if (result.isConfirmed) 
             {
-                if(result.status === 'Error File')
-                {
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'error',
-                        title: `${result.message}`,
-                        showConfirmButton: false,
-                        timer: 2000
-                    })
-                }
-
-               if(result.data === true)
-               {
-                    setTimeout(function() {
-                        SUPPLIER.loadSupplierList();
-                    }, 1500);
-
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'Successfully Save !',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-
-                    $(".upload-supplier-modal").modal("hide");
-               }
-               else
-               {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Failed to Upload Data',
-                    showConfirmButton: true,
-                    timer: 2000
-                })
-               }
+                $.ajax({
+                    url         : `store-supplier`,
+                    type        : 'post',
+                    dataType    : 'json',
+                    cache       : false,
+                    contentType : false,
+                    processData : false,
+                    data        : formData,
+                    success: result => 
+                    {
+                        if(result.status === 'Error File')
+                        {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: `${result.message}`,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        }
+        
+                       if(result.data === true)
+                       {
+                            setTimeout(function() {
+                                SUPPLIER.loadSupplierList();
+                            }, 1500);
+        
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Successfully Save !',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            
+                            $('.form_upload_supplier').val('');
+        
+                            $(".upload-supplier-modal").modal("hide");
+                       }
+                       else
+                       {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Failed to Upload Data',
+                            showConfirmButton: true,
+                            timer: 2000
+                        })
+                       }
+                    }
+                }); 
             }
-        }); 
+        }) 
     }
 
     this_supplier.deleteSupplier = (id) =>
     {
-        console.log(id);
-
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -206,6 +219,11 @@ const SUPPLIER = (() => {
                 });
             }
         })
+    }
+
+    this_supplier.downloadTemplate = () =>
+    {
+        window.open(`../../../tis/storage/app/public/template/template.xlsx`);
     }
 
     return this_supplier;

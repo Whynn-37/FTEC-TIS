@@ -11,8 +11,6 @@ class SupplierController extends Controller
     {
         $file = $Request->file('upload_file');
 
-        $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
-
         $sheet = 0;
     
         $status = 'Error';
@@ -21,6 +19,8 @@ class SupplierController extends Controller
 
             if (file_exists($file)) 
             {
+                $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
+                
                 if($file_extension === 'csv' || $file_extension === 'xlsx')
                 {
                     $data = $upload->upload($file, $sheet);
@@ -49,6 +49,11 @@ class SupplierController extends Controller
                     $status = 'Error File';
                     $message = 'Invalid File';
                 }
+            }
+            else
+            {
+                $status = 'No File';
+                $message = 'No File Selected';
             }
         
         return

@@ -50,13 +50,12 @@
                         </div>
                         <div class="col-2" >
                             <label>&nbsp;</label>
-                            <button class="btn btn-success" style="margin-left:35px;"><b> <i class="ti-download"> </i> DOWNLOAD </b></button>
+                            <button type="button" class="btn btn-success" style="margin-left:35px;" onclick="SUPPLIER.downloadTemplate();"><b> <i class="ti-download"> </i> DOWNLOAD </b></button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                {{-- <button type="button" class="btn btn-success">SAVE</button> --}}
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
