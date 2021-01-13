@@ -127,4 +127,33 @@ class TrialChecksheet extends Model
             )
         ->first();
     }
+
+    public function history($decision)
+    {
+        return TrialChecksheet::join('trial_ledgers', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
+        ->join('approvals', 'trial_checksheets.id', 'approvals.trial_checksheet_id')
+        ->join('attachments', 'trial_checksheets.id', 'attachments.trial_checksheet_id')
+        ->where('approvals.decision', $decision)
+        ->select(
+            'trial_checksheets.id',
+            'trial_checksheets.judgment',
+            'trial_ledgers.part_number',
+            'trial_ledgers.revision_number',
+            'trial_ledgers.trial_number',
+            'trial_ledgers.inspection_reason',
+            'approvals.inspect_by',
+            'approvals.inspect_datetime',
+            'approvals.evaluated_by',
+            'approvals.evaluated_datetime',
+            'approvals.approved_by',
+            'approvals.approved_datetime',
+            'approvals.disapproved_by',
+            'approvals.disapproved_datetime',
+            'attachments.file_folder',
+            'attachments.file_name',
+            'attachments.file_merge',
+            'attachments.file_name_merge',
+            )
+        ->get();
+    }
 }

@@ -403,7 +403,7 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
-                    'evaluated_by' => Session::get('fullname'),
+                    'evaluated_by' => Session::get('name'),
                     'evaluated_datetime' => now(),
                     'decision' => 2
                 ];
@@ -442,7 +442,7 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
-                    'approved_by' => Session::get('fullname'),
+                    'approved_by' => Session::get('name'),
                     'approved_datetime' => now(),
                     'decision' => 0
                 ];
@@ -480,7 +480,7 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
-                    'disapproved_by' => Session::get('fullname'),
+                    'disapproved_by' => Session::get('name'),
                     'disapproved_datetime' => now(),
                     'decision' => 3,
                     'reason' => $reason
@@ -494,7 +494,7 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
-                    'evaluated_by' => Session::get('fullname'),
+                    'evaluated_by' => Session::get('name'),
                     'evaluated_datetime' => now(),
                     'decision' => 2
                 ];
