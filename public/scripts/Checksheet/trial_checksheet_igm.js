@@ -24,10 +24,13 @@ const IGM = (() => {
                 title: `Do you want to load IGM?`,
             })
         ).then((result) => {
-            if (result.value) {
+            if (result.value) 
+            {
                 //if yes
                 IGM.StoreIGM();
-            } else {
+            } 
+            else 
+            {
                 //if no
                 $('#accordion_igm').LoadingOverlay('show');
 
@@ -65,32 +68,48 @@ const IGM = (() => {
         let revision_number = $('#slc_revision_number').val();
 
         $.ajax({
-            url: `store-igm`,
-            type: 'post',
+            url     : `store-igm`,
+            type    : 'post',
             dataType: 'json',
-            cache: false,
-            data: {
-                _token: _TOKEN,
-                part_number: part_number,
-                revision_number: revision_number,
-                trial_checksheet_id: trial_checksheet_id,
+            cache   : false,
+            data    : {
+                _token              : _TOKEN,
+                part_number         : part_number,
+                revision_number     : revision_number,
+                trial_checksheet_id : trial_checksheet_id,
             },
-            success: data => {
-                IGM.LoadIGM(trial_checksheet_id);
+            success: result => 
+            {
+                if (result.result === false)
+                {
+                    Swal.fire({
+                        icon    : 'warning',
+                        title   : result.message,
+                        text    : 'No IGM file has been found',
+                    })
+
+                    $('#accordion_igm').LoadingOverlay('hide');
+                }
+                else
+                {
+                    IGM.LoadIGM(trial_checksheet_id);
+                }
             }
         });
     };
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
         $.ajax({
-            url: `load-igm`,
-            type: 'get',
+            url     : `load-igm`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
+            cache   : false,
+            data    : 
+            {
                 trial_checksheet_id: trial_checksheet_id,
             },
-            success: data => {
+            success: data => 
+            {
                 $('#btn_validate_load_igm').prop('hidden', true);
                 $('#tbl_igm').prop('hidden', false);
                 $('#tbody_tbl_igm').prop('hidden', false);
@@ -99,7 +118,8 @@ const IGM = (() => {
                 IGM.GetChecksheetItems(data);
 
                 //pagkuha ng max item number
-                if (data.data.items.length > 0) {
+                if (data.data.items.length > 0) 
+                {
                     let count = 1;
                     data.data.items.forEach((value) => {
                         //paglalagay ng item count
@@ -116,7 +136,9 @@ const IGM = (() => {
                         </td>
                     </tfoot>
                     `;
-                } else {
+                } 
+                else 
+                {
                     $('#btn_validate_load_igm').prop('hidden', false);
                     tfoot_tbl_igm = '';
                 }
@@ -129,15 +151,17 @@ const IGM = (() => {
 
     this_igm.GetChecksheetItems = (data) => {
 
-        let array_item_tools_options = '';
-        let array_item_type_options = '';
-        let tr_new_item = '';
+        let array_item_tools_options    = '';
+        let array_item_type_options     = '';
+        let tr_new_item                 = '';
 
-        for (let index = 0; index < array_item_tools.length; index++) {
+        for (let index = 0; index < array_item_tools.length; index++) 
+        {
             array_item_tools_options += `<option value="${array_item_tools[index]}"></option>`;
         }
 
-        for (let index = 0; index < array_item_type.length; index++) {
+        for (let index = 0; index < array_item_type.length; index++) 
+        {
             array_item_type_options += `<option value="${array_item_type[index]}">${array_item_type[index]}</option>`;
         }
 
@@ -264,10 +288,6 @@ const IGM = (() => {
 
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
                 IGM.AddIgmSubNo(array_load_igm_type[a_index], array_load_igm_item_number[a_index], existing_sub_no_count, 0, bg_header,array_hidden_checksheet_data_id[b_index],'select_item_type',array_data[b_index],array_judgement[b_index],array_coordinates[b_index]);
-    
-                // $(`#a_add_igm_item_no_${array_load_igm_item_number[a_index]}`).attr('onclick', `IGM.AddIgmItemNo('${array_load_igm_type[a_index]}',${array_load_igm_item_number[a_index]},1,0);`)
-                // $(`#a_add_igm_item_no_${array_load_igm_item_number[a_index]}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${array_load_igm_type[a_index]}',${array_load_igm_item_number[a_index]},1,0);`)
-                // $(`#slc_item_no_${array_load_igm_item_number[a_index]}_type`).attr('onchange', `IGM.SelectItemType(${array_load_igm_item_number[a_index]},1);`);
     
                 $(`#a_add_igm_item_no_${array_load_igm_item_number[a_index]}_sub_no`).prop('hidden', false);
                 $(`#th_igm_item_no_${array_load_igm_item_number[a_index]}_extra_column`).prop('hidden', false);
@@ -1655,6 +1675,7 @@ const IGM = (() => {
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
         {
+            //pinalitan ang trigger ng function from onkeyup to onchange
             tr += `${tr_sub_no_column}
             <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
@@ -1665,40 +1686,40 @@ const IGM = (() => {
                     </div>
                 </td>
 				<td style="vertical-align: middle;" rowspan="2">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')" value="${new_coordinates}">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')" value="${new_coordinates}">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,0)}',${item_no_count},${new_sub_no},'min_1');">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,2)}',${item_no_count},${new_sub_no},'min_2');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,4)}',${item_no_count},${new_sub_no},'min_3');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,6)}',${item_no_count},${new_sub_no},'min_4');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,8)}',${item_no_count},${new_sub_no},'min_5');">
 				</td>
 				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,1)}',${item_no_count},${new_sub_no},'max_1');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,3)}',${item_no_count},${new_sub_no},'max_2');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,5)}',${item_no_count},${new_sub_no},'max_3');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,7)}',${item_no_count},${new_sub_no},,'max_4');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onkeyup="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,9)}',${item_no_count},${new_sub_no},','max_5');">
 				</td>
 			</tr>`;
         } 
@@ -1714,7 +1735,7 @@ const IGM = (() => {
                     </div>
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}" onkeyup="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no});">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}" onchange="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no});">
                 </td>
                 <td class="td_sub_no_input">
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,0)}">
@@ -2015,6 +2036,7 @@ const IGM = (() => {
     };
 
     this_igm.SubItemSelectVisual = (item_no, sub_no, visual_no) => {
+
         //para to sa coordinates since wala namang pinapasa na visual_no
         if (visual_no !== 'undefined')
         {
@@ -2099,10 +2121,10 @@ const IGM = (() => {
                         }
                     }
                 }
+                
+                //proceed sa pag kuha ng visuals then deretso sa ajax
+                IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
             }
-            
-            //proceed sa pag kuha ng visuals then deretso sa ajax
-            IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
         }
         else
         {
@@ -2203,6 +2225,10 @@ const IGM = (() => {
         let lower_limit   =   $(`#txt_item_no_${item_no}_lower_limit`).val();
         let specs         =   $(`#txt_item_no_${item_no}_specs`).val();
         let coordinates   =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let min_max_value =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
+
+        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).attr('onclick',`IGM.CheckIfDashValue('${min_max_value}',${item_no},${sub_no},'${min_max_type}_${min_max_no}')`);
+        
         //upper limit
         if (upper_limit === '') 
         {
@@ -2275,45 +2301,96 @@ const IGM = (() => {
 
     this_igm.ValidateSubItemGetMinMax = (item_no, sub_no, min_max_no, min_max_type) => {
         
+        let min_max_value   = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
+        let type            = $(`#slc_item_no_${item_no}_type`).val();
+
         if (min_max_type === 'min') 
         {
             if (min_max_no === 1) 
             {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
-                {
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } 
-                else 
+                if (min_max_value === '-')
                 {
                     $(`#span_min_error_${min_max_no}`).remove();
-                    IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+
+                    if (type === 'Min and Max and Form Tolerance')
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    }
+                    else
+                    {
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                    }
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_max_value))) 
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    } 
+                    else 
+                    {
+                        $(`#span_min_error_${min_max_no}`).remove();
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                    }
                 }
             } 
             else 
             {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
+                if (min_max_value === '-')
                 {
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } 
-                else 
-                {
-                    for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
+                    if (type === 'Min and Max and Form Tolerance')
                     {
-                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') 
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    }
+                    else
+                    {
+                        for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
                         {
-                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val('');
-                            IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
-                        } 
-                        else 
-                        {
-                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') 
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') 
                             {
-                                $(`#span_min_error_${min_max_no}`).remove();
-                                IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val('');
+                                IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
+                            } 
+                            else 
+                            {
+                                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') 
+                                {
+                                    $(`#span_min_error_${min_max_no}`).remove();
+                                    IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                                }
                             }
-                        }
+                        } 
+                    }
+
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_max_value))) 
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    } 
+                    else 
+                    {
+                        for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
+                        {
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val('');
+                                IGM.ValidateSubItemGetMinMaxPreviousUpperAndLowerLimit(item_no, sub_no, min_max_no);
+                            } 
+                            else 
+                            {
+                                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no - 1}`).val() !== '') 
+                                {
+                                    $(`#span_min_error_${min_max_no}`).remove();
+                                    IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                                }
+                            }
+                        }  
                     }
                 }
             }
@@ -2322,30 +2399,63 @@ const IGM = (() => {
         {
             if (min_max_no === 1) 
             {
-                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val() === '') 
+                if (min_max_value === '-')
                 {
                     $(`#span_min_error_${min_max_no}`).remove();
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Required</span>`);
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                } 
-                else 
-                {
-                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val() === '') 
+
+                    if (type === 'Min and Max and Form Tolerance')
                     {
                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    } 
-                    else {
+                    }
+                    else
+                    {
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type); 
+                    }
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_max_value))) 
+                    {
                         $(`#span_min_error_${min_max_no}`).remove();
-                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Required</span>`);
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    } 
+                    else 
+                    {
+                        $(`#span_min_error_${min_max_no}`).remove();
+                        IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type); 
                     }
                 }
             } 
             else 
             {
-                IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
+                if (min_max_value === '-')
+                {
+                    if (type === 'Min and Max and Form Tolerance')
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    }
+                    else
+                    {
+                        IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
+                    }
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_max_value))) 
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    } 
+                    else 
+                    {
+                        IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
+                    }
+                }
             }
         }
         else
@@ -2368,29 +2478,95 @@ const IGM = (() => {
                     {
                         empty_min_max_inputs_count++;
                     }
-                    
+
                     if (empty_min_max_inputs_count === 0)
                     {
-                        let new_min_value = parseFloat(min_value);
-                        let new_max_value = parseFloat(max_value);
-
                         //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
-                        if (parseFloat(min_value) > 0)
+                        if (!isNaN(parseFloat(min_value)))
                         {
-                            new_min_value =  `+${parseFloat(min_value)}`;
+                            if (parseFloat(min_value) > 0)
+                            {
+                                new_min_value =  `+${parseFloat(min_value)}`;
+                            }
                         }
                         
-                        if (parseFloat(max_value) > 0)
+                        if (!isNaN(parseFloat(max_value)))
                         {
-                            new_max_value =  `+${parseFloat(max_value)}`;
+                            if (parseFloat(max_value) > 0)
+                            {
+                                new_max_value =  `+${parseFloat(max_value)}`;
+                            }
                         }
-                        //pagpush ng min and max data
-                        array_min_max_value.push(new_min_value);
-                        array_min_max_value.push(new_max_value);
+
+                        if (min_value !== '')
+                        {
+                            if (min_value === '-')
+                            {
+                                if (type === 'Min and Max and Form Tolerance')
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`)
+                                }
+                                else
+                                {
+                                    array_min_max_value.push(min_value);
+                                }
+                            }
+                            else
+                            {
+                                if (!isNaN(parseFloat(min_value)))
+                                {
+                                    array_min_max_value.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+                                }
+                                else
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        }
+
+                        if (max_value !== '')
+                        {
+                            if (max_value === '-')
+                            {
+                                if (type === 'Min and Max and Form Tolerance')
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`)
+                                }
+                                else
+                                {
+                                    array_min_max_value.push(max_value);
+                                }
+                            }
+                            else
+                            {
+                                if (!isNaN(parseFloat(max_value)))
+                                {
+                                    array_min_max_value.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
+                                }
+                                else
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        }
 
                         if (c_count === 5) 
                         {
-                            //pagkuha ng overall judgement para sa checksheet item 
+                            //pagkuha ng overall judgement para sa checksheet item
                             IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
                             array_min_max_value = [];
                         }
@@ -2458,15 +2634,15 @@ const IGM = (() => {
 
     this_igm.ValidateSubItemGetMinMaxWithUpperAndLowerLimit = (item_no, sub_no, min_max_no, min_max_type) => {
 
+        let type                                                    = $(`#slc_item_no_${item_no}_type`).val();
         let upper_limit                                             = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit                                             = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let min_max_range                                           = (parseFloat(upper_limit) - parseFloat(lower_limit)) / 2;
         let min_value                                               = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
         let max_value                                               = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
         let last_max_value                                          = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
         let array_min_max_judgement_per_sub_item                    = [];
         let array_min_max_value                                     = [];
-        let array_min_max_judgement_per_sub_item_overall_NG_count   = 0;
-
 
         if (parseFloat(min_value) > parseFloat(max_value)) 
         {
@@ -2486,118 +2662,193 @@ const IGM = (() => {
             {
                 for (let a_count = 1; a_count <= 5; a_count++) 
                 {
-
                     let min_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
                     let max_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
                    
                     // checking ng min
-                    if (min_value !== '') 
+                    if (min_value_loop !== '') 
                     {   
-                        if (parseFloat(min_value_loop) > upper_limit) 
+                        if (min_value_loop === '-')
                         {
-                            array_min_max_judgement_per_sub_item.push('NG');
-                        } 
-                        else 
+                            array_min_max_judgement_per_sub_item.push('NA');
+                        }
+                        else
                         {
-                            if (parseFloat(min_value_loop) < lower_limit) 
+                            //para sa iba pang condition para sa MMF may range na kasama
+                            if (type === 'Min and Max and Form Tolerance')
                             {
-                                array_min_max_judgement_per_sub_item.push('NG');
-                            } 
-                            else 
+                                let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+                                alert(`${min_max_difference} <= ${min_max_range}`)
+                                if (min_max_difference <= min_max_range)
+                                {
+                                    alert('ok')
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
+                                else if (min_max_difference > min_max_range)
+                                {
+                                    alert('ng')
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else
+                                {
+                                    alert('ok2')
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
+                            }
+                            else
                             {
-                                array_min_max_judgement_per_sub_item.push('OK');
+                                if (parseFloat(min_value_loop) > parseFloat(upper_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                } 
+                                else 
+                                {
+                                    if (parseFloat(min_value_loop) < parseFloat(lower_limit)) 
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('NG');
+                                    } 
+                                    else 
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        array_min_max_judgement_per_sub_item.push('NA');
+                    }
 
                     // checking ng max
-                    if (max_value !== '') 
+                    if (max_value_loop !== '') 
                     {
-                        if (parseFloat(max_value_loop) > upper_limit) 
+                        if (max_value_loop === '-')
                         {
-                            array_min_max_judgement_per_sub_item.push('NG');
-                        } 
-                        else 
+                            array_min_max_judgement_per_sub_item.push('NA');
+                        }
+                        else
                         {
-                            if (parseFloat(max_value_loop) < lower_limit) 
+                            //para sa iba pang condition para sa MMF may range na kasama
+                            if (type === 'Min and Max and Form Tolerance')
                             {
-                                array_min_max_judgement_per_sub_item.push('NG');
-                            } 
-                            else 
+                                let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+                                alert(`${min_max_difference} <= ${min_max_range}`)
+                                if (min_max_difference <= min_max_range)
+                                {
+                                                                                alert('ok')
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
+                                else if (min_max_difference > min_max_range)
+                                {
+                                                                                alert('ng')
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else
+                                {
+                                                                                alert('ok2')
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
+                            }
+                            else
                             {
-                                array_min_max_judgement_per_sub_item.push('OK');
+                                if (parseFloat(max_value_loop) > parseFloat(upper_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                } 
+                                else 
+                                {
+                                    if (parseFloat(max_value_loop) < parseFloat(lower_limit)) 
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('NG');
+                                    } 
+                                    else 
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        array_min_max_judgement_per_sub_item.push('NA');
                     }
 
                     if (a_count === 5) 
                     {
                         if (array_min_max_judgement_per_sub_item.length !== 10) 
                         {
-
                             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                             $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         } 
                         else 
                         {
-                            // counting ng NG
-                            for (let b_count = 0; b_count < array_min_max_judgement_per_sub_item.length; b_count++) 
+                            for (let c_count = 1; c_count <= 5; c_count++) 
                             {
-                                if (array_min_max_judgement_per_sub_item[b_count] === 'NG') 
+                                //pagkuha ng min and max data
+                                let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
+                                let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
+                                
+                                //pagpush ng min and max data
+                                if (min_value === '-')
                                 {
-                                    array_min_max_judgement_per_sub_item_overall_NG_count++;
+                                    array_min_max_value.push(min_value);
                                 }
-                            }
-
-                        }
-
-                        for (let c_count = 1; c_count <= 5; c_count++) 
-                        {
-                            let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
-                            let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
-
-                            //pagka nagbura sa gitna na may last value
-                            if (min_value === '') 
-                            {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                            } 
-                            else
-                            {
-                                //pagka nagbura sa gitna na may last value
-                                if (max_value === '') 
+                                else
                                 {
-                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                } 
-                                else 
-                                {
-                                    //pagkuha ng min and max data
-                                    let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
-                                    let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
-                                    //pagpush ng min and max data
-                                    array_min_max_value.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
-                                    array_min_max_value.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
-
-                                    if (c_count === 5) 
+                                    if (min_value === '')
                                     {
-                                        //pag lalagay ng sub item judgement
-                                        if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) 
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                                        } 
-                                        else 
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
-                                        }
-                                        //pagkuha ng overall judgement para sa checksheet item 
-                                        IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
-                                        array_min_max_judgement_per_sub_item = [];
-                                        array_min_max_value = [];
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        array_min_max_value.push('-');
+                                    }
+                                    else
+                                    {
+                                        array_min_max_value.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
                                     }
                                 }
+
+                                if (max_value === '-')
+                                {
+                                    array_min_max_value.push(max_value);
+                                }
+                                else
+                                {
+                                    if (max_value === '')
+                                    {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        array_min_max_value.push('-');
+                                    }
+                                    else
+                                    {
+                                        array_min_max_value.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
+                                    }
+                                }
+                                
+                                if (c_count === 5) 
+                                {
+                                    //pag lalagay ng sub item judgement
+                                    if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                    {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                    } 
+                                    else 
+                                    {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                    }
+
+                                    //pagkuha ng overall judgement para sa checksheet item 
+                                    alert(array_min_max_value)
+                                    alert(array_min_max_judgement_per_sub_item)
+                                    IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                    array_min_max_judgement_per_sub_item = [];
+                                    array_min_max_value = [];
+                                }
                             }
                         }
+
                     }
                 }
             } 
@@ -2646,20 +2897,28 @@ const IGM = (() => {
                 {
                     $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
                 } 
-                else {
-                    if (overall_NG_count > 0) 
+                else 
+                {
+                    if (array_overall_judgement[0] !== 'N/A')
                     {
-                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-                        //auto judgement papunta sa DB
-                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_data, judgment_datas)
-                        array_overall_judgement = [];
+                        if ($.inArray('NG',array_overall_judgement) === -1)
+                        {
+                            $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                            //auto judgement papunta sa DB
+                            IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'GOOD', coordinates, array_data, judgment_datas)
+                            array_overall_judgement = [];
+                        }
+                        else
+                        {
+                            $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                            //auto judgement papunta sa DB
+                            IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_data, judgment_datas)
+                            array_overall_judgement = [];
+                        }
                     } 
                     else 
                     {
-                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                        //auto judgement papunta sa DB
-                        IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'GOOD', coordinates, array_data, judgment_datas)
-                        array_overall_judgement = [];
+                        $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
                     }
                 }
             } 
@@ -2754,11 +3013,22 @@ const IGM = (() => {
             {
                 data = (array_data[number] == "undefined") ? '': array_data[number];
             } 
+            else
+            {
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                {
+                    data = '-';
+                }
+            }
         }
         else
         {
-            data = '';
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+            {
+                data = '-';
+            }
         }
+
         return data;
     };
 
@@ -2808,13 +3078,15 @@ const IGM = (() => {
         }
     };
 
+    this_igm.CheckIfDashValue = (value,item_no,sub_no,min_max_type_no) => {
+
+        if (value === '-')
+        {
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type_no}`).val('');
+        }
+    };
    
     return this_igm;
 })();
 
 
-// NOTE: 12/18/2020
-// LAGYAN NG VALIDATION ANG MIN MAX NA PAGKA WALANG MIN OR MAX NA ILALAGAY DAPAT NAKADASH
-// LAGYAN NG VALIDATION ANG PAGSESAVE DAPAT HINDI PAPASOK PAGKA + OR - LANG ANG LAMAN NG MIN MAX TEXTBOX. ALAMIN KUNG PAANO MALALAMAN NA MAY NUMBER SA TEXTBOX HINDI LANG + OR - SIGN. 
-
-// TAPOS NA EVALUATOR. NEXT AY APPROVER NA. SA APPROVER TATLONG ATTACHMENT LANG ANG ILOLOAD, YUNG NAKA MERGE NA PDF, 2ND PAGE, EVALUATION RESULT. VIEWING LANG SA MGA ATTACHMENT NA TO

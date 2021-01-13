@@ -374,7 +374,7 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id !== null)
         {
             // $filename = $part_number . '_' . $revision_number;
-            // $filename =$part_number.'_'.$revision_number.'(00)';
+            $filename =$part_number.'_'.$revision_number.'(00)';
             $filename = 'igm';
             
             // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
@@ -535,21 +535,22 @@ class TrialChecksheetController extends Controller
     {
         $file_names = ['numbering_drawing','material_certification','special_tool_data','others_1','others_2'];
 
-        $trial_checksheet_id = $Request->trial_checksheet_id;
-        $temperature = $Request->temperature;
-        $humidity = $Request->humidity;
-        $judgment = $Request->judgment;
-        $part_number = $Request->part_number;
-        $revision_number = $Request->revision_number;
+        $trial_checksheet_id    = $Request->trial_checksheet_id;
+        $temperature            = $Request->temperature;
+        $humidity               = $Request->humidity;
+        $judgment               = $Request->judgment;
+        $part_number            = $Request->part_number;
+        $revision_number        = $Request->revision_number;
+        $trial_number           = $Request->trial_number;
 
-        $folder_name = $part_number . '-' . $revision_number . '-' . date('Ymd');
+        $folder_name    = $part_number . '-' . $revision_number . '-T' . $trial_number . '-' . date('Ymd');//pinadagdag ni jed - george
 
-        $status  = 'Error';
-        $message = 'No File';
+        $status         = 'Error';
+        $message        = 'No File';
             
-        $trial_checksheet_result = [];
-        $approval_result = [];
-        $attachment_result = [];
+        $trial_checksheet_result    = [];
+        $approval_result            = [];
+        $attachment_result          = [];
 
         if(count($Request->file()) !== 0)
         {

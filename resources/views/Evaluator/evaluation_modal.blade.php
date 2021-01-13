@@ -137,7 +137,7 @@
             </div>
             <div class="modal-footer">
                 <button id="btn_approve_data" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.ApproveData();"><strong class="strong-font"><i class="ti-check"></i> APPROVE</strong></button>
-                <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                <button type="button" class="btn btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
             </div>
         </div>
     </div>

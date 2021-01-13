@@ -26,7 +26,8 @@
                                                     <tr class="text-white">
                                                        <th>PART NO</th>
                                                        <th>REVISION</th>
-                                                       <th>TRIAL STAGE</th>
+                                                       <th>TRIAL NUMBER</th>
+                                                       <th>INSPECTION REASON</th>
                                                        <th>DATE FINISHED</th>
                                                        <th>JUDGEMENT</th>
                                                        <th>ACTION</th>
@@ -57,7 +58,8 @@
                                                     <tr class="text-white">
                                                        <th>PART NO</th>
                                                        <th>REVISION</th>
-                                                       <th>TRIAL NO</th>
+                                                       <th>TRIAL NUMBER</th>
+                                                       <th>INSPECTION REASON</th>
                                                        <th>DISAPPROVED BY</th>
                                                        <th>DISAPPROVED DATE/TIME</th>
                                                        <th>REASON</th>

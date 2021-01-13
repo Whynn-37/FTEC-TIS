@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    
     APPROVE.LoadFinishedInspectionData();
     APPROVE.LoadDisapprovedInspectionData();
 });
@@ -10,8 +9,6 @@ const APPROVE = (() => {
 
     let array_type                  = [];
     let array_item_number           = [];
-    let final_array_min_max_datas   = [];
-    let checksheet_item_count       = '';
    
     this_approve.LoadFinishedInspectionData = () => {
 
@@ -46,6 +43,7 @@ const APPROVE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.date_finished}</td>
                         <td>${judgement}</td>
                         <td>
@@ -94,12 +92,12 @@ const APPROVE = (() => {
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>
+                        <td>${value.inspection_reason}</td>
                         <td>${value.disapproved_by}</td>
                         <td>${value.disapproved_datetime}</td>
                         <td>${value.reason}</td>
                     </tr>`;
                 });
-
 
                 $('#tbody_tbl_disapproved_inspection_data').html(tbody);
                 $('#tbl_disapproved_inspection_data').DataTable({
@@ -153,7 +151,7 @@ const APPROVE = (() => {
                 <div class="vertical-rectangle">
                     <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
                     <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name[0]}');"><i class="ti-eye"></i> VIEW FILE</button>
+                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.pdf');"><i class="ti-eye"></i> VIEW FILE</button>
                     </div>
                     
                     <center style="margin-top: 195px;">
@@ -163,17 +161,7 @@ const APPROVE = (() => {
                 <div class="vertical-rectangle">
                     <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
                     <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('second_page','','',${data.data.checksheet_items[0].trial_checksheet_id});"><i class="ti-eye"></i> VIEW FILE</button>
-                    </div>
-                    
-                    <center style="margin-top: 195px;">
-                        <span>Second Page</span>
-                    </center>
-                </div>
-                <div class="vertical-rectangle">
-                    <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
-                    <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','','',${data.data.checksheet_items[0].trial_checksheet_id});"><i class="ti-eye"></i> VIEW FILE</button>
+                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.xlsx');"><i class="ti-eye"></i> VIEW FILE</button>
                     </div>
                     
                     <center style="margin-top: 195px;">
@@ -194,23 +182,19 @@ const APPROVE = (() => {
 
     };
 
-    this_approve.OpenFile = (file_type,file_folder,file_name,trial_checksheet_id) => {
-
+    this_approve.OpenFile = (file_type,file_folder,file_name) => {
+    
         if (file_type === 'merged')
         {
             window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
         }
-        else if (file_type === 'second_page')
-        {
-            window.open(`${base_url}/api/generate-second-page?trial_checksheet_id=${trial_checksheet_id}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
-        }
         else
         {
-           let popout =  window.open(`${base_url}/api/generate-trial-evaluation-result?trial_checksheet_id=${trial_checksheet_id}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
+           let popout =  window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
 
             window.setTimeout(function(){
                 popout.close();
-            }, 1000);
+            }, 500);
         }
     };
     
@@ -270,8 +254,6 @@ const APPROVE = (() => {
 
             item_count++;
         });
-
-        checksheet_item_count += item_count;
 
         //pag lalagay ng tr sa table
         $('#tbody_tbl_igm').html(tr_checksheet);
@@ -488,15 +470,16 @@ const APPROVE = (() => {
                     cache   : false,
                     success: result => 
                     {
+                        $('#div_modal_content').LoadingOverlay('hide');
+                        $('#modal_view_inspection_data').modal('hide');
+                        APPROVE.LoadFinishedInspectionData();
+                        APPROVE.LoadDisapprovedInspectionData();
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
                             text: 'Approve successful',
                         })
-
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-                        APPROVE.LoadFinishedInspectionData();
                     }
                 });
             }
@@ -505,44 +488,78 @@ const APPROVE = (() => {
 
     this_approve.DisapproveData = () => {
 
-        Swal.fire($.extend(swal_options, {
-            title: 'Are you sure you want to disapprove?',
-        })).then((result) => 
+        $('#btn_approve').prop('hidden',true);
+        $('#btn_cancel').prop('hidden',true);
+        $('#btn_disapprove').prop('hidden',true);
+        $('#btn_submit_disapprove').prop('hidden',false);
+        $('#btn_cancel_disapprove').prop('hidden',false);
+        $('#accordion_disapprove_reason').prop('hidden',false);
+        $('#txt_disapprove_reason').focus();
+    };
+
+    this_approve.CancelDisapproveData = () => {
+
+        $('#btn_approve').prop('hidden',false);
+        $('#btn_cancel').prop('hidden',false);
+        $('#btn_disapprove').prop('hidden',false);
+        $('#btn_submit_disapprove').prop('hidden',true);
+        $('#btn_cancel_disapprove').prop('hidden',true);
+        $('#accordion_disapprove_reason').prop('hidden',true);
+        $('#span_error_reason').remove();
+    };
+
+    this_approve.ProceedDisapproveData = () => {
+
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let reason              = $('#txt_disapprove_reason').val();
+
+        if (reason === '')
         {
-            if (result.value) 
+            $('#span_error_reason').remove();
+            $('#txt_disapprove_reason').after(`<span id="span_error_reason" class="span-error">Required</span>`);
+        }
+        else
+        {
+            $('#span_error_reason').remove();
+
+            Swal.fire($.extend(swal_options, {
+                title: 'Are you sure you want to disapprove?',
+            })).then((result) => 
             {
-                $('#div_modal_content').LoadingOverlay('show');
+                if (result.value) 
+                {
+                    $('#div_modal_content').LoadingOverlay('show');
 
-                let trial_checksheet_id = $('#trial_checksheet_id').val();
+                    $.ajax({
+                        url     : `approved`,
+                        type    : 'post',
+                        dataType: 'json',
+                        data    : 
+                        {
+                            _token              : _TOKEN,
+                            trial_checksheet_id : trial_checksheet_id,
+                            decision            : 2,
+                            action              : 2,
+                            reason              : reason,
+                        },
+                        cache   : false,
+                        success: result => 
+                        {
+                            $('#div_modal_content').LoadingOverlay('hide');
+                            $('#modal_view_inspection_data').modal('hide');
+                            APPROVE.LoadFinishedInspectionData();
+                            APPROVE.LoadDisapprovedInspectionData();
 
-                $.ajax({
-                    url     : `approved`,
-                    type    : 'post',
-                    dataType: 'json',
-                    data    : 
-                    {
-                        _token              : _TOKEN,
-                        trial_checksheet_id : trial_checksheet_id,
-                        decision            : 2,
-                        action              : 2,
-                    },
-                    cache   : false,
-                    success: result => 
-                    {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Dispprove successful',
-                        })
-
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-                        APPROVE.LoadFinishedInspectionData();
-                        APPROVE.LoadDisapprovedInspectionData();
-                    }
-                });
-            }
-        })
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Diaspprove successful',
+                            })
+                        }
+                    });
+                }
+            })
+        }
     };
 
     return this_approve;
