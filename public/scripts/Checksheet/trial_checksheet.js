@@ -2,7 +2,7 @@ $(document).ready(function () {
     CHECKSHEET.LoadRefreshAlert();
     CHECKSHEET.InitializeCycleTimeTimer();
     CHECKSHEET.LoadDowntimeRunningTimeInterval();
-
+    CHECKSHEET.LoadDowntimeTypes();
 });
 
 let logVisit = function (event) {
@@ -38,16 +38,19 @@ let logVisit = function (event) {
 let logDowntime = function (event) {
     
 
-    let trial_checksheet_id = $('#trial_checksheet_id').val();
+    let trial_checksheet_id     = $('#trial_checksheet_id').val();
 
-    let downtime_type = $("#slc_downtime_type").val();
+    let downtime_type           = $("#slc_downtime_type").val();
+    let others_description      = $("#txt_others_description").val();
 
     let downtime                = $("#div_downtime_timer").TimeCircles().getTime();
     let absolute_value_downtime = Math.abs(Math.floor(downtime));
     total_down_time             = (absolute_value_downtime / 60).toFixed(2);
 
+    //yung (downtime_type === 'Others') ? others_description : downtime_type ay ako naglagay - george
     // URL to send the data to
-    let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
+    let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${(downtime_type === 'Others') ? others_description : downtime_type}&total_down_time=${total_down_time}`;
+    
 
     let result = navigator.sendBeacon(url);
 
@@ -74,6 +77,7 @@ const CHECKSHEET = (() => {
     let array_sub_item = [];
     let array_file_type = ['png', 'jpg', 'jpeg','PNG', 'JPG', 'JPEG', 'pdf'];
     let array_files = [];
+    let array_downtime_type = ['Breaktime','Clinic','Confirmation','Meeting','Parts Problem','Phonecall','Toilet','Others'];
 
     // pang refresh ng trial ledger
     this_checksheet.LoadRefreshAlert = () => {
@@ -336,9 +340,10 @@ const CHECKSHEET = (() => {
             {
                 application_date: application_date,
             },
-            success: data => {
-                if (data.status === 'Success') {
-
+            success: data => 
+            {
+                if (data.status === 'Success') 
+                {
                     //checksheet details
                     $('#trial_checksheet_id').val(data.data.trial_checksheets.id);
                     $('#trial_checksheet_application_date').val(data.data.trial_checksheets.application_date);
@@ -361,7 +366,6 @@ const CHECKSHEET = (() => {
 
                     $('#accordion_details').LoadingOverlay('hide');
                     $('#div_card_takt_time').LoadingOverlay('hide');
-
                 }
             }
         });
@@ -382,6 +386,32 @@ const CHECKSHEET = (() => {
         setInterval(function () {
             CHECKSHEET.LoadDowntimeRunningTime();
         }, 1000);
+    };
+
+    this_checksheet.LoadDowntimeTypes = () => {
+        
+        let downtime_type = `<option value="" selected disabled>Select type
+        </option>`;
+        
+        for (let index = 0; index < array_downtime_type.length; index++) 
+        {
+            downtime_type += `<option value="${array_downtime_type[index]}">${array_downtime_type[index]}</option>`
+        }
+
+        $('#slc_downtime_type').append(downtime_type);
+    };
+
+    this_checksheet.ShowTextboxOthersDowntime = (type) => {
+
+        if (type ==='Others')
+        {
+            $('#div_others_downtype').prop('hidden',false);
+            $('#txt_others_description').focus();
+        }
+        else
+        {
+            $('#div_others_downtype').prop('hidden',true);
+        }
     };
 
     this_checksheet.InitializeCycleTimeTimer = () => {
@@ -645,15 +675,20 @@ const CHECKSHEET = (() => {
 
     this_checksheet.DowntimeTimerAction = (status) => {
 
-        let downtime_type           = $("#slc_downtime_type").val();
+        let downtime_type       = $("#slc_downtime_type").val();
+        let others_description  = $("#txt_others_description").val();
 
         if (downtime_type === null) 
         {
             $("#span_error_downtime_type").remove();
-            $("#slc_downtime_type").before('<span id ="span_error_downtime_type" class="span-error">Required</span>');
+            $("#span_error_others").remove();
+            $("#slc_downtime_type").after('<span id ="span_error_downtime_type" class="span-error">Required</span>');
         } 
-        else {
+        else 
+        {
             $("#span_error_downtime_type").remove();
+            $("#span_error_others").remove();
+
             if (status === 'start_downtime') 
             {
                 var text = 'start';
@@ -662,18 +697,45 @@ const CHECKSHEET = (() => {
             {
                 text = 'stop';
             }
-            Swal.fire(
-                $.extend(swal_options, {
-                    title: `Are you sure you want to ${text} downtime?`,
-                    text: ''
-                })
-            ).then((result) => 
+
+            //para sa others na type, yung nasa textbox ang ipapasa na type
+            if (downtime_type === 'Others')
             {
-                if (result.value) 
+                if (others_description === '')
                 {
-                    CHECKSHEET.Downtime(text, downtime_type);
+                    $("#txt_others_description").after('<span id ="span_error_others" class="span-error">Required</span>');
                 }
-            });
+                else
+                {
+                    Swal.fire(
+                        $.extend(swal_options, {
+                            title: `Are you sure you want to ${text} downtime?`,
+                            text: ''
+                        })
+                    ).then((result) => 
+                    {
+                        if (result.value) 
+                        {
+                            CHECKSHEET.Downtime(text, others_description);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                Swal.fire(
+                    $.extend(swal_options, {
+                        title: `Are you sure you want to ${text} downtime?`,
+                        text: ''
+                    })
+                ).then((result) => 
+                {
+                    if (result.value) 
+                    {
+                        CHECKSHEET.Downtime(text, downtime_type);
+                    }
+                });
+            }
         }
     };
 
@@ -715,7 +777,7 @@ const CHECKSHEET = (() => {
 
                     });
                     $('#tbody_tbl_downtime').html(tbody);
-                    $('#td_total_downtime').html(sum_downtime);
+                    $('#td_total_downtime').html((isNaN(sum_downtime.toFixed(2)) ? '' : sum_downtime.toFixed(2)));
 
                     $('#div_downtime').LoadingOverlay('hide');
                 }
@@ -732,10 +794,18 @@ const CHECKSHEET = (() => {
             $("#div_downtime_timer").TimeCircles().start();
             $("#btn_finish_downtime").prop("disabled", false);
             $("#btn_start_downtime").prop("disabled", true);
-            $("#span_error_downtime_type").prop("disabled", true);
+            $("#txt_others_description").prop("disabled", true);
             $("#slc_downtime_type").prop("disabled", true);
             $("#btn_stop_time").prop("disabled", true);
             $("#div_takt_time_timer").TimeCircles().stop();
+
+            //pag show ng attachments at ssave button
+            $('#div_row_numbering_drawing').prop('hidden',true);
+            $('#div_row_special_tool_data').prop('hidden',true);
+            $('#div_row_others_2').prop('hidden',true);
+            $('#div_row_save_inspection').prop('hidden',true);
+            //igm
+            $('#div_accordion_igm').prop('hidden', true);
 
             var total_down_time = null;
         } 
@@ -751,9 +821,18 @@ const CHECKSHEET = (() => {
             $("#btn_start_downtime").prop("disabled", false);
             $("#btn_stop_time").prop("disabled", false);
             $("#slc_downtime_type").prop("disabled", false);
-            $("#span_error_downtime_type").prop("disabled", false);
+            $("#txt_others_description").prop("disabled", false);
+            $("#div_others_downtype").prop("hidden", true);
             $("#slc_downtime_type").val(null);
             $("#div_takt_time_timer").TimeCircles().start();
+
+            //pag show ng attachments at ssave button
+            $('#div_row_numbering_drawing').prop('hidden',false);
+            $('#div_row_special_tool_data').prop('hidden',false);
+            $('#div_row_others_2').prop('hidden',false);
+            $('#div_row_save_inspection').prop('hidden',false);
+            //igm
+            $('#div_accordion_igm').prop('hidden', false);
         }
 
         $.ajax({

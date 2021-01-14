@@ -205,14 +205,17 @@
                                                                     <h5 class="header-title"><i class="ti-timer"></i>
                                                                         DOWNTIME</h5>
                                                                     <span id="txt_downtime_running_time" hidden></span>
-                                                                    <label>TYPE:</label>&nbsp;
-                                                                    <select class="form-control mb-3" name=""
-                                                                        id="slc_downtime_type">
-                                                                        <option value="" selected disabled>Select type
-                                                                        </option>
-                                                                        <option value="Type 1">Type 1</option>
-                                                                        <option value="Type 2">Type 2</option>
-                                                                    </select>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <label>TYPE:</label>&nbsp;
+                                                                            <select class="form-control mb-3" id="slc_downtime_type" onchange="CHECKSHEET.ShowTextboxOthersDowntime(this.value);">
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-6" id="div_others_downtype" hidden>
+                                                                            <label>DESCRIPTION:</label>&nbsp;
+                                                                            <input type="text" class="form-control" id="txt_others_description" placeholder="Enter description">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-3">
