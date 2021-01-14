@@ -2,6 +2,8 @@ $(document).ready(function () {
 
     $("#accordion_attachment").remove();
     $(".modal-footer").remove();
+
+    $('#tbl_history_data').DataTable();
 });
 
 
@@ -62,7 +64,6 @@ const HISTORY = (() => {
                     "ordering": true,
                     "info": true,
                     "autoWidth": true,
-                    "scrollX": true,
                 });
                 $('#tbl_history_data').LoadingOverlay('hide');
             }

@@ -50,6 +50,19 @@
                                         <a href="{{ url('approval') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span
                                                 style="font-size:1.2em">APPROVER</span></a>
                                     </li>
+                                    <li>
+                                        <a href="{{ url('history') }}"><i class="ti-time" style="font-size:1.2em"></i><span
+                                                style="font-size:1.2em">HISTORY</span></a>
+                                    </li>
+                                    <li>
+                                        <a><i class="ti-agenda" style="font-size:1.2em"></i><span
+                                            style="font-size:1.2em;">MANAGEMENT</span></a>
+                                        <ul class="submenu" style="border-top: 4px solid #01C293;">
+                                            <li><a href="{{ url('supplier') }}"><i class="ti-shopping-cart-full"></i><span>SUPPLIER</span></a></li>
+                                            {{-- <li><a href="index2.html">Ecommerce dashboard</a></li>
+                                            <li><a href="index3.html">SEO dashboard</a></li> --}}
+                                        </ul>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

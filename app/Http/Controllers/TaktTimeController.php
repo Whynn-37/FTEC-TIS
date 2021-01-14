@@ -8,6 +8,9 @@ use App\TrialChecksheet;
 use App\ChecksheetItem;
 use App\ChecksheetData;
 use App\TrialLedger;
+use App\Approval;
+use App\Attachment;
+use Session;
 use DB;
 class TaktTimeController extends Controller
 {
@@ -46,6 +49,8 @@ class TaktTimeController extends Controller
                                     TaktTime $TaktTime,
                                     ChecksheetData $ChecksheetData,
                                     ChecksheetItem $ChecksheetItem,
+                                    Approval $Approval,
+                                    Attachment $Attachment,
                                     Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
@@ -60,6 +65,8 @@ class TaktTimeController extends Controller
         $checksheet_item_result = [];
         $checksheet_data_result = [];
         $checksheet_items = [];
+        $approval_result = [];
+        $attachment_result = [];
 
         if($trial_checksheet_id !== null)
         {
@@ -78,7 +85,6 @@ class TaktTimeController extends Controller
             $message = "Successfully load"; 
 
             $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
-
         }
         else
         {
@@ -107,6 +113,25 @@ class TaktTimeController extends Controller
                     'total_takt_time'       => null,
                     'takt_time'             => $takt_times,
                 ];
+
+                $approval_data =
+                [
+                    'trial_checksheet_id'      => $last_id['id'],
+                    'inspect_by'               => Session::get('name'), // session name
+                    'inspect_datetime'         => now(),
+                    'decision'                 => 4
+                ];
+
+                $approval_result = $Approval->storeApproval($approval_data);
+
+                $attachment_data =
+                [
+                    'trial_checksheet_id'   => $last_id['id'],
+                    'file_folder'           => '',
+                    'file_name'             => ''
+                ];
+
+                $attachment_result = $Attachment->storeAttachments($attachment_data);
                 
                 if($trial_number >= 2)
                 {
@@ -155,7 +180,7 @@ class TaktTimeController extends Controller
                             $checksheet_datas[] =
                             [
                                 'checksheet_item_id'    => $value['checksheet_item_id'],
-                                'coordinates'            => $value['coordinates'],
+                                'coordinates'           => $value['coordinates'],
                                 'sub_number'            => $value['sub_number'],
                                 'created_at'            => now(),
                                 'updated_at'            => now()
@@ -190,6 +215,8 @@ class TaktTimeController extends Controller
                 'takt_time' => $takt_time_result,
                 'items'     => $checksheet_item_result,
                 'data'      => $checksheet_data_result,
+                'approval'  => $approval_result,
+                'attachment'=> $attachment_result,
             ]
         ];
     }

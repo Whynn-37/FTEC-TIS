@@ -7,44 +7,55 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 class SupplierController extends Controller
 {
-    public function storeSupplier(UploadController $upload,Supplier $Supplier)
+    public function storeSupplier(UploadController $upload,Supplier $Supplier,Request $Request)
     {
-        // $file = '\\\10.164.20.211\uploads\Copy of Supplier code 20201020(2165).xlsx';
-        // $file = 'C:\TIS\supplier.xlsx';
+        $file = $Request->file('upload_file');
 
-        // $file = 'F:\TIS\supplier.xlsx';
-        $file = 'F:\TIS\supplier.xlsx';
-        // $file = 'D:\supplier.xlsx';
         $sheet = 0;
-
+    
         $status = 'Error';
         $message = 'No File';
         $result = [];
 
-        if (file_exists($file)) 
-        {
-            $data = $upload->upload($file, $sheet);
-
-            for($i = 1; $i < count($data); $i ++)
+            if (file_exists($file)) 
             {
-                $result[] = [
-                    'supplier_code'   =>  $data[$i][0],
-                    'supplier_name'   =>  $data[$i][1]
-                ];
+                $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
+                
+                if($file_extension === 'csv' || $file_extension === 'xlsx')
+                {
+                    $data = $upload->upload($file, $sheet);
+
+                    for($i = 1; $i < count($data); $i ++)
+                    {
+                        $result[] = [
+                            'supplier_code'   =>  $data[$i][0],
+                            'supplier_name'   =>  $data[$i][1]
+                        ];
+                    }
+
+                    $result = $Supplier->storeSupplier($result);
+
+                    $status = 'Error';
+                    $message = 'Not Successfully Save';
+
+                    if ($result) 
+                    {
+                        $status = 'Success';
+                        $message = 'Successfully Save';
+                    }
+                }
+                else
+                {
+                    $status = 'Error File';
+                    $message = 'Invalid File';
+                }
             }
-
-            $result = $Supplier->storeSupplier($result);
-
-            $status = 'Error';
-            $message = 'Npt Successfully Save';
-
-            if ($result) 
+            else
             {
-                $status = 'Success';
-                $message = 'Successfully Save';
+                $status = 'No File';
+                $message = 'No File Selected';
             }
-        }
-
+        
         return
         [
             'status'    =>  $status,
@@ -122,8 +133,10 @@ class SupplierController extends Controller
         ];
     }
 
-    public function deleteSupplier($id,Supplier $Supplier)
+    public function deleteSupplier(Request $Request,Supplier $Supplier)
     {
+        $id =  $Request->id;
+
         $result = $Supplier->deleteSupplier($id); 
 
         $status = 'Error';

@@ -48,6 +48,7 @@ Route::delete('delete-data','ChecksheetDataController@deleteDatas');
 Route::post('store-supplier', 'SupplierController@storeSupplier');
 Route::get('load-supplier', 'SupplierController@loadSupplier');
 Route::post('update-supplier', 'SupplierController@updateSupplier');
+Route::delete('delete-supplier', 'SupplierController@deleteSupplier');
 
 
 //Cycle Time
@@ -77,5 +78,5 @@ Route::get('for-approval','MailController@forApproval');
 Route::get('for-disapproval','MailController@forDispproval');
 Route::get('back-to-approval','MailController@backToApproval');
 
-Route::get('load-part-number-column', 'TrialChecksheetController@loadPartNumberColumn');
-
+//history
+Route::get('history-search/{status}', 'HistoryController@historySearch');
