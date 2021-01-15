@@ -18,19 +18,17 @@
                     <div class="card-body">
                         <h4 class="header-title"><i class="ti-clipboard"></i> HISTORY </h4><br>
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <label>STATUS:</label>
-                                <select class="form-control mb-3" name="state" id="slc_status">
+                                <select class="form-control mb-3" name="state" id="slc_status" onchange="HISTORY.loadHistoryList();">
                                     <option value="null" disabled selected>SELECT</option>
-                                    <option value="For Inspection">FOR INSPECTION</option>
-                                    <option value="For Evaluation">FOR EVALUATION</option>
-                                    <option value="For Approval">FOR APPROVAL</option>
-                                    <option value="Approved">APPROVED</option>
-                                    <option value="Disapproved">DISAPPROVED</option>
+                                    <option value="FOR INSPECTION">FOR INSPECTION</option>
+                                    <option value="ON-GOING INSPECTION">ON-GOING INSPECTION</option>
+                                    <option value="FOR EVALUATION">FOR EVALUATION</option>
+                                    <option value="FOR APPROVAL">FOR APPROVAL</option>
+                                    <option value="APPROVED">APPROVED</option>
+                                    <option value="DISAPPROVED">DISAPPROVED</option>
                                 </select>
-                            </div>
-                            <div class="col-md-2 float-right">
-                                <button class="btn btn-success" id="btn_search" style="margin-top:28px;margin-left:50px;" onclick="HISTORY.LoadPartNumber();"><span class="fa fa-search"></span> SEARCH </button>
                             </div>
                         </div>
                     </div>
@@ -46,29 +44,28 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="single-table">
-                                    <div class="table-responsive">
-                                        <table class="table text-center table-bordered" id="tbl_history_data" style="text-align:justify;">
-                                            <thead class="text-uppercase bg-dark">
-                                                <tr class="text-white">
-                                                    <th>ACTION</th>
-                                                    <th>PART NUMBER</th>
-                                                    <th>PART NAME</th>
-                                                    <th>SUPPLIER NAME</th>
-                                                    <th>REVISION</th>
-                                                    <th>TRIAL NUMBER</th>
-                                                    <th>JUDGMENT</th>
-                                                    <th>INSPECTED BY</th>
-                                                    <th>INSPECTOR DATE</th>
-                                                    <th>EVALUATED BY</th>
-                                                    <th>EVALUATED DATE</th>
-                                                    <th>APPROVED BY</th>
-                                                    <th>APPROVED DATE</th>
-                                                    <th>MERGE PDF</th>
-                                                 </tr>
-                                            </thead>
-                                            <tbody id="tbody_tbl_history_data"></tbody>
-                                        </table>
-                                    </div>
+                                    <table class="table table-responsive text-center table-bordered" id="tbl_history_data" style="text-align:justify;">
+                                        <thead class="text-uppercase bg-dark">
+                                            <tr class="text-white">
+                                                <th>ACTION</th>
+                                                <th>PART NUMBER</th>
+                                                <th>REVISION NUMBER</th>
+                                                <th>TRIAL NUMBER</th>
+                                                <th>INSPECTION REASON</th>
+                                                <th>JUDGMENT</th>
+                                                <th>INSPECTED BY</th>
+                                                <th>INSPECTOR DATE</th>
+                                                <th>EVALUATED BY</th>
+                                                <th>EVALUATED DATE</th>
+                                                <th>APPROVED BY</th>
+                                                <th>APPROVED DATE</th>
+                                                <th>DISAPPROVED BY</th>
+                                                <th>DISAPPROVED DATE</th>
+                                                <th>FILE</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody id="tbody_tbl_history_data"></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -79,6 +76,7 @@
     </div>
 
     @include('Approver.approval_modal')
+    @include('History.history_modal')
 </div>
 
 @endsection
