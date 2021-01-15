@@ -34,7 +34,7 @@ class TaktTime extends Model
     public function getStartDateTime($id)
     {
         return TaktTime::where('trial_checksheet_id', $id)
-        ->where('end_time', null)
+        ->where('end_time', '')
         ->select('start_time', 'start_date')
         ->latest()
         ->first();

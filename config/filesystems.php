@@ -70,7 +70,8 @@ return [
             'host' => env('FTP_HOST'),
             'username' => env('FTP_USERNAME'),
             'password' => env('FTP_PASSWORD'),
-            'root' => 'uploads/' // for example: /var/www/html/dev/images
+            'root' => '/mit/', // for example: /var/www/html/dev/images
+            'port' => 20,
         ],
 
         'sftp' => [

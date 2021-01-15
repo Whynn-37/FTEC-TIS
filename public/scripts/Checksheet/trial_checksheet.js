@@ -49,16 +49,18 @@ let logDowntime = function (event) {
 
     //yung (downtime_type === 'Others') ? others_description : downtime_type ay ako naglagay - george
     // URL to send the data to
-    let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${(downtime_type === 'Others') ? others_description : downtime_type}&total_down_time=${total_down_time}`;
+    if (downtime_type !== null) 
+    {
+        let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
+
+        let result = navigator.sendBeacon(url);
     
-
-    let result = navigator.sendBeacon(url);
-
-    if (result) {
-        console.log('Successfully queued!');
-
-    } else {
-        console.log('Failure.');
+        if (result) {
+            console.log('Successfully queued!');
+    
+        } else {
+            console.log('Failure.');
+        } 
     }
 
     event.preventDefault()

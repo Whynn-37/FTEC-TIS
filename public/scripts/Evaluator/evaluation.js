@@ -51,7 +51,7 @@ const EVALUATE = (() => {
                         <td>${value.date_finished}</td>
                         <td>${judgement}</td>
                         <td>
-                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                         </td>
                     </tr>`;
                 });
@@ -101,7 +101,7 @@ const EVALUATE = (() => {
                         <td>${value.disapproved_datetime}</td>
                         <td>${value.reason}</td>
                         <td>
-                        <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.trial_checksheet_id},'disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                        <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                         </td>
                     </tr>`;
                 });
@@ -162,13 +162,13 @@ const EVALUATE = (() => {
                 $('#txt_part_name').val(data.data.checksheet_details.part_name);
                 $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
                 $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
-                $('#txt_supplier_name').val();//hindi pa kasama sa returned data
-                $('#txt_received_date').val(data.data.checksheet_details.received_date);//hindi pa kasama sa returned data
+                $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
+                $('#txt_received_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
                 $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
-                $('#txt_actual_inspection_time').val(data.data.checksheet_details.inspection_actual_time);//hindi pa kasama sa returned data
-                $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
+                $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                $('#txt_inspection_reason').val(data.data.checksheet_details.takt_time);
                 $('#txt_die_kind').val(data.data.checksheet_details.die_class);
-                $('#txt_inspector').val(data.data.checksheet_details.inspector_id); //hindi pa kasama sa returned data
+                $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
                 
                 //attachments
                 let files = '';

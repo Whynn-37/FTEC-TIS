@@ -8,7 +8,7 @@ use App\TrialLedger;
 
 class HistoryController extends Controller
 {
-    public function historySearch(TrialChecksheet $TrialChecksheet, TrialLedger $TrialLedger,Request $Request)
+    public function historySearch(TrialChecksheet $TrialChecksheet, TrialLedger $TrialLedger, Request $Request)
     {
         $status = $Request->status;
 
@@ -136,5 +136,14 @@ class HistoryController extends Controller
 
 
         return $result;
+    }
+
+    public function getInspectionHistory(TrialLedger $TrialLedger, Request $Request)
+    {
+        $application_date = $Request->id;
+
+        $data = $TrialLedger->getInspectionHistory($application_date);
+
+        return $data;
     }
 }

@@ -114,19 +114,26 @@ class TrialLedger extends Model
         ->first();
     }
 
-    public function forInspection()
+    public function getInspectionHistory($application_date)
     {
-        return TrialLedger::join('trial_checksheets', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
-        ->join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        ->where('trial_ledgers.application_date', $application_date)
         ->select(
-            'trial_checksheets.id',
             'trial_ledgers.part_number', 
-            'trial_ledgers.part_name', 
+            'trial_ledgers.inspection_reason',
             'trial_ledgers.revision_number', 
             'trial_ledgers.trial_number', 
+            'trial_ledgers.part_name', 
+            'trial_ledgers.model_name', 
+            'trial_ledgers.supplier_code',
+            'suppliers.supplier_name',
+            'trial_ledgers.received_date',
+            'trial_ledgers.plan_start_date',
+            'trial_ledgers.inspection_required_time',
+            'trial_ledgers.die_class',
             'trial_ledgers.inspector_id',
-            'suppliers.supplier_name')
-        ->get();
+        )
+        ->first();
     }
 
     public function loadPartnumberHistory($column)

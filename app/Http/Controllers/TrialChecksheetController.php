@@ -284,38 +284,33 @@ class TrialChecksheetController extends Controller
                                 TrialChecksheet $TrialChecksheet,
                                 Request $Request)
     {
-        $part_number = $Request->part_number;
-        $inspection_reason = $Request->inspection_reason;
-        $revision_number = $Request->revision_number;
-        $trial_number = $Request->trial_number;
-
         $application_date = $Request->application_date;
 
         $status = 'Error';
         $message = 'Required Fields';
         $result = [];
+        $data_trial_ledger_merge = [];
+        $trial_checksheet_data_merge = [];
 
         if ($application_date !== null) 
         {
-            $data = 
-            [
-                'part_number'       => $part_number,
-                'inspection_reason' => $inspection_reason,
-                'revision_number'   => $revision_number,
-                'trial_number'      => $trial_number
-            ];
-
             $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($application_date)),true);
             $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
-            $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
+            if ($supplier_data) 
+            {
+                $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
+            }
 
             $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
             if($trial_checksheet_data)
             {
                 // if exist
-                $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
+                if ($data_trial_ledger_merge) 
+                {
+                    $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
+                }
             }
             else
             {
@@ -324,12 +319,15 @@ class TrialChecksheetController extends Controller
                 [
                     'id' => null
                 ];
-                
-                $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
+
+                if ($data_trial_ledger_merge) 
+                {
+                    $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
+                }
             }
 
             $status = 'Error';
-            $message = 'No Details';
+            $message = 'Please Upload Supplier or No Supplier code';
 
             if ($trial_checksheet_data_merge) 
             {
@@ -369,12 +367,12 @@ class TrialChecksheetController extends Controller
         $revision_number !== null || 
         $trial_checksheet_id !== null)
         {
-            // $filename = $part_number . '_' . $revision_number;
-            $filename =$part_number.'_'.$revision_number.'(00)';
+            $filename = $part_number . '_' . $revision_number;
+            // $filename =$part_number.'_'.$revision_number.'(00)';
             $filename = 'igm';
             
-            // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; pabalik nalang sa dati hindi kase nagana sakin -george
-            $path ='F:\TIS\\';
+            $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
+            // $path ='F:\TIS\\';
             // $path ='D:\\';
     
             $igm_files = scandir($path);
@@ -400,9 +398,9 @@ class TrialChecksheetController extends Controller
                 {
                     $igm_file_name =  end($filtered_igm_files);
     
-                    // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; pabalik nalang sa dati hindi kase nagana sakin -george
+                    $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
                     // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
