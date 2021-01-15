@@ -75,9 +75,9 @@ class TaktTimeController extends Controller
                 'trial_checksheet_id'   => $trial_checksheet_id,
                 'start_date'            => date('Y/m/d'),
                 'start_time'            => date('H:i:s'),
-                'end_time'              => null,
-                'actual_time'           => null,
-                'total_takt_time'       => null,
+                'end_time'              => '',
+                'actual_time'           => '',
+                'total_takt_time'       => '',
                 'takt_time'             => $takt_times,
             ];
 
@@ -108,9 +108,9 @@ class TaktTimeController extends Controller
                     'trial_checksheet_id'   => $last_id['id'],
                     'start_date'            => date('Y/m/d'),
                     'start_time'            => date('H:i:s'),
-                    'end_time'              => null,
-                    'actual_time'           => null,
-                    'total_takt_time'       => null,
+                    'end_time'              => '',
+                    'actual_time'           => '',
+                    'total_takt_time'       => '',
                     'takt_time'             => $takt_times,
                 ];
 
