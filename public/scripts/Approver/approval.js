@@ -47,10 +47,12 @@ const APPROVE = (() => {
                         <td>${value.date_finished}</td>
                         <td>${judgement}</td>
                         <td>
-                            <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                         </td>
                     </tr>`;
+                    // <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                 });
+
 
                 $('#tbody_tbl_finished_inspection_data').html(tbody);
 
@@ -114,7 +116,7 @@ const APPROVE = (() => {
         });
     };
 
-    this_approve.ViewFinishedInspectionData = (id, status) => {
+    this_approve.ViewFinishedInspectionData = (id) => {
 
         $('#modal_view_inspection_data').modal('show');
 
@@ -174,7 +176,7 @@ const APPROVE = (() => {
                 //pagkuha ng checksheet item tapos checksheet data
                 APPROVE.GetChecksheetItem(data);
 
-                $('#btn_approve_data').attr('onclick',`APPROVE.ApproveData('${status}');`)
+                // $('#btn_approve_data').attr('onclick',`APPROVE.ApproveData('${status}');`)
 
                 $('#div_modal_content').LoadingOverlay('hide');
             }

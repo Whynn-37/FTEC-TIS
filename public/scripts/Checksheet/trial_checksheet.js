@@ -884,7 +884,9 @@ const CHECKSHEET = (() => {
 
         //pangclear ng error texts
         $('.form_trial_checksheet_field_error').text('');
-        let required_count = 0;
+        let required_count  = 0;
+        let loop_count      = 0;
+
 
         $('.form_trial_checksheet_field').each(function () 
         {
@@ -893,103 +895,101 @@ const CHECKSHEET = (() => {
                 $('.form_trial_checksheet_field_error').text('Required');
                 required_count++;
             }
+            loop_count++;
 
-            if (required_count === 0)
+            if (loop_count === 9)
             {
-                (part_number !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
-                (temperature !== '')    ? $('#span_temperature').prop('hidden', true)   :'';
-                (humidity !== '')       ? $('#span_humidity').prop('hidden', true)      : '';
-
-                if (part_number !== null && numbering_drawing !== '' && material_certification !== ''&& special_tool_data !== '' && temperature !== '' && humidity !== '') 
+                if (required_count === 0)
                 {
-                    //checking kung may niload na igm or kung hindi man niload, merong inadd na item. basta dapat may IGM
-                    if (item_no_count == 0 || item_no_count === '')
+                    (part_number !== null)  ? $('#span_part_no').prop('hidden', true)       :'';
+                    (temperature !== '')    ? $('#span_temperature').prop('hidden', true)   :'';
+                    (humidity !== '')       ? $('#span_humidity').prop('hidden', true)      : '';
+    
+                    if (part_number !== null && numbering_drawing !== '' && material_certification !== ''&& special_tool_data !== '' && temperature !== '' && humidity !== '') 
                     {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Incomplete checksheet',
-                            text: 'No IGM checksheet found',
-                        })
-                    }
-                    else
-                    {
-                        //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
-                        for (let item_no_index = 1; item_no_index <= parseInt(item_no_count); item_no_index++) 
+                        //checking kung may niload na igm or kung hindi man niload, merong inadd na item. basta dapat may IGM
+                        if (item_no_count == 0 || item_no_count === '')
                         {
-                            let type = $(`#slc_item_no_${item_no_index}_type`).val();
-
-                            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Incomplete checksheet',
+                                text: 'No IGM checksheet found',
+                            })
+                        }
+                        else
+                        {
+                            //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
+                            for (let item_no_index = 1; item_no_index <= parseInt(item_no_count); item_no_index++) 
                             {
-                                //pagkuha ng sub no count
-                                let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
-                                let sub_no_count    = onclick_value[2];
-
-                                for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
+                                let type = $(`#slc_item_no_${item_no_index}_type`).val();
+    
+                                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                                 {
-                                    for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
+                                    //pagkuha ng sub no count
+                                    let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
+                                    let sub_no_count    = onclick_value[2];
+    
+                                    for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
                                     {
-                                        let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
-                                        let max_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
-
-                                        if (min_value === '')
+                                        for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
                                         {
-                                            $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
-                                        }
-            
-                                        if (max_value === '')
-                                        {
-                                            $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
+                                            let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
+                                            let max_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
+    
+                                            if (min_value === '')
+                                            {
+                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
+                                            }
+                
+                                            if (max_value === '')
+                                            {
+                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
+                                            }
                                         }
                                     }
                                 }
-                            }
-
-                            if (item_no_index === parseInt(item_no_count))
-                            {
-                                Swal.fire(
-                                    $.extend(swal_options, {
-                                        title   : "Are you sure?",
-                                        text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
-                                    })
-                                ).then((result) => 
+    
+                                //pagkuha ng item judgements para sa buong judgment ng trial
+                                let item_judgment = $(`#td_item_no_${item_no_index}_judgement span`).text();
+                                
+                                if (item_judgment === 'N/A')
                                 {
-                                    if (result.value) 
+                                    na_judgement_count++;
+                                }
+                                else if (item_judgment === 'NG')
+                                {
+                                    ng_judgement_count++;
+                                }
+    
+                                if (item_no_index === parseInt(item_no_count))
+                                {
+                                    if (na_judgement_count > 0)
                                     {
-                                        //pagkuha ng item judgements para sa buong judgment ng trial
-                                        for (let index = 1; index <= parseInt(item_no_count); index++) 
-                                        {
-                                            let item_judgment = $(`#td_item_no_${index}_judgement span`).text();
-                                            
-                                            if (item_judgment === 'N/A')
-                                            {
-                                                na_judgement_count++;
-                                            }
-                                            else if (item_judgment === 'NG')
-                                            {
-                                                ng_judgement_count++;
-                                            }
-        
-                                            if (index === parseInt(item_no_count))
-                                            {
-                                                if (na_judgement_count > 0)
-                                                {
-                                                    Swal.fire({
-                                                        icon: 'warning',
-                                                        title: 'Item with no judgement has been found',
-                                                        text: 'Please check your checksheet items.',
-                                                    })
-                                                }
-                                                else
-                                                {
-                                                    //checking if NG or OK
-                                                    (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
-        
-                                                    CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
-                                                }
-                                            }
-                                        }
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Item with no judgement has been found',
+                                            text: 'Please check your checksheet items.',
+                                        })
                                     }
-                                });
+                                    else
+                                    {
+                                        //checking if NG or OK
+                                        (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
+                                        
+                                        Swal.fire(
+                                            $.extend(swal_options, {
+                                                title   : "Are you sure?",
+                                                text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
+                                            })
+                                        ).then((result) => 
+                                        {
+                                            if (result.value) 
+                                            {
+                                                CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         }
                     }

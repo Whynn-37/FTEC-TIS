@@ -227,6 +227,7 @@ const EVALUATE = (() => {
 
         let tr_checksheet           = '';
         let item_count              = 0;
+        array_type                  = [];//pang clear ng array types
 
         data.data.checksheet_items.forEach((value) => 
         {
@@ -249,6 +250,8 @@ const EVALUATE = (() => {
                 judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
             }
             
+            $('#tbody_tbl_igm').empty();
+
             tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th>TOOLS</th>
@@ -346,7 +349,7 @@ const EVALUATE = (() => {
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
         let rowspan          = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
-
+        
         if (existing_sub_no_count === 0) 
         {
             existing_sub_no_count_per_item = 0;
@@ -368,8 +371,11 @@ const EVALUATE = (() => {
 
             $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
 
-            //para sa pag papalit ng kulay ng visuals data
-            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance') 
+            {
+                //para sa pag papalit ng kulay ng visuals data
+                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            } 
         } 
         else 
         {
@@ -394,8 +400,11 @@ const EVALUATE = (() => {
                 $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan', parseInt(rowspan) + 1);
             }
 
-            //para sa pag papalit ng kulay ng visuals data
-            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance') 
+            {
+                //para sa pag papalit ng kulay ng visuals data
+                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            } 
         }
     };
 
@@ -850,7 +859,7 @@ const EVALUATE = (() => {
                         $(`#span_lower_limit_error_${item_no}`).remove();
                         $(`#span_remarks_error_${item_no}`).remove();
 
-                        if (type === 'Min and Max') 
+                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                         {
                             let sub_no_count = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
 
@@ -865,10 +874,6 @@ const EVALUATE = (() => {
                                     EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'hinsei');
                                 }
                             }
-                        } 
-                        else if (type === 'Min and Max and Form Tolerance')
-                        {
-                            alert('mmf')
                         }
                         else 
                         {
@@ -914,71 +919,154 @@ const EVALUATE = (() => {
 
     this_evaluate.RejudgementMinMax = (item_no, sub_no, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks) => {
 
-        let upper_limit                                             = $(`#txt_item_no_${item_no}_upper_limit`).val();
-        let lower_limit                                             = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let upper_limit                          = $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit                          = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let min_max_range                        = (parseFloat(upper_limit) - parseFloat(lower_limit)) / 2;
 
-        let array_min_max_judgement_per_sub_item                    = [];
-        let array_min_max_value                                     = [];
+        let array_min_max_judgement_per_sub_item = [];
+        let array_min_max_value                  = [];
 
         for (let a_count = 1; a_count <= 5; a_count++) 
         {
             let min_value_loop = $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).html();
             let max_value_loop = $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).html();
+     
+            // checking ng min
+            if (min_value_loop !== '') 
+            {   
+                if (min_value_loop === '-')
+                {
+                    array_min_max_judgement_per_sub_item.push('NA');
+                    array_min_max_value.push('-');
+                }
+                else
+                {
+                    //para sa iba pang condition para sa MMF may range na kasama
+                    if (type === 'Min and Max and Form Tolerance')
+                    {
+                        let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-            //pagpush ng min and max data
-            array_min_max_value.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));
-            array_min_max_value.push((parseFloat(max_value_loop) > 0) ? `+${parseFloat(max_value_loop)}`: parseFloat(max_value_loop));
-                
-            if (parseFloat(min_value_loop) > upper_limit) 
+                        if (min_max_difference <= min_max_range)
+                        {
+                            array_min_max_judgement_per_sub_item.push('OK');
+                        }
+                        else if (min_max_difference > min_max_range)
+                        {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        }
+                        else
+                        {
+                            array_min_max_judgement_per_sub_item.push('OK');
+                        }
+                    }
+                    else
+                    {
+                        if (parseFloat(min_value_loop) > parseFloat(upper_limit)) 
+                        {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        } 
+                        else 
+                        {
+                            if (parseFloat(min_value_loop) < parseFloat(lower_limit)) 
+                            {
+                                array_min_max_judgement_per_sub_item.push('NG');
+                            } 
+                            else 
+                            {
+                                array_min_max_judgement_per_sub_item.push('OK');
+                            }
+                        }
+                    }
+
+                    array_min_max_value.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));
+                }
+             }
+             else
+             {
+                array_min_max_judgement_per_sub_item.push('NA');
+                array_min_max_value.push('-');
+             }
+
+            // checking ng max
+            if (max_value_loop !== '') 
             {
-                array_min_max_judgement_per_sub_item.push('NG');
-            } 
-            else 
-            {
-                if (parseFloat(min_value_loop) < lower_limit) 
+                if (max_value_loop === '-')
                 {
-                    array_min_max_judgement_per_sub_item.push('NG');
-                } 
-                else 
+                    array_min_max_judgement_per_sub_item.push('NA');
+                    array_min_max_value.push('-');
+                }
+                else
                 {
-                    array_min_max_judgement_per_sub_item.push('OK');
+                    //para sa iba pang condition para sa MMF may range na kasama
+                    if (type === 'Min and Max and Form Tolerance')
+                    {
+                        let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+
+                        if (min_max_difference <= min_max_range)
+                        {
+                            array_min_max_judgement_per_sub_item.push('OK');
+                        }
+                        else if (min_max_difference > min_max_range)
+                        {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        }
+                        else
+                        {
+                            array_min_max_judgement_per_sub_item.push('OK');
+                        }
+                    }
+                    else
+                    {
+                        if (parseFloat(max_value_loop) > parseFloat(upper_limit)) 
+                        {
+                            array_min_max_judgement_per_sub_item.push('NG');
+                        } 
+                        else 
+                        {
+                            if (parseFloat(max_value_loop) < parseFloat(lower_limit)) 
+                            {
+                                array_min_max_judgement_per_sub_item.push('NG');
+                            } 
+                            else 
+                            {
+                                array_min_max_judgement_per_sub_item.push('OK');
+                            }
+                        }
+                    }
+
+                    array_min_max_value.push((parseFloat(max_value_loop) > 0) ? `+${parseFloat(max_value_loop)}`: parseFloat(max_value_loop));
                 }
             }
-
-            if (parseFloat(max_value_loop) > upper_limit) 
+            else
             {
-                array_min_max_judgement_per_sub_item.push('NG');
-            } 
-            else 
-            {
-                if (parseFloat(max_value_loop) < lower_limit) 
-                {
-                    array_min_max_judgement_per_sub_item.push('NG');
-                } 
-                else 
-                {
-                    array_min_max_judgement_per_sub_item.push('OK');
-                }
+                array_min_max_judgement_per_sub_item.push('NA');
+                array_min_max_value.push('-');
             }
 
             if (a_count === 5) 
             {
-                if ($.inArray('NG', array_min_max_judgement_per_sub_item) === - 1)
+                if (array_min_max_judgement_per_sub_item.length !== 10) 
                 {
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
-                    array_min_max_judgement_per_sub_item     = [];
-
-                }
-                else
+                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                } 
+                else 
                 {
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                    array_min_max_judgement_per_sub_item     = [];
+                    //pag lalagay ng sub item judgement
+                    if ($.inArray('NG', array_min_max_judgement_per_sub_item) === - 1)
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                    }
+                    else
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                    }
+                  
+                    //pagkuha ng overall judgement para sa checksheet item 
+                    EVALUATE.OverallRejudgement(item_no,sub_no,array_min_max_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
+                    array_min_max_judgement_per_sub_item = [];
+                    array_min_max_value = [];
                 }
-
-                //pagkuha ng overall judgement para sa checksheet item 
-                EVALUATE.OverallRejudgement(item_no,sub_no,array_min_max_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
-                array_min_max_judgement_per_sub_item = [];
-                array_min_max_value = [];
             }
         }   
     };
@@ -989,6 +1077,17 @@ const EVALUATE = (() => {
         let total_sub_no_count              = sub_no_count;
         let id                              = $(`#txt_hidden_item_no_${item_no}_id`).val();
         let judgment_datas                  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+        
+        if (action === 'hinsei')
+        {
+            let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
+            let split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
+            var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+        }
+        else
+        {
+            sub_item_remarks                    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
+        }
 
         (action === 'hinsei') ? coordinates = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html() : coordinates = new_coordinates;
 
@@ -1001,8 +1100,8 @@ const EVALUATE = (() => {
         }
 
         //para malaman ang checksheet item judgement
-        ($.inArray('NG', array_overall_judgement) === - 1)                  ? judgment_item     = 'GOOD'    : judgment_item     = 'NG';
-        ($.inArray('NG', array_overall_judgement) === - 1)                  ? judgement_status  = 'success' : judgement_status  = 'danger';
+        ($.inArray('NG', array_overall_judgement) === - 1) ? judgment_item     = 'GOOD'    : judgment_item     = 'NG';
+        ($.inArray('NG', array_overall_judgement) === - 1) ? judgement_status  = 'success' : judgement_status  = 'danger';
 
         //para malaman kung may remarks o wala
         (remarks == null) ? new_remarks = '' : new_remarks = remarks;
@@ -1017,20 +1116,23 @@ const EVALUATE = (() => {
         
         //para malaman ang trial checksheet judgement
         ($.inArray('NG', array_trial_checksheet_overall_judgement) === - 1) ? final_judgment    = 'GOOD'    : final_judgment = 'NG';
-
+        
         if ($.inArray('N/A',array_overall_judgement) === -1)
         {
             if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance') 
             {
                 EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgment_item,item_type,new_remarks,final_judgment,action);
+                array_overall_judgement     = [];
             }
+
             // para sa pag update ng checksheet data
-            EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',final_judgment,type,item_no,action);
+            EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,sub_item_remarks,judgment_item,final_judgment,type,item_no,action);
             array_overall_judgement     = [];
         }
         else
         {
             $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+            array_overall_judgement     = [];
         }
     };
     
@@ -1131,6 +1233,7 @@ const EVALUATE = (() => {
     this_evaluate.EditSubItem = (type,item_no, sub_no, coordinates, array_data,remarks) => {
 
         let  hinsei_button = $(`#btn_item_no_${item_no}_hinsei`).length;
+        let  item_judgment = $(`#td_item_no_1_judgement span`).text();
 
         if (hinsei_button === 0)
         {
@@ -1195,7 +1298,7 @@ const EVALUATE = (() => {
                     <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
                 </div>
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-secondary btn-block" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
                 </div>
             </div>`;
 
@@ -1236,7 +1339,11 @@ const EVALUATE = (() => {
             array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${index}`).val());
         }
 
-        if ($.inArray('N/A',array_visuals) === -1)
+        if (array_visuals.every( (value, i, array) => value === 'NA') == true)
+        {
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+        }
+        else
         {
             if ($.inArray('NG', array_visuals) === - 1)
             {
@@ -1246,10 +1353,6 @@ const EVALUATE = (() => {
             {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
             }
-        }
-        else
-        {
-            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="input_text_center">N/A</span>');
         }
     };
 
@@ -1568,24 +1671,44 @@ const EVALUATE = (() => {
 
     this_evaluate.ValidateSubItemGetMinMaxWithUpperAndLowerLimit = (item_no, sub_no, min_max_no, min_max_type) => {
         
-        let type                                                    = $(`#td_item_no_${item_no}_type`).html();
-        let upper_limit                                             = $(`#td_item_no_${item_no}_upper_limit`).html();
-        let lower_limit                                             = $(`#td_item_no_${item_no}_lower_limit`).html();
-        let min_max_range                                           = (parseFloat(upper_limit) - parseFloat(lower_limit)) / 2;
-        let min_value                                               = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
-        let max_value                                               = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
-        let last_max_value                                          = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
-        let total_sub_no_count                                      = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
-        let array_min_max_judgement_per_sub_item                    = [];
-        let array_min_max_judgement_per_sub_item_overall_NG_count   = 0;
+        let type      = $(`#td_item_no_${item_no}_type`).html();
+        let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
+        let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
+
+        if (type === 'Min and Max and Form Tolerance')
+        {
+            if (min_value === '-' || max_value === '-')
+            {
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            }
+            else
+            {
+                EVALUATE.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit(type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type);
+            }
+        }
+        else
+        {
+            EVALUATE.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit(type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type);
+        }
+    };
+
+    this_evaluate.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit = (type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type) => {
+        
+        let upper_limit                          = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit                          = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let min_max_range                        = (parseFloat(upper_limit) - parseFloat(lower_limit)) / 2;
+        let last_max_value                       = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_5`).val();
+        let total_sub_no_count                   = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
+        let array_min_max_judgement_per_sub_item = [];
+        let array_min_max_value                  = [];
 
         if (parseFloat(min_value) > parseFloat(max_value)) 
         {
-
             $(`#span_min_error_${min_max_no}`).remove();
             $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Invalid min and max</span>`);
-            // $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
-            
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val('');
+
             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
         } 
         else 
@@ -1613,24 +1736,23 @@ const EVALUATE = (() => {
                         {
                             
                             final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
-
                              //para sa iba pang condition para sa MMF may range na kasama
-                             if (type === 'Min and Max and Form Tolerance')
-                             {
-                                 let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+                            if (type === 'Min and Max and Form Tolerance')
+                            {
+                                let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-                                 if (min_max_difference <= min_max_range)
-                                 {
-                                     array_min_max_judgement_per_sub_item.push('OK');
-                                 }
-                                 else if (min_max_difference > min_max_range)
-                                 {
-                                     array_min_max_judgement_per_sub_item.push('NG');
-                                 }
-                                 else
-                                 {
-                                     array_min_max_judgement_per_sub_item.push('OK');
-                                 }
+                                if (min_max_difference <= min_max_range)
+                                {
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
+                                else if (min_max_difference > min_max_range)
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else
+                                {
+                                    array_min_max_judgement_per_sub_item.push('OK');
+                                }
                             }
                             else
                             {
@@ -1724,68 +1846,31 @@ const EVALUATE = (() => {
                         } 
                         else 
                         {
-                            // counting ng NG
-                            for (let b_count = 0; b_count < array_min_max_judgement_per_sub_item.length; b_count++) 
+                            //pag lalagay ng sub item judgement
+                            if ($.inArray('NG', array_min_max_judgement_per_sub_item) === - 1) 
                             {
-                                if (array_min_max_judgement_per_sub_item[b_count] === 'NG') 
-                                {
-                                    array_min_max_judgement_per_sub_item_overall_NG_count++;
-                                }
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
                             }
-                        }
-
-                        for (let c_count = 1; c_count <= 5; c_count++) 
-                        {
-                            let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${c_count}`).val();
-                            let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${c_count}`).val();
-
-                            //pagka nagbura sa gitna na may last value
-                            if (min_value === '') 
-                            {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                            } 
                             else
                             {
-                                //pagka nagbura sa gitna na may last value
-                                if (max_value === '') 
-                                {
-                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                } 
-                                else 
-                                {
-                                    if (c_count === 5) 
-                                    {
-                                        //pag lalagay ng sub item judgement
-                                        if (array_min_max_judgement_per_sub_item_overall_NG_count > 0) 
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                            }
 
-                                        } 
-                                        else 
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
-                                        }
+                            //para malaman ang checksheet item judgement
+                            let array_overall_judgement = [];
 
-                                        let array_overall_judgement = [];
+                            for (let index = 1; index <= total_sub_no_count; index++) 
+                            {
+                                array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+                            }
 
-                                        //para malaman ang checksheet item judgement
-                                        for (let index = 1; index <= total_sub_no_count; index++) 
-                                        {
-                                            array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
-                                        }
-
-                                        if ($.inArray('NG', array_overall_judgement) === - 1) 
-                                        {
-                                            $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                                        }
-                                        else
-                                        {
-                                            $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-                                        }
-                                    }
-                                }
+                            if ($.inArray('NG', array_overall_judgement) === - 1) 
+                            {
+                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                            }
+                            else
+                            {
+                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
                             }
                         }
                     }
@@ -1800,125 +1885,139 @@ const EVALUATE = (() => {
 
     this_evaluate.SaveSubItem = (type, item_no, sub_no, coordinates,visuals_min_max_datas) => {
 
-        let new_coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
         let sub_item_judgement  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
         let remarks             = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
-        
-        if (sub_item_judgement === 'N/A')
+        let new_coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+
+        let split_item_remarks          = $(`#btn_item_no_${item_no}_hinsei`).attr('onclick').split(',');
+        let split_split_item_remarks    = split_item_remarks[6].split(')');
+        let item_remarks                = split_split_item_remarks[0].replace(/"|'/g, '');
+
+        if (remarks !== '')
         {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Item with no judgement has been found',
-                text: 'Please check your checksheet items or your checksheet data.',
-            })
-        }
-        else
-        {
-            if (remarks !== '')
+            $(`#span_remarks_error_item_no_${item_no}_sub_no_${sub_no}`).remove();
+
+            if (new_coordinates !== '') 
             {
-                $(`#span_remarks_error_item_no_${item_no}_sub_no_${sub_no}`).remove();
-
-                if (new_coordinates !== '') 
+                if (type === 'Min and Max and Form Tolerance')
                 {
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                    if (sub_item_judgement === 'N/A')
                     {
-                        let array_min_max_data  = [];
-                        let split_data          = visuals_min_max_datas.split(',');
-
-                        split_data.forEach((split_value) => {
-                            array_min_max_data.push(split_value);
-                        });
-
-                        let min_count       = 0;
-                        let max_count       = 1;
-                        let changes_count   = 0;
-                        
-                        //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
-                        for (let a_count = 1; a_count <= 5; a_count++) 
-                        {
-                            let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
-                            let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
-
-                            if (min_value === '')
-                            {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val('-');
-                            }
-
-                            if (max_value === '')
-                            {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val('-');
-                            }
-
-                            //para malaman kung may changes ba sa coordinates or visuals
-                            if (min_value !== array_min_max_data[min_count])
-                            {
-                                changes_count++;
-                            }
-
-                            if (max_value !== array_min_max_data[max_count])
-                            {
-                                changes_count++;
-                            }
-
-                            min_count += 2;
-                            max_count += 2;
-
-                            if (a_count === 5)
-                            {
-                                if (changes_count > 0)
-                                {
-                                    EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,final_array_min_max_datas,type,remarks);
-                                }
-                                else
-                                {
-                                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Edit Cancelled',
-                                        text: 'There is no changes with the coordinates and min max data. Edit is cancelled.',
-                                    })
-                                }
-                            }
-                        }
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Item with no judgement has been found',
+                            text: 'Please check your checksheet items or your checksheet data.',
+                        })
                     }
                     else
                     {
-                        let visual_no       = 1;
-                        let changes_count   = 0;
-
-                        split_data = visuals_min_max_datas.split(',');
-                        split_data.forEach((split_value) => 
-                        {
-                            let new_visual_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
-
-                            (split_value != new_visual_value) ? changes_count++ : '';
-
-                            if (visual_no === 5)
-                            {
-                                if (changes_count > 0)
-                                {
-                                    EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,final_array_min_max_datas,type,remarks);
-                                }
-                                else
-                                {
-                                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Edit Cancelled',
-                                        text: 'There is no changes with the coordinates and visuals. Edit is cancelled.',
-                                    })
-                                }
-                            }
-
-                            visual_no++;
-                        });
+                        EVALUATE.ValidateSaveSubItemMinMax(type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates);
                     }
                 }
+                else if  (type === 'Min and Max')
+                {
+                    EVALUATE.ValidateSaveSubItemMinMax(type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates);
+                }
+                else
+                {
+                    let visual_no       = 1;
+                    let changes_count   = 0;
+
+                    split_data = visuals_min_max_datas.split(',');
+                    split_data.forEach((split_value) => 
+                    {
+                        let new_visual_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
+
+                        (split_value != new_visual_value) ? changes_count++ : '';
+
+                        if (visual_no === 5)
+                        {
+                            if (changes_count > 0)
+                            {
+                                EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,final_array_min_max_datas,type,item_remarks);
+                            }
+                            else
+                            {
+                                EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Edit Cancelled',
+                                    text: 'There is no changes with the coordinates and visuals. Edit is cancelled.',
+                                })
+                            }
+                        }
+
+                        visual_no++;
+                    });
+                }
             }
-            else
+        }
+        else
+        {
+            $(`#span_remarks_error_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).after(`<span id="span_remarks_error_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`)
+        }
+    };
+
+    this_evaluate.ValidateSaveSubItemMinMax = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
+
+        let array_min_max_data  = [];
+        let split_data          = visuals_min_max_datas.split(',');
+
+        split_data.forEach((split_value) => {
+            array_min_max_data.push(split_value);
+        });
+
+        let min_count       = 0;
+        let max_count       = 1;
+        let changes_count   = 0;
+        
+        //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
+        for (let a_count = 1; a_count <= 5; a_count++) 
+        {
+            let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
+            let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
+
+            if (min_value === '')
             {
-                $(`#span_remarks_error_${item_no}`).remove();
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).after(`<span id="span_remarks_error_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`)
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val('-');
+            }
+
+            if (max_value === '')
+            {
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val('-');
+            }
+
+            //para malaman kung may changes ba sa coordinates or visuals
+            if (min_value !== array_min_max_data[min_count])
+            {
+                changes_count++;
+            }
+
+            if (max_value !== array_min_max_data[max_count])
+            {
+                changes_count++;
+            }
+
+            min_count += 2;
+            max_count += 2;
+
+            if (a_count === 5)
+            {
+                if (changes_count > 0)
+                {
+                    //final_array_min_max_datas naka global to
+                    EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,final_array_min_max_datas,type,remarks);
+                }
+                else
+                {
+                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Edit Cancelled',
+                        text: 'There is no changes with the coordinates and min max data. Edit is cancelled.',
+                    })
+                }
             }
         }
     };
@@ -1946,7 +2045,7 @@ const EVALUATE = (() => {
         })
     }
 
-    this_evaluate.CancelSubItem = (type, item_no, sub_no, coordinates, visual_min_max_datas, sub_item_judgement,remarks) => {
+    this_evaluate.CancelSubItem = (type, item_no, sub_no, coordinates, visual_min_max_datas, sub_item_judgement,remarks,item_judgment) => {
 
         let button = `<button type="button" id ="btn_edit_item_no_${item_no}_sub_no_${sub_no}" type ="button" class ="btn btn-success btn-block" onclick ="EVALUATE.EditSubItem('${type}',${item_no},${sub_no},'${coordinates}','${visual_min_max_datas}','${remarks}');"> <strong class ="strong-font"> <i class="ti-pencil-alt"></i> EDIT</strong></button>`;
         let visual_no = 1;
@@ -1965,8 +2064,8 @@ const EVALUATE = (() => {
 
             for (let index = 1; index <= 5; index++) 
             {
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${index}`).html(IGM.ChecksheetDataInputData(array_visual_min_max_data,min_count));
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${index}`).html(IGM.ChecksheetDataInputData(array_visual_min_max_data,max_count));
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${index}`).html(IGM.ChecksheetDataInputData(type,array_visual_min_max_data,min_count));
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${index}`).html(IGM.ChecksheetDataInputData(type,array_visual_min_max_data,max_count));
                 
                 min_count += 2;
                 max_count += 2;
@@ -2012,6 +2111,8 @@ const EVALUATE = (() => {
         $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(coordinates);
        
         $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(button);
+
+        $(`#td_item_no_1_judgement`).html((item_judgment === 'NG') ? '<span class="badge badge-danger subitem-visual-judgement">NG</span>' : '<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
     };
 
     this_evaluate.SubitemCalculateOverallJudgement = (item_no, sub_no, array_data, type,remarks) => {
@@ -2019,15 +2120,18 @@ const EVALUATE = (() => {
         //yung type sa (item_no, sub_no, array_data, type) ay gamit para sa pagsesave ng min max/minmax tolerenace na type
         // yung nasa trial_checksheet_igm.js na SubitemCalculateOverallJudgement ay iba dahil iba ang way nila ng pagkuha ng total_sub_no_count
         //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
-        let trial_checksheet_id         = $(`#trial_checksheet_id`).val();
-        let id                          = $(`#txt_hidden_item_no_${item_no}_id`).val();
-        let coordinates                 = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-        let tools                       = $(`#td_item_no_${item_no}_tools`).html();
-        let specs                       = $(`#td_item_no_${item_no}_specs`).html();
-        let upper_limit                 = $(`#td_item_no_${item_no}_upper_limit`).html();
-        let lower_limit                 = $(`#td_item_no_${item_no}_lower_limit`).html();
-        let item_type                   = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
-
+        let trial_checksheet_id          = $(`#trial_checksheet_id`).val();
+        let id                           = $(`#txt_hidden_item_no_${item_no}_id`).val();
+        let coordinates                  = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let tools                        = $(`#td_item_no_${item_no}_tools`).html();
+        let specs                        = $(`#td_item_no_${item_no}_specs`).html();
+        let upper_limit                  = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit                  = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let item_type                    = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
+        let split_btn_hinsei_value       = $(`#btn_item_no_${item_no}_hinsei`).attr('onclick').split(',');
+        let split_split_btn_hinsei_value = split_btn_hinsei_value[6].split(')');
+        let item_remarks                 = split_split_btn_hinsei_value[0].replace(/"|'/g, '');
+      
         let judgment_datas              = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
         let total_sub_no_count          = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
 
@@ -2078,12 +2182,13 @@ const EVALUATE = (() => {
                         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                         {
                             //auto judgement papunta sa DB para sa checksheet item
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,remarks,trial_checksheet_judgement,'edit');
+                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
                         }
 
                         //auto judgement papunta sa DB para sa checksheet data
                         EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
-                        array_overall_judgement = [];
+                        array_overall_judgement     = [];
+                        final_array_min_max_datas   = [];
 
                     }
                     else
@@ -2093,12 +2198,13 @@ const EVALUATE = (() => {
                         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                         {
                             //auto judgement papunta sa DB para sa checksheet item
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,remarks,trial_checksheet_judgement,'edit');
+                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
                         }
 
                         //auto judgement papunta sa DB
                         EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
-                        array_overall_judgement = [];
+                        array_overall_judgement     = [];
+                        final_array_min_max_datas   = [];
                     }
                 }
             } 
@@ -2111,12 +2217,13 @@ const EVALUATE = (() => {
                     if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                     {
                         //auto judgement papunta sa DB para sa checksheet item
-                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,remarks,trial_checksheet_judgement,'edit');
+                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
                     }
 
                     //auto judgement papunta sa DB
                     EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
-                    array_overall_judgement = [];
+                    array_overall_judgement     = [];
+                    final_array_min_max_datas   = [];
 
                 }
                 else
@@ -2126,12 +2233,13 @@ const EVALUATE = (() => {
                     if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                     {
                         //auto judgement papunta sa DB para sa checksheet item
-                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,remarks,trial_checksheet_judgement,'edit');
+                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
                     }
 
                     //auto judgement papunta sa DB
                     EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
-                    array_overall_judgement = [];
+                    array_overall_judgement     = [];
+                    final_array_min_max_datas   = [];
                 }
             }
         }
@@ -2181,7 +2289,7 @@ const EVALUATE = (() => {
     this_evaluate.ProceedEditData = (checksheet_item_id,sub_number,coordinates,data,judgment_datas,remarks,judgment_items,judgment_checksheet,type,item_no,action) => {
         
         let trial_checksheet_id = $('#trial_checksheet_id').val();
-       
+
         $.ajax({
             url         : `edit-data`,
             type        : 'patch',
@@ -2244,6 +2352,7 @@ const EVALUATE = (() => {
                             text: 'Edit successful',
                         })
                     }
+                    
                 }
 
                 EVALUATE.LoadFinishedInspectionData();
@@ -2411,3 +2520,5 @@ const EVALUATE = (() => {
 
     return this_evaluate;
 })();
+
+//SAVE HINSEI WALA PA PARA SA MMF
