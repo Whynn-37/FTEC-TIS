@@ -99,6 +99,7 @@ const IGM = (() => {
     };
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
+
         $.ajax({
             url     : `load-igm`,
             type    : 'get',
@@ -120,14 +121,9 @@ const IGM = (() => {
                 //pagkuha ng max item number
                 if (data.data.items.length > 0) 
                 {
-                    let count = 1;
-                    data.data.items.forEach((value) => {
-                        //paglalagay ng item count
-                        if (count === data.data.items.length) {
-                            item_no_count += value.item_number;
-                        }
-                        count++;
-                    });
+                    item_no_count = '';
+                    item_no_count += data.data.items.length;
+
                     // add item button , {{--IGM.AddIgmItemNo(type, current_item_no + 1, sub item count, added item no in between count)--}}
                     var tfoot_tbl_igm = `
                     <tfoot id="tfoot_add_igm_item">

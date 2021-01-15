@@ -56,8 +56,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label>RECEIVED DATE:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_received_date" readonly>
+                                            <label>APPLICATION DATE:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_application_date" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label>INSPECTION COMPLETION DATE:</label>
@@ -103,7 +103,7 @@
                             <div class="card-header">
                                 <a class="card-link" data-toggle="collapse" href="#accordion_igm_details"><strong
                                         style="font-size: 20px;"><i class="ti-layout-grid2"></i>
-                                        IGM</strong></a>
+                                        CHECKSHEET</strong></a>
                             </div>
                             <div id="accordion_igm_details" class="collapse show" data-parent="#accordion_checksheet">
                                 <div class="card-body">

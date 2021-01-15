@@ -56,8 +56,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label>RECEIVED DATE:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_received_date" readonly>
+                                            <label>APPPLICATION DATE:</label>
+                                            <input class="form-control mb-3" type="text" placeholder="Received date" id="txt_application_date" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label>INSPECTION COMPLETION DATE:</label>

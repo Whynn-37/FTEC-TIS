@@ -27,43 +27,49 @@ const APPROVE = (() => {
                 $('#tbl_finished_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_finished_inspection_data').empty();
 
-                let tbody = '';
-                data.data.forEach((value) => {
-                    if (value.judgment === 'GOOD')
-                    {
-                        judgement = '<span class="badge badge-success subitem-visual-judgement">GOOD</span>';
-                    }
-                    else
-                    {
-                        judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
-                    }
+                if (data.status === 'Success')
+                {
+                    let tbody = '';
+
+                    data.data.forEach((value) => {
+                        if (value.judgment === 'GOOD')
+                        {
+                            judgement = '<span class="badge badge-success subitem-visual-judgement">GOOD</span>';
+                        }
+                        else
+                        {
+                            judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
+                        }
+    
+                        tbody +=
+                            `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.inspection_reason}</td>
+                            <td>${value.date_finished}</td>
+                            <td>${judgement}</td>
+                            <td>
+                                <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.id});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                        </tr>`;
+                        // <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                    });
+    
+    
+                    $('#tbody_tbl_finished_inspection_data').html(tbody);
                     
-                    tbody +=
-                        `<tr>
-                        <td>${value.part_number}</td>
-                        <td>${value.revision_number}</td>
-                        <td>${value.trial_number}</td>
-                        <td>${value.inspection_reason}</td>
-                        <td>${value.date_finished}</td>
-                        <td>${judgement}</td>
-                        <td>
-                            <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.id});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                        </td>
-                    </tr>`;
-                    // <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                });
-
-
-                $('#tbody_tbl_finished_inspection_data').html(tbody);
+                }
 
                 $('#tbl_finished_inspection_data').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": true,
+                    "paging"        : true,
+                    "lengthChange"  : true,
+                    "searching"     : true,
+                    "ordering"      : true,
+                    "info"          : true,
+                    "autoWidth"     : true,
                 });
+                
                 $('#tbl_finished_inspection_data').LoadingOverlay('hide');
             }
         });
@@ -87,30 +93,33 @@ const APPROVE = (() => {
                 $('#tbl_disapproved_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_disapproved_inspection_data').empty();
 
-                let tbody = '';
-                data.data.forEach((value) => {
-                    tbody += 
-                    `<tr>
-                        <td>${value.part_number}</td>
-                        <td>${value.revision_number}</td>
-                        <td>${value.trial_number}</td>
-                        <td>${value.inspection_reason}</td>
-                        <td>${value.disapproved_by}</td>
-                        <td>${value.disapproved_datetime}</td>
-                        <td>${value.reason}</td>
-                    </tr>`;
-                });
+                if (data.status === 'Success')
+                {
+                    let tbody = '';
+                    data.data.forEach((value) => {
+                        tbody += 
+                        `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.inspection_reason}</td>
+                            <td>${value.disapproved_by}</td>
+                            <td>${value.disapproved_datetime}</td>
+                            <td>${value.reason}</td>
+                        </tr>`;
+                    });
+    
+                    $('#tbody_tbl_disapproved_inspection_data').html(tbody);
+                }
 
-                $('#tbody_tbl_disapproved_inspection_data').html(tbody);
                 $('#tbl_disapproved_inspection_data').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": true,
+                    "paging"        : true,
+                    "lengthChange"  : true,
+                    "searching"     : true,
+                    "ordering"      : true,
+                    "info"          : true,
+                    "autoWidth"     : true,
                 });
-
                 $('#tbl_disapproved_inspection_data').LoadingOverlay('hide');
             }
         });
@@ -133,55 +142,63 @@ const APPROVE = (() => {
             },
             success: data => 
             {
-                //checksheet details
-                $('#txt_part_number').val(data.data.checksheet_details.part_number);
-                $('#txt_revision').val(data.data.checksheet_details.revision_number);
-                $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
-                $('#txt_part_name').val(data.data.checksheet_details.part_name);
-                $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
-                $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
-                $('#txt_supplier_name').val();//hindi pa kasama sa returned data
-                $('#txt_received_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
-                $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
-                $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data
-                $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
-                $('#txt_die_kind').val(data.data.checksheet_details.die_class);
-                $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
-                
-                //attachments
-                let files = `
-                <div class="vertical-rectangle">
-                    <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
-                    <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.pdf');"><i class="ti-eye"></i> VIEW FILE</button>
+                if (data.status === 'Success')
+                {
+                    //checksheet details
+                    $('#txt_part_number').val(data.data.checksheet_details.part_number);
+                    $('#txt_revision').val(data.data.checksheet_details.revision_number);
+                    $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
+                    $('#txt_part_name').val(data.data.checksheet_details.part_name);
+                    $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
+                    $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
+                    $('#txt_supplier_name').val();//hindi pa kasama sa returned data
+                    $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
+                    $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
+                    $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data
+                    $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
+                    $('#txt_die_kind').val(data.data.checksheet_details.die_class);
+                    $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
+
+                    //attachments
+                    let files = `
+                    <div class="vertical-rectangle">
+                        <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
+                        <div class="file-options">
+                            <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('merged','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.pdf');"><i class="ti-eye"></i> VIEW FILE</button>
+                        </div>
+                        
+                        <center style="margin-top: 195px;">
+                            <span>Merged Attachments</span>
+                        </center>
                     </div>
-                    
-                    <center style="margin-top: 195px;">
-                        <span>Merged Attachments</span>
-                    </center>
-                </div>
-                <div class="vertical-rectangle">
-                    <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
-                    <div class="file-options">
-                        <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.xlsx');"><i class="ti-eye"></i> VIEW FILE</button>
-                    </div>
-                    
-                    <center style="margin-top: 195px;">
-                        <span>Evaluation Result</span>
-                    </center>
-                </div>`;
+                    <div class="vertical-rectangle">
+                        <img id="img_attachment_1" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
+                        <div class="file-options">
+                            <button type="button" class="btn btn-green mb-3" onclick="APPROVE.OpenFile('evaluation_result','${data.data.attachment.file_folder}','${data.data.attachment.file_name_merge}.xlsx');"><i class="ti-eye"></i> VIEW FILE</button>
+                        </div>
+                        
+                        <center style="margin-top: 195px;">
+                            <span>Evaluation Result</span>
+                        </center>
+                    </div>`;
 
-                $('#div_attachments').html(files);
+                    $('#div_attachments').html(files);
 
-                //pagkuha ng checksheet item tapos checksheet data
-                APPROVE.GetChecksheetItem(data);
-
-                // $('#btn_approve_data').attr('onclick',`APPROVE.ApproveData('${status}');`)
+                    //pagkuha ng checksheet item tapos checksheet data
+                    APPROVE.GetChecksheetItem(data);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon    : 'error',
+                        title   : data.status,
+                        text    : data.message,
+                    })
+                }
 
                 $('#div_modal_content').LoadingOverlay('hide');
             }
         });
-
     };
 
     this_approve.OpenFile = (file_type,file_folder,file_name) => {
@@ -234,6 +251,7 @@ const APPROVE = (() => {
                 <th width="10%">UPPER LIMIT</th>
                 <th width="10%">LOWER LIMIT</th>
                 <th width="10%">JUDGEMENT</th>
+                <th width="10%">REMARKS</th>
                 <th colspan="2"></th>
             </tr>
             <tr id="tr_item_no_${value.item_number}">
@@ -249,6 +267,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${value.item_number}_upper_limit">${upper_limit}</td>
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
+                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null) ? '-' : value.remarks}</td>
             </tr>`;
 
             array_type.push(value.type);
@@ -270,6 +289,7 @@ const APPROVE = (() => {
         let array_data                      = [];
         let array_judgement                 = [];
         let array_coordinates               = [];
+        let array_remarks               = [];
         let existing_sub_no_count           = -1;//naka -1 para pag increment nya naka 0 para pag pasok sa add igm sub no function sa zero sya papasok 
         
         //pagkuha ng data id
@@ -280,6 +300,7 @@ const APPROVE = (() => {
                 array_hidden_checksheet_data_id.push(value.id);
                 array_judgement.push(value.judgment);
                 array_coordinates.push(value.coordinates);
+                array_remarks.push(value.remarks);
     
                 array_split_value = [];
                 if (value.data !== null)
@@ -297,7 +318,7 @@ const APPROVE = (() => {
                 existing_sub_no_count++;
 
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
-                APPROVE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index]);
+                APPROVE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index]);
     
                 $(`#th_igm_item_no_${array_item_number[a_index]}_extra_column`).prop('hidden', false);
                 
@@ -307,6 +328,7 @@ const APPROVE = (() => {
             array_data                      = [];
             array_judgement                 = [];
             array_coordinates               = [];
+            array_remarks               = [];
             existing_sub_no_count           = -1;
         }
     };
@@ -315,15 +337,16 @@ const APPROVE = (() => {
         let tr_sub_no_column = `
 		<tr id="tr_item_no_${item_no_count}_sub_no_column">
 			<th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
-			<th width="15%" class="text-white bg-dark">SUB NO</th>
+			<th width="5%" class="text-white bg-dark">SUB NO</th>
 			<th width="18%" class="text-white bg-dark">COORDINATES</th>
 			<th width="30%" class="text-white bg-dark" colspan="5">DATA</th>
 			<th width="10%" class="text-white bg-dark">JUDGEMENT</th>
+			<th width="15%" class="text-white bg-dark">REMARKS</th>
 		</tr>`;
         return tr_sub_no_column;
     };
 
-    this_approve.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates) => {
+    this_approve.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
 
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
@@ -346,7 +369,7 @@ const APPROVE = (() => {
 
             tr_sub_no_column += APPROVE.AddIgmSubNoHeader(item_no_count, rowspan_count);
 
-            tr_sub_no_inputs += APPROVE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates);
+            tr_sub_no_inputs += APPROVE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
 
             $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
 
@@ -363,7 +386,7 @@ const APPROVE = (() => {
             $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
 
             //pag lalagay lang ng row sa table, walang pag add sa DB
-            tr_sub_no_inputs += APPROVE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates);
+            tr_sub_no_inputs += APPROVE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
             
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
             {
@@ -381,7 +404,7 @@ const APPROVE = (() => {
         }
     };
 
-    this_approve.AddIgmSubNoInputs = (type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates) => {
+    this_approve.AddIgmSubNoInputs = (type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
 
         let tr                      = '';
         let new_sub_no              = existing_sub_no_count_per_item;
@@ -403,6 +426,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null) ? '-' : remarks}</td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
@@ -439,6 +463,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${(remarks == null) ? '-' : remarks}</td>
             </tr`;
             //alamin kung paano magagawa na iisang button lang edit tapos save cancel
         }
@@ -472,16 +497,27 @@ const APPROVE = (() => {
                     cache   : false,
                     success: result => 
                     {
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-                        APPROVE.LoadFinishedInspectionData();
-                        APPROVE.LoadDisapprovedInspectionData();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Approve successful',
-                        })
+                        if (result.status === 'Success')
+                        {
+                            $('#div_modal_content').LoadingOverlay('hide');
+                            $('#modal_view_inspection_data').modal('hide');
+                            APPROVE.LoadFinishedInspectionData();
+                            APPROVE.LoadDisapprovedInspectionData();
+    
+                            Swal.fire({
+                                icon    : 'success',
+                                title   : 'Success',
+                                text    : 'Approve successful',
+                            })
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                icon    : 'error',
+                                title   : data.status,
+                                text    : data.message,
+                            })
+                        }
                     }
                 });
             }
@@ -547,16 +583,27 @@ const APPROVE = (() => {
                         cache   : false,
                         success: result => 
                         {
-                            $('#div_modal_content').LoadingOverlay('hide');
-                            $('#modal_view_inspection_data').modal('hide');
-                            APPROVE.LoadFinishedInspectionData();
-                            APPROVE.LoadDisapprovedInspectionData();
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Diaspprove successful',
-                            })
+                            if (result.status === 'Success')
+                            {
+                                $('#div_modal_content').LoadingOverlay('hide');
+                                $('#modal_view_inspection_data').modal('hide');
+                                APPROVE.LoadFinishedInspectionData();
+                                APPROVE.LoadDisapprovedInspectionData();
+    
+                                Swal.fire({
+                                    icon    : 'success',
+                                    title   : 'Success',
+                                    text    : 'Diaspprove successful',
+                                })
+                            }
+                            else
+                            {
+                                Swal.fire({
+                                    icon    : 'error',
+                                    title   : data.status,
+                                    text    : data.message,
+                                })
+                            }
                         }
                     });
                 }

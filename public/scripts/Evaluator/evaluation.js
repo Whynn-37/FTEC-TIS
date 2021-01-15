@@ -31,33 +31,37 @@ const EVALUATE = (() => {
                 $('#tbl_finished_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_finished_inspection_data').empty();
 
-                let tbody = '';
-                data.data.forEach((value) => {
-                    if (value.judgment === 'GOOD')
-                    {
-                        judgement = '<span class="badge badge-success subitem-visual-judgement">GOOD</span>';
-                    }
-                    else
-                    {
-                        judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
-                    }
-                    
-                    tbody +=
-                        `<tr>
-                        <td>${value.part_number}</td>
-                        <td>${value.revision_number}</td>
-                        <td>${value.trial_number}</td>
-                        <td>${value.inspection_reason}</td>
-                        <td>${value.date_finished}</td>
-                        <td>${judgement}</td>
-                        <td>
-                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                        </td>
-                    </tr>`;
-                });
+                if (data.status === 'Success')
+                {
+                    let tbody = '';
 
-                $('#tbody_tbl_finished_inspection_data').html(tbody);
-
+                    data.data.forEach((value) => {
+                        if (value.judgment === 'GOOD')
+                        {
+                            judgement = '<span class="badge badge-success subitem-visual-judgement">GOOD</span>';
+                        }
+                        else
+                        {
+                            judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
+                        }
+                        
+                        tbody +=
+                            `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.inspection_reason}</td>
+                            <td>${value.date_finished}</td>
+                            <td>${judgement}</td>
+                            <td>
+                                <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                        </tr>`;
+                    });
+    
+                    $('#tbody_tbl_finished_inspection_data').html(tbody);
+                }
+                
                 $('#tbl_finished_inspection_data').DataTable({
                     "paging": true,
                     "lengthChange": true,
@@ -89,23 +93,26 @@ const EVALUATE = (() => {
                 $('#tbl_disapproved_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_disapproved_inspection_data').empty();
 
-                let tbody = '';
-                data.data.forEach((value) => {
-                    tbody += 
-                    `<tr>
-                        <td>${value.part_number}</td>
-                        <td>${value.revision_number}</td>
-                        <td>${value.trial_number}</td>
-                        <td>${value.inspection_reason}</td>
-                        <td>${value.disapproved_by}</td>
-                        <td>${value.disapproved_datetime}</td>
-                        <td>${value.reason}</td>
-                        <td>
-                        <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
-                        </td>
-                    </tr>`;
-                });
+                if (data.status === 'Success')
+                {
+                    let tbody = '';
 
+                    data.data.forEach((value) => {
+                        tbody += 
+                        `<tr>
+                            <td>${value.part_number}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.inspection_reason}</td>
+                            <td>${value.disapproved_by}</td>
+                            <td>${value.disapproved_datetime}</td>
+                            <td>${value.reason}</td>
+                            <td>
+                            <button class="btn btn-primary btn-block" onclick="EVALUATE.ViewFinishedInspectionData(${value.id},'disapproved');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                        </tr>`;
+                    });
+                }
 
                 $('#tbody_tbl_disapproved_inspection_data').html(tbody);
                 $('#tbl_disapproved_inspection_data').DataTable({
@@ -155,61 +162,72 @@ const EVALUATE = (() => {
             },
             success: data => 
             {
-                //checksheet details
-                $('#txt_part_number').val(data.data.checksheet_details.part_number);
-                $('#txt_revision').val(data.data.checksheet_details.revision_number);
-                $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
-                $('#txt_part_name').val(data.data.checksheet_details.part_name);
-                $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
-                $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
-                $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
-                $('#txt_received_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
-                $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
-                $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
-                $('#txt_inspection_reason').val(data.data.checksheet_details.takt_time);
-                $('#txt_die_kind').val(data.data.checksheet_details.die_class);
-                $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
-                
-                //attachments
-                let files = '';
-                let count = 1;
-
-                //attachment count
-                attachment_count += data.data.attachment.file_name.length;
-
-                for (let index = 0; index < data.data.attachment.file_name.length; index++) 
+                if (data.status === 'Success')
                 {
-                    let add_to_pdf_button = '';
+                    //checksheet details
+                    $('#txt_part_number').val(data.data.checksheet_details.part_number);
+                    $('#txt_revision').val(data.data.checksheet_details.revision_number);
+                    $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
+                    $('#txt_part_name').val(data.data.checksheet_details.part_name);
+                    $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
+                    $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
+                    $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
+                    $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
+                    $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
+                    $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                    $('#txt_inspection_reason').val(data.data.checksheet_details.takt_time);
+                    $('#txt_die_kind').val(data.data.checksheet_details.die_class);
+                    $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
 
-                    if (status === 'finished')
+                    //attachments
+                    let files = '';
+                    let count = 1;
+
+                    //attachment count
+                    attachment_count += data.data.attachment.file_name.length;
+
+                    for (let index = 0; index < data.data.attachment.file_name.length; index++) 
                     {
-                        add_to_pdf_button += `<button id="btn_add_to_pdf_${count}" type="button" class="btn btn-green"  onclick="EVALUATE.AddToPdf(${count},'','${data.data.attachment.file_name[index]}','unchecked');"><i class="ti-plus"></i> ADD TO PDF</button>`;
-                    }
-                    
+                        let add_to_pdf_button = '';
 
-                    files += `
-                    <div class="vertical-rectangle">
-                        <img id="img_attachment_${count}" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
-                        <div class="file-options">
-                            <button type="button" class="btn btn-green mb-3" onclick="EVALUATE.OpenFile('${data.data.attachment.file_folder}','${data.data.attachment.file_name[index]}');"><i class="ti-eye"></i> VIEW FILE</button>
-                            ${add_to_pdf_button}
-                        </div>
+                        if (status === 'finished')
+                        {
+                            add_to_pdf_button += `<button id="btn_add_to_pdf_${count}" type="button" class="btn btn-green"  onclick="EVALUATE.AddToPdf(${count},'','${data.data.attachment.file_name[index]}','unchecked');"><i class="ti-plus"></i> ADD TO PDF</button>`;
+                        }
                         
-                        <center style="margin-top: 195px;">
-                            <span>${data.data.attachment.file_name[index].split('.')[0]}</span>
-                        </center>
-                    </div>`;
 
-                    count++;
+                        files += `
+                        <div class="vertical-rectangle">
+                            <img id="img_attachment_${count}" src="${base_url}/template/assets/images/icon/file.png" class="file-image">
+                            <div class="file-options">
+                                <button type="button" class="btn btn-green mb-3" onclick="EVALUATE.OpenFile('${data.data.attachment.file_folder}','${data.data.attachment.file_name[index]}');"><i class="ti-eye"></i> VIEW FILE</button>
+                                ${add_to_pdf_button}
+                            </div>
+                            
+                            <center style="margin-top: 195px;">
+                                <span>${data.data.attachment.file_name[index].split('.')[0]}</span>
+                            </center>
+                        </div>`;
+
+                        count++;
+                    }
+                    $('#div_attachments').html(files);
+
+                    //pagkuha ng checksheet item tapos checksheet data
+                    EVALUATE.GetChecksheetItem(data);
+
+                    $('#btn_approve_data').attr('onclick',`EVALUATE.ApproveData('${status}');`)
+
+                    $('#div_modal_content').LoadingOverlay('hide');
                 }
-                $('#div_attachments').html(files);
-
-                //pagkuha ng checksheet item tapos checksheet data
-                EVALUATE.GetChecksheetItem(data);
-
-                $('#btn_approve_data').attr('onclick',`EVALUATE.ApproveData('${status}');`)
-
-                $('#div_modal_content').LoadingOverlay('hide');
+                else
+                {
+                    Swal.fire({
+                        icon    : 'error',
+                        title   : data.status,
+                        text    : data.message,
+                    })
+                }
             }
         });
     };
@@ -1207,6 +1225,14 @@ const EVALUATE = (() => {
                             text: 'Hinsei successful',
                         })
                     }
+                }
+                else
+                {
+                    Swal.fire({
+                        icon    : 'error',
+                        title   : data.status,
+                        text    : data.message,
+                    })
                 }
 
                 $(`#accordion_igm`).LoadingOverlay('hide');
@@ -2384,10 +2410,17 @@ const EVALUATE = (() => {
                             text: 'Edit successful',
                         })
                     }
-                    
-                }
 
-                EVALUATE.LoadFinishedInspectionData();
+                    EVALUATE.LoadFinishedInspectionData();
+                }
+                else
+                {
+                    Swal.fire({
+                        icon    : 'error',
+                        title   : data.status,
+                        text    : data.message,
+                    })
+                }
 
                 $(`#accordion_igm`).LoadingOverlay('hide');
             }
@@ -2525,25 +2558,36 @@ const EVALUATE = (() => {
                     cache   : false,
                     success: result => 
                     {
-                        array_add_to_pdf            = [];
-                        add_to_pdf_count            = 1;
-                        attachment_count            = '';
-                        array_type                  = [];
-                        array_item_number           = [];
-                        final_array_min_max_datas   = [];
-                        checksheet_item_count       = '';
-
-                        $('#div_modal_content').LoadingOverlay('hide');
-                        $('#modal_view_inspection_data').modal('hide');
-
-                        EVALUATE.LoadFinishedInspectionData();
-                        EVALUATE.LoadDisapprovedInspectionData();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Approve successful',
-                        })
+                        if (result.status === 'Success')
+                        {
+                            array_add_to_pdf            = [];
+                            add_to_pdf_count            = 1;
+                            attachment_count            = '';
+                            array_type                  = [];
+                            array_item_number           = [];
+                            final_array_min_max_datas   = [];
+                            checksheet_item_count       = '';
+    
+                            $('#div_modal_content').LoadingOverlay('hide');
+                            $('#modal_view_inspection_data').modal('hide');
+    
+                            EVALUATE.LoadFinishedInspectionData();
+                            EVALUATE.LoadDisapprovedInspectionData();
+    
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Approve successful',
+                            })
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                icon    : 'error',
+                                title   : data.status,
+                                text    : data.message,
+                            })
+                        }
                     }
                 });
             }

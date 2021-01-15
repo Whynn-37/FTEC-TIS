@@ -51,7 +51,7 @@ let logDowntime = function (event) {
     // URL to send the data to
     if (downtime_type !== null) 
     {
-        let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
+        let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${(downtime_type === 'Others') ? others_description : downtime_type}&total_down_time=${total_down_time}`;
 
         let result = navigator.sendBeacon(url);
     
@@ -515,6 +515,10 @@ const CHECKSHEET = (() => {
                     CHECKSHEET.LoadCycleTime(0, 'start');
                     IGM.LoadIGM(data.data.takt_time.trial_checksheet_id);
 
+                    //pag seset ng add new item
+                    
+                    $('#btn_add_new_igm_item_no').attr('onclick',`IGM.AddIgmItemNo('',${item_no_count},0,0,'new');`);
+
                     //pag show ng attachments at ssave button
                     $('#div_row_numbering_drawing').prop('hidden',false);
                     $('#div_row_special_tool_data').prop('hidden',false);
@@ -658,6 +662,11 @@ const CHECKSHEET = (() => {
                     $("#slc_downtime_type").prop("disabled", true);
                     $("#btn_start_downtime").prop("disabled", true);
 
+                    //IGM
+                    $('#tfoot_add_igm_item').remove();
+                    $('#tbl_new_igm').prop('hidden', true);
+                    $('#tbody_tbl_new_igm').empty();
+                    
                     //pag show ng attachments at ssave button
                     $('#div_row_numbering_drawing').prop('hidden',true);
                     $('#div_row_special_tool_data').prop('hidden',true);
