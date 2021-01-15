@@ -123,7 +123,11 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.ViewFinishedInspectionData = (id, status) => {
+
         $('#modal_view_inspection_data').modal('show');
+        checksheet_item_count   = '';
+        array_add_to_pdf        = [];
+        add_to_pdf_count        = 1;
 
         if (status === 'finished') 
         {
@@ -260,6 +264,7 @@ const EVALUATE = (() => {
                 <th>UPPER LIMIT</th>
                 <th>LOWER LIMIT</th>
                 <th>JUDGEMENT</th>
+                <th>REMARKS</th>
                 <th id="th_igm_item_no_${value.item_number}_extra_column" colspan="7"></th>
             </tr>
             <tr id="tr_item_no_${value.item_number}">
@@ -275,6 +280,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_upper_limit">${upper_limit}</td>
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
+                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null) ? '-' : value.remarks}</td>
                 <td colspan="3" id="td_item_no_${value.item_number}_hinsei">
                     <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
                 </td>
@@ -809,17 +815,40 @@ const EVALUATE = (() => {
 
         
         //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
-        if (parseFloat(upper_limit) > 0)
+        
+        if (upper_limit === '-')
         {
-            new_upper_limit =  `+${parseFloat(upper_limit)}`;
+            new_upper_limit =  `-`;
+        }
+        else if (upper_limit === '-')
+        {
+            new_upper_limit =  '';
+        }
+        else
+        {
+            if (parseFloat(upper_limit) > 0)
+            {
+                new_upper_limit =  `+${parseFloat(upper_limit)}`;
+            }
         }
         
-        if (parseFloat(lower_limit) > 0)
+        if (lower_limit === '-')
         {
-            new_lower_limit =  `+${parseFloat(lower_limit)}`;
+            new_lower_limit =  `-`;
         }
-
-        if (specs === '')
+        else if (lower_limit === '')
+        {
+            new_lower_limit =  '';
+        }
+        else
+        {
+            if (parseFloat(lower_limit) > 0)
+            {
+                new_lower_limit =  `+${parseFloat(lower_limit)}`;
+            }
+        }
+        
+         if (specs === '')
         {
             $(`#span_specs_error_${item_no}`).remove();
         
@@ -895,7 +924,9 @@ const EVALUATE = (() => {
                                 }
                                 
                                 (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-                                
+
+                                $(`#td_item_no_${item_no}_remarks`).html(new_remarks);
+
                                 // para sa pag update ng checksheet data
                                 EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,new_remarks,judgement,final_judgment,type,item_no,'hinsei');
                             }
@@ -1107,6 +1138,7 @@ const EVALUATE = (() => {
         (remarks == null) ? new_remarks = '' : new_remarks = remarks;
         
         $(`#td_item_no_${item_no}_judgement`).html(`<span class="badge badge-${judgement_status} subitem-visual-judgement">${judgment_item}</span>`);
+        $(`#td_item_no_${item_no}_remarks`).html(new_remarks);// remarks ng checksheet item
 
         //para malaman ang trial checksheet judgement
         for (let index = 1; index <= parseInt(checksheet_item_count); index++) 
@@ -2380,7 +2412,7 @@ const EVALUATE = (() => {
 
         let item_no_count   = parseInt(checksheet_item_count);
         let decision        = 3;//naka default na 3 para to sa pag approve ulit ng disapproved inspection data
-
+        
         if (status === 'finished')
         {
             //para malaman kung may pinili na attachment

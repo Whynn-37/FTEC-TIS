@@ -70,13 +70,8 @@ window.addEventListener('beforeunload', logDowntime);
 
 const CHECKSHEET = (() => {
     let this_checksheet = {};
-
-    let downtime_count = 1;
-
-    let array_item = [];
-    let array_sub_item = [];
+    
     let array_file_type = ['png', 'jpg', 'jpeg','PNG', 'JPG', 'JPEG', 'pdf'];
-    let array_files = [];
     let array_downtime_type = ['Breaktime','Clinic','Confirmation','Meeting','Parts Problem','Phonecall','Toilet','Others'];
 
     // pang refresh ng trial ledger
@@ -406,6 +401,7 @@ const CHECKSHEET = (() => {
         if (type ==='Others')
         {
             $('#div_others_downtype').prop('hidden',false);
+            $('#txt_others_description').val('');
             $('#txt_others_description').focus();
         }
         else
@@ -465,7 +461,7 @@ const CHECKSHEET = (() => {
     };
 
     //
-    this_checksheet.StartCycleTime = (downtime_running_time) => {
+    this_checksheet.StartCycleTime = () => {
 
         $('#div_card_takt_time').LoadingOverlay('show');
 
@@ -574,8 +570,8 @@ const CHECKSHEET = (() => {
                     tbody += `<tr>
                         <td>${value.start_date}</td>
                         <td>${value.start_time}</td>
-                        <td>${value.end_time}</td>
-                        <td>${value.total_takt_time}</td>
+                        <td>${(value.end_time == null) ? '' : value.end_time}</td>
+                        <td>${(value.total_takt_time == null) ? '' : value.total_takt_time}</td>
                     </tr>`;
 
                 });
