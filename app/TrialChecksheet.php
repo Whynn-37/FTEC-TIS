@@ -31,15 +31,11 @@ class TrialChecksheet extends Model
 
     public function getChecksheetDetails($id)
     {
-        return TrialChecksheet::join('trial_ledgers', function($join)
-        {
-            $join->on('trial_ledgers.part_number', '=', 'trial_checksheets.part_number')
-                ->on('trial_ledgers.trial_number', '=', 'trial_checksheets.trial_number')
-                ->on('trial_ledgers.revision_number', '=', 'trial_checksheets.revision_number');
-        })
+        return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
         ->join('suppliers', 'trial_ledgers.supplier_code', '=', 'suppliers.supplier_code')
+        ->join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
         ->where('trial_checksheets.id', $id)
-        ->select([
+        ->select(
             'trial_checksheets.id',
             'trial_checksheets.part_number', 
             'trial_checksheets.revision_number',
@@ -54,8 +50,10 @@ class TrialChecksheet extends Model
             'trial_ledgers.supplier_code',
             'trial_ledgers.inspection_reason',
             'trial_ledgers.model_name',
+            'trial_ledgers.application_date',
             'suppliers.supplier_name',
-            ])
+            'approvals.inspect_by',
+            )
         ->first();
     }
 
@@ -69,6 +67,24 @@ class TrialChecksheet extends Model
         return TrialChecksheet::join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
         ->join('trial_ledgers', 'trial_ledgers.application_date','=','trial_checksheets.application_date') // pinadagdag ni jed para sa insp reason -george
         ->where('approvals.decision', '=', $decision)
+        ->select(
+            'trial_checksheets.id',
+            'trial_checksheets.judgment',
+            'trial_checksheets.date_finished',
+            'trial_ledgers.part_number',
+            'trial_ledgers.revision_number',
+            'trial_ledgers.trial_number',
+            'trial_ledgers.inspection_reason',
+            'approvals.inspect_by',
+            'approvals.inspect_datetime',
+            'approvals.evaluated_by',
+            'approvals.evaluated_datetime',
+            'approvals.approved_by',
+            'approvals.approved_datetime',
+            'approvals.disapproved_by',
+            'approvals.disapproved_datetime',
+            'approvals.reason',
+        )
         ->get();
     }
 
@@ -103,6 +119,7 @@ class TrialChecksheet extends Model
     {
         return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
         ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
+        ->join('suppliers', 'trial_ledgers.supplier_code', '=', 'suppliers.supplier_code')
         ->where('trial_checksheets.id', $trial_checksheet_id)
         ->select(
             'trial_checksheets.id', 
@@ -113,7 +130,7 @@ class TrialChecksheet extends Model
             'trial_ledgers.application_date', 
             'trial_ledgers.part_name', 
             'trial_ledgers.supplier_code', 
-            // 'suppliers.supplier_name', 
+            'suppliers.supplier_name', 
             'approvals.inspect_by', 
             'approvals.inspect_datetime', 
             'approvals.evaluated_by', 
