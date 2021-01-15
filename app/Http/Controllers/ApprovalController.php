@@ -58,6 +58,14 @@ class ApprovalController extends Controller
 
             $takt_time_data = $TaktTime->getTotalTaktTime($trial_checksheet_id);
 
+            foreach ($takt_time_data as $total_takt_time_value) 
+            {
+                $data_sum[] = $total_takt_time_value['total_takt_time'];
+            }
+
+            $takt_time_data = array_sum($data_sum);
+            
+
             $status = 'Error';
             $message = 'Somethings Wrong!';
 

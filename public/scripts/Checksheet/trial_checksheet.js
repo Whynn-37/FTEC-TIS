@@ -47,15 +47,18 @@ let logDowntime = function (event) {
     total_down_time             = (absolute_value_downtime / 60).toFixed(2);
 
     // URL to send the data to
-    let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
+    if (downtime_type !== null) 
+    {
+        let url = `api/downtime?trial_checksheet_id=${trial_checksheet_id}&type=${downtime_type}&total_down_time=${total_down_time}`;
 
-    let result = navigator.sendBeacon(url);
-
-    if (result) {
-        console.log('Successfully queued!');
-
-    } else {
-        console.log('Failure.');
+        let result = navigator.sendBeacon(url);
+    
+        if (result) {
+            console.log('Successfully queued!');
+    
+        } else {
+            console.log('Failure.');
+        } 
     }
 
     event.preventDefault()
