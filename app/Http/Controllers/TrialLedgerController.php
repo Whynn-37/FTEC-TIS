@@ -14,10 +14,10 @@ class TrialLedgerController extends Controller
         // $file = 'F:\TIS\trial_ledger.xlsx';
         // $file = 'D:\trial_ledger.xlsx';
        // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
-    //    $file = 'D:\trial_ledger.xlsx';
+       $file = 'D:\trial_ledger.xlsx';
         // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
         // $file = 'D:\TIS\trial_ledger.xlsx';
-        $file = 'F:\TIS\trial_ledger.xlsx';
+        // $file = 'F:\TIS\trial_ledger.xlsx';
 
         $status = 'Error';
         $message = 'No file in Directory';

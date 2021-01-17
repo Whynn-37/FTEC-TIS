@@ -94,7 +94,6 @@ const HISTORY = (() => {
             dataType: 'json',
             cache   : false,
             data    : {
-                _token  : _TOKEN,
                 id      : id
             },
             success: data => 

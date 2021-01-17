@@ -119,6 +119,7 @@ class TrialLedger extends Model
         return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
         ->where('trial_ledgers.application_date', $application_date)
         ->select(
+            'trial_ledgers.application_date',
             'trial_ledgers.part_number', 
             'trial_ledgers.inspection_reason',
             'trial_ledgers.revision_number', 
