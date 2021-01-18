@@ -31,10 +31,10 @@ const EVALUATE = (() => {
                 $('#tbl_finished_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_finished_inspection_data').empty();
 
+                let tbody = '';
+
                 if (data.status === 'Success')
                 {
-                    let tbody = '';
-
                     data.data.forEach((value) => {
                         if (value.judgment === 'GOOD')
                         {
@@ -93,10 +93,10 @@ const EVALUATE = (() => {
                 $('#tbl_disapproved_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_disapproved_inspection_data').empty();
 
+                let tbody = '';
+
                 if (data.status === 'Success')
                 {
-                    let tbody = '';
-
                     data.data.forEach((value) => {
                         tbody += 
                         `<tr>
@@ -217,8 +217,6 @@ const EVALUATE = (() => {
                     EVALUATE.GetChecksheetItem(data);
 
                     $('#btn_approve_data').attr('onclick',`EVALUATE.ApproveData('${status}');`)
-
-                    $('#div_modal_content').LoadingOverlay('hide');
                 }
                 else
                 {
@@ -228,6 +226,7 @@ const EVALUATE = (() => {
                         text    : data.message,
                     })
                 }
+                $('#div_modal_content').LoadingOverlay('hide');
             }
         });
     };
@@ -1193,7 +1192,8 @@ const EVALUATE = (() => {
             type        : 'patch',
             dataType    : 'json',
             cache       : false,
-            data        : {
+            data        : 
+            {
                 _token: _TOKEN,
                 trial_checksheet_id : trial_checksheet_id,
                 item_number         : item_no,
@@ -1733,26 +1733,6 @@ const EVALUATE = (() => {
         let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).val();
         let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val();
 
-        if (type === 'Min and Max and Form Tolerance')
-        {
-            if (min_value === '-' || max_value === '-')
-            {
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-            }
-            else
-            {
-                EVALUATE.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit(type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type);
-            }
-        }
-        else
-        {
-            EVALUATE.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit(type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type);
-        }
-    };
-
-    this_evaluate.ProceedValidateSubItemGetMinMaxWithUpperAndLowerLimit = (type,min_value,max_value,item_no, sub_no, min_max_no, min_max_type) => {
-        
         let upper_limit                          = $(`#td_item_no_${item_no}_upper_limit`).html();
         let lower_limit                          = $(`#td_item_no_${item_no}_lower_limit`).html();
         let min_max_range                        = (parseFloat(upper_limit) - parseFloat(lower_limit)) / 2;
@@ -1775,41 +1755,87 @@ const EVALUATE = (() => {
 
             if (last_max_value !== '') 
             {
-                final_array_min_max_datas = [];
+                final_array_min_max_datas   = [];
+                dash_count                  = 0;
 
                 for (let a_count = 1; a_count <= 5; a_count++) 
                 {
                     let min_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
                     let max_value_loop = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
-
+               
                     // checking ng min
                     if (min_value_loop !== '') 
                     {   
                         if (min_value_loop === '-')
                         {
+                            if (type === 'Min and Max and Form Tolerance')
+                            {
+                                if (max_value_loop !== '')
+                                {
+                                    if (max_value_loop !== '-')
+                                    {
+                                        dash_count++;
+                                    }
+                                }
+                                else
+                                {
+                                    dash_count++;
+                                }
+                            }
                             final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
                             array_min_max_judgement_per_sub_item.push('NA');
                         }
                         else
                         {
-                            
-                            final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
-                             //para sa iba pang condition para sa MMF may range na kasama
                             if (type === 'Min and Max and Form Tolerance')
                             {
-                                let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+                                if (max_value_loop === '')
+                                {
+                                    if (max_value_loop === '-')
+                                    {
+                                        dash_count++;
+                                        final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                                        array_min_max_judgement_per_sub_item.push('NA');
+                                    }
+                                    else
+                                    {
+                                        let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-                                if (min_max_difference <= min_max_range)
-                                {
-                                    array_min_max_judgement_per_sub_item.push('OK');
-                                }
-                                else if (min_max_difference > min_max_range)
-                                {
-                                    array_min_max_judgement_per_sub_item.push('NG');
+                                        if (min_max_difference <= min_max_range)
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('OK');
+                                        }
+                                        else if (min_max_difference > min_max_range)
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('NG');
+                                        }
+                                        else
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('OK');
+                                        }
+
+                                        final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                                        //para sa iba pang condition para sa MMF may range na kasama
+                                    }
                                 }
                                 else
                                 {
-                                    array_min_max_judgement_per_sub_item.push('OK');
+                                    final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));//
+
+                                    let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+
+                                    if (min_max_difference <= min_max_range)
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
+                                    else if (min_max_difference > min_max_range)
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('NG');
+                                    }
+                                    else
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
                                 }
                             }
                             else
@@ -1829,11 +1855,18 @@ const EVALUATE = (() => {
                                         array_min_max_judgement_per_sub_item.push('OK');
                                     }
                                 }
+
+                                final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                                //para sa iba pang condition para sa MMF may range na kasama
                             }
                         }
                     }
                     else
                     {
+                        if (type === 'Min and Max and Form Tolerance')
+                        {
+                            dash_count++;
+                        }
                         final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
                         array_min_max_judgement_per_sub_item.push('NA');
                     }
@@ -1843,29 +1876,73 @@ const EVALUATE = (() => {
                     {
                         if (max_value_loop === '-')
                         {
+                            if (type === 'Min and Max and Form Tolerance')
+                            {
+                                if (min_value_loop !== '')
+                                {
+                                    if (min_value_loop !== '-')
+                                    {
+                                        dash_count++;
+                                    }
+                                }
+                                else
+                                {
+                                    dash_count++;
+                                }
+                            }
+
                             final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
                             array_min_max_judgement_per_sub_item.push('NA');
                         }
                         else
                         {
-                            final_array_min_max_datas.push((parseFloat(max_value_loop) > 0) ? `+${parseFloat(max_value_loop)}`: parseFloat(max_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
-
                             //para sa iba pang condition para sa MMF may range na kasama
                             if (type === 'Min and Max and Form Tolerance')
                             {
-                                let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+                                if (min_value_loop === '')
+                                {
+                                    if (min_value_loop === '-')
+                                    {
+                                        dash_count++;
+                                        final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
+                                        array_min_max_judgement_per_sub_item.push('NA');
+                                    }
+                                    else
+                                    {
+                                        let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-                                if (min_max_difference <= min_max_range)
-                                {
-                                    array_min_max_judgement_per_sub_item.push('OK');
-                                }
-                                else if (min_max_difference > min_max_range)
-                                {
-                                    array_min_max_judgement_per_sub_item.push('NG');
+                                        if (min_max_difference <= min_max_range)
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('OK');
+                                        }
+                                        else if (min_max_difference > min_max_range)
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('NG');
+                                        }
+                                        else
+                                        {
+                                            array_min_max_judgement_per_sub_item.push('OK');
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    array_min_max_judgement_per_sub_item.push('OK');
+                                    final_array_min_max_datas.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));//
+
+                                    let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
+
+                                    if (min_max_difference <= min_max_range)
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
+                                    else if (min_max_difference > min_max_range)
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('NG');
+                                    }
+                                    else
+                                    {
+                                        array_min_max_judgement_per_sub_item.push('OK');
+                                    }
                                 }
                             }
                             else
@@ -1885,11 +1962,17 @@ const EVALUATE = (() => {
                                         array_min_max_judgement_per_sub_item.push('OK');
                                     }
                                 }
+                                final_array_min_max_datas.push((parseFloat(max_value_loop) > 0) ? `+${parseFloat(max_value_loop)}`: parseFloat(max_value_loop));// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
                             }
                         }
                     }
                     else
                     {
+                        if (type === 'Min and Max and Form Tolerance')
+                        {
+                            dash_count++;
+                        }
+
                         final_array_min_max_datas.push('-');// nakaglobal to, kailangan para sa SaveSubItem ng 'Min and Max' type
                         array_min_max_judgement_per_sub_item.push('NA');
                     }
@@ -1898,37 +1981,45 @@ const EVALUATE = (() => {
                     {
                         if (array_min_max_judgement_per_sub_item.length !== 10) 
                         {
-
                             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                             $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         } 
                         else 
-                        {
-                            //pag lalagay ng sub item judgement
-                            if ($.inArray('NG', array_min_max_judgement_per_sub_item) === - 1) 
+                        {   
+                            //para sa MMF, para malaman kung ang isa sa min and max sa data ay naka dash or empty
+                            if (dash_count > 0)
                             {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                             }
                             else
                             {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
-                            }
+                                //pag lalagay ng sub item judgement
+                                if ($.inArray('NG', array_min_max_judgement_per_sub_item) === - 1) 
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                }
+                                else
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                }
 
-                            //para malaman ang checksheet item judgement
-                            let array_overall_judgement = [];
+                                //para malaman ang checksheet item judgement
+                                let array_overall_judgement = [];
 
-                            for (let index = 1; index <= total_sub_no_count; index++) 
-                            {
-                                array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
-                            }
+                                for (let index = 1; index <= total_sub_no_count; index++) 
+                                {
+                                    array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+                                }
 
-                            if ($.inArray('NG', array_overall_judgement) === - 1) 
-                            {
-                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                            }
-                            else
-                            {
-                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                                if ($.inArray('NG', array_overall_judgement) === - 1) 
+                                {
+                                    $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                }
+                                else
+                                {
+                                    $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                                }
                             }
                         }
                     }
@@ -2353,7 +2444,8 @@ const EVALUATE = (() => {
             type        : 'patch',
             dataType    : 'json',
             cache       : false,
-            data        : {
+            data        : 
+            {
                 _token: _TOKEN,
                 trial_checksheet_id : trial_checksheet_id,
                 checksheet_item_id  : checksheet_item_id,
@@ -2568,7 +2660,6 @@ const EVALUATE = (() => {
                             final_array_min_max_datas   = [];
                             checksheet_item_count       = '';
     
-                            $('#div_modal_content').LoadingOverlay('hide');
                             $('#modal_view_inspection_data').modal('hide');
     
                             EVALUATE.LoadFinishedInspectionData();
@@ -2584,10 +2675,12 @@ const EVALUATE = (() => {
                         {
                             Swal.fire({
                                 icon    : 'error',
-                                title   : data.status,
-                                text    : data.message,
+                                title   : result.status,
+                                text    : result.message,
                             })
                         }
+                        
+                        $('#div_modal_content').LoadingOverlay('hide');
                     }
                 });
             }

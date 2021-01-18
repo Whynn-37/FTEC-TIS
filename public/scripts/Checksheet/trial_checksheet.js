@@ -78,7 +78,9 @@ const CHECKSHEET = (() => {
 
     // pang refresh ng trial ledger
     this_checksheet.LoadRefreshAlert = () => {
-        $('#div_main_content').prop('hidden', true)
+
+        $('#div_main_content').prop('hidden', true);
+
         Swal.fire(
             $.extend(swal_options_refresh, {
                 title: "Click refresh to update the trial ledger data",
@@ -94,15 +96,18 @@ const CHECKSHEET = (() => {
                     allowOutsideClick: false,
                 })
                 $.ajax({
-                    url: `store-trial-ledger`,
-                    type: 'post',
+                    url     : `store-trial-ledger`,
+                    type    : 'post',
                     dataType: 'json',
-                    cache: false,
-                    data: {
+                    cache   : false,
+                    data    : 
+                    {
                         _token: _TOKEN
                     },
-                    success: result => {
-                        if (result.status === 'Success') {
+                    success: result => 
+                    {
+                        if (result.status === 'Success') 
+                        {
                             swal.close();
                             Swal.fire({
                                 icon: 'success',
@@ -112,7 +117,9 @@ const CHECKSHEET = (() => {
                             })
                             $('#div_main_content').prop('hidden', false);
                             CHECKSHEET.LoadPartnumber();
-                        } else {
+                        } 
+                        else 
+                        {
                             swal.close();
                             Swal.fire({
                                 icon: 'error',
@@ -131,19 +138,32 @@ const CHECKSHEET = (() => {
     this_checksheet.LoadPartnumber = () => {
 
         $.ajax({
-            url: `load-partnumber`,
-            type: 'get',
+            url     : `load-partnumber`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            success: data => {
+            cache   : false,
+            success : data => 
+            {
                 $('#slc_part_number').empty();
-                let select_options = '<option value="" selected disabled>Select part no.</option>';
 
-                data.data.forEach((value) => {
-                    select_options += `<option value="${value.part_number}">${value.part_number}</option>`
-                });
-
-                $('#slc_part_number').append(select_options);
+                if (data.status === 'Success')
+                {
+                    let select_options = '<option value="" selected disabled>Select part no.</option>';
+    
+                    data.data.forEach((value) => {
+                        select_options += `<option value="${value.part_number}">${value.part_number}</option>`
+                    });
+    
+                    $('#slc_part_number').append(select_options);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
             }
         });
     };
@@ -155,24 +175,36 @@ const CHECKSHEET = (() => {
         $('#slc_trial_number').empty();
 
         $.ajax({
-            url: `load-inspection-reason`,
-            type: 'get',
+            url     : `load-inspection-reason`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
+            cache   : false,
+            data    : 
+            {
                 part_number: part_number
             },
-            success: data => {
-                // console.log(data);
+            success: data => 
+            {
                 $('#slc_inspection_reason').empty();
 
-                let select_options = '<option value="" selected disabled>Select inspection reason</option>';
+                if (data.status === 'Success')
+                {
+                    let select_options = '<option value="" selected disabled>Select inspection reason</option>';
 
-                data.data.forEach((value) => {
-                    select_options += `<option value="${value.inspection_reason}">${value.inspection_reason}</option>`;
-                });
+                    data.data.forEach((value) => {
+                        select_options += `<option value="${value.inspection_reason}">${value.inspection_reason}</option>`;
+                    });
 
-                $('#slc_inspection_reason').append(select_options);
+                    $('#slc_inspection_reason').append(select_options);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
             }
         });
     };
@@ -185,24 +217,37 @@ const CHECKSHEET = (() => {
         let part_number = $('#slc_part_number').val();
 
         $.ajax({
-            url: `load-revision`,
-            type: 'get',
+            url     : `load-revision`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
-                part_number: part_number,
-                inspection_reason: inspection_reason
+            cache   : false,
+            data    : 
+            {
+                part_number         : part_number,
+                inspection_reason   : inspection_reason
             },
-            success: data => {
+            success: data => 
+            {
                 $('#slc_revision_number').empty();
 
-                let select_options = '<option value="" selected disabled>Select revision number</option>';
-
-                data.data.forEach((value) => {
-                    select_options += `<option value="${value.revision_number}">${value.revision_number}</option>`;
-                });
-
-                $('#slc_revision_number').append(select_options);
+                if (data.status === 'Success')
+                {
+                    let select_options = '<option value="" selected disabled>Select revision number</option>';
+    
+                    data.data.forEach((value) => {
+                        select_options += `<option value="${value.revision_number}">${value.revision_number}</option>`;
+                    });
+    
+                    $('#slc_revision_number').append(select_options);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
             }
         });
     };
@@ -214,25 +259,38 @@ const CHECKSHEET = (() => {
         let inspection_reason = $('#slc_inspection_reason').val();
 
         $.ajax({
-            url: `load-trial-number`,
-            type: 'get',
+            url     : `load-trial-number`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
-                part_number: part_number,
-                inspection_reason: inspection_reason,
-                revision_number: revision_number,
+            cache   : false,
+            data    : 
+            {
+                part_number         : part_number,
+                inspection_reason   : inspection_reason,
+                revision_number     : revision_number,
             },
-            success: data => {
+            success: data => 
+            {
                 $('#slc_trial_number').empty();
 
-                let select_options = '<option value="" selected disabled>Select trial number</option>';
+                if (data.status === 'Success')
+                {
+                    let select_options = '<option value="" selected disabled>Select trial number</option>';
 
-                data.data.forEach((value) => {
-                    select_options += `<option value="${value.trial_number}">${value.trial_number}</option>`;
-                });
-
-                $('#slc_trial_number').append(select_options);
+                    data.data.forEach((value) => {
+                        select_options += `<option value="${value.trial_number}">${value.trial_number}</option>`;
+                    });
+    
+                    $('#slc_trial_number').append(select_options);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
             }
         });
     };
@@ -240,25 +298,38 @@ const CHECKSHEET = (() => {
     //
     this_checksheet.LoadApplicationDate = () => {
 
-        let part_number = $('#slc_part_number').val();
-        let inspection_reason = $('#slc_inspection_reason').val();
-        let revision_number = $('#slc_revision_number').val();
-        let trial_number = $('#slc_trial_number').val();
+        let part_number         = $('#slc_part_number').val();
+        let inspection_reason   = $('#slc_inspection_reason').val();
+        let revision_number     = $('#slc_revision_number').val();
+        let trial_number        = $('#slc_trial_number').val();
 
         $.ajax({
-            url: `load-application-date`,
-            type: 'get',
+            url     : `load-application-date`,
+            type    : 'get',
             dataType: 'json',
-            cache: false,
-            data: {
-                part_number: part_number,
-                inspection_reason: inspection_reason,
-                revision_number: revision_number,
-                trial_number: trial_number,
+            cache   : false,
+            data    : 
+            {
+                part_number         : part_number,
+                inspection_reason   : inspection_reason,
+                revision_number     : revision_number,
+                trial_number        : trial_number,
             },
-            success: data => {
-                $('#trial_checksheet_application_date').empty();
-                $('#trial_checksheet_application_date').val(data.data.application_date);
+            success: data => 
+            {
+                if (data.status === 'Success')
+                {
+                    $('#trial_checksheet_application_date').empty();
+                    $('#trial_checksheet_application_date').val(data.data.application_date);
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
             }
         });
     };
@@ -361,9 +432,19 @@ const CHECKSHEET = (() => {
 
                     $('#btn_start_time').prop('disabled', false);
 
-                    $('#accordion_details').LoadingOverlay('hide');
-                    $('#div_card_takt_time').LoadingOverlay('hide');
+                    
                 }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
+
+                $('#accordion_details').LoadingOverlay('hide');
+                $('#div_card_takt_time').LoadingOverlay('hide');
             }
         });
     };
@@ -452,10 +533,14 @@ const CHECKSHEET = (() => {
                 text: ''
             })
         ).then((result) => {
-            if (result.value) {
-                if (status === "start_takt_time") {
+            if (result.value) 
+            {
+                if (status === "start_takt_time") 
+                {
                     CHECKSHEET.StartCycleTime(downtime_running_time);
-                } else {
+                } 
+                else 
+                {
                     CHECKSHEET.StopCycleTime(downtime_running_time);
                 }
             }
@@ -495,10 +580,11 @@ const CHECKSHEET = (() => {
                 if (data.status === 'Success') 
                 {
                     //checksheet details
-                    $('#slc_part_number').prop('readonly', true);
-                    $('#slc_revision_number').prop('readonly', true);
-                    $('#slc_trial_number').prop('readonly', true);
-                    $('#slc_inspection_reason').prop('readonly', true);
+                    $('#slc_part_number option:not(:selected)').attr('disabled', true);
+                    $('#slc_revision_number option:not(:selected)').attr('disabled', true);
+                    $('#slc_trial_number option:not(:selected)').attr('disabled', true);
+                    $('#slc_inspection_reason option:not(:selected)').attr('disabled', true);
+                    
                     $('#btn_validate_load_details').prop('disabled', true);
                     //target takt time
                     $("#div_target_takt_time_timer").TimeCircles().start();
@@ -527,8 +613,17 @@ const CHECKSHEET = (() => {
 
                     //pag show ng igm
                     $('#div_accordion_igm').prop('hidden', false);
-                    $('#div_card_takt_time').LoadingOverlay('hide');
                 }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
+
+                $('#div_card_takt_time').LoadingOverlay('hide');
             }
         });
 
@@ -551,59 +646,71 @@ const CHECKSHEET = (() => {
             },
             success: data => 
             {
-                $('#tbl_takt_time').DataTable().destroy();
-                $('#tbody_tbl_takt_time').empty();
-
-                let tbody = '';
-                var target_takt_time = inspection_required_time * 60;
-                var total_sum_total_takt_time = 0;
-
-                data.data.forEach((value) => 
+                if (data.status === 'Success')
                 {
-                    //last array element of target takt time
-                    array_takt_time_data = data.data[data.data.length - 1];
-                    target_takt_time = array_takt_time_data['takt_time'] * 60;
-
-                    // sum ng takt time para sa actual time na timer
-                    let sum_total_takt_time = 0;
+                    $('#tbl_takt_time').DataTable().destroy();
+                    $('#tbody_tbl_takt_time').empty();
+    
+                    let tbody = '';
+                    var target_takt_time = inspection_required_time * 60;
+                    var total_sum_total_takt_time = 0;
+    
                     data.data.forEach((value) => 
                     {
-                        sum_total_takt_time += parseFloat(value.total_takt_time);
+                        //last array element of target takt time
+                        array_takt_time_data = data.data[data.data.length - 1];
+                        target_takt_time = array_takt_time_data['takt_time'] * 60;
+    
+                        // sum ng takt time para sa actual time na timer
+                        let sum_total_takt_time = 0;
+                        data.data.forEach((value) => 
+                        {
+                            sum_total_takt_time += parseFloat(value.total_takt_time);
+                        });
+    
+                        total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
+    
+                        tbody += `<tr>
+                            <td>${value.start_date}</td>
+                            <td>${value.start_time}</td>
+                            <td>${(value.end_time == null) ? '' : value.end_time}</td>
+                            <td>${(value.total_takt_time == null) ? '' : value.total_takt_time}</td>
+                        </tr>`;
+    
                     });
-
-                    total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
-
-                    tbody += `<tr>
-                        <td>${value.start_date}</td>
-                        <td>${value.start_time}</td>
-                        <td>${(value.end_time == null) ? '' : value.end_time}</td>
-                        <td>${(value.total_takt_time == null) ? '' : value.total_takt_time}</td>
-                    </tr>`;
-
-                });
-
-                if (status === 'load_cycle_time') 
-                {
-                    //target takt time
-                    $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
-                    $("#div_target_takt_time_timer").TimeCircles().rebuild();
-                    $("#div_target_takt_time_timer").TimeCircles().stop();
-
-                    //actual time
-                    $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
-                    $("#div_actual_time_timer").TimeCircles().rebuild();
-                    $("#div_actual_time_timer").TimeCircles().stop();
+    
+                    if (status === 'load_cycle_time') 
+                    {
+                        //target takt time
+                        $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+                        $("#div_target_takt_time_timer").TimeCircles().rebuild();
+                        $("#div_target_takt_time_timer").TimeCircles().stop();
+    
+                        //actual time
+                        $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
+                        $("#div_actual_time_timer").TimeCircles().rebuild();
+                        $("#div_actual_time_timer").TimeCircles().stop();
+                    }
+                    
+                    $('#tbody_tbl_takt_time').html(tbody);
+                    $('#tbl_takt_time').DataTable({
+                        "paging": true,
+                        "lengthChange": false,
+                        "searching": false,
+                        "ordering": false,
+                        "info": true,
+                        "autoWidth": true,
+                    });
                 }
-                
-                $('#tbody_tbl_takt_time').html(tbody);
-                $('#tbl_takt_time').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": false,
-                    "info": true,
-                    "autoWidth": true,
-                });
+                // else
+                // {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: data.status,
+                //         text: data.message,
+                //     })
+                // } naka comment kase pagka walang iloload nalabas pa swal na error
+
             }
         });
     };
@@ -644,10 +751,11 @@ const CHECKSHEET = (() => {
                     CHECKSHEET.LoadCycleTime(0, 'stop');
 
                     //checksheet details
-                    $('#slc_part_number').prop('readonly', false);
-                    $('#slc_revision_number').prop('readonly', false);
-                    $('#slc_trial_number').prop('readonly', false);
-                    $('#slc_inspection_reason').prop('readonly', false);
+                    $('#slc_part_number option:not(:selected)').attr('disabled', false);
+                    $('#slc_revision_number option:not(:selected)').attr('disabled', false);
+                    $('#slc_trial_number option:not(:selected)').attr('disabled', false);
+                    $('#slc_inspection_reason option:not(:selected)').attr('disabled', false);
+
                     $('#btn_validate_load_details').prop('disabled', false);
 
                     //cycle time
@@ -674,8 +782,16 @@ const CHECKSHEET = (() => {
                     $('#div_row_save_inspection').prop('hidden',true);
 
                     $('#div_accordion_igm').prop('hidden', true);
-                    $('#div_card_takt_time').LoadingOverlay('hide');
                 }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                }
+                $('#div_card_takt_time').LoadingOverlay('hide');
             }
         });
     };
@@ -755,36 +871,48 @@ const CHECKSHEET = (() => {
             $('#div_downtime').LoadingOverlay('show');
 
             $.ajax({
-                url: `load-down-time`,
-                type: 'get',
+                url     : `load-down-time`,
+                type    : 'get',
                 dataType: 'json',
-                cache: false,
-                data: {
+                cache   : false,
+                data    : 
+                {
                     trial_checksheet_id: trial_checksheet_id,
                 },
                 success: data => 
                 {
                     $('#tbody_tbl_downtime').empty();
 
-                    // sum ng downtime
-                    let sum_downtime = 0;
-                    data.data.forEach((value) => {
-                        sum_downtime += parseFloat(value.total_down_time);
-                    });
-
-                    let tbody = '';
-                    data.data.forEach((value) => {
-
-                        tbody += `<tr>
-                            <td>${value.type}</td>
-                            <td>${value.start_time}</td>
-                            <td>${value.down_time}</td>
-                            <td>${value.total_down_time}</td>
-                        </tr>`;
-
-                    });
-                    $('#tbody_tbl_downtime').html(tbody);
-                    $('#td_total_downtime').html((isNaN(sum_downtime.toFixed(2)) ? '' : sum_downtime.toFixed(2)));
+                    if (data.status === 'Success')
+                    {
+                        // sum ng downtime
+                        let sum_downtime = 0;
+                        data.data.forEach((value) => {
+                            sum_downtime += parseFloat(value.total_down_time);
+                        });
+    
+                        let tbody = '';
+                        data.data.forEach((value) => {
+    
+                            tbody += `<tr>
+                                <td>${value.type}</td>
+                                <td>${value.start_time}</td>
+                                <td>${value.down_time}</td>
+                                <td>${value.total_down_time}</td>
+                            </tr>`;
+    
+                        });
+                        $('#tbody_tbl_downtime').html(tbody);
+                        $('#td_total_downtime').html((isNaN(sum_downtime.toFixed(2)) ? '' : sum_downtime.toFixed(2)));
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: 'error',
+                            title: data.status,
+                            text: data.message,
+                        })
+                    }
 
                     $('#div_downtime').LoadingOverlay('hide');
                 }
@@ -847,7 +975,8 @@ const CHECKSHEET = (() => {
             type    : 'post',
             dataType: 'json',
             cache   : false,
-            data    : {
+            data    : 
+            {
                 _token              : _TOKEN,
                 trial_checksheet_id : trial_checksheet_id,
                 type                : downtime_type,
@@ -855,7 +984,18 @@ const CHECKSHEET = (() => {
             },
             success: result => 
             {
-                CHECKSHEET.LoadDowntime();
+                if (result.status === 'Success')
+                {
+                    CHECKSHEET.LoadDowntime();
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: result.status,
+                        text: result.message,
+                    })
+                }
             }
         });
     };
@@ -1049,7 +1189,7 @@ const CHECKSHEET = (() => {
 
                     CHECKSHEET.LoadPartnumber();
                     item_no_count = '';
-                    $('#div_trial_checksheet').LoadingOverlay('hide');
+                    
 
                     Swal.fire({
                         icon: 'success',
@@ -1066,6 +1206,16 @@ const CHECKSHEET = (() => {
                         }
                     })
                 }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: result.status,
+                        text: result.message,
+                    })
+                }
+
+                $('#div_trial_checksheet').LoadingOverlay('hide');
             }
         });
     };

@@ -27,10 +27,10 @@ const APPROVE = (() => {
                 $('#tbl_finished_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_finished_inspection_data').empty();
 
+                let tbody = '';
+
                 if (data.status === 'Success')
                 {
-                    let tbody = '';
-
                     data.data.forEach((value) => {
                         if (value.judgment === 'GOOD')
                         {
@@ -58,7 +58,6 @@ const APPROVE = (() => {
     
     
                     $('#tbody_tbl_finished_inspection_data').html(tbody);
-                    
                 }
 
                 $('#tbl_finished_inspection_data').DataTable({
@@ -93,9 +92,10 @@ const APPROVE = (() => {
                 $('#tbl_disapproved_inspection_data').DataTable().destroy();
                 $('#tbody_tbl_disapproved_inspection_data').empty();
 
+                let tbody = '';
+
                 if (data.status === 'Success')
                 {
-                    let tbody = '';
                     data.data.forEach((value) => {
                         tbody += 
                         `<tr>
@@ -136,7 +136,8 @@ const APPROVE = (() => {
             type    : 'get',
             dataType: 'json',
             cache   : false,
-            data    : {
+            data    : 
+            {
                 _token  : _TOKEN,
                 id      : id
             },
@@ -499,7 +500,7 @@ const APPROVE = (() => {
                     {
                         if (result.status === 'Success')
                         {
-                            $('#div_modal_content').LoadingOverlay('hide');
+                            
                             $('#modal_view_inspection_data').modal('hide');
                             APPROVE.LoadFinishedInspectionData();
                             APPROVE.LoadDisapprovedInspectionData();
@@ -518,6 +519,7 @@ const APPROVE = (() => {
                                 text    : data.message,
                             })
                         }
+                        $('#div_modal_content').LoadingOverlay('hide');
                     }
                 });
             }
@@ -585,7 +587,7 @@ const APPROVE = (() => {
                         {
                             if (result.status === 'Success')
                             {
-                                $('#div_modal_content').LoadingOverlay('hide');
+                                
                                 $('#modal_view_inspection_data').modal('hide');
                                 APPROVE.LoadFinishedInspectionData();
                                 APPROVE.LoadDisapprovedInspectionData();
@@ -604,6 +606,7 @@ const APPROVE = (() => {
                                     text    : data.message,
                                 })
                             }
+                            $('#div_modal_content').LoadingOverlay('hide');
                         }
                     });
                 }
