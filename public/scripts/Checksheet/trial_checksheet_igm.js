@@ -799,6 +799,7 @@ const IGM = (() => {
                             }
                         }
                     }
+                    $(`#accordion_igm`).LoadingOverlay('hide');
                 }
                 else
                 {
@@ -2980,7 +2981,6 @@ const IGM = (() => {
                                             {
                                                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
                                             }
-                                            alert(array_min_max_value)
                                             //pagkuha ng overall judgement para sa checksheet item 
                                             IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
                                             array_min_max_judgement_per_sub_item = [];

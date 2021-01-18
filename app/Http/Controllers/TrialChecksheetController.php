@@ -367,12 +367,12 @@ class TrialChecksheetController extends Controller
         $revision_number !== null || 
         $trial_checksheet_id !== null)
         {
-            $filename = $part_number . '_' . $revision_number;
-            // $filename =$part_number.'_'.$revision_number.'(00)';
-            $filename = 'igm';
+            // $filename = $part_number . '_' . $revision_number;
+            $filename =$part_number.'_'.$revision_number.'(00)';
+            // $filename = 'igm';
             
-            $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-            // $path ='F:\TIS\\';
+            // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
+            $path ='F:\TIS\\';
             // $path ='D:\\';
     
             $igm_files = scandir($path);

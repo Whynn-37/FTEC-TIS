@@ -239,6 +239,8 @@ const EVALUATE = (() => {
 			<th class="text-white bg-dark">COORDINATES</th>
 			<th class="text-white bg-dark" colspan="5">DATA</th>
 			<th class="text-white bg-dark">JUDGEMENT</th>
+            <th class="text-white bg-dark">REMARKS
+        </th>
 			<th class="text-white bg-dark"></th>
 		</tr>`;
         return tr_sub_no_column;
@@ -453,6 +455,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null) ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit"  style="vertical-align: middle;" rowspan="2">
                     <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
@@ -492,6 +495,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null) ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit">
                     <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
@@ -932,6 +936,10 @@ const EVALUATE = (() => {
                                 let coordinates     = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html();
                                 let judgment_datas  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
 
+                                let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
+                                let split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
+                                var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+
                                 let array_visuals   = [];
 
                                 //data ng visuals
@@ -940,12 +948,10 @@ const EVALUATE = (() => {
                                     array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val());
                                 }
                                 
-                                (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-
                                 $(`#td_item_no_${item_no}_remarks`).html(new_remarks);
 
                                 // para sa pag update ng checksheet data
-                                EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,new_remarks,judgement,final_judgment,type,item_no,'hinsei');
+                                EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,sub_item_remarks,judgement,final_judgment,type,item_no,'hinsei');
                             }
                         }
                     }
@@ -958,8 +964,9 @@ const EVALUATE = (() => {
                     title: 'Hinsei Cancelled',
                     text: 'There is no changes with the specification, upper limit, lower limit. Hinsei is cancelled.',
                 })
+                let td_item_remarks = $(`#td_item_no_${item_no}_remarks`).html();
 
-                EVALUATE.CancelHinsei(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,remarks);
+                EVALUATE.CancelHinsei(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
             }
         }
 
@@ -2087,7 +2094,9 @@ const EVALUATE = (() => {
                             }
                             else
                             {
-                                EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
+                                let td_sub_item_remarks = $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html();
+
+                                EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,(td_sub_item_remarks === '-') ? '' : td_sub_item_remarks);
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Edit Cancelled',
@@ -2404,6 +2413,7 @@ const EVALUATE = (() => {
         let upper_limit         = $(`#td_item_no_${item_no}_upper_limit`).html();
         let lower_limit         = $(`#td_item_no_${item_no}_lower_limit`).html();
         let item_type           = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
+        let sub_item_remarks    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
         let array_visuals       = [];
 
         let new_upper_limit     = null;
@@ -2431,6 +2441,8 @@ const EVALUATE = (() => {
         {
             array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${index}`).val());
         }
+
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html(sub_item_remarks);//textarea to html
 
         EVALUATE.OverallRejudgement(item_no, sub_no, array_visuals, sub_no_count,trial_checksheet_id,tools,type,new_specs,new_upper_limit,new_lower_limit,item_type,remarks,'edit',new_coordinates)
     }
