@@ -646,39 +646,39 @@ const CHECKSHEET = (() => {
             },
             success: data => 
             {
-                if (data.status === 'Success')
+                $('#tbl_takt_time').DataTable().destroy();
+                $('#tbody_tbl_takt_time').empty();
+
+                let tbody = '';
+                var target_takt_time = inspection_required_time * 60;
+                var total_sum_total_takt_time = 0;
+
+                data.data.forEach((value) => 
                 {
-                    $('#tbl_takt_time').DataTable().destroy();
-                    $('#tbody_tbl_takt_time').empty();
-    
-                    let tbody = '';
-                    var target_takt_time = inspection_required_time * 60;
-                    var total_sum_total_takt_time = 0;
-    
+                    //last array element of target takt time
+                    array_takt_time_data = data.data[data.data.length - 1];
+                    target_takt_time = array_takt_time_data['takt_time'] * 60;
+
+                    // sum ng takt time para sa actual time na timer
+                    let sum_total_takt_time = 0;
                     data.data.forEach((value) => 
                     {
-                        //last array element of target takt time
-                        array_takt_time_data = data.data[data.data.length - 1];
-                        target_takt_time = array_takt_time_data['takt_time'] * 60;
-    
-                        // sum ng takt time para sa actual time na timer
-                        let sum_total_takt_time = 0;
-                        data.data.forEach((value) => 
-                        {
-                            sum_total_takt_time += parseFloat(value.total_takt_time);
-                        });
-    
-                        total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
-    
-                        tbody += `<tr>
-                            <td>${value.start_date}</td>
-                            <td>${value.start_time}</td>
-                            <td>${(value.end_time == null) ? '' : value.end_time}</td>
-                            <td>${(value.total_takt_time == null) ? '' : value.total_takt_time}</td>
-                        </tr>`;
-    
+                        sum_total_takt_time += parseFloat(value.total_takt_time);
                     });
-    
+
+                    total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
+
+                    tbody += `<tr>
+                        <td>${value.start_date}</td>
+                        <td>${value.start_time}</td>
+                        <td>${(value.end_time == null) ? '' : value.end_time}</td>
+                        <td>${(value.total_takt_time == null) ? '' : value.total_takt_time}</td>
+                    </tr>`;
+
+                });
+
+                if (data.status === 'Success')
+                {
                     if (status === 'load_cycle_time') 
                     {
                         //target takt time
@@ -691,26 +691,38 @@ const CHECKSHEET = (() => {
                         $("#div_actual_time_timer").TimeCircles().rebuild();
                         $("#div_actual_time_timer").TimeCircles().stop();
                     }
-                    
-                    $('#tbody_tbl_takt_time').html(tbody);
-                    $('#tbl_takt_time').DataTable({
-                        "paging": true,
-                        "lengthChange": false,
-                        "searching": false,
-                        "ordering": false,
-                        "info": true,
-                        "autoWidth": true,
-                    });
                 }
-                // else
-                // {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: data.status,
-                //         text: data.message,
-                //     })
-                // } naka comment kase pagka walang iloload nalabas pa swal na error
+                else
+                {
+                    if (status === 'load_cycle_time') 
+                    {
+                        //target takt time
+                        $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+                        $("#div_target_takt_time_timer").TimeCircles().rebuild();
+                        $("#div_target_takt_time_timer").TimeCircles().stop();
+    
+                        //actual time
+                        $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
+                        $("#div_actual_time_timer").TimeCircles().rebuild();
+                        $("#div_actual_time_timer").TimeCircles().stop();
+                    }
 
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.status,
+                        text: data.message,
+                    })
+                } //naka comment kase pagka walang iloload nalabas pa swal na error
+
+                $('#tbody_tbl_takt_time').html(tbody);
+                $('#tbl_takt_time').DataTable({
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": false,
+                    "ordering": false,
+                    "info": true,
+                    "autoWidth": true,
+                });
             }
         });
     };

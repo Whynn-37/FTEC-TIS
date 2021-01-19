@@ -121,8 +121,8 @@ const SUPPLIER = (() => {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sige paki upload thanks',
-            cancelButtonText: 'Confirm ko muna ha'
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel'
           }).then((result) => {
             if (result.isConfirmed) 
             {

@@ -49,8 +49,8 @@
                             <div class="col-8">
                                 <h4 class="header-title"><i class="ti-shopping-cart-full"> </i> SUPPLIER LIST </h4><br>
                             </div>
-                            <div class="col-2" style="float:right;left: 205px;">
-                                <button class="btn btn-primary" data-toggle="modal" data-target=".upload-supplier-modal" onclick=""><b> <i class="ti-cloud-up"> </i> UPLOAD FILE </b></button>
+                            <div class="col-2">
+                                <button class="btn btn-primary" style="float:right;" data-toggle="modal" data-target=".upload-supplier-modal" onclick=""><b> <i class="ti-cloud-up"> </i> UPLOAD FILE </b></button>
                             </div>
                             <div class="col-2">
                                 <button class="btn btn-success" style="float:right;" data-toggle="modal" onclick="SUPPLIER.clearData();"><b><i class="ti-plus"></i> ADD SUPPLIER </b></button>

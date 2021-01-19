@@ -34,4 +34,11 @@ class DownTime extends Model
         ->latest()
         ->first();
     }
+
+    public function getTotalDownTime($id)
+    {
+        return DownTime::where('trial_checksheet_id', $id)
+        ->select('total_down_time')
+        ->get();
+    }
 }
