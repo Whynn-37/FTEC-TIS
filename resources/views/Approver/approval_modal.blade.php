@@ -64,8 +64,11 @@
                                             <input class="form-control mb-3" type="text" placeholder="Inspection completion date" id="txt_inspection_completion_date" readonly>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label>ACTUAL INSPECTION TIME:</label>
-                                            <input class="form-control mb-3" type="text" placeholder="Actual inspection time" id="txt_actual_inspection_time" readonly>
+                                            <label>ACTUAL INSPECTION TIME / TOTAL DOWN TIME:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="txt_actual_inspection_time" placeholder="Actual inspection time" readonly>
+                                                <input type="text" class="form-control" id="txt_total_down_time" placeholder="Total Down Time" readonly>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">

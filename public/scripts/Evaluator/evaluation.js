@@ -175,10 +175,11 @@ const EVALUATE = (() => {
                     $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
                     $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
                     $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
-                    $('#txt_inspection_reason').val(data.data.checksheet_details.takt_time);
+                    $('#txt_total_down_time').val(data.data.down_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                    $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
                     $('#txt_die_kind').val(data.data.checksheet_details.die_class);
                     $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
-
+                    
                     //attachments
                     let files = '';
                     let count = 1;

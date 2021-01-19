@@ -9,6 +9,7 @@ use App\ChecksheetItem;
 use App\TrialChecksheet;
 use App\ChecksheetData;
 use App\TaktTime;
+use App\DownTime;
 use App\Supplier;
 use App\Exports\TrialEvaluationResultExport;
 use App\Http\Controllers\MailController;
@@ -23,6 +24,7 @@ class ApprovalController extends Controller
                                         TrialChecksheet $TrialChecksheet, 
                                         Attachment $Attachment,
                                         TaktTime $TaktTime,
+                                        DownTime $DownTime,
                                         Request $Request)
     {
         $trial_checksheet_id = $Request->id;
@@ -35,7 +37,10 @@ class ApprovalController extends Controller
         $checksheet_data = [];
         $attachment_data = [];
         $takt_time_data = [];
-
+        $down_time_data = [];
+        $data_takt_sum = [];
+        $data_down_sum = [];
+ 
         if ($trial_checksheet_id !== null) 
         {
             $checksheet_details = $TrialChecksheet->getChecksheetDetails($trial_checksheet_id);
@@ -60,11 +65,19 @@ class ApprovalController extends Controller
 
             foreach ($takt_time_data as $total_takt_time_value) 
             {
-                $data_sum[] = $total_takt_time_value['total_takt_time'];
+                $data_takt_sum[] = $total_takt_time_value['total_takt_time'];
             }
 
-            $takt_time_data = array_sum($data_sum);
-            
+            $takt_time_data = array_sum($data_takt_sum);
+
+            $down_time_data = $DownTime->getTotalDownTime($trial_checksheet_id);
+
+            foreach ($down_time_data as $total_down_time_value) 
+            {
+                $data_down_sum[] = $total_down_time_value['total_down_time'];
+            }
+
+            $down_time_data = array_sum($data_down_sum);
 
             $status = 'Error';
             $message = 'Somethings Wrong!';
@@ -89,6 +102,7 @@ class ApprovalController extends Controller
                 'checksheet_data'       => $checksheet_data,
                 'attachment'            => $attachment_data,
                 'takt_time'             => $takt_time_data,
+                'down_time'             => $down_time_data,
             ]
         ];
     }
@@ -318,9 +332,9 @@ class ApprovalController extends Controller
 
         $data_trial_ledger_merge = array_merge($data_trial_ledger, $data_supplier);
 
-         $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number']);
+        $details_data = $TrialChecksheet->getAllNg($data_trial_ledger_merge['part_number'], $data_trial_ledger_merge['inspection_reason']);
 
-        $get_first_trial = $TrialChecksheet->getFirstTrial($data_trial_ledger_merge['part_number']);
+        $get_first_trial = $TrialChecksheet->getFirstTrial($data_trial_ledger_merge['part_number'], $data_trial_ledger_merge['inspection_reason']);
 
         $result_merge = [];
         $checksheet_items_result = [];
@@ -330,8 +344,8 @@ class ApprovalController extends Controller
 
         if (count($get_first_trial_ng) !== 0) 
         {
-            if ($data_trial_ledger['trial_number'] !== 1) 
-            {
+            // if ($data_trial_ledger['trial_number'] !== 1) 
+            // {
                 for($i=0; $i < count($details_data); $i++)
                 {
                     $trial_checksheet_id_result = $details_data[$i]['id'];
@@ -343,18 +357,18 @@ class ApprovalController extends Controller
                         ];
                     }
                 }
-            }
-            else 
-            {
-                for($i=0; $i < count($details_data); $i++)
-                {
-                    $trial_checksheet_id_result = $details_data[$i]['id'];
-                    $result_merge[$i][] = [
-                        'trial_checksheet_id' => $details_data[$i]['id'],
-                        'item_number' => $get_first_trial_ng[$i]['item_number']
-                    ];
-                }
-            }
+            // }
+            // else 
+            // {
+            //     for($i=0; $i < count($details_data); $i++)
+            //     {
+            //         $trial_checksheet_id_result = $details_data[$i]['id'];
+            //         $result_merge[$i][] = [
+            //             'trial_checksheet_id' => $details_data[$i]['id'],
+            //             'item_number' => $get_first_trial_ng[$i]['item_number']
+            //         ];
+            //     }
+            // }
         }
 
         foreach ($result_merge as $details_key => $details_value) 

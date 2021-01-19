@@ -19,6 +19,7 @@ class CreateTrialChecksheetsTable extends Migration
             $table->string('part_number');
             $table->string('revision_number');
             $table->integer('trial_number');
+            $table->string('inspection_reason');
             $table->string('date_finished')->nullable();
             $table->string('judgment')->nullable();
             $table->string('date_inspected')->nullable();

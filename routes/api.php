@@ -65,8 +65,8 @@ Route::get('load-inspection-data', 'ApprovalController@loadInspectionData');
 Route::patch('edit-hinsei', 'ApprovalController@editHinsei');
 Route::patch('edit-data', 'ApprovalController@editData');
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
-Route::get('generate-trial-evaluation-result','ApprovalController@generateTrialEvaluationResult');
-Route::get('generate-second-page','ApprovalController@generateSecondPage');
+Route::get('generate-trial-evaluation-result/{id}','ApprovalController@generateTrialEvaluationResult');
+Route::get('generate-second-page/{id}','ApprovalController@generateSecondPage');
 Route::post('approved','ApprovalController@approved');
 
 

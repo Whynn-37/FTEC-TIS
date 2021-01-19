@@ -368,12 +368,12 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id !== null)
         {
             // $filename = $part_number . '_' . $revision_number;
-            $filename =$part_number.'_'.$revision_number.'(00)';
-            // $filename = 'igm';
+            // $filename =$part_number.'_'.$revision_number.'(00)';
+            $filename = 'igm';
             
             // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-            $path ='F:\TIS\\';
-            // $path ='D:\\';
+            // $path ='F:\TIS\\';
+            $path ='D:\\';
     
             $igm_files = scandir($path);
     
@@ -398,8 +398,8 @@ class TrialChecksheetController extends Controller
                 {
                     $igm_file_name =  end($filtered_igm_files);
     
-                    $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
+                    // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
+                    $file = 'D:\\'.$igm_file_name;
                     // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
