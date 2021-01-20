@@ -298,15 +298,19 @@ class FpdfController extends Controller
                                 $data_value = [];
                             
                                 for ($g = 0; $g < 10; $g++)
-                                {                        if($g % 2 == 1)
-                                    {   
-                                        $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                        $x++;
-                                    }
-                                    else
+                                {   
+                                    if ($datas['data'][$g] !== '-') 
                                     {
-                                        $data_value[$x]['max'] = floatval($datas['data'][$g]);
-                                    }
+                                        if($g % 2 == 1)
+                                        {   
+                                            $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                            $x++;
+                                        }
+                                        else
+                                        {
+                                            $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                        }
+                                    }                     
                                 }
                                 
                                 $minmax = max($data_value);
@@ -374,14 +378,18 @@ class FpdfController extends Controller
                                 $data_value = [];
                             
                                 for ($g = 0; $g < 10; $g++)
-                                {                        if($g % 2 == 1)
-                                    {   
-                                        $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                        $x++;
-                                    }
-                                    else
+                                {                        
+                                    if ($datas['data'][$g] !== '-') 
                                     {
-                                        $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                        if($g % 2 == 1)
+                                        {   
+                                            $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                            $x++;
+                                        }
+                                        else
+                                        {
+                                            $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                        }
                                     }
                                 }
 
@@ -449,14 +457,18 @@ class FpdfController extends Controller
                                 $data_value = [];
                             
                                 for ($g = 0; $g < 10; $g++)
-                                {                        if($g % 2 == 1)
-                                    {   
-                                        $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                        $x++;
-                                    }
-                                    else
+                                {                        
+                                    if ($datas['data'][$g] !== '-') 
                                     {
-                                        $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                        if($g % 2 == 1)
+                                        {   
+                                            $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                            $x++;
+                                        }
+                                        else
+                                        {
+                                            $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                        }
                                     }
                                 }
 

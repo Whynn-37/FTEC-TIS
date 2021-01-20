@@ -179,10 +179,11 @@ const EVALUATE = (() => {
                     $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
                     $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
                     $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
-                    $('#txt_inspection_reason').val(data.data.checksheet_details.takt_time);
+                    $('#txt_total_down_time').val(data.data.down_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                    $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
                     $('#txt_die_kind').val(data.data.checksheet_details.die_class);
                     $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
-
+                    
                     //attachments
                     let files = '';
                     let count = 1;
@@ -332,7 +333,6 @@ const EVALUATE = (() => {
         let array_coordinates               = [];
         let array_remarks                   = [];
         let existing_sub_no_count           = -1;//naka -1 para pag increment nya naka 0 para pag pasok sa add igm sub no function sa zero sya papasok 
-        
         //pagkuha ng data id
         for (let a_index = 0; a_index < data.data.checksheet_data.length; a_index++) 
         {
@@ -342,7 +342,7 @@ const EVALUATE = (() => {
                 array_judgement.push(value.judgment);
                 array_coordinates.push(value.coordinates);
                 array_remarks.push(value.remarks);
-    
+
                 array_split_value = [];
                 if (value.data !== null)
                 {
@@ -353,22 +353,22 @@ const EVALUATE = (() => {
                 }
                 array_data.push(array_split_value);
             });
-
+         
             for (let b_index = 0; b_index < array_hidden_checksheet_data_id.length; b_index++) 
             {
                 existing_sub_no_count++;
-
+                
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
                 EVALUATE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index]);
     
                 $(`#th_igm_item_no_${array_item_number[a_index]}_extra_column`).prop('hidden', false);
-                
             }
 
             array_hidden_checksheet_data_id = [];
             array_data                      = [];
             array_judgement                 = [];
             array_coordinates               = [];
+            array_remarks                   = [];
             existing_sub_no_count           = -1;
         }
     };
@@ -741,7 +741,7 @@ const EVALUATE = (() => {
 
     this_evaluate.ItemDataInputs = (item_no, tools, type, specs, upper_limit, lower_limit) => {
 
-        let td_specs        = `<input id="txt_item_no_${item_no}_specs"  value="${specs}" type="text" class="form-control input_text_center" placeholder="Enter specification" onkeypress='return event.charCode >= 43 && event.charCode <= 57'>`;
+        let td_specs        = `<input id="txt_item_no_${item_no}_specs"  value="${specs}" type="text" class="form-control input_text_center" placeholder="Enter specification">`;
 
         let td_upper_limit  = `<input id="txt_item_no_${item_no}_upper_limit"  value="${upper_limit}" type="text" class="form-control input_text_center" placeholder="Enter upper limit" onkeyup="EVALUATE.ValidateItemNoUpperAndLowerLimit(${item_no});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">`;
 

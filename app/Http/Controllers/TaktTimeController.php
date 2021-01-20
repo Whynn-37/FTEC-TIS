@@ -98,6 +98,7 @@ class TaktTimeController extends Controller
                     'part_number'           => $part_number,
                     'revision_number'       => $revision_number,
                     'trial_number'          => $trial_number,
+                    'inspection_reason'     => $inspection_reason,
                     'date_inspected'        => now(),
                 ];
         

@@ -98,17 +98,19 @@ class TrialChecksheet extends Model
         ->get();
     }
 
-    public function getAllNg($part_number)
+    public function getAllNg($part_number, $inspection_reason)
     {
         return TrialChecksheet::where('part_number', $part_number)
+        ->where('inspection_reason', $inspection_reason)
         ->where('judgment', 'NG')
         ->select('id', 'trial_number', 'date_finished', 'judgment', 'revision_number')
         ->get();
     }
 
-    public function getFirstTrial($get_part_number)
+    public function getFirstTrial($part_number, $inspection_reason)
     {
-        return TrialChecksheet::where('part_number', $get_part_number)
+        return TrialChecksheet::where('part_number', $part_number)
+        ->where('inspection_reason', $inspection_reason)
         ->where('judgment', 'NG')
         ->select('id', 'trial_number')
         ->orderBy('trial_number', 'asc')

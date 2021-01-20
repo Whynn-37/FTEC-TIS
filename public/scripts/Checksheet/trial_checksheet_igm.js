@@ -484,7 +484,7 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_specs" type="number" class="form-control input_text_center" placeholder="Enter specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
+					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center" placeholder="Enter specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder});">
 				</td>
 				<td>
 					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
@@ -648,7 +648,7 @@ const IGM = (() => {
         let specification       = $(`#txt_item_no_${item_no}_specs`).val();
         let upper_limit         = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit         = $(`#txt_item_no_${item_no}_lower_limit`).val();
-        
+       
         if (action === 'select_item_type')
         {   
             //pag update or create ng checksheet item
@@ -678,6 +678,10 @@ const IGM = (() => {
                     //pag update or create ng checksheet item
                     IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action);
                 }
+                else
+                {
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                }
             }
             else
             {
@@ -697,6 +701,17 @@ const IGM = (() => {
 
         $(`#accordion_igm`).LoadingOverlay('show');
 
+        // alert(`
+        // id                  : ${id},
+        // trial_checksheet_id : ${trial_checksheet_id},
+        // item_number         : ${item_no},
+        // tools               : ${tools},
+        // type                : ${type},
+        // specification       : ${specification},
+        // upper_limit         : ${upper_limit},
+        // lower_limit         : ${lower_limit},
+        
+        // `)
         $.ajax({
             url     : `store-items`,
             type    : 'post',
