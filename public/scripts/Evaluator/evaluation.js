@@ -51,6 +51,8 @@ const EVALUATE = (() => {
                             <td>${value.revision_number}</td>
                             <td>${value.trial_number}</td>
                             <td>${value.inspection_reason}</td>
+                            <td>${value.inspect_by}</td>
+                            <td>${value.inspect_datetime}</td>
                             <td>${value.date_finished}</td>
                             <td>${judgement}</td>
                             <td>
@@ -104,6 +106,8 @@ const EVALUATE = (() => {
                             <td>${value.revision_number}</td>
                             <td>${value.trial_number}</td>
                             <td>${value.inspection_reason}</td>
+                            <td>${value.inspect_by}</td>
+                            <td>${value.inspect_datetime}</td>
                             <td>${value.disapproved_by}</td>
                             <td>${value.disapproved_datetime}</td>
                             <td>${value.reason}</td>
