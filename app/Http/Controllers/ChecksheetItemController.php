@@ -53,8 +53,8 @@ class ChecksheetItemController extends Controller
                     'judgment'              => 'N/A',
                     'item_type'             => 0,
                     'judgment'              => 'N/A',
-                    'remarks'               => null,
-                    'hinsei'                => null,
+                    'remarks'               => '',
+                    'hinsei'                => '',
                 ];
         
                 $checksheet_item_result =  $ChecksheetItem->updateOrCreateChecksheetItem($checksheet_item);
@@ -63,10 +63,10 @@ class ChecksheetItemController extends Controller
                 [
                     'checksheet_item_id'    => $checksheet_item_result->id,
                     'sub_number'            => 1,
-                    'coordinates'           => null,
-                    'data'                  => null,
+                    'coordinates'           => '',
+                    'data'                  => '',
                     'judgment'              => 'N/A',
-                    'remarks'               => null,
+                    'remarks'               => '',
                 ];
                 
                 $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);
@@ -86,6 +86,8 @@ class ChecksheetItemController extends Controller
                 DB::rollback();
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit, Session::get('name'));
      
         return 
         [
@@ -136,6 +138,9 @@ class ChecksheetItemController extends Controller
             }
         }
         
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number, Session::get('name'));
+
+
         return 
         [
             'status'    => $status,

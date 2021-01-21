@@ -13,6 +13,8 @@ use App\ChecksheetData;
 use App\Approval;
 use App\Attachment;
 use DB;
+use App\Helpers\ActivityLog;
+use Session;
 class TrialChecksheetController extends Controller
 {
     public function unique_multidim_array($array, $key) { 
@@ -95,7 +97,7 @@ class TrialChecksheetController extends Controller
             $status = 'Success';
             $message = 'Part Number Successfully Load';
         }
-
+        
         return 
         [
             'status'    =>  $status,
@@ -238,7 +240,7 @@ class TrialChecksheetController extends Controller
                 $message = 'Trial Number Successfully load';
             }
         }
-        
+
         return 
         [
             'status'    =>  $status,
@@ -270,7 +272,7 @@ class TrialChecksheetController extends Controller
                 $message = 'Application Date Successfully load';
             }
         }
-        
+
         return 
         [
             'status'    =>  $status,
@@ -311,6 +313,9 @@ class TrialChecksheetController extends Controller
                 {
                     $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
                 }
+
+                $logs = 'The Data Exist in TrialChecksheet';
+
             }
             else
             {
@@ -324,6 +329,9 @@ class TrialChecksheetController extends Controller
                 {
                     $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
                 }
+
+                $logs = 'The Data Not Exist in TrialChecksheet';
+
             }
 
             $status = 'Error';
@@ -340,6 +348,8 @@ class TrialChecksheetController extends Controller
                 'trial_checksheets' => $trial_checksheet_data_merge,
             ];
         }
+
+        ActivityLog::activityLog($message . ' - ' . $logs, Session::get('name'));
 
         return 
         [
@@ -384,10 +394,10 @@ class TrialChecksheetController extends Controller
                 //filtering of igm file
                 for ($i=0; $i < count($igm_files); $i++) 
                 { 
-                if(strpos($igm_files[$i],$filename) !== false)
-                {
-                        $filtered_igm_files[] = $igm_files[$i];
-                }
+                    if(strpos($igm_files[$i],$filename) !== false)
+                    {
+                            $filtered_igm_files[] = $igm_files[$i];
+                    }
                 }
         
                 $status = 'Error';
@@ -439,6 +449,7 @@ class TrialChecksheetController extends Controller
                                         'specification'         => $igm_data[$i]['specification'],
                                         'upper_limit'           => $igm_data[$i]['upper_limit'],
                                         'lower_limit'           => $igm_data[$i]['lower_limit'],
+                                        'remarks'               => '',
                                         'judgment'              => 'N/A',
                                         'item_type'             => 1,
                                         'created_at'            => now(),
@@ -456,6 +467,7 @@ class TrialChecksheetController extends Controller
                                     'checksheet_item_id'    => $checksheet_item_data[$i],
                                     'sub_number'            => 1,
                                     'judgment'              => 'N/A',
+                                    'remarks'               => '',
                                     'created_at'            => now(),
                                     'updated_at'            => now()
                                 ];
@@ -481,6 +493,8 @@ class TrialChecksheetController extends Controller
                 DB::rollback();
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Part Number : ' . $part_number . ' - Revision Number : ' . $revision_number, Session::get('name'));
 
         return
         [
@@ -620,6 +634,8 @@ class TrialChecksheetController extends Controller
             }
         }
 
+        ActivityLog::activityLog('Finished Inspection - ' . $message, Session::get('name'));
+
         return 
         [
             'status'    => $status,
@@ -682,6 +698,8 @@ class TrialChecksheetController extends Controller
                 DB::rollback();
             }
         }
+        
+        ActivityLog::activityLog($message . ' - Sub Number - ' . $sub_number . ' Coordinates - ' . $coordinates . ' - Data ' . $data . ' - Judgment Data - ' . $judgment_datas . ' / Judgment Items - ' . $judgment_items, Session::get('name'));
 
         return 
         [

@@ -12,6 +12,7 @@ use App\Approval;
 use App\Attachment;
 use Session;
 use DB;
+use App\Helpers\ActivityLog;
 class TaktTimeController extends Controller
 {
     public function loadCycleTime(TaktTime $TaktTime, Request $Request)
@@ -68,29 +69,29 @@ class TaktTimeController extends Controller
         $approval_result = [];
         $attachment_result = [];
 
-        if($trial_checksheet_id !== null)
+        DB::beginTransaction();
+
+        try
         {
-            $data = 
-            [
-                'trial_checksheet_id'   => $trial_checksheet_id,
-                'start_date'            => date('Y/m/d'),
-                'start_time'            => date('H:i:s'),
-                'end_time'              => '',
-                'actual_time'           => '',
-                'total_takt_time'       => '',
-                'takt_time'             => $takt_times,
-            ];
+            if($trial_checksheet_id !== null)
+            {
+                $data = 
+                [
+                    'trial_checksheet_id'   => $trial_checksheet_id,
+                    'start_date'            => date('Y/m/d'),
+                    'start_time'            => date('H:i:s'),
+                    'end_time'              => '',
+                    'actual_time'           => '',
+                    'total_takt_time'       => '',
+                    'takt_time'             => $takt_times,
+                ];
 
-            $status = "Success";
-            $message = "Successfully load"; 
+                $status = "Success";
+                $message = "Successfully Updated"; 
 
-            $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
-        }
-        else
-        {
-            DB::beginTransaction();
-
-            try
+                $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+            }
+            else
             {
                 $trial_checksheet = 
                 [
@@ -155,6 +156,7 @@ class TaktTimeController extends Controller
                                 'specification'         => $items_value->specification,
                                 'upper_limit'           => $items_value->upper_limit,
                                 'lower_limit'           => $items_value->lower_limit,
+                                'remarks'               => $items_value->remarks,
                                 'judgment'              => 'N/A',
                                 'item_type'             => 0,
                                 'created_at'            => now(),
@@ -183,6 +185,7 @@ class TaktTimeController extends Controller
                                 'checksheet_item_id'    => $value['checksheet_item_id'],
                                 'coordinates'           => $value['coordinates'],
                                 'sub_number'            => $value['sub_number'],
+                                'remarks'               => $value['remarks'],
                                 'created_at'            => now(),
                                 'updated_at'            => now()
                             ];
@@ -195,17 +198,21 @@ class TaktTimeController extends Controller
                 $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
 
                 $status = "Success";
-                $message = "Successfully Updated"; 
+                $message = "Successfully Saved"; 
 
-                DB::commit();
-            } 
-            catch (\Throwable $th) 
-            {
-                $status = 'Error';
-                $message = $th->getMessage();
-                DB::rollback();
+                $trial_checksheet_id = $last_id['id'];
             }
+
+            DB::commit();
+        } 
+        catch (\Throwable $th) 
+        {
+            $status = 'Error';
+            $message = $th->getMessage();
+            DB::rollback();
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Takt Time : ' . $takt_times, Session::get('name'));
         
         return 
         [
@@ -262,6 +269,8 @@ class TaktTimeController extends Controller
                 }
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Actual Time : ' . $actual_time . ' - Total Takt Time : ' . $total_takt_time  . ' - Takt Time : ' . $takt_time, Session::get('name'));
 
         return 
         [

@@ -34,10 +34,10 @@ class ChecksheetDataController extends Controller
                 $data = [
                     'checksheet_item_id' => $checksheet_item_id,
                     'sub_number'         => $sub_number,
-                    'coordinates'        => null,
-                    'data'               => null,
+                    'coordinates'        => '',
+                    'data'               => '',
                     'judgment'           => 'N/A',
-                    'remarks'            => null,
+                    'remarks'            => '',
                 ];
         
                 $result = $ChecksheetData->updateOrCreateChecksheetData($data);
@@ -55,6 +55,8 @@ class ChecksheetDataController extends Controller
                 DB::rollback();
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $checksheet_item_id . ' - Sub Number : ' . $sub_number, Session::get('name'));
 
         return 
         [
@@ -112,6 +114,8 @@ class ChecksheetDataController extends Controller
                 DB::rollback();
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $checksheet_item_id . ' - Sub Number : ' . $sub_number . ' - Judgment : ' . $judgment, Session::get('name'));
 
         return 
         [

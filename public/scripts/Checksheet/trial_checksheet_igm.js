@@ -101,6 +101,9 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
+        let part_number       = $('#slc_part_number').val();
+        let inspection_reason = $('#slc_inspection_reason').val();
+
         $.ajax({
             url     : `load-igm`,
             type    : 'get',
@@ -108,7 +111,9 @@ const IGM = (() => {
             cache   : false,
             data    : 
             {
-                trial_checksheet_id: trial_checksheet_id,
+                trial_checksheet_id : trial_checksheet_id,
+                part_number         : part_number,
+                inspection_reason   : inspection_reason
             },
             success: data => 
             {
