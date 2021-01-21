@@ -102,14 +102,9 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
-<<<<<<< HEAD
         let part_number         = $('#slc_part_number').val();
         let inspection_reason   = $('#slc_inspection_reason').val();
         let trial_number        = $('#slc_trial_number').val();
-=======
-        let part_number       = $('#slc_part_number').val();
-        let inspection_reason = $('#slc_inspection_reason').val();
->>>>>>> develop
 
         $.ajax({
             url     : `load-igm`,
@@ -120,11 +115,7 @@ const IGM = (() => {
             {
                 trial_checksheet_id : trial_checksheet_id,
                 part_number         : part_number,
-<<<<<<< HEAD
                 inspection_reason   : inspection_reason,
-=======
-                inspection_reason   : inspection_reason
->>>>>>> develop
             },
             success: data => 
             {
@@ -253,13 +244,13 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center" placeholder="Enter specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_upper_limit" value="${upper_limit}" type="text" class="form-control input_text_center" placeholder="Enter upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_upper_limit" value="${upper_limit}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_lower_limit" value="${lower_limit}" type="text" class="form-control input_text_center" placeholder="Enter lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_lower_limit" value="${lower_limit}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td id="td_item_no_${value.item_number}_judgement" class="input_text_center" style="vertical-align: middle;">${judgement}</td>
 				${(trial_number > 1) ? remarks : ''}
@@ -541,7 +532,7 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specs" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder},'update_item_no_only');">
+					<input id="txt_item_no_${item_no_holder}_specs" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateAddIgmItemNo(${item_no_holder},'update_item_no_only');">
 				</td>
 				<td>
 					<input id="txt_item_no_${item_no_holder}_upper_limit" type="number" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder},'update_item_no_only');" onkeypress="return event.charCode >= 43 && event.charCode <= 57">
@@ -1768,13 +1759,13 @@ const IGM = (() => {
             // }
             // else
             // {
-                tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks);
+                tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks,load_igm_status);
 
                 $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
                 $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
 
                 // //para sa pag papalit ng kulay ng visuals data
-                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data,load_igm_status);
             // }
         } 
         else 
@@ -1823,7 +1814,7 @@ const IGM = (() => {
             else
             {
                 //pag lalagay lang ng row sa table, walang pag add sa DB
-                tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks);
+                tr_sub_no_inputs += IGM.AddIgmSubNoInputs(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks,load_igm_status);
 
                 if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                 {
@@ -1837,7 +1828,7 @@ const IGM = (() => {
                 }
 
                 //para sa pag papalit ng kulay ng visuals data
-                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+                IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data,load_igm_status);
             }
 
             IGM.AddSubNoChangeRemoveSubNoOnClick(type, item_no_count, added_item_no_between_count, existing_sub_no_count_per_item);
@@ -1861,8 +1852,8 @@ const IGM = (() => {
         return tr_sub_no_column;
     };
 
-    this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks) => {
-        
+    this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks,load_igm_status) => {
+      
         let trial_number            = $('#slc_trial_number').val();
         let tr                      = '';
         let new_sub_no              = existing_sub_no_count_per_item;
@@ -1900,19 +1891,19 @@ const IGM = (() => {
 					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},'','')" value="${new_coordinates}">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,0)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,0)}',${item_no_count},${new_sub_no},'min_1');">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'min')" title='min' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,0) : '-' : IGM.ChecksheetDataInputData(type,array_data,0)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,0) : '' : IGM.ChecksheetDataInputData(type,array_data,0)}',${item_no_count},${new_sub_no},'min_1');">
 				</td>
 				<td class="td_sub_no_input">
-					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,2)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,2)}',${item_no_count},${new_sub_no},'min_2');">
+					<input  id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'min')" title='min' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,2) : '-' : IGM.ChecksheetDataInputData(type,array_data,2)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,2) : '' : IGM.ChecksheetDataInputData(type,array_data,2)}',${item_no_count},${new_sub_no},'min_2');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,4)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,4)}',${item_no_count},${new_sub_no},'min_3');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'min')" title='min' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,4) : '-' : IGM.ChecksheetDataInputData(type,array_data,4)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,4) : '' : IGM.ChecksheetDataInputData(type,array_data,4)}',${item_no_count},${new_sub_no},'min_3');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,6)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,6)}',${item_no_count},${new_sub_no},'min_4');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'min')" title='min' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,6) : '-' : IGM.ChecksheetDataInputData(type,array_data,6)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,6) : '' : IGM.ChecksheetDataInputData(type,array_data,6)}',${item_no_count},${new_sub_no},'min_4');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_data,8)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,8)}',${item_no_count},${new_sub_no},'min_5');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'min')" title='min' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,8) : '-' : IGM.ChecksheetDataInputData(type,array_data,8)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,8) : '' : IGM.ChecksheetDataInputData(type,array_data,8)}',${item_no_count},${new_sub_no},'min_5');">
 				</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
                 ${(trial_number > 1) ? td_remarks : ''}
@@ -1920,19 +1911,19 @@ const IGM = (() => {
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,1)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,1)}',${item_no_count},${new_sub_no},'max_1');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},1,'max')" title='max' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,1) : '-' : IGM.ChecksheetDataInputData(type,array_data,1)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,1) : '' : IGM.ChecksheetDataInputData(type,array_data,1)}',${item_no_count},${new_sub_no},'max_1');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,3)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,3)}',${item_no_count},${new_sub_no},'max_2');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},2,'max')" title='max' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,3) : '-' : IGM.ChecksheetDataInputData(type,array_data,3)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,3) : '' : IGM.ChecksheetDataInputData(type,array_data,3)}',${item_no_count},${new_sub_no},'max_2');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,5)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,5)}',${item_no_count},${new_sub_no},'max_3');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},3,'max')" title='max' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,5) : '-' : IGM.ChecksheetDataInputData(type,array_data,5)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,5) : '' : IGM.ChecksheetDataInputData(type,array_data,5)}',${item_no_count},${new_sub_no},'max_3');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,7)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,7)}',${item_no_count},${new_sub_no},'max_4');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},4,'max')" title='max' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,7) : '-' : IGM.ChecksheetDataInputData(type,array_data,7)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,7) : '' : IGM.ChecksheetDataInputData(type,array_data,7)}',${item_no_count},${new_sub_no},'max_4');">
 				</td>
 				<td class="td_sub_no_input">
-					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_data,9)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_data,9)}',${item_no_count},${new_sub_no},'max_5');">
+					<input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5" type="text" class="form-control input_text_center  text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="IGM.SubItemGetMinMax(${item_no_count},${new_sub_no},5,'max')" title='max' value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,9) : '-' : IGM.ChecksheetDataInputData(type,array_data,9)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,9) : '' : IGM.ChecksheetDataInputData(type,array_data,9)}',${item_no_count},${new_sub_no},'max_5');">
 				</td>
 			</tr>`;
         } 
@@ -1953,19 +1944,19 @@ const IGM = (() => {
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${new_coordinates}" onchange="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no});">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,0)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},1);" readonly value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,0) : '' : IGM.ChecksheetDataInputData(type,array_data,0)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,1)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_2" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},2);" readonly value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,1) : '' : IGM.ChecksheetDataInputData(type,array_data,1)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,2)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_3" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},3);" readonly value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,2) : '' : IGM.ChecksheetDataInputData(type,array_data,2)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,3)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_4" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},4);" readonly value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,3) : '' : IGM.ChecksheetDataInputData(type,array_data,3)}">
                 </td>
                 <td class="td_sub_no_input">
-                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly value="${IGM.ChecksheetDataInputData(type,array_data,4)}">
+                    <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center input-pointer text_to_uppercase" placeholder="Click visual" onclick="IGM.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" readonly value="${(load_igm_status === 'from_load_igm') ? (array_data != '') ? IGM.ChecksheetDataInputData(type,array_data,4) : '' : IGM.ChecksheetDataInputData(type,array_data,4)}">
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
                 ${(trial_number > 1) ? td_remarks : ''}
@@ -3703,7 +3694,7 @@ const IGM = (() => {
     this_igm.ChecksheetDataInputData = (type,array_data,number) => {
 
         let data = '';
-
+       
         if (array_data != undefined)
         {
            if (array_data.length !== 0)
@@ -3725,7 +3716,7 @@ const IGM = (() => {
                 data = '-';
             }
         }
-
+       
         return data;
     };
 
@@ -3746,31 +3737,64 @@ const IGM = (() => {
         return data;
     };
 
-    this_igm.ChecksheetDataVisualsChangeColor = (item_no_count,existing_sub_no_count_per_item,array_data) => {
+    this_igm.ChecksheetDataVisualsChangeColor = (item_no_count,existing_sub_no_count_per_item,array_data,load_igm_status) => {
 
         let visual_no = 1;
         let sub_no = existing_sub_no_count_per_item;
-
-        if (array_data != undefined) 
-        { 
-            for (let b_index = 0; b_index < array_data.length; b_index++) 
+      
+        if (load_igm_status === 'from_load_igm')
+        {
+            if (array_data != '')
             {
-                if (array_data[b_index] === 'OK')
+                for (let b_index = 0; b_index < array_data.length; b_index++) 
                 {
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    if (array_data[b_index] === 'OK')
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    else if (array_data[b_index] === 'NG')
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    else
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    visual_no++;
                 }
-                else if (array_data[b_index] === 'NG')
+            }
+            else
+            {
+                $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#e8ecef');
+               
+            }
+        }
+        else
+        {
+            if (array_data != undefined) 
+            { 
+                for (let b_index = 0; b_index < array_data.length; b_index++) 
                 {
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    if (array_data[b_index] === 'OK')
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    else if (array_data[b_index] === 'NG')
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    else
+                    {
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                        $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+                    }
+                    visual_no++;
                 }
-                else
-                {
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
-                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
-                }
-                visual_no++;
             }
         }
     };
