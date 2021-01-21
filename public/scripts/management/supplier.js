@@ -141,7 +141,7 @@ const SUPPLIER = (() => {
                             Swal.fire({
                                 position: 'center',
                                 icon: 'error',
-                                title: `${result.message}`,
+                                title: result.message,
                                 showConfirmButton: false,
                                 timer: 2000
                             })
