@@ -677,8 +677,23 @@ const CHECKSHEET = (() => {
 
                 });
 
-                if (data.status === 'Success')
-                {
+                // if (data.status === 'Success')
+                // {
+                //     if (status === 'load_cycle_time') 
+                //     {
+                //         //target takt time
+                //         $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+                //         $("#div_target_takt_time_timer").TimeCircles().rebuild();
+                //         $("#div_target_takt_time_timer").TimeCircles().stop();
+    
+                //         //actual time
+                //         $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
+                //         $("#div_actual_time_timer").TimeCircles().rebuild();
+                //         $("#div_actual_time_timer").TimeCircles().stop();
+                //     }
+                // }
+                // else
+                // {
                     if (status === 'load_cycle_time') 
                     {
                         //target takt time
@@ -690,29 +705,17 @@ const CHECKSHEET = (() => {
                         $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
                         $("#div_actual_time_timer").TimeCircles().rebuild();
                         $("#div_actual_time_timer").TimeCircles().stop();
-                    }
-                }
-                else
-                {
-                    if (status === 'load_cycle_time') 
-                    {
-                        //target takt time
-                        $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
-                        $("#div_target_takt_time_timer").TimeCircles().rebuild();
-                        $("#div_target_takt_time_timer").TimeCircles().stop();
-    
-                        //actual time
-                        $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
-                        $("#div_actual_time_timer").TimeCircles().rebuild();
-                        $("#div_actual_time_timer").TimeCircles().stop();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: data.status,
+                            text: data.message,
+                            timer: 500
+                        })
                     }
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: data.status,
-                        text: data.message,
-                    })
-                } //naka comment kase pagka walang iloload nalabas pa swal na error
+                    
+                // } //naka comment kase pagka walang iloload nalabas pa swal na error
 
                 $('#tbody_tbl_takt_time').html(tbody);
                 $('#tbl_takt_time').DataTable({

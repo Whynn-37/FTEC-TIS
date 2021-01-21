@@ -117,6 +117,14 @@ class TrialChecksheet extends Model
         ->first();
     }
 
+    public function getChecksheet($part_number, $inspection_reason)
+    {
+        return TrialChecksheet::where('part_number', $part_number)
+        ->where('inspection_reason', $inspection_reason)
+        ->select('id')
+        ->get();
+    }
+
     public function getAllData($trial_checksheet_id)
     {
         return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')

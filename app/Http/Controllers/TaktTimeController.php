@@ -18,8 +18,8 @@ class TaktTimeController extends Controller
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
 
-        $status = 'Error';
-        $message = 'No Trial Checksheet ID';
+        $status = 'Success';
+        $message = 'Successfully Load';
         $data = [];
 
         if ($trial_checksheet_id !== null) 
