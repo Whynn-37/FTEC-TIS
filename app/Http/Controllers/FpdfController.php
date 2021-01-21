@@ -519,8 +519,8 @@ class FpdfController extends Controller
             }
             else 
             {
-                $specs = $fpdf->getTemplateSize($pageId);
-                $fpdf->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
+                $specs = $pdf->getTemplateSize($pageId);
+                $pdf->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
                 $path = $location.$file;
                 $pdf->Image($path,5,100,200);
             }

@@ -524,8 +524,8 @@ const APPROVE = (() => {
                         {
                             Swal.fire({
                                 icon    : 'error',
-                                title   : data.status,
-                                text    : data.message,
+                                title   : result.status,
+                                text    : result.message,
                             })
                         }
                         $('#div_modal_content').LoadingOverlay('hide');

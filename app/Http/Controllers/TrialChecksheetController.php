@@ -367,65 +367,28 @@ class TrialChecksheetController extends Controller
         $revision_number !== null || 
         $trial_checksheet_id !== null)
         {
-<<<<<<< HEAD
-            // $filename = $part_number . '_' . $revision_number;
-            $filename =$part_number.'_'.$revision_number.'(00)';
-            // $filename = 'igm';
-
-            // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-            $path ='F:\TIS\\';
-            // $path ='D:\\';
-    
-            $igm_files = scandir($path);
-    
-            //filtering of igm file
-            for ($i=0; $i < count($igm_files); $i++) 
-            { 
-               if(strpos($igm_files[$i],$filename) !== false)
-               {
-                    $filtered_igm_files[] = $igm_files[$i];
-               }
-            }
-    
-            $status = 'Error';
-            $message = 'No file exist';
-            $result = false;
-    
-            if(!empty($filtered_igm_files))
-            {
-                DB::beginTransaction();
-=======
             DB::beginTransaction();
->>>>>>> develop
 
             try 
             {
                 // $filename = $part_number . '_' . $revision_number;
-                // $filename =$part_number.'_'.$revision_number.'(00)';
-                $filename = 'igm';
+                $filename =$part_number.'_'.$revision_number.'(00)';
+                // $filename = 'igm';
                 
                 // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-                // $path ='F:\TIS\\';
-                $path ='D:\\';
+                $path ='F:\TIS\\';
+                // $path ='D:\\';
         
                 $igm_files = scandir($path);
         
                 //filtering of igm file
                 for ($i=0; $i < count($igm_files); $i++) 
                 { 
-                if(strpos($igm_files[$i],$filename) !== false)
-                {
-<<<<<<< HEAD
-                    $igm_file_name =  end($filtered_igm_files);
-    
-                    // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
-=======
+                    if(strpos($igm_files[$i],$filename) !== false)
+                    {
                         $filtered_igm_files[] = $igm_files[$i];
+                    }
                 }
-                }
->>>>>>> develop
         
                 $status = 'Error';
                 $message = 'No file exist';
@@ -437,8 +400,8 @@ class TrialChecksheetController extends Controller
                         $igm_file_name =  end($filtered_igm_files);
         
                         // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                        $file = 'D:\\'.$igm_file_name;
-                        // $file = 'F:\TIS\\'.$igm_file_name;
+                        // $file = 'D:\\'.$igm_file_name;
+                        $file = 'F:\TIS\\'.$igm_file_name;
             
                         // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                         $sheet = 0;

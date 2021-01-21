@@ -1364,14 +1364,9 @@ const EVALUATE = (() => {
             let td_edit_button = `
             <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
             <br>
-            <div class="row">
-                <div class="col-md-6">
-                    <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-                </div>
-                <div class="col-md-6">
-                    <button type="button" class="btn btn-secondary btn-block" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
-                </div>
-            </div>`;
+            <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+            
+            <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
 
             $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
             $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
@@ -2124,7 +2119,8 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.ValidateSaveSubItemMinMax = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
-
+        
+        let td_sub_item_remarks = $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html();
         let array_min_max_data  = [];
         let split_data          = visuals_min_max_datas.split(',');
 
@@ -2175,7 +2171,7 @@ const EVALUATE = (() => {
                 }
                 else
                 {
-                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,remarks);
+                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,(td_sub_item_remarks === '-') ? '' : td_sub_item_remarks);
                     Swal.fire({
                         icon: 'warning',
                         title: 'Edit Cancelled',
@@ -2295,7 +2291,8 @@ const EVALUATE = (() => {
         let split_btn_hinsei_value       = $(`#btn_item_no_${item_no}_hinsei`).attr('onclick').split(',');
         let split_split_btn_hinsei_value = split_btn_hinsei_value[6].split(')');
         let item_remarks                 = split_split_btn_hinsei_value[0].replace(/"|'/g, '');
-      
+        let sub_item_remarks    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
+
         let judgment_datas              = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
         let total_sub_no_count          = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
 
@@ -2316,6 +2313,7 @@ const EVALUATE = (() => {
             (new_lower_limit > 0) ? new_lower_limit =  `+${new_lower_limit}` : '';
         }
 
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html(sub_item_remarks);//textarea to html, paglalgay ng remarks sa table
 
         let array_overall_judgement = [];
 
@@ -2448,7 +2446,7 @@ const EVALUATE = (() => {
             array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${index}`).val());
         }
 
-        $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html(sub_item_remarks);//textarea to html
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html(sub_item_remarks);//textarea to html, paglalgay ng remarks sa table
 
         EVALUATE.OverallRejudgement(item_no, sub_no, array_visuals, sub_no_count,trial_checksheet_id,tools,type,new_specs,new_upper_limit,new_lower_limit,item_type,remarks,'edit',new_coordinates)
     }
