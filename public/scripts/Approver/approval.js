@@ -47,6 +47,10 @@ const APPROVE = (() => {
                             <td>${value.revision_number}</td>
                             <td>${value.trial_number}</td>
                             <td>${value.inspection_reason}</td>
+                            <td>${value.inspect_by}</td>
+                            <td>${value.inspect_datetime}</td>
+                            <td>${value.evaluated_by}</td>
+                            <td>${value.evaluated_datetime}</td>
                             <td>${value.date_finished}</td>
                             <td>${judgement}</td>
                             <td>
@@ -103,6 +107,10 @@ const APPROVE = (() => {
                             <td>${value.revision_number}</td>
                             <td>${value.trial_number}</td>
                             <td>${value.inspection_reason}</td>
+                            <td>${value.inspect_by}</td>
+                            <td>${value.inspect_datetime}</td>
+                            <td>${value.evaluated_by}</td>
+                            <td>${value.evaluated_datetime}</td>
                             <td>${value.disapproved_by}</td>
                             <td>${value.disapproved_datetime}</td>
                             <td>${value.reason}</td>
@@ -211,7 +219,7 @@ const APPROVE = (() => {
         }
         else
         {
-           let popout =  window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`, "_blank", "width=1200,height=600, left = 2300,top = 200");
+           let popout =  window.open(`../../../tis/storage/app/public/${file_folder}/${file_name}`);
 
             window.setTimeout(function(){
                 popout.close();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Attachment;
 use \setasign\Fpdi\Fpdi;
+use \setasign\Fpdi\FpdiProtection;
 class FpdfController extends Controller
 {
     public function mergeFile($datax, $data)
@@ -509,14 +510,17 @@ class FpdfController extends Controller
                 for($i = 0; $i <$pagecount; $i++)
                 {
                     $pageId = $pdf->importPage($i + 1);
+
+                    $specs = $pdf->getTemplateSize($pageId);
                     
-                    $pdf->AddPage();
+                    $pdf->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
                     $pdf->useTemplate($pageId);
                 }
             }
             else 
             {
-                $pdf->AddPage();
+                $specs = $fpdf->getTemplateSize($pageId);
+                $fpdf->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
                 $path = $location.$file;
                 $pdf->Image($path,5,100,200);
             }

@@ -28,6 +28,10 @@
                                                     <th>REVISION</th>
                                                     <th>TRIAL NUMBER</th>
                                                     <th>INSPECTION REASON</th>
+                                                    <th>INSPECTED BY</th>
+                                                    <th>INSPECTED DATE/TIME</th>
+                                                    <th>EVALUATED BY</th>
+                                                    <th>EVALUATED DATE/TIME</th>
                                                     <th>DATE FINISHED</th>
                                                     <th>JUDGEMENT</th>
                                                     <th>ACTION</th>
@@ -60,6 +64,10 @@
                                                     <th>REVISION</th>
                                                     <th>TRIAL NUMBER</th>
                                                     <th>INSPECTION REASON</th>
+                                                    <th>INSPECTED BY</th>
+                                                    <th>INSPECTED DATE/TIME</th>
+                                                    <th>EVALUATED BY</th>
+                                                    <th>EVALUATED DATE/TIME</th>
                                                     <th>DISAPPROVED BY</th>
                                                     <th>DISAPPROVED DATE/TIME</th>
                                                     <th>REASON</th>

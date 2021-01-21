@@ -121,4 +121,12 @@ class ChecksheetItem extends Model
         ->orderBy('item_number', 'asc')
         ->get();
     }
+
+    public function getItem($trial_checksheet_id)
+    {
+        return ChecksheetItem::whereIn('trial_checksheet_id', $trial_checksheet_id)
+        ->select('item_number')
+        ->groupBy('item_number')
+        ->get();
+    }
 }
