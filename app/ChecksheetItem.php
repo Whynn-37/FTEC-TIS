@@ -32,6 +32,7 @@ class ChecksheetItem extends Model
                 'specification'         => $row['specification'],
                 'upper_limit'           => $row['upper_limit'],
                 'lower_limit'           => $row['lower_limit'],
+                'remarks'               => $row['remarks'],
                 'judgment'              => $row['judgment'],
                 'item_type'             => $row['item_type'],
                 'created_at'            => $row['created_at'],

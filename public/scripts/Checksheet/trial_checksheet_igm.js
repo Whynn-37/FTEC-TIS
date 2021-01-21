@@ -102,9 +102,14 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
+<<<<<<< HEAD
         let part_number         = $('#slc_part_number').val();
         let inspection_reason   = $('#slc_inspection_reason').val();
         let trial_number        = $('#slc_trial_number').val();
+=======
+        let part_number       = $('#slc_part_number').val();
+        let inspection_reason = $('#slc_inspection_reason').val();
+>>>>>>> develop
 
         $.ajax({
             url     : `load-igm`,
@@ -115,7 +120,11 @@ const IGM = (() => {
             {
                 trial_checksheet_id : trial_checksheet_id,
                 part_number         : part_number,
+<<<<<<< HEAD
                 inspection_reason   : inspection_reason,
+=======
+                inspection_reason   : inspection_reason
+>>>>>>> develop
             },
             success: data => 
             {

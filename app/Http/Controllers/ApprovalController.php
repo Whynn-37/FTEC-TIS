@@ -16,6 +16,7 @@ use App\Http\Controllers\MailController;
 use Session;
 use DB;
 use Excel;
+use App\Helpers\ActivityLog;
 
 class ApprovalController extends Controller
 {
@@ -80,14 +81,14 @@ class ApprovalController extends Controller
             $down_time_data = array_sum($data_down_sum);
 
             $status = 'Error';
-            $message = 'Somethings Wrong!';
+            $message = 'Successfully Load';
 
             if((!empty($checksheet_details) === true) && 
             (!empty($checksheet_items) === true)  && 
             (!empty($checksheet_data) === true)) 
             {
                 $status = 'Success';
-                $message = 'Load Successfully!';
+                $message = 'Successfully Load';
             }
         }
         
@@ -170,13 +171,15 @@ class ApprovalController extends Controller
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 
         $status = 'Error';
-        $message = 'Somethings Wrong!';
+        $message = 'Not Successfully Updated';
 
         if ($result !== null) 
         {
             $status = 'Success';
-            $message = 'Update Successfully!';
+            $message = 'Successfully Updated';
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Type : ' . $type . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit . ' - Judgment : ' . $judgment, Session::get('name'));
 
         return 
         [
@@ -195,7 +198,7 @@ class ApprovalController extends Controller
         $checksheet_item_id = $Request->checksheet_item_id;
         $sub_number = $Request->sub_number;
         $coordinates = $Request->coordinates;
-        $data = $Request->data;
+        $datas = $Request->data;
         $judgment_datas = $Request->judgment_datas;
         $remarks = $Request->remarks;
 
@@ -205,7 +208,7 @@ class ApprovalController extends Controller
 
 
         $status = 'Error';
-        $message = 'Somethings Wrong!';
+        $message = 'Not Successfully Updated';
         $result = false;
 
         DB::beginTransaction();
@@ -227,7 +230,7 @@ class ApprovalController extends Controller
                 'checksheet_item_id' => $checksheet_item_id,
                 'sub_number'         => $sub_number,
                 'coordinates'        => $coordinates,
-                'data'               => $data,
+                'data'               => $datas,
                 'judgment'           => $judgment_datas,
                 'remarks'            => $remarks,
             ];
@@ -237,7 +240,7 @@ class ApprovalController extends Controller
             $ChecksheetData->updateOrCreateChecksheetData($data);
 
             $status = 'Success';
-            $message = 'Update Successfully!';
+            $message = 'Successfully Updated';
             $result = true;
             
             DB::commit();
@@ -248,6 +251,8 @@ class ApprovalController extends Controller
             $message = $th->getMessage();
             DB::rollback();
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $checksheet_item_id . ' - Sub Number : ' . $sub_number . ' - Coordinates : ' . $coordinates . ' - Data : ' . $datas . ' - Judgment Checksheet : ' . $judgment_checksheet . ' - Judgment Item : ' . $judgment_items . ' - Judgment Data : ' . $judgment_datas . ' - Remarks : ' . $remarks, Session::get('name'));
 
         return 
         [
@@ -414,13 +419,12 @@ class ApprovalController extends Controller
         $attachment = [];
 
         $status = 'Error';
-        $message = 'Somethings Wrong!';
+        $message = 'Not Successfully Save';
 
         DB::beginTransaction();
 
         try 
         {
-
             if ($decision == 1 && $action == 1) 
             {
                 $data = 
@@ -535,7 +539,7 @@ class ApprovalController extends Controller
             $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
 
             $status = 'Success';
-            $message = 'Save Successfully!';
+            $message = 'Successfully Save';
 
             DB::commit();
         } 
@@ -545,6 +549,17 @@ class ApprovalController extends Controller
             $message = $th->getMessage();
             DB::rollback();
         }
+
+        if ($action == 1) 
+        {
+            $action = 'Approved';
+        }
+        else 
+        {
+            $action = 'Disapproved';
+        }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Action : ' . $action . ' - Decision : ' . $decision . ' - Selected File : ' . $selected_file . ' - Reason : ' . $reason, Session::get('name'));
         
         return
         [

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ActivityLog;
+use Session;
 class SupplierController extends Controller
 {
     public function storeSupplier(UploadController $upload,Supplier $Supplier,Request $Request)
@@ -17,44 +19,46 @@ class SupplierController extends Controller
         $message = 'No File';
         $result = [];
 
-            if (file_exists($file)) 
+        if (file_exists($file)) 
+        {
+            $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
+            
+            if($file_extension === 'csv' || $file_extension === 'xlsx')
             {
-                $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
-                
-                if($file_extension === 'csv' || $file_extension === 'xlsx')
+                $data = $upload->upload($file, $sheet);
+
+                for($i = 1; $i < count($data); $i ++)
                 {
-                    $data = $upload->upload($file, $sheet);
-
-                    for($i = 1; $i < count($data); $i ++)
-                    {
-                        $result[] = [
-                            'supplier_code'   =>  $data[$i][0],
-                            'supplier_name'   =>  $data[$i][1]
-                        ];
-                    }
-
-                    $result = $Supplier->storeSupplier($result);
-
-                    $status = 'Error';
-                    $message = 'Not Successfully Save';
-
-                    if ($result) 
-                    {
-                        $status = 'Success';
-                        $message = 'Successfully Save';
-                    }
+                    $result[] = [
+                        'supplier_code'   =>  $data[$i][0],
+                        'supplier_name'   =>  $data[$i][1]
+                    ];
                 }
-                else
+
+                $result = $Supplier->storeSupplier($result);
+
+                $status = 'Error';
+                $message = 'Not Successfully Save';
+
+                if ($result) 
                 {
-                    $status = 'Error File';
-                    $message = 'Invalid File';
+                    $status = 'Success';
+                    $message = 'Successfully Save';
                 }
             }
             else
             {
-                $status = 'No File';
-                $message = 'No File Selected';
+                $status = 'Error File';
+                $message = 'Invalid File';
             }
+        }
+        else
+        {
+            $status = 'No File';
+            $message = 'No File Selected';
+        }
+
+        ActivityLog::activityLog($message, Session::get('name'));
         
         return
         [
@@ -125,6 +129,8 @@ class SupplierController extends Controller
             $message = 'Successfully Save';
         }
 
+        ActivityLog::activityLog($message . ' - Supplier Code : ' . $supplier_code . ' - Supplier Name : ' . $supplier_name, Session::get('name'));
+
         return
         [
             'status'    =>  $status,
@@ -147,6 +153,8 @@ class SupplierController extends Controller
             $status = 'Success';
             $message = 'Successfully Deleted';
         }
+
+        ActivityLog::activityLog($message . ' - Deleted Id : ' . $id, Session::get('name'));
     
         return
         [

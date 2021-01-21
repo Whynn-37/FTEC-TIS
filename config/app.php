@@ -234,6 +234,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'Fpdf' =>  Crabbly\Fpdf\FpdfServiceProvider::class,
+        'ActivityLog' =>  app\Helpers\ActivityLog::class,
     ],
 
 ];

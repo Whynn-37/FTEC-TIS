@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\UploadController;
 use App\TrialLedger;
+use App\Helpers\ActivityLog;
+use Session;
 
 class TrialLedgerController extends Controller
 {
@@ -11,10 +13,10 @@ class TrialLedgerController extends Controller
     {
         // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
         //   $file = 'C:\TIS\trial_ledger.xlsx';
-        $file = 'F:\TIS\trial_ledger.xlsx';
+        // $file = 'F:\TIS\trial_ledger.xlsx';
         // $file = 'D:\trial_ledger.xlsx';
        // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
-    //    $file = 'D:\trial_ledger.xlsx';
+       $file = 'D:\trial_ledger.xlsx';
         // $file = '\\\10.164.20.211\uploads\trial_ledger.xlsx';
         // $file = 'D:\TIS\trial_ledger.xlsx';
         $file = 'F:\TIS\trial_ledger.xlsx';
@@ -24,6 +26,8 @@ class TrialLedgerController extends Controller
         $result = [];
         $sheet = 0;
         $store_trial_ledger = [];
+
+        $logs = 'The File Path is wrong or No file in directory';
 
         if(file_exists($file))
         {
@@ -57,9 +61,12 @@ class TrialLedgerController extends Controller
                 ];
             }
 
-            $store_trial_ledger = $TrialLedger->storeTrialLedger($datas);
+            $logs = 'Successfully Update';
 
+            $store_trial_ledger = $TrialLedger->storeTrialLedger($datas);
         }
+        
+        ActivityLog::activityLog($logs, Session::get('name'));
 
         return 
         [

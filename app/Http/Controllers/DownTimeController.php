@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\DownTime;
+use App\Helpers\ActivityLog;
+use Session;
 class DownTimeController extends Controller
 {
     public function loadDownTime(DownTime $DownTime, Request $Request)
@@ -80,6 +82,8 @@ class DownTimeController extends Controller
                 $message = 'Successfully Update';
             }
         }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Type : ' . $type . ' - Total Down Time : ' . $total_down_time, Session::get('name'));
 
         return
         [
