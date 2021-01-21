@@ -3182,3 +3182,6 @@ table.dataTable thead td {
 .btn-font-lg{
     font-size: 18px;;
 }
+.text_to_uppercase {
+    text-transform: uppercase;
+}

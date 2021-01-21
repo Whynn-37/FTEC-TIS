@@ -603,7 +603,7 @@ const CHECKSHEET = (() => {
 
                     //pag seset ng add new item
                     
-                    $('#btn_add_new_igm_item_no').attr('onclick',`IGM.AddIgmItemNo('',${item_no_count},0,0,'new');`);
+                    // $('#btn_add_new_igm_item_no').attr('onclick',`IGM.AddIgmItemNo('',${item_no_count},0,0,'new');`);
 
                     //pag show ng attachments at ssave button
                     $('#div_row_numbering_drawing').prop('hidden',false);
@@ -708,11 +708,11 @@ const CHECKSHEET = (() => {
                     }
 
                     Swal.fire({
-                        icon: 'error',
+                        icon: 'info',
                         title: data.status,
                         text: data.message,
                     })
-                } //naka comment kase pagka walang iloload nalabas pa swal na error
+                } 
 
                 $('#tbody_tbl_takt_time').html(tbody);
                 $('#tbl_takt_time').DataTable({
@@ -727,7 +727,8 @@ const CHECKSHEET = (() => {
         });
     };
 
-    this_checksheet.StopCycleTime = () => {
+    this_checksheet.StopCycleTime = (action) => {
+        //MERONG ACTION PARA SA PAG SESAVE NG TRIAL CHECKSHEET. PARA HINDI NA ILOAD ANG CYCLE TIME
 
         $('#div_card_takt_time').LoadingOverlay('show');
 
@@ -760,7 +761,10 @@ const CHECKSHEET = (() => {
             {
                 if (data.status === 'Success') 
                 {
-                    CHECKSHEET.LoadCycleTime(0, 'stop');
+                    if (action !== 'save_trial_checksheet')
+                    {
+                        CHECKSHEET.LoadCycleTime(0, 'stop');
+                    }
 
                     //checksheet details
                     $('#slc_part_number option:not(:selected)').attr('disabled', false);
@@ -1190,7 +1194,7 @@ const CHECKSHEET = (() => {
                     $('#tbody_tbl_downtime').empty();
                     $('#td_total_downtime').html('');
                     
-                    CHECKSHEET.StopCycleTime();
+                    CHECKSHEET.StopCycleTime('save_trial_checksheet');
 
                     $('#form_trial_checksheet')[0].reset();
                     $('#slc_revision_number').empty();

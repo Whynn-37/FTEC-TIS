@@ -653,7 +653,9 @@ const EVALUATE = (() => {
             array_add_to_pdf.push(file_name);
             add_to_pdf_count++;
 
-        } else {
+        } 
+        else 
+        {
             let onclick_value = $(`#btn_add_to_pdf_${file_no}`).attr('onclick');
             let split_onclick_value = onclick_value.split(',');
             let check_file_no_value = split_onclick_value[1];
@@ -1319,20 +1321,20 @@ const EVALUATE = (() => {
                 array_min_max_data.push(split_value);
             });
             
-            let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
+            let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
 
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
             {
-                td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
+                td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
 
                 let min_count = 0;
                 let max_count = 1;
 
                 for (let index = 1; index <= 5; index++) 
                 {
-                    let data_min = `<input  id="txt_item_no_${item_no}_sub_no_${sub_no}_min_${index}" type="text" class="form-control input_text_center" placeholder="Enter Min" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}"  onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}',${item_no},${sub_no},'min_${index}');">`;
+                    let data_min = `<input  id="txt_item_no_${item_no}_sub_no_${sub_no}_min_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}"  onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}',${item_no},${sub_no},'min_${index}');">`;
 
-                    let data_max = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_max_${index}" type="text" class="form-control input_text_center" placeholder="Enter Max" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}',${item_no},${sub_no},'max_${index}');">`;
+                    let data_max = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_max_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}',${item_no},${sub_no},'max_${index}');">`;
 
                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${index}`).html(data_min);
                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${index}`).html(data_max);
