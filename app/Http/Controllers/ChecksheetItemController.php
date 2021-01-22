@@ -8,7 +8,6 @@ use App\ChecksheetData;
 use DB;
 use App\Helpers\ActivityLog;
 use Session;
-
 class ChecksheetItemController extends Controller
 {
     public function storeItems(ChecksheetItem $ChecksheetItem,ChecksheetData $ChecksheetData,Request $Request)
