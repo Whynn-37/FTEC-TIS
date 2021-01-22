@@ -21,7 +21,7 @@ const HISTORY = (() => {
         let button_style = '';
         let history_function = 'APPROVE.ViewFinishedInspectionData';
 
-        if(status === 'FOR INSPECTION' || status === 'ON-GOING INSPECTION')
+        if(status === 'FOR INSPECTION')
         {
             file_button = 'disabled';
             file_button_color = 'btn-secondary';

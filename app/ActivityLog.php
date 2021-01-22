@@ -10,6 +10,6 @@ class ActivityLog extends Model
 
     public function loadActivityLog()
     {
-        return ActivityLog::all();
+        return ActivityLog::orderBy('id', 'desc')->get();
     }
 }
