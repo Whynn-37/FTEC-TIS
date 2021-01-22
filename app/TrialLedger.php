@@ -99,6 +99,36 @@ class TrialLedger extends Model
         ->first();
     }
 
+    public function getForInspection()
+    {
+        $ledger = TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        ->where('trial_ledgers.actual_end_date', null)
+        ->orWhere('trial_ledgers.actual_end_date', '')
+        ->select(
+            'trial_ledgers.application_date', 
+            'trial_ledgers.part_number', 
+            'trial_ledgers.inspection_reason', 
+            'trial_ledgers.revision_number', 
+            'trial_ledgers.trial_number', 
+            'trial_ledgers.part_name', 
+            'trial_ledgers.supplier_code', 
+            'trial_ledgers.inspector_id', 
+            'suppliers.supplier_name'
+        )
+        ->get();
+
+        $checksheet = DB::table('trial_checksheets')
+        ->where('date_finished', '!=', null)
+        ->select('application_date')
+        ->get();
+
+        return 
+        [
+            'ledger' => $ledger,
+            'checksheet' => $checksheet,
+        ];
+    }
+
     public function getTrialLedger($application_date)
     {
         return TrialLedger::where('application_date', $application_date)

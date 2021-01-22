@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\ChecksheetData;
 use App\ChecksheetItem;
 use DB;
+use App\Helpers\ActivityLog;
+use Session;
 
 class ChecksheetDataController extends Controller
 {

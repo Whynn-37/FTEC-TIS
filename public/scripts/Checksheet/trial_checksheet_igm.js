@@ -64,8 +64,8 @@ const IGM = (() => {
         $('#accordion_igm').LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
-        let part_number = $('#slc_part_number').val();
-        let revision_number = $('#slc_revision_number').val();
+        let part_number = $('#txt_part_number').val();
+        let revision_number = $('#txt_revision_number').val();
 
         $.ajax({
             url     : `store-igm`,
@@ -101,8 +101,8 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
-        let part_number       = $('#slc_part_number').val();
-        let inspection_reason = $('#slc_inspection_reason').val();
+        let part_number       = $('#txt_part_number').val();
+        let inspection_reason = $('#txt_inspection_reason').val();
 
         $.ajax({
             url     : `load-igm`,

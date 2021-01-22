@@ -19,6 +19,42 @@
                     <div class="card-body" id="div_trial_checksheet">
                         <h4 class="header-title"><i class="ti-clipboard"></i> TRIAL CHECKSHEET</h4>
                         <form id="form_trial_checksheet" method="post" enctype="multipart/form-data">
+                            {{-- CYCLE TIME --}}
+                            <div class="according accordion-s2 gradiant-bg mb-3" id="div_inspection_list">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <a class="card-link" data-toggle="collapse" href="#accordion_inspection_list"><strong
+                                                style="font-size: 20px;"><i class="ti-agenda"></i>&nbsp; INSPECTION LIST</strong></a>
+                                    </div>
+                                    <div id="accordion_inspection_list" class="collapse show" data-parent="#accordion5">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="single-table">
+                                                        <div class="table-responsive">
+                                                            <table class="table text-center table-bordered" id="tbl_inspection_list" style="text-align:justify;">
+                                                                <thead class="text-uppercase bg-dark">
+                                                                    <tr class="text-white">
+                                                                        <th> ACTION </th>
+                                                                        <th> PART NUMBER </th>
+                                                                        <th> INSPECTION REASON </th>
+                                                                        <th> REVISION NUMBER </th>
+                                                                        <th> TRIAL NUMBER </th>
+                                                                        <th> PART NAME </th>
+                                                                        <th> SUPPLIER CODE / SUPPLIER NAME </th>
+                                                                        <th> INSPECTOR </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="tbody_tbl_inspection_list"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {{-- CHECKSHEET --}}
                             @csrf
                             <div id="accordion4" class="according accordion-s2 gradiant-bg mb-3">
@@ -37,6 +73,22 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <label>PART NUMBER:</label>&nbsp;
+                                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Part number" name="part_number" id="txt_part_number" readonly>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label>INSPECTION REASON (INSPECTION TYPE):</label>&nbsp;
+                                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Inspection Reason" name="inspection_reason" id="txt_inspection_reason" readonly>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>REVISION:</label>
+                                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Revision number" name="revision_number" id="txt_revision_number" readonly>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label>TRIAL NUMBER:</label>
+                                                    <input class="form-control mb-3 form_trial_checksheet_field" type="text" placeholder="Trial Number" name="trial_number" id="txt_trial_number" readonly>
+                                                </div>
+                                                {{-- <div class="col-md-3">
+                                                    <label>PART NUMBER:</label>&nbsp;
                                                     <select class="form-control mb-3 select2 form_trial_checksheet_field" name="part_number" id="slc_part_number" onchange="CHECKSHEET.LoadInspectionReason(this.value)"></select>
                                                 </div>
                                                 <div class="col-md-3 mb-3">
@@ -50,7 +102,7 @@
                                                 <div class="col-md-3 mb-3">
                                                     <label>TRIAL NUMBER:</label>
                                                     <select id="slc_trial_number" name="trial_number" class="form-control mb-3 form_trial_checksheet_field" onchange="CHECKSHEET.LoadApplicationDate()"></select>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
@@ -93,12 +145,12 @@
                                                     <input class="form-control mb-3" type="text" placeholder="Inspector" id="txt_inspector" readonly>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            {{-- <div class="row">
                                                 <div class="col-md-12">
                                                     <button id="btn_validate_load_details" type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.ValidateLoadDetails();"><strong
                                                         style="font-size: 20px;"><i class="ti-search"></i> SEARCH</strong></button>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -430,13 +482,13 @@
             customClass: 'swal-wide',
         };
         // select2
-        let select2 = $('.select2').select2();
-        select2.data('select2').$selection.css('height', '45px');
-        select2.data('select2').$selection.css('margin-bottom', '1px');
+        // let select2 = $('.select2').select2();
+        // select2.data('select2').$selection.css('height', '45px');
+        // select2.data('select2').$selection.css('margin-bottom', '1px');
         
-        let select2_1 = $('.select2_1').select2();
-        select2_1.data('select2').$selection.css('height', '45px');
-        select2_1.data('select2').$selection.css('margin-bottom', '1px');
+        // let select2_1 = $('.select2_1').select2();
+        // select2_1.data('select2').$selection.css('height', '45px');
+        // select2_1.data('select2').$selection.css('margin-bottom', '1px');
         
     </script>
     @endsection

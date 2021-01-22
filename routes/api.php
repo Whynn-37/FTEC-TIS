@@ -35,6 +35,8 @@ Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
 Route::get('load-igm-ng', 'TrialChecksheetController@loadIgmNg');
+Route::get('get-for-inspection', 'TrialChecksheetController@getForInspection');
+
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');

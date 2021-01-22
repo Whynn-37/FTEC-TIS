@@ -19,7 +19,7 @@ class CreateActivityLogsTable extends Migration
             $table->string('url');
             $table->string('method');
             $table->string('ip');
-            $table->string('browser');
+            $table->text('browser');
             $table->string('user_id');
             $table->timestamps();
         });
