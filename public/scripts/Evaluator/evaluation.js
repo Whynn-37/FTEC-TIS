@@ -2583,6 +2583,7 @@ const EVALUATE = (() => {
         let hinsei_count    = 0;
         let edit_count      = 0;
 
+        
         //para malaman kung may unsaved na hinsei
         for (let index = 1; index <= item_no_count; index++) 
         {
@@ -2593,17 +2594,15 @@ const EVALUATE = (() => {
             {
                 hinsei_count++;
             }
-            else
+
+            //para malaman kung may unsaved na inedit na data
+            for (let b_index = 1; b_index <= sub_no_count; b_index++) 
             {
-                //para malaman kung may unsaved na inedit na data
-                for (let b_index = 1; b_index <= sub_no_count; b_index++) 
+                let edit_button = $(`#btn_edit_item_no_${index}_sub_no_${b_index}`).length;
+
+                if (edit_button === 0)
                 {
-                    let edit_button = $(`#btn_edit_item_no_${index}_sub_no_${b_index}`).length;
-    
-                    if (edit_button === 0)
-                    {
-                        edit_count++;
-                    }
+                    edit_count++;
                 }
             }
 

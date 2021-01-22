@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ChecksheetData;
 use App\ChecksheetItem;
+use App\Helpers\ActivityLog;// ako nag add kase hindi nagana wala nito - george
+use Session;// ako nag add kase hindi nagana wala nito - george
 use DB;
 
 class ChecksheetDataController extends Controller
