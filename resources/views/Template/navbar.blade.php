@@ -58,9 +58,8 @@
                                         <a><i class="ti-agenda" style="font-size:1.2em"></i><span
                                             style="font-size:1.2em;">MANAGEMENT</span></a>
                                         <ul class="submenu" style="border-top: 4px solid #01C293;">
-                                            <li><a href="{{ url('supplier') }}"><i class="ti-shopping-cart-full"></i><span>SUPPLIER</span></a></li>
-                                            {{-- <li><a href="index2.html">Ecommerce dashboard</a></li>
-                                            <li><a href="index3.html">SEO dashboard</a></li> --}}
+                                            <li><a href="{{ url('supplier') }}"><i class="ti-shopping-cart-full"></i><span> SUPPLIER </span></a></li>
+                                            <li><a href="{{ url('activity-logs') }}"><i class="ti-harddrives"></i><span> ACTIVITY LOGS </span></a></li>
                                         </ul>
                                     </li>
                                 </ul>

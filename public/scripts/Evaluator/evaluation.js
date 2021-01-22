@@ -136,6 +136,7 @@ const EVALUATE = (() => {
     this_evaluate.ViewFinishedInspectionData = (id, status) => {
 
         $('#modal_view_inspection_data').modal('show');
+        attachment_count = '';
         checksheet_item_count   = '';
         array_add_to_pdf        = [];
         add_to_pdf_count        = 1;
@@ -661,7 +662,7 @@ const EVALUATE = (() => {
             let onclick_value = $(`#btn_add_to_pdf_${file_no}`).attr('onclick');
             let split_onclick_value = onclick_value.split(',');
             let check_file_no_value = split_onclick_value[1];
-
+            
             if (parseInt(check_file_no_value) === add_to_pdf_count - 1) {
                 $(`#img_attachment_${file_no}`).attr('src', `${base_url}/template/assets/images/icon/file.png`);
                 $(`#btn_add_to_pdf_${file_no}`).attr('onclick', `EVALUATE.AddToPdf(${file_no},'','${file_name}','unchecked');`)
@@ -673,7 +674,7 @@ const EVALUATE = (() => {
                 $(`#btn_add_to_pdf_${file_no}`).html('<i class="ti-plus"></i> ADD TO PDF')
 
                 if (array_add_to_pdf.length > 1) {
-
+                    
                     for (let index = 1; index <= parseInt(attachment_count); index++) {
 
                         let onclick_value = $(`#btn_add_to_pdf_${index}`).attr('onclick');

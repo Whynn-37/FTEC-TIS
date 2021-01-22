@@ -15,31 +15,26 @@
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-8">
-                                <h4 class="header-title"><i class="ti-shopping-cart-full"> </i> SUPPLIER LIST </h4><br>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary" style="float:right;" data-toggle="modal" data-target=".upload-supplier-modal" onclick=""><b> <i class="ti-cloud-up"> </i> UPLOAD FILE </b></button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-success" style="float:right;" data-toggle="modal" onclick="SUPPLIER.clearData();"><b><i class="ti-plus"></i> ADD SUPPLIER </b></button>
-                            </div>
-                        </div>
+                        <h4 class="header-title"><i class="ti-harddrives"> </i> ACTIVITY LOGS </h4><br>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="single-table">
                                     <div class="table-responsive">
-                                        <table class="table text-center table-bordered" id="tbl_supplier_data" style="text-align:justify;">
+                                        <table class="table text-center table-bordered" id="tbl_activity_log_data" style="text-align:justify;">
                                             <thead class="text-uppercase bg-dark">
                                                 <tr class="text-white">
                                                     <th> NUMBER </th>
-                                                    <th> SUPPLIER CODE </th>
-                                                    <th> SUPPLIER NAME </th>
-                                                    <th> ACTION </th>
+                                                    <th> SUBJECT </th>
+                                                    <th> URL </th>
+                                                    <th> METHOD </th>
+                                                    <th> I.P </th>
+                                                    <th> BROWSER </th>
+                                                    <th> EMPLOYEE ID </th>
+                                                    <th> UPDATED AT </th>
+                                                    <th> CREATED AT </th>
                                                  </tr>
                                             </thead>
-                                            <tbody id="tbody_tbl_supplier_data"></tbody>
+                                            <tbody id="tbody_tbl_activity_log_data"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -50,8 +45,6 @@
             </div>
         </div>
     </div>
-
-    @include('Management.supplier_modal')
 </div>
 
 @endsection
@@ -59,7 +52,7 @@
 <script src="../node_modules/sweetalert2/dist/sweetalert2.min.js"></script>
 <script src="../node_modules/select2/dist/js/select2.min.js"></script>
 <script src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="{{ asset('scripts/Management/supplier.js') }}"></script>
+<script src="{{ asset('scripts/Management/activity_log.js') }}"></script>
 
 <script>
     // swal

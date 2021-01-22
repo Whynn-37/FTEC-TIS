@@ -21,6 +21,7 @@ Route::get('evaluation', 'PageController@evaluation_page');
 Route::get('approval', 'PageController@approver_page');
 Route::get('history', 'PageController@history_page');
 Route::get('supplier', 'PageController@supplier_page');
+Route::get('activity-logs', 'PageController@activity_log_page');
 Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
