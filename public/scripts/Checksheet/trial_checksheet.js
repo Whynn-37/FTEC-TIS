@@ -622,6 +622,7 @@ const CHECKSHEET = (() => {
                     $('#div_row_save_inspection').prop('hidden',false);
                     $('#div_row_save_inspection').prop('hidden',false);
                     //pag show ng igm
+                    $('#div_accordion_igm').prop('hidden', false);
                     $('#div_inspection_list').hide();
                 }
                 else
@@ -1171,8 +1172,6 @@ const CHECKSHEET = (() => {
     };
     
     this_checksheet.ProceedSaveTrialChecksheet = (final_judgment) => {
-
-    alert();
 
         $('#div_trial_checksheet').LoadingOverlay('show');
 
