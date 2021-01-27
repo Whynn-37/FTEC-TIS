@@ -68,6 +68,7 @@ class TaktTimeController extends Controller
         $checksheet_items = [];
         $approval_result = [];
         $attachment_result = [];
+        $hinsei_result = [];
 
         DB::beginTransaction();
 
@@ -87,7 +88,7 @@ class TaktTimeController extends Controller
                 ];
 
                 $status = "Success";
-                $message = "Successfully Updated"; 
+                $message = "Inspection will continue"; 
 
                 $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
             }
@@ -141,27 +142,53 @@ class TaktTimeController extends Controller
                     
                     $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
 
+                    
                     if (count($result_items) !== 0) 
                     {
                         foreach($result_items as $items_value) 
                         {
                             $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
-    
-                            $checksheet_items[] = 
-                            [
-                                'trial_checksheet_id'   => $last_id['id'],
-                                'item_number'           => $items_value->item_number,
-                                'tools'                 => $items_value->tools,
-                                'type'                  => $items_value->type,
-                                'specification'         => $items_value->specification,
-                                'upper_limit'           => $items_value->upper_limit,
-                                'lower_limit'           => $items_value->lower_limit,
-                                'remarks'               => $items_value->remarks,
-                                'judgment'              => 'N/A',
-                                'item_type'             => 0,
-                                'created_at'            => now(),
-                                'updated_at'            => now()
-                            ];
+                            
+                            if ($items_value->hinsei === 'HINSEI') 
+                            {
+                                $hinsei_result[] = 1;
+
+                                $checksheet_items[] = 
+                                [
+                                    'trial_checksheet_id'   => $last_id['id'],
+                                    'item_number'           => $items_value->item_number,
+                                    'tools'                 => $items_value->tools,
+                                    'type'                  => $items_value->type,
+                                    'specification'         => $items_value->specification,
+                                    'upper_limit'           => $items_value->upper_limit,
+                                    'lower_limit'           => $items_value->lower_limit,
+                                    'remarks'               => $items_value->remarks,
+                                    'judgment'              => $items_value->judgment,
+                                    'item_type'             => 0,
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
+                            else 
+                            {
+                                $hinsei_result[] = 0;
+
+                                $checksheet_items[] = 
+                                [
+                                    'trial_checksheet_id'   => $last_id['id'],
+                                    'item_number'           => $items_value->item_number,
+                                    'tools'                 => $items_value->tools,
+                                    'type'                  => $items_value->type,
+                                    'specification'         => $items_value->specification,
+                                    'upper_limit'           => $items_value->upper_limit,
+                                    'lower_limit'           => $items_value->lower_limit,
+                                    'remarks'               => $items_value->remarks,
+                                    'judgment'              => 'N/A',
+                                    'item_type'             => 0,
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
                         }
     
                         $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
@@ -173,22 +200,42 @@ class TaktTimeController extends Controller
     
                             foreach($items as $item)
                             {
+                                $item->hinsei = $hinsei_result[$i];
                                 $item->checksheet_item_id = $checksheet_item_result[$i];
                                 $new_array[] = $item;
                             }
                         }
-                        
+
                         foreach ($new_array as $value) 
                         {
-                            $checksheet_datas[] =
-                            [
-                                'checksheet_item_id'    => $value['checksheet_item_id'],
-                                'coordinates'           => $value['coordinates'],
-                                'sub_number'            => $value['sub_number'],
-                                'remarks'               => $value['remarks'],
-                                'created_at'            => now(),
-                                'updated_at'            => now()
-                            ];
+                            if ($value['hinsei'] === 1) 
+                            {
+                                $checksheet_datas[] =
+                                [
+                                    'checksheet_item_id'    => $value['checksheet_item_id'],
+                                    'coordinates'           => $value['coordinates'],
+                                    'sub_number'            => $value['sub_number'],
+                                    'data'                  => $value['data'],
+                                    'judgment'              => $value['judgment'],
+                                    'remarks'               => $value['remarks'],
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
+                            else 
+                            {
+                                $checksheet_datas[] =
+                                [
+                                    'checksheet_item_id'    => $value['checksheet_item_id'],
+                                    'coordinates'           => $value['coordinates'],
+                                    'sub_number'            => $value['sub_number'],
+                                    'data'                  => '-,-,-,-,-,-,-,-,-,-',
+                                    'judgment'              => 'N/A',
+                                    'remarks'               => $value['remarks'],
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
                         }
                         
                         $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
@@ -198,7 +245,7 @@ class TaktTimeController extends Controller
                 $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
 
                 $status = "Success";
-                $message = "Successfully Saved"; 
+                $message = "Inspection begins"; 
 
                 $trial_checksheet_id = $last_id['id'];
             }
@@ -213,7 +260,7 @@ class TaktTimeController extends Controller
         }
 
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Takt Time : ' . $takt_times, Session::get('name'));
-        
+
         return 
         [
             'status'    =>  $status,
@@ -265,7 +312,7 @@ class TaktTimeController extends Controller
                 if($result)
                 {
                     $status = "Success";
-                    $message = "Successfully Updated";
+                    $message = "Inspection stopped";
                 }
             }
         }
