@@ -261,9 +261,9 @@ const EVALUATE = (() => {
         {
             $('#trial_checksheet_id').val(value.trial_checksheet_id); 
 
-            (value.specification    === null) ? specs       = '-': specs        = value.specification;
-            (value.upper_limit      === null) ? upper_limit = '-': upper_limit  = value.upper_limit;
-            (value.lower_limit      === null) ? lower_limit = '-': lower_limit  = value.lower_limit;
+            (value.specification    === null || value.specification    === '') ? specs       = '-': specs        = value.specification;
+            (value.upper_limit      === null || value.upper_limit      === '') ? upper_limit = '-': upper_limit  = value.upper_limit;
+            (value.lower_limit      === null || value.lower_limit      === '') ? lower_limit = '-': lower_limit  = value.lower_limit;
 
             if (value.judgment === null || value.judgment === 'N/A')
             {
@@ -279,6 +279,11 @@ const EVALUATE = (() => {
             }
             
             $('#tbody_tbl_igm').empty();
+
+            //MERON NITO DAHIL MAY TYPES NA HINDI KAILANGAN NG HINSEI
+            let td_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_hinsei">
+                <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
+            </td>`;
 
             tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
@@ -304,10 +309,8 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_upper_limit">${upper_limit}</td>
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
-                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null) ? '-' : value.remarks}</td>
-                <td colspan="3" id="td_item_no_${value.item_number}_hinsei">
-                    <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
-                </td>
+                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null  || value.remarks === '') ? '-' : value.remarks}</td>
+                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ? td_hinsei_button : ''}
             </tr>`;
 
             array_type.push(value.type);
@@ -439,8 +442,8 @@ const EVALUATE = (() => {
 
     this_evaluate.AddIgmSubNoInputs = (type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
 
-        let tr                      = '';
-        let new_sub_no              = existing_sub_no_count_per_item;
+        let tr          = '';
+        let new_sub_no  = existing_sub_no_count_per_item;
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
         {
@@ -450,28 +453,47 @@ const EVALUATE = (() => {
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
                 </td>
-				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2" >${coordinates}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(type,array_data,6)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(type,array_data,8)}</td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
-                    ${IGM.ChecksheetDataInputJudgement(judgement)}
-                </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null) ? '-' : remarks}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2">${coordinates}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_4">${IGM.ChecksheetDataInputData(type,array_data,6)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_5">${IGM.ChecksheetDataInputData(type,array_data,8)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null || remarks === '') ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit"  style="vertical-align: middle;" rowspan="2">
                     <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(type,array_data,5)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(type,array_data,7)}</td>
-				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(type,array_data,9)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_2">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_3">${IGM.ChecksheetDataInputData(type,array_data,5)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_4">${IGM.ChecksheetDataInputData(type,array_data,7)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(type,array_data,9)}</td>
 			</tr>`;
         } 
+        else if (type === 'Actual' || type === 'Material Thickness')
+        {
+            tr += `${tr_sub_no_column}
+            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
+                <td>
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+                </td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_2">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_3">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_4">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_5">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit">
+                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
+                </td>
+            </tr`;
+        }
         else 
         {
             tr += `${tr_sub_no_column}
@@ -496,10 +518,8 @@ const EVALUATE = (() => {
                 <td class="td_sub_no_input">
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_5" type="text" class="form-control input_text_center" placeholder="Click visual" onclick="EVALUATE.SubItemSelectVisual(${item_no_count},${new_sub_no},5);" disabled value="${IGM.ChecksheetDataInputData(type,array_data,4)}" >
                 </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
-                    ${IGM.ChecksheetDataInputJudgement(judgement)}
-                </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null) ? '-' : remarks}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit">
                     <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
@@ -734,8 +754,7 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.HinseiButton = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
-        let button = `<button id="btn_item_no_${item_no}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>`;
-
+        let button = `<button id="btn_item_no_${item_no}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>`;
         $(`#td_item_no_${item_no}_hinsei`).html(button);
 
         $(`#txt_item_no_${item_no}_hinsei_remarks`).text(remarks);
@@ -756,6 +775,7 @@ const EVALUATE = (() => {
     }
 
     this_evaluate.RemarksInputs = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
+
         let td_remarks = `
         <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_hinsei_remarks" placeholder="Enter remarks"></textarea>
         <br>
@@ -824,6 +844,7 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.SaveHinsei = (item_no,existing_specs, existing_upper_limit, existing_lower_limit) => {
+
 
         let trial_checksheet_id     = $(`#trial_checksheet_id`).val();
         let item_no_id              = $(`#txt_hidden_item_no_${item_no}_id`).val();
@@ -900,8 +921,8 @@ const EVALUATE = (() => {
 
         if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
         { 
-            if (existing_specs !== specs || existing_upper_limit !== upper_limit || existing_lower_limit !== lower_limit)
-            {
+            // if (existing_specs !== specs || existing_upper_limit !== upper_limit || existing_lower_limit !== lower_limit)
+            // {
                 Swal.fire($.extend(swal_options, {
                     title: 'Are you sure you want to save?',
                 })).then((result) => 
@@ -917,13 +938,26 @@ const EVALUATE = (() => {
 
                         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
                         {
-                            let sub_no_count = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
-
-                            for (let sub_no = 1; sub_no <= sub_no_count; sub_no++) 
+                            for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
                             {
-                                EVALUATE.RejudgementMinMax(item_no, sub_no, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
+                                EVALUATE.RejudgementMinMax(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
 
-                                if (sub_no == sub_no_count)
+                                if (sub_no == item_no_sub_no_count)
+                                {
+                                    //para malaman kung may remarks o wala
+                                    (remarks == null) ? new_remarks = '' : new_remarks = remarks;
+                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'hinsei');
+                                }
+                            }
+                        }
+                        else if (type === 'Actual' || type === 'Material Thickness')
+                        {
+                            // ONGOING PA SA SAVE HINSEI DITO, CHECK NALANG ULIT PAGBALIK KUNG ANO PA MALI OR KULANG, kinoment ko lang nasa baba pero ito codes non
+                            for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
+                            {
+                                EVALUATE.RejudgementDataAMT(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
+
+                                if (sub_no == item_no_sub_no_count)
                                 {
                                     //para malaman kung may remarks o wala
                                     (remarks == null) ? new_remarks = '' : new_remarks = remarks;
@@ -962,21 +996,111 @@ const EVALUATE = (() => {
                         }
                     }
                 })
-            }
-            else
-            {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Hinsei Cancelled',
-                    text: 'There is no changes with the specification, upper limit, lower limit. Hinsei is cancelled.',
-                })
-                let td_item_remarks = $(`#td_item_no_${item_no}_remarks`).html();
-
-                EVALUATE.CancelHinsei(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
-            }
+            // }
+            // else
+            // {
+            //     Swal.fire({
+            //         icon: 'warning',
+            //         title: 'Hinsei Cancelled',
+            //         text: 'There is no changes with the specification, upper limit, lower limit. Hinsei is cancelled.',
+            //     })
+            //     let td_item_remarks = $(`#td_item_no_${item_no}_remarks`).html();
+            //     EVALUATE.CancelHinsei(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
+            // }
         }
 
     }
+
+    this_evaluate.RejudgementDataAMT = (item_no, sub_no, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks) => {
+        //AMT -> Actual Material Thickness, 5 inputs lang
+
+        let upper_limit     = $(`#txt_item_no_${item_no}_upper_limit`).val();
+        let lower_limit     = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let last_value      = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
+        let array_value     = [];
+        let array_judgement = [];
+        
+        if (coordinates !== '')
+        {
+            if (last_value !== '')
+            {
+                for (let data_index = 1; data_index <= 5; data_index++) 
+                {
+                    let value = $(`#td_item_no_${item_no}_sub_no_${sub_no}_amt_${data_index}`).html();
+                    
+                    if (value === '')
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    }
+                    else
+                    {
+                        if (value === '-')
+                        {
+                            array_value.push(value);
+                            array_judgement.push('NA');
+                        }
+                        else
+                        {
+                            if (isNaN(parseFloat(value)))
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            }
+                            else
+                            {
+                                array_value.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
+
+                                if (parseFloat(value) > parseFloat(upper_limit) || parseFloat(value) < parseFloat(lower_limit))
+                                {
+                                    array_judgement.push('NG');
+                                }
+                                else
+                                {
+                                    array_judgement.push('OK');
+                                }
+                            }
+                        }
+                    }
+
+                    if (data_index === 5)
+                    {
+                        if (array_judgement.every( (value, i, array) => value === 'NA') == true)
+                        {
+                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        }
+                        else
+                        {
+                            if ($.inArray('NG',array_judgement) === -1) 
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                            } 
+                            else 
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                            }
+                            EVALUATE.OverallRejudgement(item_no,sub_no,array_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
+                            array_value     = [];
+                            array_judgement = [];
+                        }
+                        
+                    }
+                }
+            }
+            else
+            {
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            }
+        }
+        else
+        {
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+        }
+    };
 
     this_evaluate.RejudgementMinMax = (item_no, sub_no, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks) => {
 
@@ -991,7 +1115,6 @@ const EVALUATE = (() => {
         {
             let min_value_loop = $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).html();
             let max_value_loop = $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).html();
-     
             // checking ng min
             if (min_value_loop !== '') 
             {   
@@ -1038,15 +1161,16 @@ const EVALUATE = (() => {
                             }
                         }
                     }
-
+                    
                     array_min_max_value.push((parseFloat(min_value_loop) > 0) ? `+${parseFloat(min_value_loop)}`: parseFloat(min_value_loop));
                 }
-             }
-             else
-             {
+            }
+            else
+            {
+                
                 array_min_max_judgement_per_sub_item.push('NA');
                 array_min_max_value.push('-');
-             }
+            }
 
             // checking ng max
             if (max_value_loop !== '') 
@@ -1094,7 +1218,7 @@ const EVALUATE = (() => {
                             }
                         }
                     }
-
+                    
                     array_min_max_value.push((parseFloat(max_value_loop) > 0) ? `+${parseFloat(max_value_loop)}`: parseFloat(max_value_loop));
                 }
             }
@@ -1122,7 +1246,7 @@ const EVALUATE = (() => {
                     {
                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
                     }
-                  
+                   
                     //pagkuha ng overall judgement para sa checksheet item 
                     EVALUATE.OverallRejudgement(item_no,sub_no,array_min_max_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
                     array_min_max_judgement_per_sub_item = [];
@@ -1138,12 +1262,20 @@ const EVALUATE = (() => {
         let total_sub_no_count              = sub_no_count;
         let id                              = $(`#txt_hidden_item_no_${item_no}_id`).val();
         let judgment_datas                  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
-        
+
         if (action === 'hinsei')
         {
-            let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
-            let split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
-            var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+            if (type === 'Actual' || type === 'Material Thickness')
+            {
+                let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
+                let split_split_sub_item_remarks    = split_sub_item_remarks[9].split(')');
+                var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+            }
+            else
+            {
+                split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
+                sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+            }
         }
         else
         {
@@ -1181,7 +1313,7 @@ const EVALUATE = (() => {
         
         if ($.inArray('N/A',array_overall_judgement) === -1)
         {
-            if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance') 
+            if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance' || type !== 'Actual' || type !== 'Material Thickness') 
             {
                 EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgment_item,item_type,new_remarks,final_judgment,action);
                 array_overall_judgement     = [];
@@ -1304,75 +1436,95 @@ const EVALUATE = (() => {
     this_evaluate.EditSubItem = (type,item_no, sub_no, coordinates, array_data,remarks) => {
 
         let  hinsei_button = $(`#btn_item_no_${item_no}_hinsei`).length;
-        let  item_judgment = $(`#td_item_no_1_judgement span`).text();
+        let  item_judgment = $(`#td_item_no_${item_no}_judgement span`).text();
 
-        if (hinsei_button === 0)
+        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
         {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Unsaved hinsei',
-                text: 'Please save/cancel the hinsei before editing the checksheet data',
-            })
-        }
-        else
-        {
-            $(`#btn_edit_sub_no_${sub_no}`).prop('hidden', true);
-
-            let array_min_max_data          = [];
-
-            split_data = array_data.split(',');
-            split_data.forEach((split_value) => {
-                array_min_max_data.push(split_value);
-            });
-            
-            let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
-
-            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+            if (hinsei_button === 0)
             {
-                td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
-
-                let min_count = 0;
-                let max_count = 1;
-
-                for (let index = 1; index <= 5; index++) 
-                {
-                    let data_min = `<input  id="txt_item_no_${item_no}_sub_no_${sub_no}_min_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}"  onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}',${item_no},${sub_no},'min_${index}');">`;
-
-                    let data_max = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_max_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}',${item_no},${sub_no},'max_${index}');">`;
-
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${index}`).html(data_min);
-                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${index}`).html(data_max);
-                    
-                    min_count += 2;
-                    max_count += 2;
-                }
-
-                var sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Unsaved hinsei',
+                    text: 'Please save/cancel the hinsei before editing the checksheet data',
+                })
             }
             else
             {
-                for (let visual_no = 1; visual_no <= 5; visual_no++) 
+                $(`#btn_edit_sub_no_${sub_no}`).prop('hidden', true);
+
+                let array_min_max_data          = [];
+
+                split_data = array_data.split(',');
+                split_data.forEach((split_value) => {
+                    array_min_max_data.push(split_value);
+                });
+                
+                let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
+
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                 {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
+                    td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
+
+                    let min_count = 0;
+                    let max_count = 1;
+
+                    for (let index = 1; index <= 5; index++) 
+                    {
+                        let data_min = `<input  id="txt_item_no_${item_no}_sub_no_${sub_no}_min_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Min" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'min')" title='min' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}"  onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,min_count)}',${item_no},${sub_no},'min_${index}');">`;
+
+                        let data_max = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_max_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Max" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'max')" title='max' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}" onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,max_count)}',${item_no},${sub_no},'max_${index}');">`;
+
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_min_${index}`).html(data_min);
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_max_${index}`).html(data_max);
+                        
+                        min_count += 2;
+                        max_count += 2;
+                    }
+
+                    var sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
                 }
+                else // pang  if (type === 'Actual' || type === 'Material Thickness')
+                {
+                    td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
 
-                sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+                    let data_count = 0;
+
+                    for (let index = 1; index <= 5; index++) 
+                    {
+                        let data_input = `<input  id="txt_item_no_${item_no}_sub_no_${sub_no}_amt_${index}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter data" autocomplete="off" onchange="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},${index},'amt')" title='data' value="${IGM.ChecksheetDataInputData(type,array_min_max_data,data_count)}"  onkeypress="return event.charCode >= 43 && event.charCode <= 57" onclick="IGM.CheckIfDashValue('${IGM.ChecksheetDataInputData(type,array_min_max_data,data_count)}',${item_no},${sub_no},'amt_${index}');">`;
+                    
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_amt_${index}`).html(data_input);
+                        data_count++;
+                    }
+                }
+                
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
             }
-            
-            let td_edit_button = `
-            <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
-            <br>
-            <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-            
-            <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
-
-            $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
-            $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
-
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
         }
+        else //pang mga kasamahan ng type = Belt Fit
+        {
+            for (let visual_no = 1; visual_no <= 5; visual_no++) 
+            {
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
+            }
+
+            sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+        }
+
+        let td_edit_button = `
+        <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
+        <br>
+        <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+        
+        <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
+
+        
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
+
+        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
+        
     };
 
     this_evaluate.SubItemSelectVisual = (item_no,sub_no,visual_no) => {
@@ -1426,6 +1578,7 @@ const EVALUATE = (() => {
 
         let coordinates     =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
         let min_max_value   =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
+        let type            =   $(`#td_item_no_${item_no}_type`).html();
 
         $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).attr('onclick',`IGM.CheckIfDashValue('${min_max_value}',${item_no},${sub_no},'${min_max_type}_${min_max_no}')`);
         
@@ -1433,7 +1586,14 @@ const EVALUATE = (() => {
         {
             $(`#span_coordinates_error_${item_no}`).remove();
 
-            EVALUATE.ValidateSubItemGetMinMax(item_no, sub_no, min_max_no, min_max_type);
+            if (type === 'Actual' || type === 'Material Thickness')
+            {
+                EVALUATE.ValidateSubItemGetDataAMT(item_no,sub_no);
+            }
+            else
+            {
+                EVALUATE.ValidateSubItemGetMinMax(item_no, sub_no, min_max_no, min_max_type);
+            }
         }
         else
         {
@@ -2040,6 +2200,102 @@ const EVALUATE = (() => {
         }
     };
 
+    this_evaluate.ValidateSubItemGetDataAMT = (item_no, sub_no) => {
+        //AMT -> Actual Material Thickness, 5 inputs lang
+
+        let upper_limit     = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit     = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let last_value      = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
+        
+        let array_judgement = [];
+        
+        if (coordinates !== '')
+        {
+            if (last_value !== '')
+            {
+                final_array_min_max_datas   = [];
+
+                for (let data_index = 1; data_index <= 5; data_index++) 
+                {
+                    let value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${data_index}`).val();
+
+                    if (value === '')
+                    {
+                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    }
+                    else
+                    {
+                        if (value === '-')
+                        {
+                            final_array_min_max_datas.push(value);
+                            array_judgement.push('NA');
+                        }
+                        else
+                        {
+                            if (isNaN(parseFloat(value)))
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            }
+                            else
+                            {
+                                final_array_min_max_datas.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
+
+                                if (parseFloat(value) > parseFloat(upper_limit) || parseFloat(value) < parseFloat(lower_limit))
+                                {
+                                    array_judgement.push('NG');
+                                }
+                                else
+                                {
+                                    array_judgement.push('OK');
+                                }
+                            }
+                        }
+                    }
+
+                    if (data_index === 5)
+                    {
+                        if (array_judgement.every( (value, i, array) => value === 'NA') == true)
+                        {
+                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        }
+                        else
+                        {
+                            if ($.inArray('NG',array_judgement) === -1) 
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                
+                                array_judgement = [];
+                            } 
+                            else 
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+
+                                array_judgement = [];
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            else
+            {
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            }
+        }
+        else
+        {
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+        }
+    };
+
     this_evaluate.SaveSubItem = (type, item_no, sub_no, coordinates,visuals_min_max_datas) => {
 
         let sub_item_judgement  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
@@ -2074,6 +2330,10 @@ const EVALUATE = (() => {
                 else if  (type === 'Min and Max')
                 {
                     EVALUATE.ValidateSaveSubItemMinMax(type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates);
+                }
+                else if (type === 'Actual' || type === 'Material Thickness')
+                {
+                    EVALUATE.ValidateSaveSubItemAMT(type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates);
                 }
                 else
                 {
@@ -2181,6 +2441,57 @@ const EVALUATE = (() => {
             }
         }
     };
+    
+    this_evaluate.ValidateSaveSubItemAMT = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
+        
+        let td_sub_item_remarks = $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html();
+        let array_data  = [];
+        let split_data          = visuals_min_max_datas.split(',');
+
+        split_data.forEach((split_value) => {
+            array_data.push(split_value);
+        });
+
+        let data_count    = 0;
+        let changes_count = 0;
+        
+        //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
+        for (let a_count = 1; a_count <= 5; a_count++) 
+        {
+            let value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).val();
+
+            if (value === '')
+            {
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).val('-');
+            }
+
+            //para malaman kung may changes ba sa coordinates or visuals
+            if (value !== array_data[data_count])
+            {
+                changes_count++;
+            }
+
+            data_count++;
+
+            if (a_count === 5)
+            {
+                if (changes_count > 0)
+                {
+                    //final_array_min_max_datas naka global to
+                    EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,final_array_min_max_datas,type,remarks);
+                }
+                else
+                {
+                    EVALUATE.CancelSubItem(type, item_no, sub_no, coordinates, visuals_min_max_datas,sub_item_judgement,(td_sub_item_remarks === '-') ? '' : td_sub_item_remarks);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Edit Cancelled',
+                        text: 'There is no changes with the coordinates and data. Edit is cancelled.',
+                    })
+                }
+            }
+        }
+    };
 
     this_evaluate.ProceedSaveSubItem = (item_no, sub_no,new_coordinates,final_array_min_max_datas,type,remarks) => {
 
@@ -2191,7 +2502,7 @@ const EVALUATE = (() => {
             {
                 $(`#accordion_igm`).LoadingOverlay('show');
                 
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'  || type === 'Actual' || type === 'Material Thickness')
                 {
                     EVALUATE.SubitemCalculateOverallJudgement(item_no, sub_no,final_array_min_max_datas,type,remarks);
                 }
@@ -2229,6 +2540,17 @@ const EVALUATE = (() => {
                 
                 min_count += 2;
                 max_count += 2;
+            }
+        }
+        else if (type === 'Actual' || type === 'Material Thickness')
+        {
+            let data_count = 0;
+
+            for (let index = 1; index <= 5; index++) 
+            {
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_amt_${index}`).html(IGM.ChecksheetDataInputData(type,array_visual_min_max_data,data_count));
+                
+                data_count++;
             }
         }
         else
@@ -2272,7 +2594,7 @@ const EVALUATE = (() => {
        
         $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(button);
 
-        $(`#td_item_no_1_judgement`).html((item_judgment === 'NG') ? '<span class="badge badge-danger subitem-visual-judgement">NG</span>' : '<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+        $(`#td_item_no_${item_no}_judgement`).html((item_judgment === 'NG') ? '<span class="badge badge-danger subitem-visual-judgement">NG</span>' : '<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
     };
 
     this_evaluate.SubitemCalculateOverallJudgement = (item_no, sub_no, array_data, type,remarks) => {
@@ -2341,7 +2663,7 @@ const EVALUATE = (() => {
                     {
                         trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
                         {
                             //auto judgement papunta sa DB para sa checksheet item
                             EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
@@ -2357,7 +2679,7 @@ const EVALUATE = (() => {
                     {
                         trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
                         {
                             //auto judgement papunta sa DB para sa checksheet item
                             EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
@@ -2376,7 +2698,7 @@ const EVALUATE = (() => {
                 {
                     trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
                     {
                         //auto judgement papunta sa DB para sa checksheet item
                         EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
@@ -2392,7 +2714,7 @@ const EVALUATE = (() => {
                 {
                     trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
                     {
                         //auto judgement papunta sa DB para sa checksheet item
                         EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
@@ -2479,7 +2801,8 @@ const EVALUATE = (() => {
                 {
                     if (action === 'edit')
                     {
-                        let button = `<button type="button" id ="btn_edit_item_no_${item_no}_sub_no_${sub_number}" type ="button" class ="btn btn-success btn-block" onclick ="EVALUATE.EditSubItem('${type}',${item_no},${sub_number},'${coordinates}','${data}','${remarks}');"> <strong class ="strong-font"> <i class="ti-pencil-alt"></i> EDIT</strong></button>`;
+                        let button = `<button type="button" id ="btn_edit_item_no_${item_no}_sub_no_${sub_number}" type ="button" class ="btn btn-success btn-block" onclick ="EVALUATE.EditSubItem('${type}',${item_no},${sub_number},'${coordinates}','${data}','${remarks}');"> <strong class ="strong-font"> <i 
+                        class="ti-pencil-alt"></i> EDIT</strong></button>`;
 
                         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                         {
@@ -2493,6 +2816,17 @@ const EVALUATE = (() => {
                                 
                                 min_count += 2;
                                 max_count += 2;
+                            }
+                        }
+                        else if (type === 'Actual' || type === 'Material Thickness')
+                        {
+                            let data_count = 0;
+
+                            for (let index = 1; index <= 5; index++) 
+                            {
+                                $(`#td_item_no_${item_no}_sub_no_${sub_number}_amt_${index}`).html(IGM.ChecksheetDataInputData(type,data,data_count));
+                                
+                                data_count++;
                             }
                         }
                         else
@@ -2583,16 +2917,19 @@ const EVALUATE = (() => {
         let hinsei_count    = 0;
         let edit_count      = 0;
 
-        
         //para malaman kung may unsaved na hinsei
         for (let index = 1; index <= item_no_count; index++) 
         {
+            let type            = $(`#td_item_no_${index}_type`).html();
             let hinsei_button   = $(`#btn_item_no_${index}_hinsei`).length;
             let sub_no_count    = $(`#txt_hidden_item_no_${index}_sub_no_count`).val();
 
-            if (hinsei_button === 0)
+            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
             {
-                hinsei_count++;
+                if (hinsei_button === 0)
+                {
+                    hinsei_count++;
+                }
             }
 
             //para malaman kung may unsaved na inedit na data

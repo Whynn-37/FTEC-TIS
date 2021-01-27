@@ -3706,7 +3706,7 @@ const IGM = (() => {
                             }
                             else
                             {
-                                array_value.push(value);
+                                array_value.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
 
                                 if (parseFloat(value) > parseFloat(upper_limit) || parseFloat(value) < parseFloat(lower_limit))
                                 {
