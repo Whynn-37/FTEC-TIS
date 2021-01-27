@@ -512,23 +512,11 @@ class TrialChecksheetController extends Controller
                     $file = 'D:\\'.$igm_file_name;
                     // $file = 'C:\TIS\\'.$igm_file_name;
         
-<<<<<<< HEAD
-                        // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                        // $file = 'D:\\'.$igm_file_name;
-                        $file = 'F:\TIS\\'.$igm_file_name;
-            
-                        // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
-                        $sheet = 0;
-                        $igm_data = [];
-                        $checksheet_item = [];
-                        $checksheet_datas = [];
-=======
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
                     $igm_data = [];
                     $checksheet_item = [];
                     $checksheet_datas = [];
->>>>>>> local
 
                     if(file_exists($file))
                     {

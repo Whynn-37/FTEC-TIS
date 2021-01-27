@@ -136,11 +136,34 @@
                             </div>
                         </div>
                     </div>
+                    <div id="accordion_disapprove_reason" class="according accordion-s2 gradiant-bg-danger mb-3" hidden>
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="card-link" href="#accordion_reason"><strong
+                                        style="font-size: 20px;"><i class="ti-comment-alt"></i>
+                                        DISAPPROVE REASON</strong></a>
+                            </div>
+                            <div id="accordion_reason" class="show" data-parent="#accordion_disapprove_reason">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <textarea id="txt_disapprove_reason" class="form-control textarea_hinsei" placeholder="Enter reason"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button id="btn_approve_data" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.ApproveData();"><strong class="strong-font"><i class="ti-check"></i> APPROVE</strong></button>
-                <button type="button" class="btn btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                <button id="btn_evaluate_cancel" type="button" class="btn btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                <button id="btn_disapprove" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.DisapproveData();"><strong class="strong-font"><i class="ti-close"></i> DISAPPROVE</strong></button>
+                
+                {{-- para sa pag disapprove --}}
+                <button id="btn_submit_disapprove" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.ProceedDisapproveData();" hidden><strong class="strong-font"><i class="ti-check"></i> PROCEED TO DISAPPROVE</strong></button>
+                <button id="btn_cancel_disapprove" type="button" class="btn btn-outline-secondary btn-block" onclick="EVALUATE.CancelDisapproveData();" hidden><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
             </div>
         </div>
     </div>

@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ChecksheetItem;
 use App\ChecksheetData;
-use App\Helpers\ActivityLog;// ako nag add kase hindi nagana wala nito - george
-use Session;// ako nag add kase hindi nagana wala nito - george
 use DB;
 use App\Helpers\ActivityLog;
 use Session;

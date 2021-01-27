@@ -566,7 +566,8 @@ class ApprovalController extends Controller
                 $message = 'Reapproved by Evaluator';
             }
             
-            if ($decision == 2 && $action == 2
+            if ($decision == 1 && $action == 2
+                || $decision == 2 && $action == 2 
                 || $decision == 3 && $action == 1) 
             {
                 $result =  $Approval->approved($trial_checksheet_id, $data);

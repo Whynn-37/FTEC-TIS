@@ -3040,6 +3040,94 @@ const EVALUATE = (() => {
         })
     };
 
+    this_evaluate.DisapproveData = () => {
+
+        $('#btn_approve_data').prop('hidden',true);
+        $('#btn_evaluate_cancel').prop('hidden',true);
+        $('#btn_disapprove').prop('hidden',true);
+        $('#btn_submit_disapprove').prop('hidden',false);
+        $('#btn_cancel_disapprove').prop('hidden',false);
+        $('#accordion_disapprove_reason').prop('hidden',false);
+        $('#txt_disapprove_reason').focus();
+    };
+
+    this_evaluate.CancelDisapproveData = () => {
+
+        $('#btn_approve_data').prop('hidden',false);
+        $('#btn_evaluate_cancel').prop('hidden',false);
+        $('#btn_disapprove').prop('hidden',false);
+        $('#btn_submit_disapprove').prop('hidden',true);
+        $('#btn_cancel_disapprove').prop('hidden',true);
+        $('#accordion_disapprove_reason').prop('hidden',true);
+        $('#span_error_reason').remove();
+    };
+
+    this_evaluate.ProceedDisapproveData = () => {
+
+        let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let reason              = $('#txt_disapprove_reason').val();
+
+        if (reason === '')
+        {
+            $('#span_error_reason').remove();
+            $('#txt_disapprove_reason').after(`<span id="span_error_reason" class="span-error">Required</span>`);
+        }
+        else
+        {
+            $('#span_error_reason').remove();
+
+            Swal.fire($.extend(swal_options, {
+                title: 'Are you sure you want to disapprove?',
+            })).then((result) => 
+            {
+                if (result.value) 
+                {
+                    $('#div_modal_content').LoadingOverlay('show');
+
+                    $.ajax({
+                        url     : `approved`,
+                        type    : 'post',
+                        dataType: 'json',
+                        data    : 
+                        {
+                            _token              : _TOKEN,
+                            trial_checksheet_id : trial_checksheet_id,
+                            decision            : 1,
+                            action              : 2,
+                            reason              : reason,
+                        },
+                        cache   : false,
+                        success: result => 
+                        {
+                            if (result.status === 'Success')
+                            {
+                                
+                                $('#modal_view_inspection_data').modal('hide');
+                                EVALUATE.LoadFinishedInspectionData();
+                                EVALUATE.LoadDisapprovedInspectionData();
+    
+                                Swal.fire({
+                                    icon    : 'success',
+                                    title   : 'Success',
+                                    text    : 'Diaspprove successful',
+                                })
+                            }
+                            else
+                            {
+                                Swal.fire({
+                                    icon    : 'error',
+                                    title   : data.status,
+                                    text    : data.message,
+                                })
+                            }
+                            $('#div_modal_content').LoadingOverlay('hide');
+                        }
+                    });
+                }
+            })
+        }
+    };
+
     return this_evaluate;
 })();
 
