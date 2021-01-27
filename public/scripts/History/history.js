@@ -1,4 +1,6 @@
-$(document).ready(function () {
+$(document).ready(function () 
+{
+    $('#tbl_history_data').DataTable();
 
     $("#accordion_attachment").remove();
     $("#modal_view_inspection_data .modal-footer").remove();
@@ -38,12 +40,11 @@ const HISTORY = (() => {
             cache   : false,
             success: data => 
             {
-                console.log(data);
 
                 $('#tbl_history_data').DataTable().destroy();
                 $('#tbody_tbl_history_data').empty();
-
                 let tbody = '';
+<<<<<<< Updated upstream
                 data.forEach((value) => {
                         tbody +=
                         `<tr>
@@ -66,6 +67,33 @@ const HISTORY = (() => {
                         <td><button class="btn ${file_button_color} btn-block" ${file_button} style="${button_style}" onclick="HISTORY.viewFiles('${value.id}','${status}','${value.file_name}','${value.file_folder}','${value.file_name_merge}');">VIEW FILES</button></td>
                     </tr>`;
                 });
+=======
+
+                if(data.length !== undefined)
+                {   
+                    data.forEach((value) => {
+                        tbody +=
+                            `<tr>
+                            <td>
+                                <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            </td>
+                            <td>${value.part_number}</td>
+                            <td>${value.part_name}</td>
+                            <td>${value.supplier_name}</td>
+                            <td>${value.revision_number}</td>
+                            <td>${value.trial_number}</td>
+                            <td>${value.judgment}</td>
+                            <td>${value.inspector}</td>
+                            <td>${value.inspect_datetime}</td>
+                            <td>${value.evaluated_by}</td>
+                            <td>${value.evaluated_datetime}</td>
+                            <td>${value.approved_by}</td>
+                            <td>${value.approved_datetime}</td>
+                            <td><a href ='#'> Download Here </a></td>
+                        </tr>`;
+                    });
+                }
+>>>>>>> Stashed changes
 
                 $('#tbody_tbl_history_data').html(tbody);
 
@@ -223,6 +251,7 @@ const HISTORY = (() => {
         $('#div_attachments_1').html(files_1);
     }
 
+<<<<<<< Updated upstream
     this_history.openFiles = (file_names,file_folder,ext) =>
     {
         if(ext == 0)
@@ -238,6 +267,10 @@ const HISTORY = (() => {
             window.open(`../../../tis/storage/app/public/${file_folder}/${file_folder}${ext}`);
         }
     }
+=======
+    return 0;
+     
+>>>>>>> Stashed changes
 
     return this_history;
     

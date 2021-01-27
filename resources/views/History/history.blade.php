@@ -11,12 +11,11 @@
 
 <div class="main-content-inner">
     <div class="container">
-        {{-- FINISHED --}}
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <h4 class="header-title"><i class="ti-clipboard"></i> HISTORY </h4><br>
+                        <h4 class="header-title"><i class="fa fa-search"></i> SEARCH HISTORY </h4>
                         <div class="row">
                             <div class="col-md-6">
                                 <label>STATUS:</label>
@@ -35,12 +34,11 @@
                 </div>
             </div>
         </div>
-        {{-- DISAPPROVED --}}
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <h4 class="header-title"><i class="ti-clipboard"></i> HISTORY DATA</h4><br>
+                        <h4 class="header-title"><i class="fa fa-history"></i> HISTORY DATA</h4>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="single-table">
