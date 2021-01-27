@@ -57,6 +57,8 @@ class DownTimeController extends Controller
                     'down_time'             =>  '',
                     'total_down_time'       =>  '',
                 ];
+
+                $type_of = 'start';
             }
             else
             {
@@ -69,6 +71,8 @@ class DownTimeController extends Controller
                     'down_time'             =>  date('H:i:s'),
                     'total_down_time'       =>  $total_down_time,
                 ];
+
+                $type_of = 'stop';
             }
 
             $result = $DownTime->storeDownTime($data);
@@ -79,7 +83,12 @@ class DownTimeController extends Controller
             if ($result) 
             {
                 $status = 'Success';
-                $message = 'Successfully Update';
+                $message = 'downtime stopped';
+
+                if ($type_of === 'start') 
+                {
+                    $message = 'downtime has begun';
+                }
             }
         }
 
