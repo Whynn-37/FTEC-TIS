@@ -65,8 +65,8 @@ const IGM = (() => {
         $('#accordion_igm').LoadingOverlay('show');
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
-        let part_number = $('#slc_part_number').val();
-        let revision_number = $('#slc_revision_number').val();
+        let part_number = $('#txt_part_number').val();
+        let revision_number = $('#txt_revision_number').val();
 
         $.ajax({
             url     : `store-igm`,

@@ -21,6 +21,7 @@ Route::get('evaluation', 'PageController@evaluation_page');
 Route::get('approval', 'PageController@approver_page');
 Route::get('history', 'PageController@history_page');
 Route::get('supplier', 'PageController@supplier_page');
+Route::get('activity-logs', 'PageController@activity_log_page');
 Route::get('/trial-checksheet/{id}', function ($id) {
     return $id;
 });
@@ -52,6 +53,8 @@ Route::post('store-igm', 'TrialChecksheetController@storeIgm');
 Route::get('load-igm', 'TrialChecksheetController@loadIgm');
 Route::post('finished-checksheet', 'TrialChecksheetController@finishedChecksheet');
 Route::get('load-igm-ng', 'TrialChecksheetController@loadIgmNg');
+Route::get('get-for-inspection', 'TrialChecksheetController@getForInspection');
+
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');

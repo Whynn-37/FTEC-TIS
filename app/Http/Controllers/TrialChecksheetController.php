@@ -281,6 +281,104 @@ class TrialChecksheetController extends Controller
         ];
     }
 
+    public function getForInspection(TrialLedger $TrialLedger)
+    {
+        $data = $TrialLedger->getForInspection();
+
+        if (count($data['checksheet']) !== 0) 
+        {
+            foreach ($data['ledger'] as $ledger_value) 
+            {
+                $application_date[] = $ledger_value->application_date;
+                foreach ($data['checksheet'] as $checksheet_value) 
+                {
+                    if ($checksheet_value->application_date === $ledger_value->application_date)
+                    {
+                        $match_application_date[] =  $ledger_value->application_date;
+                        $result = [];
+                    }
+                    else 
+                    {
+                        $result[] = 
+                        [
+                            'application_date' => $ledger_value->application_date,
+                            'part_number' => $ledger_value->part_number,
+                            'inspection_reason' => $ledger_value->inspection_reason,
+                            'revision_number' => $ledger_value->revision_number,
+                            'trial_number' => $ledger_value->trial_number,
+                            'part_name' => $ledger_value->part_name,
+                            'supplier_code' => $ledger_value->supplier_code,
+                            'inspector_id' => $ledger_value->inspector_id,
+                            'supplier_name' => $ledger_value->supplier_name
+                        ];
+                        $match_application_date = false;
+                    }
+                }
+            }
+
+            if($match_application_date !== false)
+            {
+                for($x=0; $x<count($match_application_date);$x++)
+                {
+                    $key = array_search($match_application_date[$x], $application_date); 
+                    unset($data['ledger'][$key]); 
+                }
+
+                foreach ($data['ledger'] as $ledger_value) 
+                { 
+                    $result[] = 
+                    [
+                        'application_date' => $ledger_value->application_date,
+                        'part_number' => $ledger_value->part_number,
+                        'inspection_reason' => $ledger_value->inspection_reason,
+                        'revision_number' => $ledger_value->revision_number,
+                        'trial_number' => $ledger_value->trial_number,
+                        'part_name' => $ledger_value->part_name,
+                        'supplier_code' => $ledger_value->supplier_code,
+                        'inspector_id' => $ledger_value->inspector_id,
+                        'supplier_name' => $ledger_value->supplier_name
+                    ];
+                }
+            }
+        }
+        else 
+        {
+            foreach ($data['ledger'] as $ledger_value) 
+            {
+                $result[] = 
+                [
+                    'application_date' => $ledger_value->application_date,
+                    'part_number' => $ledger_value->part_number,
+                    'inspection_reason' => $ledger_value->inspection_reason,
+                    'revision_number' => $ledger_value->revision_number,
+                    'trial_number' => $ledger_value->trial_number,
+                    'part_name' => $ledger_value->part_name,
+                    'supplier_code' => $ledger_value->supplier_code,
+                    'inspector_id' => $ledger_value->inspector_id,
+                    'supplier_name' => $ledger_value->supplier_name
+                ];
+            }
+        }
+
+        $result = $this->unique_multidim_array($result,'application_date');
+
+        $status = 'Error';
+        $message = 'No Part Number';
+
+        if (count($result) !== 0) 
+        {
+            $status = 'Success';
+            $message = 'Part Number Successfully Load';
+        }
+        
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $result
+        ];
+    }
+
     public function loadDetails(TrialLedger $TrialLedger,
                                 Supplier $Supplier,
                                 TrialChecksheet $TrialChecksheet,

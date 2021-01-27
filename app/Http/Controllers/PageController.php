@@ -91,4 +91,9 @@ class PageController extends Controller
     {
         return view('Management.supplier');
     }
+
+    public function activity_log_page ()
+    {
+        return view('Management.activity_log');
+    }
 }

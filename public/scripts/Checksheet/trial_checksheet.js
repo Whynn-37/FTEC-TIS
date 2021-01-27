@@ -117,6 +117,7 @@ const CHECKSHEET = (() => {
                             })
                             $('#div_main_content').prop('hidden', false);
                             CHECKSHEET.LoadPartnumber();
+                            CHECKSHEET.getForInspection();
                         } 
                         else 
                         {
@@ -413,6 +414,11 @@ const CHECKSHEET = (() => {
                 if (data.status === 'Success') 
                 {
                     //checksheet details
+                    $('#txt_part_number').val(data.data.trial_checksheets.part_number);
+                    $('#txt_inspection_reason').val(data.data.trial_checksheets.inspection_reason);
+                    $('#txt_revision_number').val(data.data.trial_checksheets.revision_number);
+                    $('#txt_trial_number').val(data.data.trial_checksheets.trial_number);
+
                     $('#trial_checksheet_id').val(data.data.trial_checksheets.id);
                     $('#trial_checksheet_application_date').val(data.data.trial_checksheets.application_date);
                     $('#txt_part_name').val(data.data.trial_checksheets.part_name);
@@ -555,10 +561,14 @@ const CHECKSHEET = (() => {
         let trial_checksheet_id = $('#trial_checksheet_id').val();
         let application_date    = $('#trial_checksheet_application_date').val();
         let target_takt_time    = $('#div_target_takt_time_timer').attr('data-timer') / 60;
-        let part_number         = $('#slc_part_number').val();
-        let revision_number     = $('#slc_revision_number').val();
-        let trial_number        = $('#slc_trial_number').val();
-        let inspection_reason   = $('#slc_inspection_reason').val();
+        // let part_number         = $('#slc_part_number').val();
+        // let revision_number     = $('#slc_revision_number').val();
+        // let trial_number        = $('#slc_trial_number').val();
+        // let inspection_reason   = $('#slc_inspection_reason').val();
+        let part_number         = $('#txt_part_number').val();
+        let revision_number     = $('#txt_revision_number').val();
+        let trial_number        = $('#txt_trial_number').val();
+        let inspection_reason   = $('#txt_inspection_reason').val();
         
         $.ajax({
             url     : `start-cycle-time`,
@@ -610,9 +620,10 @@ const CHECKSHEET = (() => {
                     $('#div_row_special_tool_data').prop('hidden',false);
                     $('#div_row_others_2').prop('hidden',false);
                     $('#div_row_save_inspection').prop('hidden',false);
-
+                    $('#div_row_save_inspection').prop('hidden',false);
                     //pag show ng igm
                     $('#div_accordion_igm').prop('hidden', false);
+                    $('#div_inspection_list').hide();
                 }
                 else
                 {
@@ -780,6 +791,7 @@ const CHECKSHEET = (() => {
                     $('#div_row_save_inspection').prop('hidden',true);
 
                     $('#div_accordion_igm').prop('hidden', true);
+                    $('#div_inspection_list').show();
                 }
                 else
                 {
@@ -1015,10 +1027,9 @@ const CHECKSHEET = (() => {
     };
 
     this_checksheet.ValidateSaveTrialChecksheet = () => {
-
         let temperature             = $('#txt_temperature').val();
         let humidity                = $('#txt_humidity').val();
-        let part_number             = $('#slc_part_number').val();
+        let part_number             = $('#txt_part_number').val();
         let na_judgement_count      = 0;
         let ng_judgement_count      = 0;
         
@@ -1179,13 +1190,13 @@ const CHECKSHEET = (() => {
                     CHECKSHEET.StopCycleTime('save_trial_checksheet');
 
                     $('#form_trial_checksheet')[0].reset();
-                    $('#slc_revision_number').empty();
-                    $('#slc_trial_number').empty();
-                    $('#slc_inspection_reason').empty();
+                    $('#txt_revision_number').empty();
+                    $('#txt_trial_number').empty();
+                    $('#txt_inspection_reason').empty();
 
                     $('#btn_start_time').prop('disabled',true);
 
-                    // CHECKSHEET.LoadPartnumber();
+                    CHECKSHEET.getForInspection();
                     item_no_count = '';
                     
 
@@ -1217,6 +1228,56 @@ const CHECKSHEET = (() => {
             }
         });
     };
+
+    this_checksheet.getForInspection = () =>
+    {
+        $('#tbl_inspection_list').LoadingOverlay('show');
+        
+        $.ajax({
+            url     : `get-for-inspection`,
+            type    : 'get',
+            dataType: 'json',
+            cache   : false,
+            success: data => 
+            {
+                $('#tbl_inspection_list').DataTable().destroy();
+                $('#tbody_tbl_inspection_list').empty();
+
+                console.log(data);
+
+                let tbody = '';
+               
+                data.data.forEach((value) => {
+
+
+                    tbody +=
+                        `<tr>
+                        <td> 
+                            <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.LoadDetails('${value.application_date}');" ><strong class="strong-font"><i class="ti-search"></i> INSPECT </strong></button> 
+                        </td>
+                        <td> ${value.part_number} </td>
+                        <td> ${value.inspection_reason} </td>
+                        <td> ${value.revision_number} </td>
+                        <td> ${value.trial_number} </td>
+                        <td> ${value.part_name} </td>
+                        <td> ${value.supplier_code} / ${value.supplier_name} </td>
+                        <td> ${value.inspector_id} </td>
+                    </tr>`;
+                    
+                });
+
+                $('#tbody_tbl_inspection_list').html(tbody);
+
+                $('#tbl_inspection_list').DataTable(
+                    {
+                        pageLength : 5,
+                        lengthMenu: [5, 10, 50, 100]
+                    }
+                );
+                $('#tbl_inspection_list').LoadingOverlay('hide');
+            }
+        });        
+    }
 
     return this_checksheet;
 })();
