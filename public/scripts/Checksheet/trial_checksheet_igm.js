@@ -102,9 +102,9 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
-        let part_number         = $('#slc_part_number').val();
-        let inspection_reason   = $('#slc_inspection_reason').val();
-        let trial_number        = $('#slc_trial_number').val();
+        let part_number         = $('#txt_part_number').val();
+        let inspection_reason   = $('#txt_inspection_reason').val();
+        let trial_number        = $('#txt_trial_number').val();
 
         $.ajax({
             url     : `load-igm`,
@@ -170,7 +170,7 @@ const IGM = (() => {
         let array_item_tools_options    = '';
         let array_item_type_options     = '';
         let tr_new_item                 = '';
-        let trial_number                = $('#slc_trial_number').val();
+        let trial_number                = $('#txt_trial_number').val();
        
         for (let index = 0; index < array_item_tools.length; index++) 
         {
@@ -463,7 +463,7 @@ const IGM = (() => {
     this_igm.AddIgmItemNoHeader = (previous_item_no, bg_header = "th_new_igm_sub_column") => {
 
         let item_no_holder  = parseInt(previous_item_no) + 1;
-        let trial_number    = $('#slc_trial_number').val();
+        let trial_number    = $('#txt_trial_number').val();
         let remarks         =  `<th width="10%" class="${bg_header}">REMARKS</th>`;
 
         let tr_new_item_header = `
@@ -1872,7 +1872,7 @@ const IGM = (() => {
 
     this_igm.AddIgmSubNoHeader = (item_no_count, rowspan_count, bg_header) => {
 
-        let trial_number    = $('#slc_trial_number').val();
+        let trial_number    = $('#txt_trial_number').val();
         let th_remarks      = `<th width="10%" class="${bg_header}">REMARKS</th>`;
 
         let tr_sub_no_column = `
@@ -1889,7 +1889,7 @@ const IGM = (() => {
 
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks,load_igm_status) => {
       
-        let trial_number            = $('#slc_trial_number').val();
+        let trial_number            = $('#txt_trial_number').val();
         let tr                      = '';
         let new_sub_no              = existing_sub_no_count_per_item;
         let td_remove_sub_no_button = '';

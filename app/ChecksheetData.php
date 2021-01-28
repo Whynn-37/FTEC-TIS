@@ -83,8 +83,14 @@ class ChecksheetData extends Model
     public function getDataNg($checksheet_item_id)
     {
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
-        ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks')
+        ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks', 'hinsei')
         ->orderBy('sub_number', 'asc')
         ->get();
+    }
+
+    public function updateHinsei($id, $data)
+    {
+        return ChecksheetData::where('checksheet_item_id', $id)
+        ->update($data);
     }
 }

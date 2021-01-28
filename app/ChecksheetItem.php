@@ -109,7 +109,7 @@ class ChecksheetItem extends Model
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $item_number)
-        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'lower_limit', 'upper_limit', 'judgment')
+        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'lower_limit', 'upper_limit', 'judgment', 'remarks', 'hinsei')
         ->first();
     }
 

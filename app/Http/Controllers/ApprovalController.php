@@ -131,9 +131,10 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, Request $Request)
+    public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
+        $checksheet_item_id = $Request->checksheet_item_id;
         $item_number = $Request->item_number;
         $tools = $Request->tools;
         $type = $Request->type;
@@ -175,6 +176,8 @@ class ApprovalController extends Controller
         ];
 
         $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
+
+        $ChecksheetData->updateHinsei($checksheet_item_id, ['hinsei' => $hinsei,]);
 
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 

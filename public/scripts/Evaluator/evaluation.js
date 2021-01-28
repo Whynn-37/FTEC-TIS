@@ -1333,6 +1333,7 @@ const EVALUATE = (() => {
     
     this_evaluate.ProceedOverallRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action) => {
       
+        let checksheet_item_id = (`#txt_hidden_item_no_${item_no}_id`).val();
         $.ajax({
             url         : `edit-hinsei`,
             type        : 'patch',
@@ -1352,6 +1353,7 @@ const EVALUATE = (() => {
                 item_type           : item_type,
                 remarks             : remarks,
                 judgment_checksheet : final_judgment,
+                checksheet_item_id  : checksheet_item_id,
             },
             success: result => 
             {

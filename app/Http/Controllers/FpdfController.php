@@ -7,16 +7,16 @@ use \setasign\Fpdi\Fpdi;
 use \setasign\Fpdi\FpdiProtection;
 class FpdfController extends Controller
 {
-    public function mergeFile($datax, $data)
+    public function mergeFile($merge_data, $data)
     {
         // $pdf = new \setasign\Fpdi\Fpdi();
         $pdf = new Fpdi('P', 'mm', [215.9, 300]);
 
         // folder name 
-        $folder_name = $datax['folder_name'];
+        $folder_name = $merge_data['folder_name'];
         
         // attachment file 
-        $files =$datax['file_name'];
+        $files =$merge_data['file_name'];
         $location = storage_path('app/public/'.$folder_name.'/');
 
         if ($data['checksheet_details']['judgment'] === 'NG')
@@ -73,6 +73,7 @@ class FpdfController extends Controller
                                         'data'          => explode(",",$data['datas'][$a][$b][$e]['data']),
                                         'judgment'      => $data['datas'][$a][$b][$e]['judgment'],
                                         'remarks'       => $data['datas'][$a][$b][$e]['remarks'],
+                                        'hinsei'        => $data['datas'][$a][$b][$e]['hinsei'],
                                     ];
                                 }
                             }
@@ -268,7 +269,7 @@ class FpdfController extends Controller
 
                                 // specification
                                 $pdf->SetXY(53, $increment);
-                                $pdf->MultiCell(16,6, $items['specification'] .$plus_minus. substr($items['lower_limit'], 1),0,'C');
+                                $pdf->MultiCell(16,6, $items['specification'] .$plus_minus. substr($items['upper_limit'], 1),0,'C');
 
                                 $increment+= 5.7;
                             }
@@ -289,6 +290,8 @@ class FpdfController extends Controller
                                         break;
                                 }
 
+                                
+                                
                                 $max = '';
                                 $min = '';
 
@@ -326,8 +329,16 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3,$min ,0,'C');
 
                                 // judgment
-                                $pdf->SetXY(82, $increment);
-                                $pdf->MultiCell(10,6, $judgment,0,'C');
+                                if ($datas['hinsei'] !== null) 
+                                {
+                                    $pdf->SetXY(86, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(82, $increment);
+                                    $pdf->MultiCell(10,6, $judgment,0,'C');
+                                }
 
                                 // remarks
                                 $pdf->SetXY(92, $increment);
@@ -404,10 +415,18 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3, $max,0,'C');
                                 $pdf->SetXY(105, $increment+3);
                                 $pdf->MultiCell(13,3, $min,0,'C');
-                                
+
                                 // judgment
-                                $pdf->SetXY(118, $increment);
-                                $pdf->MultiCell(10,6, $judgment,0,'C');
+                                if ($datas['hinsei'] !== null) 
+                                {
+                                    $pdf->SetXY(124, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(118, $increment);
+                                    $pdf->MultiCell(10,6, $judgment,0,'C');
+                                }
 
                                 $pdf->SetXY(128, $increment);
                                 $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
@@ -483,10 +502,18 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3, $max,0,'C');
                                 $pdf->SetXY(140, $increment+3);
                                 $pdf->MultiCell(13,3, $min,0,'C');
-                                
+
                                 // judgment
-                                $pdf->SetXY(153, $increment);
-                                $pdf->MultiCell(10,6, $judgment,0,'C');
+                                if ($datas['hinsei'] !== null) 
+                                {
+                                    $pdf->SetXY(159, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(153, $increment);
+                                    $pdf->MultiCell(10,6, $judgment,0,'C');
+                                }
 
                                 $pdf->SetXY(163, $increment);
                                 $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
