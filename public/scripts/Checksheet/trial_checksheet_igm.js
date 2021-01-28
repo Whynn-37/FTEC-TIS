@@ -102,9 +102,6 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
-        // let part_number         = $('#slc_part_number').val();
-        // let inspection_reason   = $('#slc_inspection_reason').val();
-        // let trial_number        = $('#txt_trial_number').val();
         let part_number         = $('#txt_part_number').val();
         let inspection_reason   = $('#txt_inspection_reason').val();
         let trial_number        = $('#txt_trial_number').val();

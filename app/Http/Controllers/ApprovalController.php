@@ -131,9 +131,10 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, Request $Request)
+    public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
+        $checksheet_item_id = $Request->checksheet_item_id;
         $item_number = $Request->item_number;
         $tools = $Request->tools;
         $type = $Request->type;
@@ -143,6 +144,7 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $item_type = $Request->item_type;
         $remarks = $Request->remarks;
+        $type_of = $Request->type_of;
 
         $judgment_checksheet = $Request->judgment_checksheet;
 
@@ -150,6 +152,13 @@ class ApprovalController extends Controller
         [
             'judgment'              => $judgment_checksheet
         ];
+
+        $hinsei = '';
+
+        if ($type_of === 1) 
+        {
+            $hinsei = 'HINSEI';
+        }
 
         $data = 
         [
@@ -163,10 +172,12 @@ class ApprovalController extends Controller
             'judgment'              => $judgment,
             'item_type'             => $item_type,
             'remarks'               => $remarks,
-            'hinsei'                => 'HINSEI',
+            'hinsei'                => $hinsei,
         ];
 
         $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
+
+        $ChecksheetData->updateHinsei($checksheet_item_id, ['hinsei' => $hinsei,]);
 
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 
@@ -176,7 +187,12 @@ class ApprovalController extends Controller
         if ($result !== null) 
         {
             $status = 'Success';
-            $message = 'Successfully Updated';
+            $message = 'The Evaluator edit Specs';
+
+            if ($type_of === 1) 
+            {
+                $message = 'The Evaluator set to HINSEI';
+            }
         }
 
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Type : ' . $type . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit . ' - Judgment : ' . $judgment, Session::get('name'));
@@ -240,7 +256,7 @@ class ApprovalController extends Controller
             $ChecksheetData->updateOrCreateChecksheetData($data);
 
             $status = 'Success';
-            $message = 'Successfully Updated';
+            $message = 'The Evaluator update the data';
             $result = true;
             
             DB::commit();
@@ -462,7 +478,24 @@ class ApprovalController extends Controller
                     $status = 'after_evaluation';
 
                     $folder_name = $folder_name['file_folder'];
+
+                    $message = 'Approved by Evaluator';
                 }
+            }
+            else if ($decision == 1 && $action == 2) 
+            {
+                $data = 
+                [
+                    'evaluated_by' => Session::get('name'),
+                    'evaluated_datetime' => now(),
+                    'decision' => 4
+                ];
+
+                $status = 'disapproved';
+
+                $folder_name = '';
+
+                $message = 'Disapproved by Evaluator';
             }
             else if($decision == 2 && $action == 1)
             {
@@ -500,6 +533,8 @@ class ApprovalController extends Controller
                     ];
 
                     $folder_name = '';
+
+                    $message = 'Approved by Approver';
                 }
             }
             else if($decision == 2 && $action == 2)
@@ -515,6 +550,8 @@ class ApprovalController extends Controller
                 $status = 'disapproved';
 
                 $folder_name = '';
+
+                $message = 'Disppproved by Approver';
             }
             else if($decision == 3 && $action == 1)
             {
@@ -528,9 +565,12 @@ class ApprovalController extends Controller
                 $status = 'after_evaluation';
 
                 $folder_name = '';
+
+                $message = 'Reapproved by Evaluator';
             }
             
-            if ($decision == 2 && $action == 2
+            if ($decision == 1 && $action == 2
+                || $decision == 2 && $action == 2 
                 || $decision == 3 && $action == 1) 
             {
                 $result =  $Approval->approved($trial_checksheet_id, $data);
@@ -539,7 +579,6 @@ class ApprovalController extends Controller
             $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
 
             $status = 'Success';
-            $message = 'Successfully Save';
 
             DB::commit();
         } 
@@ -557,6 +596,15 @@ class ApprovalController extends Controller
         else 
         {
             $action = 'Disapproved';
+        }
+
+        if ($decision === 1 || $decision === 3) 
+        {
+            $decision = 'Evaluator';
+        }
+        else if($decision === 2) 
+        {
+            $decision = 'Approver';
         }
 
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Action : ' . $action . ' - Decision : ' . $decision . ' - Selected File : ' . $selected_file . ' - Reason : ' . $reason, Session::get('name'));

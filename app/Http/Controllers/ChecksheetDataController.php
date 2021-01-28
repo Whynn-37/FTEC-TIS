@@ -45,7 +45,7 @@ class ChecksheetDataController extends Controller
                 $result = $ChecksheetData->updateOrCreateChecksheetData($data);
 
                 $status = 'Success';
-                $message = 'Successfully Saved';
+                $message = 'Data added';
                 $result = $result->id;
 
                 DB::commit();
@@ -105,7 +105,7 @@ class ChecksheetDataController extends Controller
                 $result =  $ChecksheetData->deleteDatas($id);
 
                 $status = 'Success';
-                $message = 'Successfully Deleted';
+                $message = 'Data deleted';
 
                 DB::commit();
             } 

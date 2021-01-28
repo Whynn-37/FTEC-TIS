@@ -74,7 +74,7 @@ class ChecksheetItemController extends Controller
                 $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);
         
                 $status = 'Success';
-                $message = 'Successfully Save';
+                $message = 'Item added';
 
                 $checksheet_item_id = $checksheet_item_result->id;
                 $checksheet_data_id = $checksheet_data_result->id;
@@ -89,7 +89,7 @@ class ChecksheetItemController extends Controller
             }
         }
 
-        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit, Session::get('name'));
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Type : ' . $type . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit, Session::get('name'));
      
         return 
         [
@@ -128,7 +128,7 @@ class ChecksheetItemController extends Controller
                 $result = $ChecksheetItem->deleteItem($id);
 
                 $status = 'Success';
-                $message = 'Successfully Deleted';
+                $message = 'Item deleted';
 
                 DB::commit();
             } 
