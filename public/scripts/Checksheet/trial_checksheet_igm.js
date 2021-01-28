@@ -102,9 +102,12 @@ const IGM = (() => {
 
     this_igm.LoadIGM = (trial_checksheet_id) => {
 
-        let part_number         = $('#slc_part_number').val();
-        let inspection_reason   = $('#slc_inspection_reason').val();
-        let trial_number        = $('#slc_trial_number').val();
+        // let part_number         = $('#slc_part_number').val();
+        // let inspection_reason   = $('#slc_inspection_reason').val();
+        // let trial_number        = $('#txt_trial_number').val();
+        let part_number         = $('#txt_part_number').val();
+        let inspection_reason   = $('#txt_inspection_reason').val();
+        let trial_number        = $('#txt_trial_number').val();
 
         $.ajax({
             url     : `load-igm`,
@@ -127,7 +130,7 @@ const IGM = (() => {
     
                     //pagkuha ng checksheet items
                     IGM.GetChecksheetItems(data);
-    
+                    $('#txt_from_load_igm_status').val(data.data.items.length);
                     //pagkuha ng max item number
                     if (data.data.items.length > 0) 
                     {
@@ -170,7 +173,7 @@ const IGM = (() => {
         let array_item_tools_options    = '';
         let array_item_type_options     = '';
         let tr_new_item                 = '';
-        let trial_number                = $('#slc_trial_number').val();
+        let trial_number                = $('#txt_trial_number').val();
        
         for (let index = 0; index < array_item_tools.length; index++) 
         {
@@ -463,7 +466,7 @@ const IGM = (() => {
     this_igm.AddIgmItemNoHeader = (previous_item_no, bg_header = "th_new_igm_sub_column") => {
 
         let item_no_holder  = parseInt(previous_item_no) + 1;
-        let trial_number    = $('#slc_trial_number').val();
+        let trial_number    = $('#txt_trial_number').val();
         let remarks         =  `<th width="10%" class="${bg_header}">REMARKS</th>`;
 
         let tr_new_item_header = `
@@ -644,8 +647,8 @@ const IGM = (() => {
             $(`#span_error_item_no_${item_no}_tools`).remove();
             $(`#slc_item_no_${item_no}_tools`).after(`<span id="span_error_item_no_${item_no}_tools" class="span-error">Required</span>`);
         }
-
     };
+
     // pag insert ng item sa DB, dito narin gumagawa ng hidden checksheet_item_id
     this_igm.ValidateAddIgmItemNo = (item_no, bg_header,action) => {
 
@@ -714,7 +717,16 @@ const IGM = (() => {
         }
         else
         {
-            remove_status = $(`#a_remove_igm_item_no_${item_no}`).attr('onclick').split(',')[1].split(')')[0].replace(/"|'/g, '');
+            let load_igm_status = $('#txt_from_load_igm_status').val();
+
+            if (load_igm_status > 0)
+            {
+                remove_status = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',')[4].split(')')[0].replace(/"|'/g, '');
+            }
+            else
+            {
+                remove_status = $(`#a_remove_igm_item_no_${item_no}`).attr('onclick').split(',')[1].split(')')[0].replace(/"|'/g, '');
+            }
         }
         
         $(`#accordion_igm`).LoadingOverlay('show');
@@ -747,8 +759,8 @@ const IGM = (() => {
                         //meron nito para malaman kung sa select type ang function. ginagamit din kase tong ProceedAddIgmItemNo() function para sa pag uupdate ng specs , upper and lower limit. kaya nilagyan ko ng action para hindi gagawin ang ang mga process na nasa baba. 
                         if (action === 'select_item_type')
                         {
-                            $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0,${remove_status});`)
-                            $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0);`)
+                            $(`#a_add_igm_item_no_${item_no}`).attr('onclick', `IGM.AddIgmItemNo('${type}',${item_no},1,0,'${remove_status}');`)
+                            $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick', `IGM.AddIgmSubNo('${type}',${item_no},1,0,'${remove_status}');`)
                             $(`#slc_item_no_${item_no}_type`).attr('onchange', `IGM.SelectItemType(${item_no},1);`);
                             
                             //para malaman kung may existing ng unang insert ng item at data
@@ -1872,7 +1884,7 @@ const IGM = (() => {
 
     this_igm.AddIgmSubNoHeader = (item_no_count, rowspan_count, bg_header) => {
 
-        let trial_number    = $('#slc_trial_number').val();
+        let trial_number    = $('#txt_trial_number').val();
         let th_remarks      = `<th width="10%" class="${bg_header}">REMARKS</th>`;
 
         let tr_sub_no_column = `
@@ -1889,7 +1901,7 @@ const IGM = (() => {
 
     this_igm.AddIgmSubNoInputs = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, checksheet_data_id,array_data,judgement,coordinates,trial_2_and_above_remarks,load_igm_status) => {
       
-        let trial_number            = $('#slc_trial_number').val();
+        let trial_number            = $('#txt_trial_number').val();
         let tr                      = '';
         let new_sub_no              = existing_sub_no_count_per_item;
         let td_remove_sub_no_button = '';

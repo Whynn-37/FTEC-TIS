@@ -56,6 +56,7 @@
                                 </div>
                             </div>
                             {{-- CHECKSHEET --}}
+                            
                             @csrf
                             <div id="accordion4" class="according accordion-s2 gradiant-bg mb-3">
                                 <div class="card">
@@ -70,6 +71,7 @@
                                             {{-- HIDDEN ID REQUEST NI JED --}}
                                             <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
                                             <input type="text" id="trial_checksheet_application_date" name="application_date" hidden>
+                                            <input type="text" id="txt_from_load_igm_status" hidden>
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <label>PART NUMBER:</label>&nbsp;

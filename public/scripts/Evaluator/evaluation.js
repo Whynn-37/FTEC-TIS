@@ -135,23 +135,27 @@ const EVALUATE = (() => {
 
     this_evaluate.ViewFinishedInspectionData = (id, status) => {
 
-        $('#modal_view_inspection_data').modal('show');
         attachment_count = '';
         checksheet_item_count   = '';
         array_add_to_pdf        = [];
         add_to_pdf_count        = 1;
 
-        if (status === 'finished') 
+        if (status !== '') //meron nito dahil pagka save ng  edit item ineexecute ko ulit tong method
         {
-            $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #009670, #01c293)');
-            $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #009670, #01c293)');
-            $('#modal_title').html('EVALUATION (FINISHED INSPECTION DATA)');
-        } 
-        else 
-        {
-            $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #c20131, #d81c4b)');
-            $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
-            $('#modal_title').html('EVALUATION (DISAPPROVED INSPECTION DATA)');
+            $('#modal_view_inspection_data').modal('show');
+
+            if (status === 'finished') 
+            {
+                $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #009670, #01c293)');
+                $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #009670, #01c293)');
+                $('#modal_title').html('EVALUATION (FINISHED INSPECTION DATA)');
+            } 
+            else 
+            {
+                $('#modal_header').css('background-image', '-webkit-linear-gradient(top left, #c20131, #d81c4b)');
+                $('#modal_header').css('background-image', 'linear-gradient(to bottom right, #c20131, #d81c4b)');
+                $('#modal_title').html('EVALUATION (DISAPPROVED INSPECTION DATA)');
+            }
         }
 
         $('#div_modal_content').LoadingOverlay('show');
@@ -282,10 +286,21 @@ const EVALUATE = (() => {
             $('#tbody_tbl_igm').empty();
 
             //MERON NITO DAHIL MAY TYPES NA HINDI KAILANGAN NG HINSEI
-            let td_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_hinsei">
-                <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
+            let td_edit_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
+                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
             </td>`;
 
+            let td_edit_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-close"></i> HINSEI</strong></button>
+                    </div>
+                </div>
+            </td>`;
+           
             tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th>TOOLS</th>
@@ -311,7 +326,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
                 <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null  || value.remarks === '') ? '-' : value.remarks}</td>
-                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ? td_hinsei_button : ''}
+                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ? (value.judgment === 'NG') ? td_edit_hinsei_button : td_edit_button : ''}
             </tr>`;
 
             array_type.push(value.type);
@@ -463,7 +478,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${IGM.ChecksheetDataInputJudgement(judgement)}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null || remarks === '') ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit"  style="vertical-align: middle;" rowspan="2">
-                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
+                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
@@ -491,7 +506,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit">
-                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
+                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
             </tr`;
         }
@@ -522,7 +537,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_edit">
-                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-success btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
+                    <button type="button" id="btn_edit_item_no_${item_no_count}_sub_no_${new_sub_no}" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditSubItem('${type}',${item_no_count},${new_sub_no},'${coordinates}','${array_data}','${(remarks == null) ? '' : remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                 </td>
             </tr`;
             //alamin kung paano magagawa na iisang button lang edit tapos save cancel
@@ -725,7 +740,7 @@ const EVALUATE = (() => {
         return `${base_url}/template/assets/images/icon/check_file_${count}.png`;
     };
 
-    this_evaluate.Hinsei = (item_no, tools, type, specs, upper_limit, lower_limit, remarks) => {
+    this_evaluate.EditItem = (item_no, tools, type, specs, upper_limit, lower_limit, remarks) => {
 
         let sub_no_count        = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
         let edit_count          = 0;
@@ -742,23 +757,23 @@ const EVALUATE = (() => {
         {
             Swal.fire({
                 icon: 'warning',
-                title: 'Unsaved data',
+                title: 'Unsaved Data',
                 text: 'Please save/cancel the checksheet data before making a hinsei.',
             })
         }
         else
         {
-            $(`#btn_item_no_${item_no}_hinsei`).prop('hidden', true);
+            $(`#btn_item_no_${item_no}_edit_item`).prop('hidden', true);
             EVALUATE.RemarksInputs(item_no, tools, type, specs, upper_limit, lower_limit,remarks);
             EVALUATE.ItemDataInputs(item_no, tools, type, specs, upper_limit, lower_limit);
         }
     };
 
-    this_evaluate.HinseiButton = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
-        let button = `<button id="btn_item_no_${item_no}_hinsei" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.Hinsei(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>`;
-        $(`#td_item_no_${item_no}_hinsei`).html(button);
+    this_evaluate.EditItemButton = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
+        let button = `<button id="btn_item_no_${item_no}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>`;
+        $(`#td_item_no_${item_no}_edit_item`).html(button);
 
-        $(`#txt_item_no_${item_no}_hinsei_remarks`).text(remarks);
+        $(`#txt_item_no_${item_no}_edit_item_remarks`).text(remarks);
     }
 
     this_evaluate.ItemDataInputs = (item_no, tools, type, specs, upper_limit, lower_limit) => {
@@ -778,15 +793,15 @@ const EVALUATE = (() => {
     this_evaluate.RemarksInputs = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
 
         let td_remarks = `
-        <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_hinsei_remarks" placeholder="Enter remarks"></textarea>
+        <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_edit_item_remarks" placeholder="Enter remarks"></textarea>
         <br>
         <div class="row">
-            <div class="col-md-6"><button type="button" class="btn btn-success btn-block btn-sm" onclick="EVALUATE.SaveHinsei(${item_no}, '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-check"></i> SAVE</button></div>
-            <div class="col-md-6"><button type="button" class="btn btn-secondary btn-block btn-sm" onclick="EVALUATE.CancelHinsei(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}','${remarks}');"><i class="ti-na"></i> CANCEL</button></div>
+            <div class="col-md-6"><button type="button" class="btn btn-success btn-block btn-sm" onclick="EVALUATE.SaveEditItem(${item_no}, '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-check"></i> SAVE</button></div>
+            <div class="col-md-6"><button type="button" class="btn btn-secondary btn-block btn-sm" onclick="EVALUATE.CancelEditItem(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}','${remarks}');"><i class="ti-na"></i> CANCEL</button></div>
         </div>`;
 
-        $(`#td_item_no_${item_no}_hinsei`).html(td_remarks);
-        $(`#txt_item_no_${item_no}_hinsei_remarks`).text(remarks);
+        $(`#td_item_no_${item_no}_edit_item`).html(td_remarks);
+        $(`#txt_item_no_${item_no}_edit_item_remarks`).text(remarks);
 
         $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
         $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', false);
@@ -844,7 +859,7 @@ const EVALUATE = (() => {
         }
     };
 
-    this_evaluate.SaveHinsei = (item_no,existing_specs, existing_upper_limit, existing_lower_limit) => {
+    this_evaluate.SaveEditItem = (item_no,existing_specs, existing_upper_limit, existing_lower_limit) => {
 
 
         let trial_checksheet_id     = $(`#trial_checksheet_id`).val();
@@ -857,7 +872,7 @@ const EVALUATE = (() => {
         let lower_limit             = $(`#txt_item_no_${item_no}_lower_limit`).val();
         let judgement               = $(`#td_item_no_${item_no}_judgement span`).text();
         let item_type               = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
-        let remarks                 = $(`#txt_item_no_${item_no}_hinsei_remarks`).val();
+        let remarks                 = $(`#txt_item_no_${item_no}_edit_item_remarks`).val();
       
         let new_upper_limit     = parseFloat(upper_limit);
         let new_lower_limit     = parseFloat(lower_limit);
@@ -917,7 +932,7 @@ const EVALUATE = (() => {
         else if (remarks === '')
         {
             $(`#span_remarks_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_hinsei_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
+            $(`#txt_item_no_${item_no}_edit_item_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
         }
 
         if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
@@ -947,7 +962,7 @@ const EVALUATE = (() => {
                                 {
                                     //para malaman kung may remarks o wala
                                     (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'hinsei');
+                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
                                 }
                             }
                         }
@@ -962,7 +977,7 @@ const EVALUATE = (() => {
                                 {
                                     //para malaman kung may remarks o wala
                                     (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'hinsei');
+                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
                                 }
                             }
                         }
@@ -970,7 +985,7 @@ const EVALUATE = (() => {
                         {
                             let final_judgment = judgement;//ginanto ko lang para alam na final judgement
 
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,'hinsei');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
+                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,'edit_item');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
 
                             for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
                             {
@@ -992,7 +1007,7 @@ const EVALUATE = (() => {
                                 $(`#td_item_no_${item_no}_remarks`).html(new_remarks);
 
                                 // para sa pag update ng checksheet data
-                                EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,sub_item_remarks,judgement,final_judgment,type,item_no,'hinsei');
+                                EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,sub_item_remarks,judgement,final_judgment,type,item_no,'edit_item');
                             }
                         }
                     }
@@ -1006,7 +1021,7 @@ const EVALUATE = (() => {
             //         text: 'There is no changes with the specification, upper limit, lower limit. Hinsei is cancelled.',
             //     })
             //     let td_item_remarks = $(`#td_item_no_${item_no}_remarks`).html();
-            //     EVALUATE.CancelHinsei(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
+            //     EVALUATE.CancelEditItem(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
             // }
         }
 
@@ -1082,7 +1097,7 @@ const EVALUATE = (() => {
                             {
                                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
                             }
-                            EVALUATE.OverallRejudgement(item_no,sub_no,array_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
+                            EVALUATE.OverallRejudgement(item_no,sub_no,array_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'edit_item');
                             array_value     = [];
                             array_judgement = [];
                         }
@@ -1249,7 +1264,7 @@ const EVALUATE = (() => {
                     }
                    
                     //pagkuha ng overall judgement para sa checksheet item 
-                    EVALUATE.OverallRejudgement(item_no,sub_no,array_min_max_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'hinsei');
+                    EVALUATE.OverallRejudgement(item_no,sub_no,array_min_max_value, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks,'edit_item');
                     array_min_max_judgement_per_sub_item = [];
                     array_min_max_value = [];
                 }
@@ -1264,7 +1279,7 @@ const EVALUATE = (() => {
         let id                              = $(`#txt_hidden_item_no_${item_no}_id`).val();
         let judgment_datas                  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
 
-        if (action === 'hinsei')
+        if (action === 'edit_item')
         {
             if (type === 'Actual' || type === 'Material Thickness')
             {
@@ -1283,7 +1298,7 @@ const EVALUATE = (() => {
             sub_item_remarks                    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
         }
 
-        (action === 'hinsei') ? coordinates = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html() : coordinates = new_coordinates;
+        (action === 'edit_item') ? coordinates = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html() : coordinates = new_coordinates;
 
         let array_overall_judgement                     = [];
         let array_trial_checksheet_overall_judgement    = [];
@@ -1352,14 +1367,15 @@ const EVALUATE = (() => {
                 item_type           : item_type,
                 remarks             : remarks,
                 judgment_checksheet : final_judgment,
+                // type_of             : (action === 'edit_item') ? 0 : 1
             },
             success: result => 
             {
                 if(result.status === 'Success')
                 {
-                    if (action === 'hinsei')
+                    if (action === 'edit_item')
                     {
-                        EVALUATE.HinseiButton(item_no, tools, type, specs, new_upper_limit, new_lower_limit,remarks);
+                        EVALUATE.EditItemButton(item_no, tools, type, specs, new_upper_limit, new_lower_limit,remarks);
 
                         $(`#td_item_no_${item_no}_specs`).html(specs);
                         $(`#td_item_no_${item_no}_upper_limit`).html(new_upper_limit);
@@ -1370,6 +1386,8 @@ const EVALUATE = (() => {
                             title: 'Success',
                             text: 'Hinsei successful',
                         })
+
+                        EVALUATE.ViewFinishedInspectionData(trial_checksheet_id,'');
                     }
                 }
                 else
@@ -1424,8 +1442,9 @@ const EVALUATE = (() => {
         }
     };
 
-    this_evaluate.CancelHinsei = (item_no, tools, type, specs, upper_limit, lower_limit, remarks) => {
-        EVALUATE.HinseiButton(item_no, tools, type, specs, upper_limit, lower_limit,remarks);
+
+    this_evaluate.CancelEditItem = (item_no, tools, type, specs, upper_limit, lower_limit, remarks) => {
+        EVALUATE.EditItemButton(item_no, tools, type, specs, upper_limit, lower_limit,remarks);
 
         $(`#td_item_no_${item_no}_tools`).html(tools);
         $(`#td_item_no_${item_no}_type`).html(type);
@@ -1436,16 +1455,16 @@ const EVALUATE = (() => {
 
     this_evaluate.EditSubItem = (type,item_no, sub_no, coordinates, array_data,remarks) => {
 
-        let  hinsei_button = $(`#btn_item_no_${item_no}_hinsei`).length;
-        let  item_judgment = $(`#td_item_no_${item_no}_judgement span`).text();
+        let  edit_item_button   = $(`#btn_item_no_${item_no}_edit_item`).length;
+        let  item_judgment      = $(`#td_item_no_${item_no}_judgement span`).text();
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
         {
-            if (hinsei_button === 0)
+            if (edit_item_button === 0)
             {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Unsaved hinsei',
+                    title: 'Unsaved Item',
                     text: 'Please save/cancel the hinsei before editing the checksheet data',
                 })
             }
@@ -1500,32 +1519,41 @@ const EVALUATE = (() => {
                 }
                 
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
+                let td_edit_button = `
+                <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
+                <br>
+                <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+                
+                <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
+
+                
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
+
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
             }
         }
         else //pang mga kasamahan ng type = Belt Fit
         {
-            for (let visual_no = 1; visual_no <= 5; visual_no++) 
+            if (edit_item_button === 0)
             {
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Unsaved Item',
+                    text: 'Please save/cancel the hinsei before editing the checksheet data',
+                })
             }
-
-            sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+            else
+            {
+                for (let visual_no = 1; visual_no <= 5; visual_no++) 
+                {
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
+                }
+    
+                sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+            }
         }
-
-        let td_edit_button = `
-        <textarea class="form-control textarea_hinsei" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
-        <br>
-        <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-        
-        <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
-
-        
-        $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
-
-        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
-        
     };
 
     this_evaluate.SubItemSelectVisual = (item_no,sub_no,visual_no) => {
@@ -2303,7 +2331,7 @@ const EVALUATE = (() => {
         let remarks             = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
         let new_coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
 
-        let split_item_remarks          = $(`#btn_item_no_${item_no}_hinsei`).attr('onclick').split(',');
+        let split_item_remarks          = $(`#btn_item_no_${item_no}_edit_item`).attr('onclick').split(',');
         let split_split_item_remarks    = split_item_remarks[6].split(')');
         let item_remarks                = split_split_item_remarks[0].replace(/"|'/g, '');
 
@@ -2519,7 +2547,7 @@ const EVALUATE = (() => {
 
     this_evaluate.CancelSubItem = (type, item_no, sub_no, coordinates, visual_min_max_datas, sub_item_judgement,remarks,item_judgment) => {
 
-        let button = `<button type="button" id ="btn_edit_item_no_${item_no}_sub_no_${sub_no}" type ="button" class ="btn btn-success btn-block" onclick ="EVALUATE.EditSubItem('${type}',${item_no},${sub_no},'${coordinates}','${visual_min_max_datas}','${remarks}');"> <strong class ="strong-font"> <i class="ti-pencil-alt"></i> EDIT</strong></button>`;
+        let button = `<button type="button" id ="btn_edit_item_no_${item_no}_sub_no_${sub_no}" type ="button" class ="btn btn-primary btn-block" onclick ="EVALUATE.EditSubItem('${type}',${item_no},${sub_no},'${coordinates}','${visual_min_max_datas}','${remarks}');"> <strong class ="strong-font"> <i class="ti-pencil-alt"></i> EDIT</strong></button>`;
         let visual_no = 1;
 
         let array_visual_min_max_data          = [];
@@ -2603,18 +2631,18 @@ const EVALUATE = (() => {
         //yung type sa (item_no, sub_no, array_data, type) ay gamit para sa pagsesave ng min max/minmax tolerenace na type
         // yung nasa trial_checksheet_igm.js na SubitemCalculateOverallJudgement ay iba dahil iba ang way nila ng pagkuha ng total_sub_no_count
         //pag lalagay ng item overall judgement based sa kung ilan ang sub item sa item no na to
-        let trial_checksheet_id          = $(`#trial_checksheet_id`).val();
-        let id                           = $(`#txt_hidden_item_no_${item_no}_id`).val();
-        let coordinates                  = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-        let tools                        = $(`#td_item_no_${item_no}_tools`).html();
-        let specs                        = $(`#td_item_no_${item_no}_specs`).html();
-        let upper_limit                  = $(`#td_item_no_${item_no}_upper_limit`).html();
-        let lower_limit                  = $(`#td_item_no_${item_no}_lower_limit`).html();
-        let item_type                    = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
-        let split_btn_hinsei_value       = $(`#btn_item_no_${item_no}_hinsei`).attr('onclick').split(',');
-        let split_split_btn_hinsei_value = split_btn_hinsei_value[6].split(')');
-        let item_remarks                 = split_split_btn_hinsei_value[0].replace(/"|'/g, '');
-        let sub_item_remarks    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
+        let trial_checksheet_id             = $(`#trial_checksheet_id`).val();
+        let id                              = $(`#txt_hidden_item_no_${item_no}_id`).val();
+        let coordinates                     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let tools                           = $(`#td_item_no_${item_no}_tools`).html();
+        let specs                           = $(`#td_item_no_${item_no}_specs`).html();
+        let upper_limit                     = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit                     = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let item_type                       = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
+        let split_btn_edit_item_value       = $(`#btn_item_no_${item_no}_edit_item`).attr('onclick').split(',');
+        let split_split_btn_edit_item_value = split_btn_edit_item_value[6].split(')');
+        let item_remarks                    = split_split_btn_edit_item_value[0].replace(/"|'/g, '');
+        let sub_item_remarks                = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
 
         let judgment_datas              = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
         let total_sub_no_count          = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
@@ -2852,6 +2880,8 @@ const EVALUATE = (() => {
                             title: 'Success',
                             text: 'Edit successful',
                         })
+
+                        EVALUATE.ViewFinishedInspectionData(trial_checksheet_id,'');
                     }
 
                     EVALUATE.LoadFinishedInspectionData();
@@ -2915,21 +2945,21 @@ const EVALUATE = (() => {
 
     this_evaluate.ValidateApproval = (item_no_count,decision) => {
 
-        let hinsei_count    = 0;
+        let edit_item_count    = 0;
         let edit_count      = 0;
 
         //para malaman kung may unsaved na hinsei
         for (let index = 1; index <= item_no_count; index++) 
         {
-            let type            = $(`#td_item_no_${index}_type`).html();
-            let hinsei_button   = $(`#btn_item_no_${index}_hinsei`).length;
-            let sub_no_count    = $(`#txt_hidden_item_no_${index}_sub_no_count`).val();
+            let type                = $(`#td_item_no_${index}_type`).html();
+            let edit_item_button    = $(`#btn_item_no_${index}_edit_item`).length;
+            let sub_no_count        = $(`#txt_hidden_item_no_${index}_sub_no_count`).val();
 
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
             {
-                if (hinsei_button === 0)
+                if (edit_item_button === 0)
                 {
-                    hinsei_count++;
+                    edit_item_count++;
                 }
             }
 
@@ -2947,11 +2977,11 @@ const EVALUATE = (() => {
             if (index === item_no_count)
             {
                 //para malaman kung may unsaved na hinsei
-                if (hinsei_count > 0)
+                if (edit_item_count > 0)
                 {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Unsaved hinsei',
+                        title: 'Unsaved Item',
                         text: 'Please save/cancel the hinsei before approving this inspection data.',
                     })
                 }
@@ -2962,7 +2992,7 @@ const EVALUATE = (() => {
                     {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Unsaved data',
+                            title: 'Unsaved Data',
                             text: 'Please save/cancel the checksheet data before approving this inspection data.',
                         })
                     }
@@ -3043,4 +3073,3 @@ const EVALUATE = (() => {
     return this_evaluate;
 })();
 
-//SAVE HINSEI WALA PA PARA SA MMF
