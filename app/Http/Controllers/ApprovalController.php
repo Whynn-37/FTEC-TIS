@@ -155,11 +155,11 @@ class ApprovalController extends Controller
 
         $hinsei = '';
 
-        if ($type_of === 1) 
+        if ($type_of == 1) 
         {
             $hinsei = 'HINSEI';
         }
-
+        
         $data = 
         [
             'trial_checksheet_id'   => $trial_checksheet_id,

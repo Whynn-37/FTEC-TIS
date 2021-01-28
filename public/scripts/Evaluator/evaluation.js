@@ -258,9 +258,10 @@ const EVALUATE = (() => {
 
     this_evaluate.GetChecksheetItem = (data) => {
 
-        let tr_checksheet           = '';
-        let item_count              = 0;
-        array_type                  = [];//pang clear ng array types
+        let tr_checksheet               = '';
+        let item_count                  = 0;
+        let trial_checksheet_judgement  = data.data.checksheet_details.judgment;
+        array_type                      = [];//pang clear ng array types
 
         data.data.checksheet_items.forEach((value) => 
         {
@@ -296,11 +297,11 @@ const EVALUATE = (() => {
                         <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.Hinsei(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-close"></i> HINSEI</strong></button>
+                        <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.Hinsei(${value.trial_checksheet_id},${value.item_number},'${value.tools}','${value.type}','${value.specification}','${value.upper_limit}','${value.lower_limit}','${value.judgment}',${value.item_type},'${(value.remarks === '') ? '-' : value.remarks}','${trial_checksheet_judgement}','hinsei');"><strong class="strong-font"><i class="ti-close"></i> HINSEI</strong></button>
                     </div>
                 </div>
             </td>`;
-           
+            // (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action)
             tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th>TOOLS</th>
@@ -1348,7 +1349,8 @@ const EVALUATE = (() => {
     
     this_evaluate.ProceedOverallRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action) => {
       
-        let checksheet_item_id = (`#txt_hidden_item_no_${item_no}_id`).val();
+        let checksheet_item_id = $(`#txt_hidden_item_no_${item_no}_id`).val(); 
+
         $.ajax({
             url         : `edit-hinsei`,
             type        : 'patch',
@@ -1358,6 +1360,7 @@ const EVALUATE = (() => {
             {
                 _token: _TOKEN,
                 trial_checksheet_id : trial_checksheet_id,
+                checksheet_item_id  : checksheet_item_id,
                 item_number         : item_no,
                 tools               : tools,
                 type                : type,
@@ -1367,8 +1370,8 @@ const EVALUATE = (() => {
                 judgment            : judgement,
                 item_type           : item_type,
                 remarks             : remarks,
+                type_of             : (action === 'edit_item') ? 0 : 1,
                 judgment_checksheet : final_judgment,
-                // type_of             : (action === 'edit_item') ? 0 : 1
             },
             success: result => 
             {
@@ -1382,6 +1385,16 @@ const EVALUATE = (() => {
                         $(`#td_item_no_${item_no}_upper_limit`).html(new_upper_limit);
                         $(`#td_item_no_${item_no}_lower_limit`).html(new_lower_limit);
         
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Edit successful',
+                        })
+
+                        EVALUATE.ViewFinishedInspectionData(trial_checksheet_id,'');
+                    }
+                    else if (action === 'hinsei')
+                    {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -1441,6 +1454,19 @@ const EVALUATE = (() => {
                 }
             }
         }
+    };
+
+    this_evaluate.Hinsei = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action) =>
+    {
+        Swal.fire($.extend(swal_options, {
+            title: 'Are you sure you want to hinsei?',
+        })).then((result) => 
+        {
+            if (result.value) 
+            {
+                EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action)
+            }
+        })
     };
 
 
