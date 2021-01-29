@@ -277,7 +277,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${value.item_number}_upper_limit">${upper_limit}</td>
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
-                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null) ? '-' : value.remarks}</td>
+                <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null || value.remarks == '') ? '-' : value.remarks}</td>
             </tr>`;
 
             array_type.push(value.type);
@@ -446,6 +446,24 @@ const APPROVE = (() => {
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_5">${IGM.ChecksheetDataInputData(type,array_data,9)}</td>
 			</tr>`;
         } 
+        else if (type === 'Actual' || type === 'Material Thickness')
+        {
+            tr += `${tr_sub_no_column}
+            <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
+                <td>
+                    <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+                </td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_2">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_3">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_4">${IGM.ChecksheetDataInputData(type,array_data,3)}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_5">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${IGM.ChecksheetDataInputJudgement(judgement)}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
+            </tr`;
+        }
         else 
         {
             tr += `${tr_sub_no_column}
@@ -473,7 +491,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${(remarks == null) ? '-' : remarks}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align:middle;" >${(remarks == null || remarks === '') ? '-' : remarks}</td>
             </tr`;
             //alamin kung paano magagawa na iisang button lang edit tapos save cancel
         }

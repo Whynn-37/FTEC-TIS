@@ -3042,7 +3042,15 @@ const IGM = (() => {
                             {
                                 let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-                                if (min_max_difference <= min_max_range)
+                                if (parseFloat(min_value_loop) > parseFloat(upper_limit) || parseFloat(min_value_loop) < parseFloat(lower_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else if (parseFloat(max_value_loop) > parseFloat(upper_limit) || parseFloat(max_value_loop) < parseFloat(lower_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else if (min_max_difference <= min_max_range)
                                 {
                                     array_min_max_judgement_per_sub_item.push('OK');
                                 }
@@ -3057,20 +3065,13 @@ const IGM = (() => {
                             }
                             else
                             {
-                                if (parseFloat(min_value_loop) > parseFloat(upper_limit)) 
+                                if (parseFloat(min_value_loop) > parseFloat(upper_limit) || parseFloat(min_value_loop) < parseFloat(lower_limit)) 
                                 {
                                     array_min_max_judgement_per_sub_item.push('NG');
                                 } 
                                 else 
                                 {
-                                    if (parseFloat(min_value_loop) < parseFloat(lower_limit)) 
-                                    {
-                                        array_min_max_judgement_per_sub_item.push('NG');
-                                    } 
-                                    else 
-                                    {
-                                        array_min_max_judgement_per_sub_item.push('OK');
-                                    }
+                                    array_min_max_judgement_per_sub_item.push('OK');
                                 }
                             }
                         }
@@ -3094,7 +3095,15 @@ const IGM = (() => {
                             {
                                 let min_max_difference = parseFloat(max_value_loop) - parseFloat(min_value_loop);
 
-                                if (min_max_difference <= min_max_range)
+                                if (parseFloat(min_value_loop) > parseFloat(upper_limit) || parseFloat(min_value_loop) < parseFloat(lower_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else if (parseFloat(max_value_loop) > parseFloat(upper_limit) || parseFloat(max_value_loop) < parseFloat(lower_limit)) 
+                                {
+                                    array_min_max_judgement_per_sub_item.push('NG');
+                                }
+                                else if (min_max_difference <= min_max_range)
                                 {
                                     array_min_max_judgement_per_sub_item.push('OK');
                                 }
@@ -3109,20 +3118,13 @@ const IGM = (() => {
                             }
                             else
                             {
-                                if (parseFloat(max_value_loop) > parseFloat(upper_limit)) 
+                                if (parseFloat(max_value_loop) > parseFloat(upper_limit) || parseFloat(max_value_loop) < parseFloat(lower_limit)) 
                                 {
                                     array_min_max_judgement_per_sub_item.push('NG');
                                 } 
                                 else 
                                 {
-                                    if (parseFloat(max_value_loop) < parseFloat(lower_limit)) 
-                                    {
-                                        array_min_max_judgement_per_sub_item.push('NG');
-                                    } 
-                                    else 
-                                    {
-                                        array_min_max_judgement_per_sub_item.push('OK');
-                                    }
+                                    array_min_max_judgement_per_sub_item.push('OK');
                                 }
                             }
                         }

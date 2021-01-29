@@ -22,6 +22,7 @@
                                     <div class="row">
                                         {{-- HIDDEN ID REQUEST NI JED --}}
                                         <input type="text" id="trial_checksheet_id" hidden>
+                                        <input type="text" id="evaluation_status" hidden>
                                         <div class="col-md-4">
                                             <label>PART NUMBER:</label>&nbsp;
                                             <span id="span_part_no" class="span-error form_trial_checksheet_field_error"></span>
