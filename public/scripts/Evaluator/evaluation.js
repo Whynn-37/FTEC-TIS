@@ -1334,11 +1334,11 @@ const EVALUATE = (() => {
         
         if ($.inArray('N/A',array_overall_judgement) === -1)
         {
-            if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance' || type !== 'Actual' || type !== 'Material Thickness') 
-            {
-                EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgment_item,item_type,new_remarks,final_judgment,action);
-                array_overall_judgement     = [];
-            }
+            // if (type !== 'Min and Max' || type !== 'Min and Max and Form Tolerance' || type !== 'Actual' || type !== 'Material Thickness') 
+            // {
+            //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgment_item,item_type,new_remarks,final_judgment,action);
+            //     array_overall_judgement     = [];
+            // }
 
             // para sa pag update ng checksheet data
             EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,sub_item_remarks,judgment_item,final_judgment,type,item_no,action);
@@ -1399,16 +1399,16 @@ const EVALUATE = (() => {
 
                         EVALUATE.ViewFinishedInspectionData(trial_checksheet_id,evaluation_status);
                     }
-                    else if (action === 'hinsei')
-                    {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Hinsei successful',
-                        })
+                    // else if (action === 'hinsei')
+                    // {
+                    //     Swal.fire({
+                    //         icon: 'success',
+                    //         title: 'Success',
+                    //         text: 'Hinsei successful',
+                    //     })
 
-                        EVALUATE.ViewFinishedInspectionData(trial_checksheet_id, evaluation_status);
-                    }
+                    //     EVALUATE.ViewFinishedInspectionData(trial_checksheet_id, evaluation_status);
+                    // }
                 }
                 else
                 {
@@ -2662,11 +2662,11 @@ const EVALUATE = (() => {
                     {
                         trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
-                        {
-                            //auto judgement papunta sa DB para sa checksheet item
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
-                        }
+                        // if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                        // {
+                        //     //auto judgement papunta sa DB para sa checksheet item
+                        //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
+                        // }
 
                         //auto judgement papunta sa DB para sa checksheet data
                         EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
@@ -2678,11 +2678,11 @@ const EVALUATE = (() => {
                     {
                         trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
-                        {
-                            //auto judgement papunta sa DB para sa checksheet item
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
-                        }
+                        // if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                        // {
+                        //     //auto judgement papunta sa DB para sa checksheet item
+                        //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
+                        // }
 
                         //auto judgement papunta sa DB
                         EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
@@ -2697,11 +2697,11 @@ const EVALUATE = (() => {
                 {
                     trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
-                    {
-                        //auto judgement papunta sa DB para sa checksheet item
-                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
-                    }
+                    // if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                    // {
+                    //     //auto judgement papunta sa DB para sa checksheet item
+                    //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'GOOD',item_type,item_remarks,trial_checksheet_judgement,'edit');
+                    // }
 
                     //auto judgement papunta sa DB
                     EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
@@ -2713,11 +2713,11 @@ const EVALUATE = (() => {
                 {
                     trial_checksheet_judgement = EVALUATE.GetTrialChecksheetJudgement();
 
-                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
-                    {
-                        //auto judgement papunta sa DB para sa checksheet item
-                        EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
-                    }
+                    // if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                    // {
+                    //     //auto judgement papunta sa DB para sa checksheet item
+                    //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,'NG',item_type,item_remarks,trial_checksheet_judgement,'edit');
+                    // }
 
                     //auto judgement papunta sa DB
                     EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
