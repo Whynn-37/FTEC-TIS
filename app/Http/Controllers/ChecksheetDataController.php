@@ -14,6 +14,7 @@ class ChecksheetDataController extends Controller
     public function storeDatas(ChecksheetData $ChecksheetData, Request $Request)
     {
         $checksheet_item_id = $Request->checksheet_item_id;
+        $item_type = $Request->item_type;
         $sub_number = $Request->sub_number;
 
         $status = 'Error';
@@ -40,6 +41,7 @@ class ChecksheetDataController extends Controller
                     'data'               => '',
                     'judgment'           => 'N/A',
                     'remarks'            => '',
+                    'type'               => $item_type,
                 ];
         
                 $result = $ChecksheetData->updateOrCreateChecksheetData($data);

@@ -2049,6 +2049,7 @@ const IGM = (() => {
     this_igm.ProceedAddIgmSubNo = (type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, rowspan,array_data,judgement,coordinates) => {
 
         let checksheet_item_id = $(`#txt_hidden_item_no_${item_no_count}`).val();
+        let item_type = $(`#slc_item_no_${item_no_count}_type`).val();
         let tr_sub_no_inputs = '';
  
         $(`#accordion_igm`).LoadingOverlay('show');
@@ -2062,7 +2063,8 @@ const IGM = (() => {
             {
                 _token              : _TOKEN,
                 checksheet_item_id  : checksheet_item_id,
-                sub_number          : existing_sub_no_count_per_item
+                sub_number          : existing_sub_no_count_per_item,
+                item_type           : item_type
             },
             success: data => 
             {

@@ -144,7 +144,6 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $item_type = $Request->item_type;
         $remarks = $Request->remarks;
-        $type_of = $Request->type_of;
 
         $judgment_checksheet = $Request->judgment_checksheet;
 
@@ -152,13 +151,6 @@ class ApprovalController extends Controller
         [
             'judgment'              => $judgment_checksheet
         ];
-
-        $hinsei = '';
-
-        if ($type_of == 1) 
-        {
-            $hinsei = 'HINSEI';
-        }
         
         $data = 
         [
@@ -172,12 +164,12 @@ class ApprovalController extends Controller
             'judgment'              => $judgment,
             'item_type'             => $item_type,
             'remarks'               => $remarks,
-            'hinsei'                => $hinsei,
+            'hinsei'                => 'HINSEI',
         ];
 
         $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
 
-        $ChecksheetData->updateHinsei($checksheet_item_id, ['hinsei' => $hinsei,]);
+        $ChecksheetData->updateHinsei($checksheet_item_id, ['hinsei' => 'HINSEI']);
 
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 
@@ -187,12 +179,7 @@ class ApprovalController extends Controller
         if ($result !== null) 
         {
             $status = 'Success';
-            $message = 'The Evaluator edit Specs';
-
-            if ($type_of === 1) 
-            {
-                $message = 'The Evaluator set to HINSEI';
-            }
+            $message = 'The Evaluator set to HINSEI';
         }
 
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Tools : ' . $tools . ' - Type : ' . $type . ' - Specs : ' . $specification . ' - Upper Limit : ' . $upper_limit . ' - Lower Limit : ' . $lower_limit . ' - Judgment : ' . $judgment, Session::get('name'));
@@ -217,6 +204,7 @@ class ApprovalController extends Controller
         $datas = $Request->data;
         $judgment_datas = $Request->judgment_datas;
         $remarks = $Request->remarks;
+        $item_type = $Request->item_type;
 
         $judgment_items = $Request->judgment_items;
 
@@ -249,6 +237,7 @@ class ApprovalController extends Controller
                 'data'               => $datas,
                 'judgment'           => $judgment_datas,
                 'remarks'            => $remarks,
+                'type'               => $item_type,
             ];
 
             $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
@@ -340,6 +329,23 @@ class ApprovalController extends Controller
         ];
     }
 
+    public function unique_array($array, $key) 
+    { 
+        $temp_array = array(); 
+        $i = 0; 
+        $key_array = array(); 
+        
+        foreach($array as $val) { 
+            if (!in_array($val[$key], $key_array)) { 
+                $key_array[$i] = $val[$key]; 
+                $temp_array[] = $val; 
+            } 
+            $i++; 
+        } 
+
+        return $temp_array; 
+    }
+
     public function generateSecondPage($trial_checksheet_id)
     {
         $TrialChecksheet = new TrialChecksheet();
@@ -392,11 +398,33 @@ class ApprovalController extends Controller
             // }
         }
 
+
         foreach ($result_merge as $details_key => $details_value) 
         {
+            $details_value = $this->unique_array($details_value, 'item_number');
             foreach ($details_value as $value) 
             {
-                $checksheet_items_result[$details_key][] = json_decode(json_encode($ChecksheetItem->getItemNg($value['trial_checksheet_id'], $value['item_number'])),true);
+                $checksheets_item = json_decode(json_encode($ChecksheetItem->getItemNg($value['trial_checksheet_id'], $value['item_number'])),true);
+
+                if (empty($checksheets_item)) 
+                {
+                    $checksheets_item = 
+                    [
+                        'id' => '',
+                        'item_number' => '',
+                        'judgment' => '',
+                        'lower_limit' => '',
+                        'upper_limit' => '',
+                        'remarks' => '',
+                        'hinsei' => '',
+                        'specification' => '',
+                        'tools' => '',
+                        'type' => '',
+                        'trial_checksheet' => '',
+                    ];
+                }
+
+                $checksheet_items_result[$details_key][] = $checksheets_item;
             }
         }
 
@@ -404,7 +432,16 @@ class ApprovalController extends Controller
         {
             foreach ($item_value as $value) 
             {
-                $checksheet_datas_result[$checksheet_items_key][] = json_decode(json_encode($ChecksheetData->getDataNg($value['id'])),true);
+                if ($value['id'] !== '') 
+                {
+                    $checksheet_data = json_decode(json_encode($ChecksheetData->getDataNg($value['id'])),true);
+                }
+                // else 
+                // {
+                //     $checksheet_data[] = [];
+                // }
+
+                $checksheet_datas_result[$checksheet_items_key][] = $checksheet_data;
             }
         }
 
@@ -456,7 +493,6 @@ class ApprovalController extends Controller
                 {
                     $second_page_data = $this->generateSecondPage($trial_checksheet_id);
                     $this->generateTrialEvaluationResult($trial_checksheet_id);
-
 
                     $merge_data_file = 
                     [
