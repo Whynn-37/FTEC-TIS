@@ -1353,8 +1353,7 @@ const EVALUATE = (() => {
     
     this_evaluate.ProceedOverallRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action) => {
       
-        let checksheet_item_id = $(`#txt_hidden_item_no_${item_no}_id`).val(); 
-
+        let checksheet_item_id = $(`#txt_hidden_item_no_${item_no}_id`).val();
         $.ajax({
             url         : `edit-hinsei`,
             type        : 'patch',
@@ -1374,7 +1373,7 @@ const EVALUATE = (() => {
                 judgment            : judgement,
                 item_type           : item_type,
                 remarks             : remarks,
-                type_of             : (action === 'edit_item') ? 0 : 1,
+                // type_of             : (action === 'edit_item') ? 0 : 1,
                 judgment_checksheet : final_judgment,
             },
             success: result => 
@@ -2775,6 +2774,7 @@ const EVALUATE = (() => {
     this_evaluate.ProceedEditData = (checksheet_item_id,sub_number,coordinates,data,judgment_datas,remarks,judgment_items,judgment_checksheet,type,item_no,action) => {
         
         let trial_checksheet_id = $('#trial_checksheet_id').val();
+        let item_type = $(`#td_item_no_${item_no}_type`).html();
 
         $.ajax({
             url         : `edit-data`,
@@ -2793,6 +2793,7 @@ const EVALUATE = (() => {
                 remarks             : remarks,
                 judgment_items      : judgment_items,
                 judgment_checksheet : judgment_checksheet,
+                item_type           : item_type
             },
             success: result => 
             {

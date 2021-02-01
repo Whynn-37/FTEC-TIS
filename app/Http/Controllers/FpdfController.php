@@ -19,9 +19,11 @@ class FpdfController extends Controller
         $files =$merge_data['file_name'];
         $location = storage_path('app/public/'.$folder_name.'/');
 
-        if ($data['checksheet_details']['judgment'] === 'NG')
-        {
-            $checksheet = [];
+        // if ($data['checksheet_details']['judgment'] === 'NG')
+        // {
+            $checksheet = []; 
+            $datas = [];
+            $items = [];
 
             if (count($data['items']) !== 0) 
             {
@@ -36,6 +38,7 @@ class FpdfController extends Controller
                                 'data'          => '',
                                 'judgment'      => '',
                                 'remarks'       => '',
+                                'hinsei'       => '',
                             ];
                         }
 
@@ -47,14 +50,34 @@ class FpdfController extends Controller
                                 { 
                                     if ($e === 0) 
                                     {
-                                        $items[$a][] = 
-                                        [
-                                            'tools'         => $data['items'][0][$c]['tools'],
-                                            'specification' => $data['items'][0][$c]['specification'],
-                                            'upper_limit'   => $data['items'][0][$c]['upper_limit'],
-                                            'lower_limit'   => $data['items'][0][$c]['lower_limit'],
-                                            'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
-                                        ];
+                                        if ($data['items'][$a][$c]['id'] !== '') 
+                                        {
+                                            $items[$a][] = 
+                                            [
+                                                'tools'         => $data['items'][0][$c]['tools'],
+                                                'specification' => $data['items'][0][$c]['specification'],
+                                                'upper_limit'   => $data['items'][0][$c]['upper_limit'],
+                                                'lower_limit'   => $data['items'][0][$c]['lower_limit'],
+                                                'type'          => $data['items'][0][$c]['type'],
+                                                'hinsei'        => $data['items'][$a][$c]['hinsei'],
+                                                'remarks'       => $data['items'][$a][$c]['remarks'],
+                                                'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
+                                            ];
+                                        }
+                                        else
+                                        {
+                                            $items[$a][] = 
+                                            [
+                                                'tools'         => '',
+                                                'specification' => '',
+                                                'upper_limit'   => '',
+                                                'lower_limit'   => '',
+                                                'type'          => '',
+                                                'hinsei'        => '',
+                                                'remarks'       => '',
+                                                'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
+                                            ];
+                                        } 
                                     }
                                     else
                                     {
@@ -64,9 +87,14 @@ class FpdfController extends Controller
                                             'specification' => '',
                                             'upper_limit'   => '',
                                             'lower_limit'   => '',
+                                            'type'          => '',
+                                            'hinsei'        => '',
+                                            'remarks'       => '',
                                             'coordinates'   => $data['datas'][$a][$b][$e]['coordinates'],
                                         ];
                                     }   
+
+                                    
 
                                     $datas[$a][] = 
                                     [
@@ -74,6 +102,7 @@ class FpdfController extends Controller
                                         'judgment'      => $data['datas'][$a][$b][$e]['judgment'],
                                         'remarks'       => $data['datas'][$a][$b][$e]['remarks'],
                                         'hinsei'        => $data['datas'][$a][$b][$e]['hinsei'],
+                                        'type'          => $data['datas'][$a][$b][$e]['type'],
                                     ];
                                 }
                             }
@@ -83,8 +112,8 @@ class FpdfController extends Controller
 
                 $checksheet =
                 [
-                    'items' => $items[0],
-                    'datas' => $datas
+                    'items' => $items,
+                    'datas' => $datas,
                 ];
 
                 $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
@@ -160,7 +189,7 @@ class FpdfController extends Controller
                         $indicator++;
 
                         $pdf->SetFont('Times');
-                        $pdf->SetFontSize(6);
+                        $pdf->SetFontSize(5);
 
                         if ($indicator == 1)
                         {
@@ -182,7 +211,7 @@ class FpdfController extends Controller
                                 $pdf->Image($circle,94,53, 10);
 
                             $increment = 76;
-                            foreach ($checksheet['items'] as $items) 
+                            foreach ($checksheet['items'][0] as $items) 
                             {
                                 switch ($items['tools']) 
                                 {
@@ -289,37 +318,38 @@ class FpdfController extends Controller
                                         $judgment = '';
                                         break;
                                 }
-
-                                
                                 
                                 $max = '';
                                 $min = '';
-
+                                
                                 if ($datas['data'] != '') 
                                 {
-                                    $x = 0;
-                                    $data_value = [];
-                                
-                                    for ($g = 0; $g < 10; $g++)
-                                    {   
-                                        if ($datas['data'][$g] !== '-') 
-                                        {
-                                            if($g % 2 == 1)
-                                            {   
-                                                $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                                $x++;
-                                            }
-                                            else
-                                            {
-                                                $data_value[$x]['max'] = floatval($datas['data'][$g]);
-                                            }
-                                        }                     
-                                    }
+                                    if ($datas['type'] === 'Min and Max' || $datas['type'] === 'Min and Max and Form Tolerance') 
+                                    {
+                                        $x = 0;
+                                        $data_value = [];
                                     
-                                    $minmax = max($data_value);
+                                        for ($g = 0; $g < 10; $g++)
+                                        {   
+                                            if ($datas['data'][$g] !== '-') 
+                                            {
+                                                if($g % 2 == 1)
+                                                {   
+                                                    $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                                    $x++;
+                                                }
+                                                else
+                                                {
+                                                    $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                                }
+                                            }                     
+                                        }
+                                        
+                                        $minmax = max($data_value);
 
-                                    $max = $minmax['max'];
-                                    $min = $minmax['min'];
+                                        $max = $minmax['max'];
+                                        $min = $minmax['min'];
+                                    }
                                 }
                                 
                                 // min max
@@ -329,20 +359,38 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3,$min ,0,'C');
 
                                 // judgment
-                                if ($datas['hinsei'] !== null) 
-                                {
-                                    $pdf->SetXY(86, $increment+2);
-                                    $pdf->MultiCell(2,2, '',1,'C');
-                                }
-                                else 
+                                if ($datas['hinsei'] !== 'HINSEI') 
                                 {
                                     $pdf->SetXY(82, $increment);
                                     $pdf->MultiCell(10,6, $judgment,0,'C');
+
+                                    // remarks
+                                    $pdf->SetXY(92, $increment);
+                                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(86, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
+
+                                    foreach ($checksheet['items'][$i] as $items) 
+                                    {
+                                        $pdf->SetXY(92, $increment);
+                                        $pdf->MultiCell(13,6, $items['remarks'],0,'C');
+                                    }
                                 }
 
-                                // remarks
-                                $pdf->SetXY(92, $increment);
-                                $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                $increment+= 5.7;
+                            }
+
+                            $increment = 76;
+                            foreach ($checksheet['items'][$i] as $items) 
+                            {
+                                if ($items['hinsei'] === 'HINSEI') 
+                                {
+                                    $pdf->SetXY(92, $increment);
+                                    $pdf->MultiCell(13,6, $items['remarks'],0,'C');
+                                }
 
                                 $increment+= 5.7;
                             }
@@ -364,6 +412,8 @@ class FpdfController extends Controller
                             else
                                 $pdf->Image($circle,129,53, 10);
                                 
+                            
+
                             $increment = 76;
                             foreach ($checksheet['datas'][$i] as $datas) 
                             {
@@ -385,29 +435,32 @@ class FpdfController extends Controller
 
                                 if ($datas['data'] != '') 
                                 {
-                                    $x = 0;
-                                    $data_value = [];
-                                
-                                    for ($g = 0; $g < 10; $g++)
-                                    {                        
-                                        if ($datas['data'][$g] !== '-') 
-                                        {
-                                            if($g % 2 == 1)
-                                            {   
-                                                $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                                $x++;
-                                            }
-                                            else
+                                    if ($datas['type'] === 'Min and Max' || $datas['type'] === 'Min and Max and Form Tolerance') 
+                                    {
+                                        $x = 0;
+                                        $data_value = [];
+                                    
+                                        for ($g = 0; $g < 10; $g++)
+                                        {   
+                                            if ($datas['data'][$g] !== '-') 
                                             {
-                                                $data_value[$x]['max'] = floatval($datas['data'][$g]);
-                                            }
+                                                if($g % 2 == 1)
+                                                {   
+                                                    $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                                    $x++;
+                                                }
+                                                else
+                                                {
+                                                    $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                                }
+                                            }                     
                                         }
+                                        
+                                        $minmax = max($data_value);
+
+                                        $max = $minmax['max'];
+                                        $min = $minmax['min'];
                                     }
-
-                                    $minmax = max($data_value);
-
-                                    $max = $minmax['max'];
-                                    $min = $minmax['min'];
                                 }
                                 
                                 // min max
@@ -417,19 +470,31 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3, $min,0,'C');
 
                                 // judgment
-                                if ($datas['hinsei'] !== null) 
-                                {
-                                    $pdf->SetXY(124, $increment+2);
-                                    $pdf->MultiCell(2,2, '',1,'C');
-                                }
-                                else 
+                                if ($datas['hinsei'] !== 'HINSEI') 
                                 {
                                     $pdf->SetXY(118, $increment);
                                     $pdf->MultiCell(10,6, $judgment,0,'C');
+
+                                    $pdf->SetXY(128, $increment);
+                                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(121, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
                                 }
 
-                                $pdf->SetXY(128, $increment);
-                                $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                $increment+= 5.7;
+                            }
+
+                            $increment = 76;
+                            foreach ($checksheet['items'][$i] as $items) 
+                            {
+                                if ($items['hinsei'] === 'HINSEI') 
+                                {
+                                    $pdf->SetXY(128, $increment);
+                                    $pdf->MultiCell(13,6, $items['remarks'],0,'C');
+                                }
 
                                 $increment+= 5.7;
                             }
@@ -472,29 +537,32 @@ class FpdfController extends Controller
 
                                 if ($datas['data'] != '') 
                                 {
-                                    $x = 0;
-                                    $data_value = [];
-                                
-                                    for ($g = 0; $g < 10; $g++)
-                                    {                        
-                                        if ($datas['data'][$g] !== '-') 
-                                        {
-                                            if($g % 2 == 1)
-                                            {   
-                                                $data_value[$x]['min'] = floatval($datas['data'][$g]);
-                                                $x++;
-                                            }
-                                            else
+                                    if ($datas['type'] === 'Min and Max' || $datas['type'] === 'Min and Max and Form Tolerance') 
+                                    {
+                                        $x = 0;
+                                        $data_value = [];
+                                    
+                                        for ($g = 0; $g < 10; $g++)
+                                        {   
+                                            if ($datas['data'][$g] !== '-') 
                                             {
-                                                $data_value[$x]['max'] = floatval($datas['data'][$g]);
-                                            }
+                                                if($g % 2 == 1)
+                                                {   
+                                                    $data_value[$x]['min'] = floatval($datas['data'][$g]);
+                                                    $x++;
+                                                }
+                                                else
+                                                {
+                                                    $data_value[$x]['max'] = floatval($datas['data'][$g]);
+                                                }
+                                            }                     
                                         }
+                                        
+                                        $minmax = max($data_value);
+
+                                        $max = $minmax['max'];
+                                        $min = $minmax['min'];
                                     }
-
-                                    $minmax = max($data_value);
-
-                                    $max = $minmax['max'];
-                                    $min = $minmax['min'];
                                 }
                                 
                                 // min max
@@ -504,19 +572,31 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(13,3, $min,0,'C');
 
                                 // judgment
-                                if ($datas['hinsei'] !== null) 
-                                {
-                                    $pdf->SetXY(159, $increment+2);
-                                    $pdf->MultiCell(2,2, '',1,'C');
-                                }
-                                else 
+                                if ($datas['hinsei'] !== 'HINSEI') 
                                 {
                                     $pdf->SetXY(153, $increment);
                                     $pdf->MultiCell(10,6, $judgment,0,'C');
+
+                                    $pdf->SetXY(163, $increment);
+                                    $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                }
+                                else 
+                                {
+                                    $pdf->SetXY(157, $increment+2);
+                                    $pdf->MultiCell(2,2, '',1,'C');
                                 }
 
-                                $pdf->SetXY(163, $increment);
-                                $pdf->MultiCell(13,6, $datas['remarks'],0,'C');
+                                $increment+= 5.7;
+                            }
+
+                            $increment = 76;
+                            foreach ($checksheet['items'][$i] as $items) 
+                            {
+                                if ($items['hinsei'] === 'HINSEI') 
+                                {
+                                    $pdf->SetXY(163, $increment);
+                                    $pdf->MultiCell(13,6, $items['remarks'],0,'C');
+                                }
 
                                 $increment+= 5.7;
                             }
@@ -524,7 +604,7 @@ class FpdfController extends Controller
                     }
                 }
             }
-        }
+        // }
         
         foreach($files as $file)
         {

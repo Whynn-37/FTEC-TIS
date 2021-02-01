@@ -550,6 +550,7 @@ class TrialChecksheetController extends Controller
                                     'lower_limit'           => $igm_data[$i]['lower_limit'],
                                     'remarks'               => '',
                                     'judgment'              => 'N/A',
+                                    'hinsei'                => '',
                                     'item_type'             => 1,
                                     'created_at'            => now(),
                                     'updated_at'            => now()

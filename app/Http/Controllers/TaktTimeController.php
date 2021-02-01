@@ -148,47 +148,23 @@ class TaktTimeController extends Controller
                         foreach($result_items as $items_value) 
                         {
                             $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
-                            
-                            if ($items_value->hinsei === 'HINSEI') 
-                            {
-                                $hinsei_result[] = 1;
-
-                                $checksheet_items[] = 
-                                [
-                                    'trial_checksheet_id'   => $last_id['id'],
-                                    'item_number'           => $items_value->item_number,
-                                    'tools'                 => $items_value->tools,
-                                    'type'                  => $items_value->type,
-                                    'specification'         => $items_value->specification,
-                                    'upper_limit'           => $items_value->upper_limit,
-                                    'lower_limit'           => $items_value->lower_limit,
-                                    'remarks'               => $items_value->remarks,
-                                    'judgment'              => $items_value->judgment,
-                                    'item_type'             => 0,
-                                    'created_at'            => now(),
-                                    'updated_at'            => now()
-                                ];
-                            }
-                            else 
-                            {
-                                $hinsei_result[] = 0;
-
-                                $checksheet_items[] = 
-                                [
-                                    'trial_checksheet_id'   => $last_id['id'],
-                                    'item_number'           => $items_value->item_number,
-                                    'tools'                 => $items_value->tools,
-                                    'type'                  => $items_value->type,
-                                    'specification'         => $items_value->specification,
-                                    'upper_limit'           => $items_value->upper_limit,
-                                    'lower_limit'           => $items_value->lower_limit,
-                                    'remarks'               => $items_value->remarks,
-                                    'judgment'              => 'N/A',
-                                    'item_type'             => 0,
-                                    'created_at'            => now(),
-                                    'updated_at'            => now()
-                                ];
-                            }
+                        
+                            $checksheet_items[] = 
+                            [
+                                'trial_checksheet_id'   => $last_id['id'],
+                                'item_number'           => $items_value->item_number,
+                                'tools'                 => $items_value->tools,
+                                'type'                  => $items_value->type,
+                                'specification'         => $items_value->specification,
+                                'upper_limit'           => $items_value->upper_limit,
+                                'lower_limit'           => $items_value->lower_limit,
+                                'remarks'               => $items_value->remarks,
+                                'judgment'              => 'N/A',
+                                'hinsei'                => '',
+                                'item_type'             => 0,
+                                'created_at'            => now(),
+                                'updated_at'            => now()
+                            ];
                         }
     
                         $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
@@ -200,7 +176,6 @@ class TaktTimeController extends Controller
     
                             foreach($items as $item)
                             {
-                                $item->hinsei = $hinsei_result[$i];
                                 $item->checksheet_item_id = $checksheet_item_result[$i];
                                 $new_array[] = $item;
                             }
@@ -208,34 +183,19 @@ class TaktTimeController extends Controller
 
                         foreach ($new_array as $value) 
                         {
-                            if ($value['hinsei'] === 1) 
-                            {
-                                $checksheet_datas[] =
-                                [
-                                    'checksheet_item_id'    => $value['checksheet_item_id'],
-                                    'coordinates'           => $value['coordinates'],
-                                    'sub_number'            => $value['sub_number'],
-                                    'data'                  => $value['data'],
-                                    'judgment'              => $value['judgment'],
-                                    'remarks'               => $value['remarks'],
-                                    'created_at'            => now(),
-                                    'updated_at'            => now()
-                                ];
-                            }
-                            else 
-                            {
-                                $checksheet_datas[] =
-                                [
-                                    'checksheet_item_id'    => $value['checksheet_item_id'],
-                                    'coordinates'           => $value['coordinates'],
-                                    'sub_number'            => $value['sub_number'],
-                                    'data'                  => '-,-,-,-,-,-,-,-,-,-',
-                                    'judgment'              => 'N/A',
-                                    'remarks'               => $value['remarks'],
-                                    'created_at'            => now(),
-                                    'updated_at'            => now()
-                                ];
-                            }
+                            $checksheet_datas[] =
+                            [
+                                'checksheet_item_id'    => $value['checksheet_item_id'],
+                                'coordinates'           => $value['coordinates'],
+                                'sub_number'            => $value['sub_number'],
+                                'data'                  => '-,-,-,-,-,-,-,-,-,-',
+                                'judgment'              => 'N/A',
+                                'remarks'               => $value['remarks'],
+                                'type'                  => $value['type'],
+                                'hinsei'                => '',
+                                'created_at'            => now(),
+                                'updated_at'            => now()
+                            ];
                         }
                         
                         $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
