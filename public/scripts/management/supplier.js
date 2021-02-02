@@ -170,7 +170,7 @@ const SUPPLIER = (() => {
                         Swal.fire({
                             position: 'center',
                             icon: 'error',
-                            title: 'Failed to Upload Data',
+                            title: result.message,
                             showConfirmButton: true,
                             timer: 2000
                         })

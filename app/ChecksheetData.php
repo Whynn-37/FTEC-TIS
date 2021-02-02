@@ -31,6 +31,7 @@ class ChecksheetData extends Model
                 'data'                  => $data['data'],
                 'judgment'              => $data['judgment'],
                 'remarks'               => $data['remarks'],
+                'type'                  => $data['type'],
             ]
         );
     }
@@ -83,7 +84,7 @@ class ChecksheetData extends Model
     public function getDataNg($checksheet_item_id)
     {
         return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
-        ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks', 'hinsei')
+        ->select('id', 'checksheet_item_id', 'coordinates', 'data', 'judgment', 'remarks', 'hinsei', 'type')
         ->orderBy('sub_number', 'asc')
         ->get();
     }

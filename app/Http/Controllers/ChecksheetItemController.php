@@ -69,6 +69,7 @@ class ChecksheetItemController extends Controller
                     'data'                  => '',
                     'judgment'              => 'N/A',
                     'remarks'               => '',
+                    'type'                  => $type,
                 ];
                 
                 $checksheet_data_result =  $ChecksheetData->updateOrCreateChecksheetData($checksheet_data);

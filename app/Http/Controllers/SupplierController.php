@@ -24,26 +24,38 @@ class SupplierController extends Controller
             $file_extension = $Request->file('upload_file')->getClientOriginalExtension();
             
             if($file_extension === 'csv' || $file_extension === 'xlsx')
-            {
+            { 
                 $data = $upload->upload($file, $sheet);
 
-                for($i = 1; $i < count($data); $i ++)
+                if($data[0][0] === '払出先コード' && 
+                   $data[0][1] === '払出先名' && 
+                   $data[0][2] === '備考' &&
+                   $data[0][3] === '半角カナ名称' &&
+                   $data[0][4] === '全角名称')
                 {
-                    $result[] = [
-                        'supplier_code'   =>  $data[$i][0],
-                        'supplier_name'   =>  $data[$i][1]
-                    ];
+                    for($i = 1; $i < count($data); $i ++)
+                    {
+                        $result[] = [
+                            'supplier_code'   =>  $data[$i][0],
+                            'supplier_name'   =>  $data[$i][1]
+                        ];
+                    }
+
+                    $result = $Supplier->storeSupplier($result);
+
+                    $status = 'Error';
+                    $message = 'Not Successfully Save';
+
+                    if ($result) 
+                    {
+                        $status = 'Success';
+                        $message = 'Successfully Save';
+                    }
                 }
-
-                $result = $Supplier->storeSupplier($result);
-
-                $status = 'Error';
-                $message = 'Not Successfully Save';
-
-                if ($result) 
+                else
                 {
-                    $status = 'Success';
-                    $message = 'Successfully Save';
+                    $status = 'Error File';
+                    $message = 'Incorrect File';
                 }
             }
             else

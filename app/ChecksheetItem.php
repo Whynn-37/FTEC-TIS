@@ -35,6 +35,7 @@ class ChecksheetItem extends Model
                 'remarks'               => $row['remarks'],
                 'judgment'              => $row['judgment'],
                 'item_type'             => $row['item_type'],
+                'hinsei'                => $row['hinsei'],
                 'created_at'            => $row['created_at'],
                 'updated_at'            => $row['updated_at']
                ]
@@ -109,15 +110,19 @@ class ChecksheetItem extends Model
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
         ->where('item_number', $item_number)
-        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'specification', 'lower_limit', 'upper_limit', 'judgment', 'remarks', 'hinsei')
+        ->select('id', 'trial_checksheet_id', 'item_number', 'tools', 'type', 'specification', 'lower_limit', 'upper_limit', 'judgment', 'remarks', 'hinsei')
         ->first();
     }
 
     public function getfirstTrialNg($trial_checksheet_id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
-        ->where('type', 'like', '%Min and Max%')
-        ->whereOr('type', 'like', '%Min and Max and Form Tolerance%')
+        ->orWhere(function ($query) {
+            $query->orWhere('type', 'like', '%Min and Max and Form Tolerance%')
+                  ->orWhere('type', 'like', '%Actual%')
+                  ->orWhere('type', 'like', '%Material Thickness%')
+                  ->orWhere('type', 'like', '%Min and Max%');
+        })
         ->select('id', 'item_number')
         ->orderBy('item_number', 'asc')
         ->get();

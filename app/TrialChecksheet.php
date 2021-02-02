@@ -102,7 +102,7 @@ class TrialChecksheet extends Model
     {
         return TrialChecksheet::where('part_number', $part_number)
         ->where('inspection_reason', $inspection_reason)
-        ->where('judgment', 'NG')
+        // ->where('judgment', 'NG')
         ->select('id', 'trial_number', 'date_finished', 'judgment', 'revision_number')
         ->get();
     }
@@ -111,7 +111,7 @@ class TrialChecksheet extends Model
     {
         return TrialChecksheet::where('part_number', $part_number)
         ->where('inspection_reason', $inspection_reason)
-        ->where('judgment', 'NG')
+        // ->where('judgment', 'NG')
         ->select('id', 'trial_number')
         ->orderBy('trial_number', 'asc')
         ->first();
