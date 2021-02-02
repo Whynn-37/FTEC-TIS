@@ -550,10 +550,9 @@ const IGM = (() => {
     this_igm.SelectItemTools = (item_no) => {
 
         let tools                       = $(`#slc_item_no_${item_no}_tools`).val();
-        let type                        = $(`#slc_item_no_${item_no}_type`).val();
         let split_type_onchange_value   = $(`#slc_item_no_${item_no}_type`).attr('onchange').split(',');
-        let split_existing_sub_item     = split_type_onchange_value[1].split(')');
-
+        let array_item_type_options     = '<option value=""selected disabled>Select type</option>';
+        
         $(`#slc_item_no_${item_no}_tools`).attr('onchange', `IGM.SelectItemTools(${item_no},'${tools}');`);
 
         //check if nasa array yung piniling tools
@@ -564,10 +563,59 @@ const IGM = (() => {
         } 
         else 
         {
+            $(`#txt_item_no_${item_no}_specs`).prop('disabled', true);
+            $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
+            $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', true);
+            $(`#txt_item_no_${item_no}_specs`).val('');
+            $(`#txt_item_no_${item_no}_upper_limit`).val('');
+            $(`#txt_item_no_${item_no}_lower_limit`).val('');
+
+            $(`#slc_item_no_${item_no}_type`).empty();
+
+            if (tools === 'VSL')
+            {
+                array_item_type_options += `<option value="${array_item_type[3]}">${array_item_type[3]}</option>`; //MAterial Check to
+            }
+            else
+            {
+                for (let index = 0; index < array_item_type.length; index++) 
+                {
+                    array_item_type_options += `<option value="${array_item_type[index]}">${array_item_type[index]}</option>`;
+                }
+            }
+
+            $(`#slc_item_no_${item_no}_type`).append(array_item_type_options);
+            
+            let type = $(`#slc_item_no_${item_no}_type`).val();
+            let existing_sub_no_count = $(`#a_add_igm_item_no_1_sub_no`).attr('onclick').split(',')[2];
+            
             if (type === null) 
             {
                 $(`#span_error_item_no_${item_no}_type`).remove();
                 $(`#slc_item_no_${item_no}_type`).after(`<span id="span_error_item_no_${item_no}_type" class="span-error">Required</span>`);
+
+                //pag remove ng mga sub item based sa kung ilan
+                if ($(`#tr_item_no_${item_no}_sub_no_1`).length > 0)
+                {
+                    $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+
+                    for (let index = 1; index <= existing_sub_no_count; index++) 
+                    {
+                        $(`#tr_item_no_${item_no}_sub_no_${index}`).prop('hidden',true);
+                    }
+                }
+                else
+                {
+                    //pang AMT (Actual Material Thickness)
+                    $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+
+                    for (let index = 1; index <= existing_sub_no_count; index++) 
+                    {
+                        //pag remove ng tr
+                        $(`#tr_item_no_${item_no}_sub_no_min_${index}`).prop('hidden',true);
+                        $(`#tr_item_no_${item_no}_sub_no_max_${index}`).prop('hidden',true);
+                    }
+                }
             } 
             else 
             {
@@ -581,6 +629,7 @@ const IGM = (() => {
 
                     //pag insert sa DB ng item at data
                     IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column','select_item_tools');
+                    
                 } 
                 else 
                 {
@@ -616,20 +665,29 @@ const IGM = (() => {
             } 
             else 
             {
-                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                if (tools === 'VSL' && type === 'Material Check')
                 {
                     $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
-                    $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', false);
-                    $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', false);
-                } 
-                else 
-                {
-                    $(`#txt_item_no_${item_no}_specs`).prop('disabled', true);
                     $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
                     $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', true);
-                    $(`#txt_item_no_${item_no}_specs`).val('');
-                    $(`#txt_item_no_${item_no}_upper_limit`).val('');
-                    $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                }
+                else
+                {
+                    if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness') 
+                    {
+                        $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
+                        $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', false);
+                        $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', false);
+                    } 
+                    else 
+                    {
+                        $(`#txt_item_no_${item_no}_specs`).prop('disabled', true);
+                        $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
+                        $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', true);
+                        $(`#txt_item_no_${item_no}_specs`).val('');
+                        $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                        $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                    }
                 }
 
                 $(`#span_error_item_no_${item_no}_tools`).remove();
@@ -653,7 +711,7 @@ const IGM = (() => {
         let id                  = $(`#txt_hidden_item_no_${item_no}`).val();
         let tools               = $(`#slc_item_no_${item_no}_tools`).val();
         let type                = $(`#slc_item_no_${item_no}_type`).val();
-        let specification       = $(`#txt_item_no_${item_no}_specs`).val();
+        let specification       = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
         let upper_limit         = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit         = $(`#txt_item_no_${item_no}_lower_limit`).val();
        
@@ -696,7 +754,14 @@ const IGM = (() => {
             }
             else
             {
-                IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                if (tools === 'VSL' && type === 'Material Check')
+                {
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,'update_item_no_only');
+                }
+                else
+                {
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                }
             }
         }
     };
@@ -725,7 +790,7 @@ const IGM = (() => {
                 remove_status = $(`#a_remove_igm_item_no_${item_no}`).attr('onclick').split(',')[1].split(')')[0].replace(/"|'/g, '');
             }
         }
-        
+
         $(`#accordion_igm`).LoadingOverlay('show');
 
         $.ajax({
@@ -749,7 +814,6 @@ const IGM = (() => {
             {
                 if (data.status === 'Success')
                 {
-                  
                     //meron nito para malaman kung update lang ng item no ang gagawin dahil meron ng nag eexist na sub item kaya hindi na need ng AddIgmSubNo. para to sa pag loload ng igm na may item_type = 0 (manual nainput na mga items at data)
                     if (action !== 'update_item_no_only')
                     {
@@ -2489,6 +2553,8 @@ const IGM = (() => {
         let upper_limit = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit = $(`#txt_item_no_${item_no}_lower_limit`).val();
         let specs       = $(`#txt_item_no_${item_no}_specs`).val();
+        let tools       = $(`#slc_item_no_${item_no}_tools`).val();
+        let type        = $(`#slc_item_no_${item_no}_type`).val();
 
         if (specs !== '')
         {   
@@ -2531,7 +2597,7 @@ const IGM = (() => {
                     }
                     
                 }
-    
+                
                 if (upper_limit !== '' && lower_limit !== '') 
                 {
                     if (upper_limit !== '-' && lower_limit !== '-')

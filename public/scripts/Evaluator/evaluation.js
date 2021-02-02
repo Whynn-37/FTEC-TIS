@@ -289,7 +289,7 @@ const EVALUATE = (() => {
 
             //MERON NITO DAHIL MAY TYPES NA HINDI KAILANGAN NG HINSEI
             let td_edit_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
-                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
+                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
             </td>`;
 
             // let td_edit_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
@@ -328,9 +328,9 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
                 <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null  || value.remarks === '') ? '-' : value.remarks}</td>
-                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ?  td_edit_button : ''}
+                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ?  td_edit_button : (value.type === 'Material Check' && value.tools === 'VSL') ? td_edit_button : ''}
             </tr>`;
-
+            
             array_type.push(value.type);
             array_item_number.push(value.item_number);
 
@@ -772,7 +772,7 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.EditItemButton = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
-        let button = `<button id="btn_item_no_${item_no}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>`;
+        let button = `<button id="btn_item_no_${item_no}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>`;
         $(`#td_item_no_${item_no}_edit_item`).html(button);
 
         $(`#txt_item_no_${item_no}_edit_item_remarks`).text(remarks);
@@ -780,16 +780,19 @@ const EVALUATE = (() => {
 
     this_evaluate.ItemDataInputs = (item_no, tools, type, specs, upper_limit, lower_limit) => {
 
-        let td_specs        = `<input id="txt_item_no_${item_no}_specs"  value="${specs}" type="text" class="form-control input_text_center" placeholder="Enter specification">`;
+        let td_specs        = `<input id="txt_item_no_${item_no}_specs"  value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter specification">`;
 
         let td_upper_limit  = `<input id="txt_item_no_${item_no}_upper_limit"  value="${upper_limit}" type="text" class="form-control input_text_center" placeholder="Enter upper limit" onkeyup="EVALUATE.ValidateItemNoUpperAndLowerLimit(${item_no});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">`;
 
         let td_lower_limit  = `<input id="txt_item_no_${item_no}_lower_limit"  value="${lower_limit}" type="text" class="form-control input_text_center" placeholder="Enter lower limit" onkeyup="EVALUATE.ValidateItemNoUpperAndLowerLimit(${item_no});" onkeypress="return event.charCode >= 43 && event.charCode <= 57">`;
 
         $(`#td_item_no_${item_no}_specs`).html(td_specs);
-        $(`#td_item_no_${item_no}_upper_limit`).html(td_upper_limit);
-        $(`#td_item_no_${item_no}_lower_limit`).html(td_lower_limit);
 
+        if (tools !== 'VSL' && type !== 'Material Check')
+        {
+            $(`#td_item_no_${item_no}_upper_limit`).html(td_upper_limit);
+            $(`#td_item_no_${item_no}_lower_limit`).html(td_lower_limit);
+        }
     }
 
     this_evaluate.RemarksInputs = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
@@ -869,9 +872,13 @@ const EVALUATE = (() => {
         let item_no_sub_no_count    = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
         let tools                   = $(`#td_item_no_${item_no}_tools`).html();
         let type                    = $(`#td_item_no_${item_no}_type`).html();
-        let specs                   = $(`#txt_item_no_${item_no}_specs`).val();
-        let upper_limit             = $(`#txt_item_no_${item_no}_upper_limit`).val();
-        let lower_limit             = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        let specs                   = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
+       
+        if (tools !== 'VSL' && type !== 'Material Check')
+        {
+            var upper_limit             = $(`#txt_item_no_${item_no}_upper_limit`).val();
+            var lower_limit             = $(`#txt_item_no_${item_no}_lower_limit`).val();
+        }
         let judgement               = $(`#td_item_no_${item_no}_judgement span`).text();
         let item_type               = $(`#txt_hidden_item_no_${item_no}_item_type`).val();
         let remarks                 = $(`#txt_item_no_${item_no}_edit_item_remarks`).val();
@@ -880,67 +887,67 @@ const EVALUATE = (() => {
         let new_lower_limit     = parseFloat(lower_limit);
 
         
-        //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
         
-        if (upper_limit === '-')
+        if (tools !== 'VSL' && type !== 'Material Check') //para to sa vsl at amterial check dahil di naman na eedit ang upper at lower limit non
         {
-            new_upper_limit =  `-`;
-        }
-        else if (upper_limit === '-')
-        {
-            new_upper_limit =  '';
-        }
-        else
-        {
-            if (parseFloat(upper_limit) > 0)
+            //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
+            if (upper_limit === '-')
             {
-                new_upper_limit =  `+${parseFloat(upper_limit)}`;
+                new_upper_limit =  `-`;
             }
-        }
-        
-        if (lower_limit === '-')
-        {
-            new_lower_limit =  `-`;
-        }
-        else if (lower_limit === '')
-        {
-            new_lower_limit =  '';
-        }
-        else
-        {
-            if (parseFloat(lower_limit) > 0)
+            else if (upper_limit === '-')
             {
-                new_lower_limit =  `+${parseFloat(lower_limit)}`;
+                new_upper_limit =  '';
             }
-        }
-        
-         if (specs === '')
-        {
-            $(`#span_specs_error_${item_no}`).remove();
-        
-            $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
-        }
-        else if (upper_limit === '')
-        {
-            $(`#span_upper_limit_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
-        }
-        else if (lower_limit === '')
-        {
-        
-            $(`#span_lower_limit_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
-        }
-        else if (remarks === '')
-        {
-            $(`#span_remarks_error_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_edit_item_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
-        }
+            else
+            {
+                if (parseFloat(upper_limit) > 0)
+                {
+                    new_upper_limit =  `+${parseFloat(upper_limit)}`;
+                }
+            }
 
-        if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
-        { 
-            // if (existing_specs !== specs || existing_upper_limit !== upper_limit || existing_lower_limit !== lower_limit)
-            // {
+            if (lower_limit === '-')
+            {
+                new_lower_limit =  `-`;
+            }
+            else if (lower_limit === '')
+            {
+                new_lower_limit =  '';
+            }
+            else
+            {
+                if (parseFloat(lower_limit) > 0)
+                {
+                    new_lower_limit =  `+${parseFloat(lower_limit)}`;
+                }
+            }
+
+            if (specs === '')
+            {
+                $(`#span_specs_error_${item_no}`).remove();
+            
+                $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
+            }
+            else if (upper_limit === '')
+            {
+                $(`#span_upper_limit_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
+            }
+            else if (lower_limit === '')
+            {
+            
+                $(`#span_lower_limit_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
+            }
+            else if (remarks === '')
+            {
+                $(`#span_remarks_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_edit_item_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
+            }
+
+            if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
+            { 
                 Swal.fire($.extend(swal_options, {
                     title: 'Are you sure you want to save?',
                 })).then((result) => 
@@ -1014,19 +1021,41 @@ const EVALUATE = (() => {
                         }
                     }
                 })
-            // }
-            // else
-            // {
-            //     Swal.fire({
-            //         icon: 'warning',
-            //         title: 'Hinsei Cancelled',
-            //         text: 'There is no changes with the specification, upper limit, lower limit. Hinsei is cancelled.',
-            //     })
-            //     let td_item_remarks = $(`#td_item_no_${item_no}_remarks`).html();
-            //     EVALUATE.CancelEditItem(item_no, tools, type, existing_specs, existing_upper_limit, existing_lower_limit,(td_item_remarks === '-') ? '' : td_item_remarks);
-            // }
+            }
         }
+        else
+        {
+            $(`#span_specs_error_${item_no}`).remove();
 
+            if (specs !== '')
+            {
+                if (remarks !== '')
+                {
+                    Swal.fire($.extend(swal_options, {
+                        title: 'Are you sure you want to save?',
+                    })).then((result) => 
+                    {
+                        if (result.value) 
+                        {
+                            $(`#accordion_igm`).LoadingOverlay('show');
+                            
+                            let final_judgment = judgement;//ginanto ko lang para alam na final judgement
+    
+                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,null,null,judgement,item_type,remarks,final_judgment,'edit_item');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
+                        }
+                    })
+                }
+                else
+                {
+                    $(`#span_remarks_error_${item_no}`).remove();
+                    $(`#txt_item_no_${item_no}_edit_item_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
+                }
+            }
+            else
+            {
+                $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
+            }
+        }
     }
 
     this_evaluate.RejudgementDataAMT = (item_no, sub_no, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks) => {
@@ -1490,6 +1519,10 @@ const EVALUATE = (() => {
         let  edit_item_button   = $(`#btn_item_no_${item_no}_edit_item`).length;
         let  item_judgment      = $(`#td_item_no_${item_no}_judgement span`).text();
 
+        let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
+
+        let sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
         {
             if (edit_item_button === 0)
@@ -1511,8 +1544,6 @@ const EVALUATE = (() => {
                     array_min_max_data.push(split_value);
                 });
                 
-                let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
-
                 if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                 {
                     td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}" onkeyup="EVALUATE.SubItemGetMinMax(${item_no},${sub_no},'','')">`;
@@ -1533,7 +1564,6 @@ const EVALUATE = (() => {
                         max_count += 2;
                     }
 
-                    var sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
                 }
                 else // pang  if (type === 'Actual' || type === 'Material Thickness')
                 {
@@ -1549,43 +1579,30 @@ const EVALUATE = (() => {
                         data_count++;
                     }
                 }
-                
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
-                let td_edit_button = `
-                <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
-                <br>
-                <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-                
-                <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
-
-                
-                $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
-
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
             }
         }
         else //pang mga kasamahan ng type = Belt Fit
         {
-            if (edit_item_button === 0)
+            for (let visual_no = 1; visual_no <= 5; visual_no++) 
             {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Unsaved Item',
-                    text: 'Please save/cancel the hinsei before editing the checksheet data',
-                })
-            }
-            else
-            {
-                for (let visual_no = 1; visual_no <= 5; visual_no++) 
-                {
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
-                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
-                }
-    
-                sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
             }
         }
+
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
+        let td_edit_button = `
+        <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
+        <br>
+        <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+        
+        <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
+
+        
+        $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
+
+        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
     };
 
     this_evaluate.SubItemSelectVisual = (item_no,sub_no,visual_no) => {
@@ -2380,10 +2397,7 @@ const EVALUATE = (() => {
         let sub_item_judgement  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
         let remarks             = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val();
         let new_coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-
-        let split_item_remarks          = $(`#btn_item_no_${item_no}_edit_item`).attr('onclick').split(',');
-        let split_split_item_remarks    = split_item_remarks[6].split(')');
-        let item_remarks                = split_split_item_remarks[0].replace(/"|'/g, '');
+        let item_remarks        = ($(`#td_item_no_${item_no}_remarks`).html() == '-') ? null : $(`#td_item_no_${item_no}_remarks`).html();
 
         if (remarks !== '')
         {
@@ -2437,11 +2451,11 @@ const EVALUATE = (() => {
     this_evaluate.ValidateSaveSubItemMinMax = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
         
         let array_min_max_data  = [];
-        let split_data          = visuals_min_max_datas.split(',');
+        // let split_data          = visuals_min_max_datas.split(',');
 
-        split_data.forEach((split_value) => {
-            array_min_max_data.push(split_value);
-        });
+        // split_data.forEach((split_value) => {
+        //     array_min_max_data.push(split_value);
+        // });
 
         //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
         for (let a_count = 1; a_count <= 5; a_count++) 
@@ -2458,6 +2472,24 @@ const EVALUATE = (() => {
             {
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val('-');
             }
+            
+            if (min_value === '-')
+            {
+                array_min_max_data.push(min_value);
+            }
+            else
+            {
+                array_min_max_data.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+            }
+
+            if (max_value === '-')
+            {
+                array_min_max_data.push(max_value);
+            }
+            else
+            {
+                array_min_max_data.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
+            }
 
             if (a_count === 5)
             {
@@ -2469,11 +2501,11 @@ const EVALUATE = (() => {
     this_evaluate.ValidateSaveSubItemAMT = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
         
         let array_data  = [];
-        let split_data          = visuals_min_max_datas.split(',');
+        // let split_data          = visuals_min_max_datas.split(',');
 
-        split_data.forEach((split_value) => {
-            array_data.push(split_value);
-        });
+        // split_data.forEach((split_value) => {
+        //     array_data.push(split_value);
+        // });
         
         //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
         for (let a_count = 1; a_count <= 5; a_count++) 
@@ -2485,6 +2517,14 @@ const EVALUATE = (() => {
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).val('-');
             }
 
+            if (value === '-')
+            {
+                array_data.push(value);
+            }
+            else
+            {
+                array_data.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
+            }
             if (a_count === 5)
             {
                 EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_data,type,remarks);
