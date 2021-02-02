@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Attachment;
-use \setasign\Fpdi\Fpdi;
+// use \setasign\Fpdi\Fpdi;
 use \setasign\Fpdi\FpdiProtection;
+use \setasign\Fpdi\Tcpdf\Fpdi;
 class FpdfController extends Controller
 {
     public function mergeFile($merge_data, $data)
     {
         // $pdf = new \setasign\Fpdi\Fpdi();
         $pdf = new Fpdi('P', 'mm', [215.9, 300]);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
 
         // folder name 
         $folder_name = $merge_data['folder_name'];
@@ -121,7 +124,7 @@ class FpdfController extends Controller
                 $pdf->AddPage();
                 $pdf->useTemplate($template);
 
-                $pdf->SetFont('Times');
+                $pdf->SetFont('cid0jp');
                 $pdf->SetFontSize(11);
 
                 $date_finished = explode(" ", $data['checksheet_details']['date_finished']);
@@ -188,8 +191,8 @@ class FpdfController extends Controller
                         }
                         $indicator++;
 
-                        $pdf->SetFont('Times');
-                        $pdf->SetFontSize(5);
+                        // $pdf->SetFont('Times');
+                        $pdf->SetFontSize(6);
 
                         if ($indicator == 1)
                         {
@@ -290,15 +293,17 @@ class FpdfController extends Controller
 
                                 
                                 $plus_minus = '';
-                                if ($items['specification'] !== null && $items['specification'] !== '') 
+                                if ($items['specification'] !== null && $items['specification'] !== '' || is_numeric($items['specification']) === 1) 
                                 {
-                                    $plus_minus = stripslashes(' ±');
-                                    $plus_minus = iconv('UTF-8', 'windows-1252', $plus_minus);
+                                    // $plus_minus = stripslashes(' ±');
+                                    // $plus_minus = iconv('UTF-8', 'windows-1252', $plus_minus);
+                                    $plus_minus = ' ± ';
                                 }
 
                                 // specification
                                 $pdf->SetXY(53, $increment);
                                 $pdf->MultiCell(16,6, $items['specification'] .$plus_minus. substr($items['upper_limit'], 1),0,'C');
+
 
                                 $increment+= 5.7;
                             }
@@ -601,8 +606,8 @@ class FpdfController extends Controller
                                 $increment+= 5.7;
                             }
                         }
-                    }
-                }
+                    } // end of forloop
+                } // end of if
             }
         // }
         
