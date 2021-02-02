@@ -218,6 +218,15 @@ const IGM = (() => {
             
             let remove_function = `<a id="a_remove_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.item_number},'existing');"><i class="ti-close"></i> REMOVE</a>`;
 
+            //ito ang default na input ng specs
+            let td_specs = `<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">`;
+            
+            //ito yung para sa vsl
+            if (value.type === 'Material Check' && value.tools === 'VSL')
+            {
+                td_specs = `<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateAddIgmItemNo(${value.item_number},'update_item_no_only');">`;
+            }
+
             tr_new_item += `${IGM.AddIgmItemNoHeader(value.item_number - 1,(value.item_type === 0) ? 'th_new_igm_sub_column' : 'th_new_igm_sub_column_dark')}
 			<tr id="tr_item_no_${value.item_number}">
                 <td>
@@ -244,7 +253,7 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+                    ${td_specs}
 				</td>
 				<td>
 					<input id="txt_item_no_${value.item_number}_upper_limit" value="${upper_limit}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
@@ -278,7 +287,14 @@ const IGM = (() => {
                     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
     
                 } 
-                else {
+                else if (value.type === 'Material Check' && value.tools === 'VSL')
+                {
+                    $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
+                    $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
+                    $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
+                }
+                else 
+                {
                     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', true);
                     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
                     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
@@ -2422,93 +2438,104 @@ const IGM = (() => {
             var visual_value    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
         }
         let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val().toUpperCase();
+        let specs           = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
 
-        if (coordinates !== '')
+        if (specs !== '')
         {
-            $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
-
-            if (visual_no !== 'undefined')
+            if (coordinates !== '')
             {
-                if (visual_no === 1) 
+                $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
+    
+                if (visual_no !== 'undefined')
                 {
-                    $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
-
-                    if (visual_value === '') 
+                    if (visual_no === 1) 
                     {
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
-
-                    } 
-                    else if (visual_value === 'OK') 
-                    {
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
-                    } 
-                    else if (visual_value === 'NA') 
-                    {
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                    } 
-                    else 
-                    {
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
-                    }
-                } 
-                else 
-                {
-                    for (let visual_count = visual_no - 1; visual_count < visual_no; visual_count++) 
-                    {
-                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_count}`).val() === '') 
+                        $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+                        $(`#span_error_specs_item_no_${item_no}`).remove();
+    
+                        if (visual_value === '') 
                         {
-                            for (let error_count = 1; error_count < visual_no; error_count++) 
-                            {
-                                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).val() === '') 
-                                {
-                                    $(`#span_visual_item_no_${item_no}_error_${error_count}`).remove();
-                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).after(`<span id="span_visual_item_no_${item_no}_error_${error_count}" class="span-error">Required</span>`);
-                                }
-                            }
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+    
+                        } 
+                        else if (visual_value === 'OK') 
+                        {
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                        } 
+                        else if (visual_value === 'NA') 
+                        {
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
                         } 
                         else 
                         {
-                            $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
-
-                            if (visual_value === '') 
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                        }
+                    } 
+                    else 
+                    {
+                        for (let visual_count = visual_no - 1; visual_count < visual_no; visual_count++) 
+                        {
+                            if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_count}`).val() === '') 
                             {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
-
-                            } 
-                            else if (visual_value === 'OK') 
-                            {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
-                            } 
-                            else if (visual_value === 'NA') 
-                            {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                for (let error_count = 1; error_count < visual_no; error_count++) 
+                                {
+                                    if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).val() === '') 
+                                    {
+                                        $(`#span_visual_item_no_${item_no}_error_${error_count}`).remove();
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).after(`<span id="span_visual_item_no_${item_no}_error_${error_count}" class="span-error">Required</span>`);
+                                    }
+                                }
                             } 
                             else 
                             {
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
-                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                                $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+    
+                                if (visual_value === '') 
+                                {
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+    
+                                } 
+                                else if (visual_value === 'OK') 
+                                {
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                                } 
+                                else if (visual_value === 'NA') 
+                                {
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                } 
+                                else 
+                                {
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                                }
                             }
                         }
                     }
+                    
+                    //proceed sa pag kuha ng visuals then deretso sa ajax
+                    IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
                 }
-                
-                //proceed sa pag kuha ng visuals then deretso sa ajax
-                IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
+            }
+            else
+            {
+                $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
             }
         }
         else
         {
-            $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
+            $(`#span_error_specs_item_no_${item_no}`).remove();
+            $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_error_specs_item_no_${item_no}" class="span-error">Required</span>`);
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
         }
     };
 
