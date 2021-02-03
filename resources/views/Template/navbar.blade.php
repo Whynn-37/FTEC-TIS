@@ -36,7 +36,6 @@
                 <div class="row align-items-center">
                     <div class="col-lg-9  d-none d-lg-block">
                         <div class="horizontal-menu">
-                        
                             <nav>
                                 <ul id="nav_menu">
                                     <li>
@@ -61,6 +60,42 @@
                                             <li><a href="{{ url('supplier') }}"><i class="ti-shopping-cart-full"></i><span> SUPPLIER </span></a></li>
                                             <li><a href="{{ url('activity-logs') }}"><i class="ti-harddrives"></i><span> ACTIVITY LOGS </span></a></li>
                                         </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- mobile_menu -->
+                    <div class="col-12 d-block d-lg-none">
+                        <div id="mobile_menu"></div>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-9  d-none d-lg-block">
+                        <div class="horizontal-menu">
+                            <nav>
+                                <ul id="nav_menu">
+                                    @if (Session::get('position') === 'INSPECTOR' || Session::get('position') === 'STAFF')
+                                        <li>
+                                            <a href="{{ url('trial-checksheet') }}"><i class="ti-clipboard" style="font-size:1.2em"></i><span style="font-size:1.2em">TRIAL CHECKSHEET</span></a>
+                                        </li>
+                                    @elseif (Session::get('position') === 'LEADER' || Session::get('position') === 'QC ASSISTANT')
+                                        <li>
+                                            <a href="{{ url('trial-checksheet') }}"><i class="ti-clipboard" style="font-size:1.2em"></i><span style="font-size:1.2em">TRIAL CHECKSHEET</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ url('evaluation') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">EVALUATOR</span></a>
+                                        </li>
+                                    @elseif (Session::get('position') === 'MANAGER' || Session::get('position') === 'DIRECTOR')
+                                        <li>
+                                            <a href="{{ url('approval') }}"><i class="ti-check-box" style="font-size:1.2em"></i><span style="font-size:1.2em">APPROVER</span></a>
+                                        </li>
+                                    @endif
+                                    <li>
+                                        <a href="{{ url('history') }}"><i class="ti-time" style="font-size:1.2em"></i><span style="font-size:1.2em">HISTORY</span></a>
                                     </li>
                                 </ul>
                             </nav>
