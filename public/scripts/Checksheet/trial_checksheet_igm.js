@@ -2439,8 +2439,110 @@ const IGM = (() => {
         }
         let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val().toUpperCase();
         let specs           = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
+        let tools           = $(`#slc_item_no_${item_no}_tools`).val();
+        let type            = $(`#slc_item_no_${item_no}_type`).val();
 
-        if (specs !== '')
+        if (tools == 'VSL' && type === 'Material Check')
+        {
+            if (specs !== '')
+            {
+                if (coordinates !== '')
+                {
+                    $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
+        
+                    if (visual_no !== 'undefined')
+                    {
+                        if (visual_no === 1) 
+                        {
+                            $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+                            $(`#span_error_specs_item_no_${item_no}`).remove();
+        
+                            if (visual_value === '') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+        
+                            } 
+                            else if (visual_value === 'OK') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                            } 
+                            else if (visual_value === 'NA') 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                            } 
+                            else 
+                            {
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                            }
+                        } 
+                        else 
+                        {
+                            for (let visual_count = visual_no - 1; visual_count < visual_no; visual_count++) 
+                            {
+                                if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_count}`).val() === '') 
+                                {
+                                    for (let error_count = 1; error_count < visual_no; error_count++) 
+                                    {
+                                        if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).val() === '') 
+                                        {
+                                            $(`#span_visual_item_no_${item_no}_error_${error_count}`).remove();
+                                            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${error_count}`).after(`<span id="span_visual_item_no_${item_no}_error_${error_count}" class="span-error">Required</span>`);
+                                        }
+                                    }
+                                } 
+                                else 
+                                {
+                                    $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
+        
+                                    if (visual_value === '') 
+                                    {
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('color', 'white');
+        
+                                    } 
+                                    else if (visual_value === 'OK') 
+                                    {
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NG');
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#d43333');
+                                    } 
+                                    else if (visual_value === 'NA') 
+                                    {
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('OK');
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#27b968');
+                                    } 
+                                    else 
+                                    {
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val('NA');
+                                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#676767');
+                                    }
+                                }
+                            }
+                        }
+                        
+                        //proceed sa pag kuha ng visuals then deretso sa ajax
+                        IGM.SubitemCalculateVisualJudgement(item_no, sub_no);
+                    }
+                }
+                else
+                {
+                    $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
+                }
+            }
+            else
+            {
+                $(`#span_error_specs_item_no_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_error_specs_item_no_${item_no}" class="span-error">Required</span>`);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
+            }
+        }
+        else
         {
             if (coordinates !== '')
             {
@@ -2531,12 +2633,7 @@ const IGM = (() => {
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
             }
         }
-        else
-        {
-            $(`#span_error_specs_item_no_${item_no}`).remove();
-            $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_error_specs_item_no_${item_no}" class="span-error">Required</span>`);
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
-        }
+        
     };
 
     this_igm.SubitemCalculateVisualJudgement = (item_no, sub_no) => {

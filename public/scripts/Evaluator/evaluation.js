@@ -1422,7 +1422,7 @@ const EVALUATE = (() => {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Edit successful',
+                            text: 'Hinsei successful',
                         })
 
                         EVALUATE.ViewFinishedInspectionData(trial_checksheet_id,evaluation_status);
@@ -1455,8 +1455,8 @@ const EVALUATE = (() => {
 
     this_evaluate.TrialChecksheetRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,action) => {
 
-        let judgment_item                                = $(`#td_item_no_${item_no}_judgement span`).text();
-        let array_item_judgment                         = [];
+        let judgment_item        = $(`#td_item_no_${item_no}_judgement span`).text();
+        let array_item_judgment  = [];
 
         //pagkuha ng item judgements para sa buong judgment ng trial
         for (let index = 1; index <= parseInt(checksheet_item_count); index++) 
@@ -2435,7 +2435,7 @@ const EVALUATE = (() => {
                     {
                         array_visual_data.push(split_value);
                     });
-
+                    
                     EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_visual_data,type,item_remarks);
                 }
             }
@@ -2805,9 +2805,9 @@ const EVALUATE = (() => {
         {
             array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${index}`).val());
         }
-
+      
         $(`#td_item_no_${item_no}_sub_no_${sub_no}_remarks`).html(sub_item_remarks);//textarea to html, paglalgay ng remarks sa table
-
+        
         EVALUATE.OverallRejudgement(item_no, sub_no, array_visuals, sub_no_count,trial_checksheet_id,tools,type,new_specs,new_upper_limit,new_lower_limit,item_type,remarks,'edit',new_coordinates)
     }
 
