@@ -121,7 +121,8 @@ class ChecksheetItem extends Model
             $query->orWhere('type', 'like', '%Min and Max and Form Tolerance%')
                   ->orWhere('type', 'like', '%Actual%')
                   ->orWhere('type', 'like', '%Material Thickness%')
-                  ->orWhere('type', 'like', '%Min and Max%');
+                  ->orWhere('type', 'like', '%Min and Max%')
+                  ->orWhere('tools', 'like', '%VSL%');
         })
         ->select('id', 'item_number')
         ->orderBy('item_number', 'asc')

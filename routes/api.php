@@ -69,7 +69,7 @@ Route::patch('edit-data', 'ApprovalController@editData');
 Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection');
 Route::get('generate-trial-evaluation-result/{id}','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page/{id}','ApprovalController@generateSecondPage');
-Route::post('approved','ApprovalController@approved');
+Route::get('approved','ApprovalController@approved');
 
 
 Route::post('pdf-test', 'FpdfController@pdfTest');
