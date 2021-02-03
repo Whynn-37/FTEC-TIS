@@ -383,9 +383,9 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function getDisapprovedInspection(TrialChecksheet $TrialChecksheet)
+    public function getDisapprovedInspection(TrialLedger $TrialLedger)
     {
-        $data = $TrialChecksheet->loadFinishedInspection(5);
+        $data = $TrialLedger->getDisapprovedInspection(5);
 
         $status = 'Error';
         $message = 'No Disapproved inspection';

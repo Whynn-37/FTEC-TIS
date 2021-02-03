@@ -129,6 +129,30 @@ class TrialLedger extends Model
         ];
     }
 
+    public function getDisapprovedInspection($decision)
+    {
+        return TrialLedger::join('suppliers', 'suppliers.supplier_code', 'trial_ledgers.supplier_code')
+        ->join('trial_checksheets', 'trial_ledgers.application_date','=','trial_checksheets.application_date')
+        ->join('approvals', 'approvals.trial_checksheet_id','=','trial_checksheets.id')
+        ->where('approvals.decision', '=', $decision)
+        ->select(
+            'trial_checksheets.id',
+            'trial_ledgers.application_date', 
+            'trial_ledgers.part_number', 
+            'trial_ledgers.inspection_reason', 
+            'trial_ledgers.revision_number', 
+            'trial_ledgers.trial_number', 
+            'trial_ledgers.part_name', 
+            'trial_ledgers.supplier_code', 
+            'trial_ledgers.inspector_id', 
+            'suppliers.supplier_name',
+            'approvals.reason',
+            'approvals.evaluated_by',
+            'approvals.evaluated_datetime',
+        )
+        ->get();
+    }
+
     public function getTrialLedger($application_date)
     {
         return TrialLedger::where('application_date', $application_date)
