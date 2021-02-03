@@ -297,28 +297,30 @@ class TrialChecksheetController extends Controller
                     if ($checksheet_value->application_date === $ledger_value->application_date)
                     {
                         $match_application_date[] =  $ledger_value->application_date;
-                        $result = [];
+                        // $result = [];
                     }
-                    else 
-                    {
-                        $result[] = 
-                        [
-                            'application_date' => $ledger_value->application_date,
-                            'part_number' => $ledger_value->part_number,
-                            'inspection_reason' => $ledger_value->inspection_reason,
-                            'revision_number' => $ledger_value->revision_number,
-                            'trial_number' => $ledger_value->trial_number,
-                            'part_name' => $ledger_value->part_name,
-                            'supplier_code' => $ledger_value->supplier_code,
-                            'inspector_id' => $ledger_value->inspector_id,
-                            'supplier_name' => $ledger_value->supplier_name
-                        ];
-                        $match_application_date = false;
-                    }
+                    // else 
+                    // {
+                    //     $result[] = 
+                    //     [
+                    //         'application_date' => $ledger_value->application_date,
+                    //         'part_number' => $ledger_value->part_number,
+                    //         'inspection_reason' => $ledger_value->inspection_reason,
+                    //         'revision_number' => $ledger_value->revision_number,
+                    //         'trial_number' => $ledger_value->trial_number,
+                    //         'part_name' => $ledger_value->part_name,
+                    //         'supplier_code' => $ledger_value->supplier_code,
+                    //         'inspector_id' => $ledger_value->inspector_id,
+                    //         'supplier_name' => $ledger_value->supplier_name
+                    //     ];
+                    //     $match_application_date = 'false';
+                    // }
                 }
             }
 
-            if($match_application_date !== false)
+            // return $match_application_date;
+
+            if($match_application_date)
             {
                 for($x=0; $x<count($match_application_date);$x++)
                 {
@@ -378,6 +380,27 @@ class TrialChecksheetController extends Controller
             'status'    =>  $status,
             'message'   =>  $message,
             'data'      =>  $result
+        ];
+    }
+
+    public function getDisapprovedInspection(TrialChecksheet $TrialChecksheet)
+    {
+        $data = $TrialChecksheet->loadFinishedInspection(5);
+
+        $status = 'Error';
+        $message = 'No Disapproved inspection';
+
+        if (count($data) !== 0) 
+        {
+            $status = 'Success';
+            $message = 'Disapproved inspection';
+        }
+
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $data
         ];
     }
 

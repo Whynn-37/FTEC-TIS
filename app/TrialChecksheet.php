@@ -71,6 +71,7 @@ class TrialChecksheet extends Model
             'trial_checksheets.id',
             'trial_checksheets.judgment',
             'trial_checksheets.date_finished',
+            'trial_ledgers.application_date',
             'trial_ledgers.part_number',
             'trial_ledgers.revision_number',
             'trial_ledgers.trial_number',

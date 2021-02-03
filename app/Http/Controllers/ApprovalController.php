@@ -532,7 +532,7 @@ class ApprovalController extends Controller
                 [
                     'evaluated_by' => Session::get('name'),
                     'evaluated_datetime' => now(),
-                    'decision' => 4
+                    'decision' => 5
                 ];
 
                 $status = 'disapproved';
