@@ -119,66 +119,6 @@ class FpdfController extends Controller
                     'datas' => $datas,
                 ];
 
-                $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
-                $template = $pdf->importPage(1);
-                $pdf->AddPage();
-                $pdf->useTemplate($template);
-
-                $pdf->SetFont('cid0jp');
-                $pdf->SetFontSize(11);
-
-                $date_finished = explode(" ", $data['checksheet_details']['date_finished']);
-                // date
-                $pdf->SetXY(180, 13);
-                $pdf->Write(0, $date_finished[0]);
-
-                // supplier
-                $pdf->SetFontSize(6);
-                $pdf->SetXY(105, 23);
-                $pdf->Write(0, $data['checksheet_details']['supplier_name']);
-
-                // part number
-                $pdf->SetFontSize(11);
-                $pdf->SetXY(43, 30);
-                $pdf->Write(0, $data['checksheet_details']['part_number']);
-
-                // part name
-                $pdf->SetFontSize(6);
-                $pdf->SetXY(43, 38);
-                $pdf->Write(0, $data['checksheet_details']['part_name']);
-
-                // revision number
-                $pdf->SetFontSize(11);
-                $pdf->SetXY(95, 38);
-                $pdf->Write(0, $data['checksheet_details']['revision_number']);
-
-                $pdf->SetFont('Times');
-                $pdf->SetFontSize(6);
-
-                // inspect by
-                $pdf->SetXY(143, 32);
-                $pdf->MultiCell(21,3,$data['approval']['inspect_by'],0,'C');
-
-                $inspect_datetime = explode(" ", $data['approval']['inspect_datetime']);
-                $pdf->SetXY(143, 38);
-                $pdf->MultiCell(21,3, $inspect_datetime[0],0,'C');
-
-                // evaluated by
-                $pdf->SetXY(164, 32);
-                $pdf->MultiCell(21,3,$data['approval']['evaluated_by'],0,'C');
-
-                $evaluated_datetime = explode(" ", $data['approval']['evaluated_datetime']);
-                $pdf->SetXY(164, 38);
-                $pdf->MultiCell(21,3, $evaluated_datetime[0],0,'C');
-
-                // approved by
-                $pdf->SetXY(184, 32);
-                $pdf->MultiCell(21,3,$data['approval']['approved_by'],0,'C');
-
-                $approved_datetime = explode(" ", $data['approval']['approved_datetime']);
-                $pdf->SetXY(184, 38);
-                $pdf->MultiCell(21,3, $approved_datetime[0],0,'C');
-
                 $indicator = 0;
 
                 if (count($checksheet) !== 0) 
@@ -196,6 +136,65 @@ class FpdfController extends Controller
 
                         if ($indicator == 1)
                         {
+                            $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
+                            $template = $pdf->importPage(1);
+                            $pdf->AddPage();
+                            $pdf->useTemplate($template);
+
+                            $pdf->SetFont('cid0jp');
+                            $pdf->SetFontSize(11);
+
+                            $date_finished = explode(" ", $data['checksheet_details']['date_finished']);
+                            // date
+                            $pdf->SetXY(180, 13);
+                            $pdf->Write(0, $date_finished[0]);
+
+                            // supplier
+                            $pdf->SetFontSize(6);
+                            $pdf->SetXY(105, 23);
+                            $pdf->Write(0, $data['checksheet_details']['supplier_name']);
+
+                            // part number
+                            $pdf->SetFontSize(11);
+                            $pdf->SetXY(43, 30);
+                            $pdf->Write(0, $data['checksheet_details']['part_number']);
+
+                            // part name
+                            $pdf->SetFontSize(6);
+                            $pdf->SetXY(43, 38);
+                            $pdf->Write(0, $data['checksheet_details']['part_name']);
+
+                            // revision number
+                            $pdf->SetFontSize(11);
+                            $pdf->SetXY(95, 38);
+                            $pdf->Write(0, $data['checksheet_details']['revision_number']);
+
+                            $pdf->SetFontSize(6);
+
+                            // inspect by
+                            $pdf->SetXY(143, 32);
+                            $pdf->MultiCell(21,3,$data['approval']['inspect_by'],0,'C');
+
+                            $inspect_datetime = explode(" ", $data['approval']['inspect_datetime']);
+                            $pdf->SetXY(143, 38);
+                            $pdf->MultiCell(21,3, $inspect_datetime[0],0,'C');
+
+                            // evaluated by
+                            $pdf->SetXY(164, 32);
+                            $pdf->MultiCell(21,3,$data['approval']['evaluated_by'],0,'C');
+
+                            $evaluated_datetime = explode(" ", $data['approval']['evaluated_datetime']);
+                            $pdf->SetXY(164, 38);
+                            $pdf->MultiCell(21,3, $evaluated_datetime[0],0,'C');
+
+                            // approved by
+                            $pdf->SetXY(184, 32);
+                            $pdf->MultiCell(21,3,$data['approval']['approved_by'],0,'C');
+
+                            $approved_datetime = explode(" ", $data['approval']['approved_datetime']);
+                            $pdf->SetXY(184, 38);
+                            $pdf->MultiCell(21,3, $approved_datetime[0],0,'C');
+
                             $circle = storage_path('app/public/second_page/circle.png');
 
                             // trial number
@@ -292,8 +291,8 @@ class FpdfController extends Controller
                                 $pdf->MultiCell(9,6, $items['coordinates'],0,'C');
 
                                 
-                                $plus_minus = '';
-                                if ($items['specification'] !== null && $items['specification'] !== '' || is_numeric($items['specification']) === 1) 
+                                $plus_minus = ' ';
+                                if (is_numeric($items['specification'])) 
                                 {
                                     // $plus_minus = stripslashes(' ±');
                                     // $plus_minus = iconv('UTF-8', 'windows-1252', $plus_minus);
@@ -324,8 +323,8 @@ class FpdfController extends Controller
                                         break;
                                 }
                                 
-                                $max = '';
-                                $min = '';
+                                $max_data = '';
+                                $min_data = '';
                                 
                                 if ($datas['data'] != '') 
                                 {
@@ -352,10 +351,42 @@ class FpdfController extends Controller
                                         
                                         $minmax = max($data_value);
 
-                                        $max = $minmax['max'];
-                                        $min = $minmax['min'];
+                                        $max_data = $minmax['max'];
+                                        $min_data = $minmax['min'];
+                                    }
+                                    else if ($datas['type'] === 'Actual' || $datas['type'] === 'Material Thickness') 
+                                    {
+                                        $x = 0;
+                                        for ($h=0; $h < 5; $h++) 
+                                        { 
+                                            if ($datas['data'][$h] !== '-') 
+                                            {
+                                                $data_value[$x]['max'] = floatval($datas['data'][$h]);
+                                                $x++;
+                                            }
+                                        }
+
+                                        $minmax = max($data_value);
+
+                                        $max_data = $minmax['max'];
+                                    }
+                                    else 
+                                    {
+                                        $max_data = 'NG';
+
+                                        if ($datas['judgment'] === 'GOOD') 
+                                        {
+                                            $max_data = 'OK';
+                                        }
+                                        else if ($datas['judgment'] === '')
+                                        {
+                                            $max_data = '';
+                                        }
                                     }
                                 }
+
+                                $max = $max_data;
+                                $min = $min_data;
                                 
                                 // min max
                                 $pdf->SetXY(69, $increment);
@@ -435,9 +466,9 @@ class FpdfController extends Controller
                                         break;
                                 }
 
-                                $max = '';
-                                $min = '';
-
+                                $max_data = '';
+                                $min_data = '';
+                                
                                 if ($datas['data'] != '') 
                                 {
                                     if ($datas['type'] === 'Min and Max' || $datas['type'] === 'Min and Max and Form Tolerance') 
@@ -463,10 +494,42 @@ class FpdfController extends Controller
                                         
                                         $minmax = max($data_value);
 
-                                        $max = $minmax['max'];
-                                        $min = $minmax['min'];
+                                        $max_data = $minmax['max'];
+                                        $min_data = $minmax['min'];
+                                    }
+                                    else if ($datas['type'] === 'Actual' || $datas['type'] === 'Material Thickness') 
+                                    {
+                                        $x = 0;
+                                        for ($h=0; $h < 5; $h++) 
+                                        { 
+                                            if ($datas['data'][$h] !== '-') 
+                                            {
+                                                $data_value[$x]['max'] = floatval($datas['data'][$h]);
+                                                $x++;
+                                            }
+                                        }
+
+                                        $minmax = max($data_value);
+
+                                        $max_data = $minmax['max'];
+                                    }
+                                    else 
+                                    {
+                                        $max_data = 'NG';
+
+                                        if ($datas['judgment'] === 'GOOD') 
+                                        {
+                                            $max_data = 'OK';
+                                        }
+                                        else if ($datas['judgment'] === '')
+                                        {
+                                            $max_data = '';
+                                        }
                                     }
                                 }
+
+                                $max = $max_data;
+                                $min = $min_data;
                                 
                                 // min max
                                 $pdf->SetXY(105, $increment);
@@ -537,9 +600,9 @@ class FpdfController extends Controller
                                         break;
                                 }
 
-                                $max = '';
-                                $min = '';
-
+                                $max_data = '';
+                                $min_data = '';
+                                
                                 if ($datas['data'] != '') 
                                 {
                                     if ($datas['type'] === 'Min and Max' || $datas['type'] === 'Min and Max and Form Tolerance') 
@@ -565,10 +628,42 @@ class FpdfController extends Controller
                                         
                                         $minmax = max($data_value);
 
-                                        $max = $minmax['max'];
-                                        $min = $minmax['min'];
+                                        $max_data = $minmax['max'];
+                                        $min_data = $minmax['min'];
+                                    }
+                                    else if ($datas['type'] === 'Actual' || $datas['type'] === 'Material Thickness') 
+                                    {
+                                        $x = 0;
+                                        for ($h=0; $h < 5; $h++) 
+                                        { 
+                                            if ($datas['data'][$h] !== '-') 
+                                            {
+                                                $data_value[$x]['max'] = floatval($datas['data'][$h]);
+                                                $x++;
+                                            }
+                                        }
+
+                                        $minmax = max($data_value);
+
+                                        $max_data = $minmax['max'];
+                                    }
+                                    else 
+                                    {
+                                        $max_data = 'NG';
+
+                                        if ($datas['judgment'] === 'GOOD') 
+                                        {
+                                            $max_data = 'OK';
+                                        }
+                                        else if ($datas['judgment'] === '')
+                                        {
+                                            $max_data = '';
+                                        }
                                     }
                                 }
+
+                                $max = $max_data;
+                                $min = $min_data;
                                 
                                 // min max
                                 $pdf->SetXY(140, $increment);

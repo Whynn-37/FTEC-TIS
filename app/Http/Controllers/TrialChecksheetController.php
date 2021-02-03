@@ -297,28 +297,30 @@ class TrialChecksheetController extends Controller
                     if ($checksheet_value->application_date === $ledger_value->application_date)
                     {
                         $match_application_date[] =  $ledger_value->application_date;
-                        $result = [];
+                        // $result = [];
                     }
-                    else 
-                    {
-                        $result[] = 
-                        [
-                            'application_date' => $ledger_value->application_date,
-                            'part_number' => $ledger_value->part_number,
-                            'inspection_reason' => $ledger_value->inspection_reason,
-                            'revision_number' => $ledger_value->revision_number,
-                            'trial_number' => $ledger_value->trial_number,
-                            'part_name' => $ledger_value->part_name,
-                            'supplier_code' => $ledger_value->supplier_code,
-                            'inspector_id' => $ledger_value->inspector_id,
-                            'supplier_name' => $ledger_value->supplier_name
-                        ];
-                        $match_application_date = false;
-                    }
+                    // else 
+                    // {
+                    //     $result[] = 
+                    //     [
+                    //         'application_date' => $ledger_value->application_date,
+                    //         'part_number' => $ledger_value->part_number,
+                    //         'inspection_reason' => $ledger_value->inspection_reason,
+                    //         'revision_number' => $ledger_value->revision_number,
+                    //         'trial_number' => $ledger_value->trial_number,
+                    //         'part_name' => $ledger_value->part_name,
+                    //         'supplier_code' => $ledger_value->supplier_code,
+                    //         'inspector_id' => $ledger_value->inspector_id,
+                    //         'supplier_name' => $ledger_value->supplier_name
+                    //     ];
+                    //     $match_application_date = 'false';
+                    // }
                 }
             }
 
-            if($match_application_date !== false)
+            // return $match_application_date;
+
+            if($match_application_date)
             {
                 for($x=0; $x<count($match_application_date);$x++)
                 {
@@ -378,6 +380,27 @@ class TrialChecksheetController extends Controller
             'status'    =>  $status,
             'message'   =>  $message,
             'data'      =>  $result
+        ];
+    }
+
+    public function getDisapprovedInspection(TrialLedger $TrialLedger)
+    {
+        $data = $TrialLedger->getDisapprovedInspection(5);
+
+        $status = 'Error';
+        $message = 'No Disapproved inspection';
+
+        if (count($data) !== 0) 
+        {
+            $status = 'Success';
+            $message = 'Disapproved inspection';
+        }
+
+        return 
+        [
+            'status'    =>  $status,
+            'message'   =>  $message,
+            'data'      =>  $data
         ];
     }
 
@@ -482,12 +505,12 @@ class TrialChecksheetController extends Controller
             try 
             {
                 // $filename = $part_number . '_' . $revision_number;
-                $filename =$part_number.'_'.$revision_number.'(00)';
-                // $filename = 'igm';
+                // $filename =$part_number.'_'.$revision_number.'(00)';
+                $filename = 'igm';
                 
                 // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-                $path ='F:\TIS\\';
-                // $path ='D:\\';
+                // $path ='F:\TIS\\';
+                $path ='D:\\';
         
                 $igm_files = scandir($path);
         
@@ -509,8 +532,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
@@ -568,6 +591,7 @@ class TrialChecksheetController extends Controller
                                 'sub_number'            => 1,
                                 'judgment'              => 'N/A',
                                 'remarks'               => '',
+                                'type'                  => $checksheet_item[$i]['type'],
                                 'created_at'            => now(),
                                 'updated_at'            => now()
                             ];

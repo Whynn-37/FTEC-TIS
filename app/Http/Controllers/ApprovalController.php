@@ -432,14 +432,27 @@ class ApprovalController extends Controller
         {
             foreach ($item_value as $value) 
             {
+                $checksheet_data = [];
+
                 if ($value['id'] !== '') 
                 {
                     $checksheet_data = json_decode(json_encode($ChecksheetData->getDataNg($value['id'])),true);
                 }
-                // else 
-                // {
-                //     $checksheet_data[] = [];
-                // }
+                
+                if (empty($checksheet_data)) 
+                {
+                    $checksheet_data[] = 
+                    [
+                        'id' => '', 
+                        'checksheet_item_id' => '', 
+                        'coordinates' => '', 
+                        'data' => '', 
+                        'judgment' => '', 
+                        'remarks' => '', 
+                        'hinsei' => '', 
+                        'type' => ''
+                    ];
+                }
 
                 $checksheet_datas_result[$checksheet_items_key][] = $checksheet_data;
             }
@@ -487,36 +500,31 @@ class ApprovalController extends Controller
                     'decision' => 2
                 ];
 
-                $result =  $Approval->approved($trial_checksheet_id, $data);
+                $second_page_data = $this->generateSecondPage($trial_checksheet_id);
+                $this->generateTrialEvaluationResult($trial_checksheet_id);
 
-                if ($result) 
-                {
-                    $second_page_data = $this->generateSecondPage($trial_checksheet_id);
-                    $this->generateTrialEvaluationResult($trial_checksheet_id);
+                $merge_data_file = 
+                [
+                    'file_merge' => $selected_file
+                ];
 
-                    $merge_data_file = 
-                    [
-                        'file_merge' => $selected_file
-                    ];
+                $Attachment->storeFileMerge($trial_checksheet_id, $merge_data_file);
 
-                    $Attachment->storeFileMerge($trial_checksheet_id, $merge_data_file);
+                $folder_name = $Attachment->getAttachment($trial_checksheet_id);
 
-                    $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+                $merge_file_data = 
+                [
+                    'folder_name' =>  $folder_name['file_folder'],
+                    'file_name' =>  explode(',', $selected_file)
+                ];
 
-                    $merge_file_data = 
-                    [
-                        'folder_name' =>  $folder_name['file_folder'],
-                        'file_name' =>  explode(',', $selected_file)
-                    ];
+                $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
-                    $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                $status = 'after_evaluation';
 
-                    $status = 'after_evaluation';
+                $folder_name = $folder_name['file_folder'];
 
-                    $folder_name = $folder_name['file_folder'];
-
-                    $message = 'Approved by Evaluator';
-                }
+                $message = 'Approved by Evaluator';
             }
             else if ($decision == 1 && $action == 2) 
             {
@@ -524,7 +532,8 @@ class ApprovalController extends Controller
                 [
                     'evaluated_by' => Session::get('name'),
                     'evaluated_datetime' => now(),
-                    'decision' => 4
+                    'decision' => 5,
+                    'reason' => $reason
                 ];
 
                 $status = 'disapproved';
@@ -542,36 +551,30 @@ class ApprovalController extends Controller
                     'decision' => 0
                 ];
 
-                $result =  $Approval->approved($trial_checksheet_id, $data);
+                $second_page_data = $this->generateSecondPage($trial_checksheet_id);
+                $this->generateTrialEvaluationResult($trial_checksheet_id);
 
-                if ($result) 
-                {
-                    $second_page_data = $this->generateSecondPage($trial_checksheet_id);
-                    $this->generateTrialEvaluationResult($trial_checksheet_id);
+                $folder_name = $Attachment->getAttachment($trial_checksheet_id);
 
+                $merge_file_data = 
+                [
+                    'folder_name' =>  $folder_name['file_folder'],
+                    'file_name' =>  explode(',', $folder_name['file_merge'])
+                ];
 
-                    $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+                $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
-                    $merge_file_data = 
-                    [
-                        'folder_name' =>  $folder_name['file_folder'],
-                        'file_name' =>  explode(',', $folder_name['file_merge'])
-                    ];
+                $status = 'approved';
 
-                    $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                $attachment = 
+                [
+                    storage_path('app/public/' . $folder_name['file_folder'] . '/' . $folder_name['file_name_merge'] . '.pdf'),
+                    storage_path('app/public/' . $folder_name['file_folder'] . '/' . $folder_name['file_name_merge'] . '.xlsx'),
+                ];
 
-                    $status = 'approved';
+                $folder_name = '';
 
-                    $attachment = 
-                    [
-                        storage_path('app/public/' . $folder_name['file_folder'] . '/' . $folder_name['file_name_merge'] . '.pdf'),
-                        storage_path('app/public/' . $folder_name['file_folder'] . '/' . $folder_name['file_name_merge'] . '.xlsx'),
-                    ];
-
-                    $folder_name = '';
-
-                    $message = 'Approved by Approver';
-                }
+                $message = 'Approved by Approver';
             }
             else if($decision == 2 && $action == 2)
             {
@@ -598,6 +601,19 @@ class ApprovalController extends Controller
                     'decision' => 2
                 ];
 
+                $second_page_data = $this->generateSecondPage($trial_checksheet_id);
+                $this->generateTrialEvaluationResult($trial_checksheet_id);
+
+                $folder_name = $Attachment->getAttachment($trial_checksheet_id);
+
+                $merge_file_data = 
+                [
+                    'folder_name' =>  $folder_name['file_folder'],
+                    'file_name' =>  explode(',', $folder_name['file_merge'])
+                ];
+
+                $FpdfController->mergeFile($merge_file_data, $second_page_data);
+
                 $status = 'after_evaluation';
 
                 $folder_name = '';
@@ -605,12 +621,7 @@ class ApprovalController extends Controller
                 $message = 'Reapproved by Evaluator';
             }
             
-            if ($decision == 1 && $action == 2
-                || $decision == 2 && $action == 2 
-                || $decision == 3 && $action == 1) 
-            {
-                $result =  $Approval->approved($trial_checksheet_id, $data);
-            }
+            $result =  $Approval->approved($trial_checksheet_id, $data);
 
             $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
 
