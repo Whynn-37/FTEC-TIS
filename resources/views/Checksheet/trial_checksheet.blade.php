@@ -19,7 +19,6 @@
                     <div class="card-body" id="div_trial_checksheet">
                         <h4 class="header-title"><i class="ti-clipboard"></i> TRIAL CHECKSHEET</h4>
                         <form id="form_trial_checksheet" method="post" enctype="multipart/form-data">
-                            {{-- CYCLE TIME --}}
                             <div class="according accordion-s2 gradiant-bg mb-3" id="div_inspection_list">
                                 <div class="card">
                                     <div class="card-header">
@@ -28,25 +27,64 @@
                                     </div>
                                     <div id="accordion_inspection_list" class="collapse show" data-parent="#accordion5">
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="single-table">
-                                                        <div class="table-responsive">
-                                                            <table class="table text-center table-bordered" id="tbl_inspection_list" style="text-align:justify;">
-                                                                <thead class="text-uppercase bg-dark">
-                                                                    <tr class="text-white">
-                                                                        <th> ACTION </th>
-                                                                        <th> PART NUMBER </th>
-                                                                        <th> INSPECTION REASON </th>
-                                                                        <th> REVISION NUMBER </th>
-                                                                        <th> TRIAL NUMBER </th>
-                                                                        <th> PART NAME </th>
-                                                                        <th> SUPPLIER CODE / SUPPLIER NAME </th>
-                                                                        <th> INSPECTOR </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="tbody_tbl_inspection_list"></tbody>
-                                                            </table>
+                                            <nav>
+                                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                                    <a class="nav-item nav-link active" id="nav_for_inspection" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">For Inspection</a>
+                                                    <a class="nav-item nav-link" id="nav_disapproved" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Disapproved</a>
+                                                    
+                                                </div>
+                                            </nav>
+                                            <div class="tab-content mt-3" id="div_nav_inspection_list">
+                                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav_for_inspection">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="single-table">
+                                                                <div class="table-responsive">
+                                                                    <table class="table text-center table-bordered" id="tbl_inspection_list" style="text-align:justify;">
+                                                                        <thead class="text-uppercase bg-dark">
+                                                                            <tr class="text-white">
+                                                                                <th> ACTION </th>
+                                                                                <th> PART NUMBER </th>
+                                                                                <th> INSPECTION REASON </th>
+                                                                                <th> REVISION NUMBER </th>
+                                                                                <th> TRIAL NUMBER </th>
+                                                                                <th> PART NAME </th>
+                                                                                <th> SUPPLIER CODE / SUPPLIER NAME </th>
+                                                                                <th> INSPECTOR </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="tbody_tbl_inspection_list"></tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav_disapproved">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="single-table">
+                                                                <div class="table-responsive">
+                                                                    <table class="table text-center table-bordered" id="tbl_disapproved_list" style="text-align:justify;">
+                                                                        <thead class="text-uppercase bg-dark">
+                                                                            <tr class="text-white">
+                                                                                <th> ACTION </th>
+                                                                                <th> PART NUMBER </th>
+                                                                                <th> INSPECTION REASON </th>
+                                                                                <th> REVISION NUMBER </th>
+                                                                                <th> TRIAL NUMBER </th>
+                                                                                <th> PART NAME </th>
+                                                                                <th> SUPPLIER CODE / SUPPLIER NAME </th>
+                                                                                <th> INSPECTOR </th>
+                                                                                <th> DISAPPROVED BY </th>
+                                                                                <th> DISAPPROVED DATETIME </th>
+                                                                                <th> REASON </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="tbody_tbl_disapproved_list"></tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -72,6 +110,7 @@
                                             <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
                                             <input type="text" id="trial_checksheet_application_date" name="application_date" hidden>
                                             <input type="text" id="txt_from_load_igm_status" hidden>
+                                            <input type="text" id="txt_inspection_list_id" hidden>
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <label>PART NUMBER:</label>&nbsp;
@@ -158,7 +197,7 @@
                                 </div>
                             </div>
                             {{-- CYCLE TIME --}}
-                            <div class="according accordion-s2 gradiant-bg mb-3">
+                            <div class="according accordion-s2 gradiant-bg mb-3" id="div_accordion_cycle_time">
                                 <div class="card">
                                     <div class="card-header">
                                         <a class="card-link" data-toggle="collapse" href="#accordion_cycle_time"><strong

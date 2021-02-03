@@ -118,6 +118,8 @@ const CHECKSHEET = (() => {
                             $('#div_main_content').prop('hidden', false);
                             CHECKSHEET.LoadPartnumber();
                             CHECKSHEET.getForInspection();
+                            CHECKSHEET.getDisapprovedInspection();
+                            
                         } 
                         else 
                         {
@@ -395,10 +397,12 @@ const CHECKSHEET = (() => {
         }
     };
 
-    this_checksheet.LoadDetails = (application_date) => {
+    this_checksheet.LoadDetails = (application_date,list) => {
 
         $('#accordion_details').LoadingOverlay('show');
         $('#div_card_takt_time').LoadingOverlay('show');
+
+        $('#txt_inspection_list_id').val(list);
 
         $.ajax({
             url     : `load-details`,
@@ -431,14 +435,33 @@ const CHECKSHEET = (() => {
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
-                    //load ng cycle time
-                    CHECKSHEET.LoadCycleTime(data.data.trial_checksheets.inspection_required_time);
-                    //load ng downtime
-                    CHECKSHEET.LoadDowntime();
 
-                    $('#btn_start_time').prop('disabled', false);
+                    $('#txt_temperature').val(data.data.trial_checksheets.temperature);
+                    $('#txt_humidity').val(data.data.trial_checksheets.humidity);
+                    if(list == 0)
+                    {
+                        //load ng cycle time
+                        CHECKSHEET.LoadCycleTime(data.data.trial_checksheets.inspection_required_time);
+                        //load ng downtime
+                        CHECKSHEET.LoadDowntime();
 
-                    
+                        $('#btn_start_time').prop('disabled', false);
+                        $('#div_accordion_igm').prop('hidden', true);
+                        $('#div_accordion_cycle_time').prop('hidden', false);
+                    }
+                    else
+                    {
+                        IGM.LoadIGM(data.data.trial_checksheets.id);
+                        $('#div_accordion_igm').prop('hidden', false);
+                        $('#div_accordion_cycle_time').prop('hidden', true);
+                        
+                         //pag show ng attachments at ssave button
+                        $('#div_row_numbering_drawing').prop('hidden',false);
+                        $('#div_row_special_tool_data').prop('hidden',false);
+                        $('#div_row_others_2').prop('hidden',false);
+                        $('#div_row_save_inspection').prop('hidden',false);
+                        $('#div_row_save_inspection').prop('hidden',false);
+                    }
                 }
                 else
                 {
@@ -1159,6 +1182,11 @@ const CHECKSHEET = (() => {
         $('#div_trial_checksheet').LoadingOverlay('show');
 
         let form_data = new FormData($('#form_trial_checksheet')[0]);
+
+        let inspection_list_id = $('#txt_inspection_list_id').val();
+
+        console.log(inspection_list_id);
+
         form_data.append('judgment',final_judgment)
 
         $.ajax({
@@ -1186,9 +1214,12 @@ const CHECKSHEET = (() => {
                     $('#tbody_tbl_takt_time').empty();
                     $('#tbody_tbl_downtime').empty();
                     $('#td_total_downtime').html('');
-                    
-                    CHECKSHEET.StopCycleTime('save_trial_checksheet');
 
+                    if(inspection_list_id == 0)
+                    {
+                        CHECKSHEET.StopCycleTime('save_trial_checksheet');
+                    }
+                    
                     $('#form_trial_checksheet')[0].reset();
                     $('#txt_revision_number').empty();
                     $('#txt_trial_number').empty();
@@ -1199,7 +1230,6 @@ const CHECKSHEET = (() => {
                     CHECKSHEET.getForInspection();
                     item_no_count = '';
                     
-
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -1253,7 +1283,7 @@ const CHECKSHEET = (() => {
                     tbody +=
                         `<tr>
                         <td> 
-                            <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.LoadDetails('${value.application_date}');" ><strong class="strong-font"><i class="ti-search"></i> INSPECT </strong></button> 
+                            <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.LoadDetails('${value.application_date}',0);" ><strong class="strong-font"><i class="ti-search"></i> INSPECT </strong></button> 
                         </td>
                         <td> ${value.part_number} </td>
                         <td> ${value.inspection_reason} </td>
@@ -1275,6 +1305,57 @@ const CHECKSHEET = (() => {
                     }
                 );
                 $('#tbl_inspection_list').LoadingOverlay('hide');
+            }
+        });        
+    }
+
+    this_checksheet.getDisapprovedInspection = () =>
+    {
+        $('#tbl_disapproved_list').LoadingOverlay('show');
+        
+        $.ajax({
+            url     : `get-disapproved-inspection`,
+            type    : 'get',
+            dataType: 'json',
+            cache   : false,
+            success: data => 
+            {
+                $('#tbl_disapproved_list').DataTable().destroy();
+                $('#tbody_tbl_disapproved_list').empty();
+
+                console.log(data);
+
+                let tbody = '';
+               
+                data.data.forEach((value) => {
+                    tbody +=
+                        `<tr>
+                        <td> 
+                            <button type="button" class="btn btn-primary btn-block" onclick="CHECKSHEET.LoadDetails('${value.application_date}',1);" ><strong class="strong-font"><i class="ti-search"></i> INSPECT </strong></button> 
+                        </td>
+                        <td> ${value.part_number} </td>
+                        <td> ${value.inspection_reason} </td>
+                        <td> ${value.revision_number} </td>
+                        <td> ${value.trial_number} </td>
+                        <td> ${value.part_name} </td>
+                        <td> ${value.supplier_code} / ${value.supplier_name} </td>
+                        <td> ${value.inspector_id} </td>
+                        <td> ${value.evaluated_by} </td>
+                        <td> ${value.evaluated_datetime} </td>
+                        <td> ${value.reason} </td>
+                    </tr>`;
+                    
+                });
+
+                $('#tbody_tbl_disapproved_list').html(tbody);
+
+                $('#tbl_disapproved_list').DataTable(
+                    {
+                        pageLength : 5,
+                        lengthMenu: [5, 10, 50, 100]
+                    }
+                );
+                $('#tbl_disapproved_list').LoadingOverlay('hide');
             }
         });        
     }
