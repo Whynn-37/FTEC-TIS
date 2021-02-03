@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
 });
 
 const LOGIN = (() => {
@@ -40,15 +39,15 @@ const LOGIN = (() => {
                         $('#span_error').remove();
                         if (result.value.position === 'SECTION LEADER' || result.value.position === 'LEADER' || result.value.position === 'QC ASSISTANT') 
                         {
-                            location.href = 'http://localhost/tis/public/evaluation';
+                            location.href = `${base_url}/evaluation`;
                         } 
                         else if (result.value.position === 'MANAGER' || result.value.position === 'DIRECTOR') 
                         {
-                            location.href = 'http://localhost/tis/public/approval';
+                            location.href = `${base_url}/approval`;
                         } 
                         else 
                         {
-                            location.href = 'http://localhost/tis/public/trial-checksheet';
+                            location.href = `${base_url}/trial-checksheet`;
                         }
                     } 
                     else if (result.response === 'fail') 
@@ -66,7 +65,7 @@ const LOGIN = (() => {
                 {
                     if(result.response === 'success')
                     {
-                        location.href = 'http://localhost/tis/public/trial-checksheet';
+                        location.href = `${base_url}/trial-checksheet`;
                     } 
                     else 
                     {

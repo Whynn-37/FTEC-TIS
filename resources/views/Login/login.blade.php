@@ -76,6 +76,7 @@
     <script src="{{ asset('template/assets/js/scripts.js') }}"></script>
     <script>
         const _TOKEN = $('#csrf-token').attr('content');
+        var base_url = "{{ url('/') }}";
     </script>
     <script src="{{ asset('scripts/Login/Login.js') }}"></script>
     
