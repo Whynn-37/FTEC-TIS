@@ -436,7 +436,7 @@ const APPROVE = (() => {
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_judgement" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">
                     ${IGM.ChecksheetDataInputJudgement(judgement)}
                 </td>
-                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null) ? '-' : remarks}</td>
+                <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_remarks" style="vertical-align: middle;" rowspan="2" class="td_sub_no_input">${(remarks == null || remarks === '') ? '-' : remarks}</td>
 			</tr>
 			<tr id="tr_item_no_${item_no_count}_sub_no_max_${new_sub_no}">
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_max_1">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
