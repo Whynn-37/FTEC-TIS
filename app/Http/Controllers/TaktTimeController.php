@@ -74,143 +74,160 @@ class TaktTimeController extends Controller
 
         try
         {
-            if($trial_checksheet_id !== null)
+            $in_use_data = $TrialChecksheet->getInUse($application_date);
+
+            $in_use = '';
+
+            if ( !empty($in_use_data) ) 
             {
-                $data = 
-                [
-                    'trial_checksheet_id'   => $trial_checksheet_id,
-                    'start_date'            => date('Y/m/d'),
-                    'start_time'            => date('H:i:s'),
-                    'end_time'              => '',
-                    'actual_time'           => '',
-                    'total_takt_time'       => '',
-                    'takt_time'             => $takt_times,
-                ];
-
-                $status = "Success";
-                $message = "Inspection will continue"; 
-
-                $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
-
-                $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['in_use' => 1]);
+                $in_use = $in_use_data['in_use'];
             }
-            else
+
+            if ($in_use === 0 || $in_use === '') 
             {
-                $trial_checksheet = 
-                [
-                    'application_date'      => $application_date,
-                    'part_number'           => $part_number,
-                    'revision_number'       => $revision_number,
-                    'trial_number'          => $trial_number,
-                    'inspection_reason'     => $inspection_reason,
-                    'date_inspected'        => now(),
-                    'in_use'                => 1,
-                ];
-        
-                $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
-                
-                $data = 
-                [
-                    'trial_checksheet_id'   => $last_id['id'],
-                    'start_date'            => date('Y/m/d'),
-                    'start_time'            => date('H:i:s'),
-                    'end_time'              => '',
-                    'actual_time'           => '',
-                    'total_takt_time'       => '',
-                    'takt_time'             => $takt_times,
-                ];
-
-                $approval_data =
-                [
-                    'trial_checksheet_id'      => $last_id['id'],
-                    'inspect_by'               => Session::get('name'), // session name
-                    'inspect_datetime'         => now(),
-                    'decision'                 => 4
-                ];
-
-                $approval_result = $Approval->storeApproval($approval_data);
-
-                $attachment_data =
-                [
-                    'trial_checksheet_id'   => $last_id['id'],
-                    'file_folder'           => '',
-                    'file_name'             => ''
-                ];
-
-                $attachment_result = $Attachment->storeAttachments($attachment_data);
-                
-                if($trial_number >= 2)
+                if($trial_checksheet_id !== null)
                 {
-                    $application_date = $TrialLedger->getApplicationDate($part_number, $inspection_reason, $trial_number-1);
-                    
-                    $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
+                    $data = 
+                    [
+                        'trial_checksheet_id'   => $trial_checksheet_id,
+                        'start_date'            => date('Y/m/d'),
+                        'start_time'            => date('H:i:s'),
+                        'end_time'              => '',
+                        'actual_time'           => '',
+                        'total_takt_time'       => '',
+                        'takt_time'             => $takt_times,
+                    ];
 
-                    
-                    if (count($result_items) !== 0) 
-                    {
-                        foreach($result_items as $items_value) 
-                        {
-                            $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
-                        
-                            $checksheet_items[] = 
-                            [
-                                'trial_checksheet_id'   => $last_id['id'],
-                                'item_number'           => $items_value->item_number,
-                                'tools'                 => $items_value->tools,
-                                'type'                  => $items_value->type,
-                                'specification'         => $items_value->specification,
-                                'upper_limit'           => $items_value->upper_limit,
-                                'lower_limit'           => $items_value->lower_limit,
-                                'remarks'               => $items_value->remarks,
-                                'judgment'              => 'N/A',
-                                'hinsei'                => '',
-                                'item_type'             => 0,
-                                'created_at'            => now(),
-                                'updated_at'            => now()
-                            ];
-                        }
-    
-                        $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
-    
-                        $new_array = [];
-                        for($i=0; $i<count($result_datas); $i++)
-                        {
-                            $items = $result_datas[$i];
-    
-                            foreach($items as $item)
-                            {
-                                $item->checksheet_item_id = $checksheet_item_result[$i];
-                                $new_array[] = $item;
-                            }
-                        }
+                    $status = "Success";
+                    $message = "Inspection will continue"; 
 
-                        foreach ($new_array as $value) 
-                        {
-                            $checksheet_datas[] =
-                            [
-                                'checksheet_item_id'    => $value['checksheet_item_id'],
-                                'coordinates'           => $value['coordinates'],
-                                'sub_number'            => $value['sub_number'],
-                                'data'                  => '-,-,-,-,-,-,-,-,-,-',
-                                'judgment'              => 'N/A',
-                                'remarks'               => $value['remarks'],
-                                'type'                  => $value['type'],
-                                'hinsei'                => '',
-                                'created_at'            => now(),
-                                'updated_at'            => now()
-                            ];
-                        }
-                        
-                        $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
-                    }
+                    $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+
+                    $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['in_use' => 1]);
                 }
+                else
+                {
+                    $trial_checksheet = 
+                    [
+                        'application_date'      => $application_date,
+                        'part_number'           => $part_number,
+                        'revision_number'       => $revision_number,
+                        'trial_number'          => $trial_number,
+                        'inspection_reason'     => $inspection_reason,
+                        'date_inspected'        => now(),
+                        'in_use'                => 1,
+                    ];
+            
+                    $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
+                    
+                    $data = 
+                    [
+                        'trial_checksheet_id'   => $last_id['id'],
+                        'start_date'            => date('Y/m/d'),
+                        'start_time'            => date('H:i:s'),
+                        'end_time'              => '',
+                        'actual_time'           => '',
+                        'total_takt_time'       => '',
+                        'takt_time'             => $takt_times,
+                    ];
 
-                $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+                    $approval_data =
+                    [
+                        'trial_checksheet_id'      => $last_id['id'],
+                        'inspect_by'               => Session::get('name'), // session name
+                        'inspect_datetime'         => now(),
+                        'decision'                 => 4
+                    ];
 
-                $status = "Success";
-                $message = "Inspection begins"; 
+                    $approval_result = $Approval->storeApproval($approval_data);
 
-                $trial_checksheet_id = $last_id['id'];
+                    $attachment_data =
+                    [
+                        'trial_checksheet_id'   => $last_id['id'],
+                        'file_folder'           => '',
+                        'file_name'             => ''
+                    ];
+
+                    $attachment_result = $Attachment->storeAttachments($attachment_data);
+                    
+                    if($trial_number >= 2)
+                    {
+                        $application_date = $TrialLedger->getApplicationDate($part_number, $inspection_reason, $trial_number-1);
+                        
+                        $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
+
+                        
+                        if (count($result_items) !== 0) 
+                        {
+                            foreach($result_items as $items_value) 
+                            {
+                                $result_datas[] = $ChecksheetData->loadTrialCheckitemsNG($items_value->id);
+                            
+                                $checksheet_items[] = 
+                                [
+                                    'trial_checksheet_id'   => $last_id['id'],
+                                    'item_number'           => $items_value->item_number,
+                                    'tools'                 => $items_value->tools,
+                                    'type'                  => $items_value->type,
+                                    'specification'         => $items_value->specification,
+                                    'upper_limit'           => $items_value->upper_limit,
+                                    'lower_limit'           => $items_value->lower_limit,
+                                    'remarks'               => $items_value->remarks,
+                                    'judgment'              => 'N/A',
+                                    'hinsei'                => '',
+                                    'item_type'             => 0,
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
+        
+                            $checksheet_item_result =  $ChecksheetItem->storeChecksheetItems($checksheet_items);
+        
+                            $new_array = [];
+                            for($i=0; $i<count($result_datas); $i++)
+                            {
+                                $items = $result_datas[$i];
+        
+                                foreach($items as $item)
+                                {
+                                    $item->checksheet_item_id = $checksheet_item_result[$i];
+                                    $new_array[] = $item;
+                                }
+                            }
+
+                            foreach ($new_array as $value) 
+                            {
+                                $checksheet_datas[] =
+                                [
+                                    'checksheet_item_id'    => $value['checksheet_item_id'],
+                                    'coordinates'           => $value['coordinates'],
+                                    'sub_number'            => $value['sub_number'],
+                                    'data'                  => '-,-,-,-,-,-,-,-,-,-',
+                                    'judgment'              => 'N/A',
+                                    'remarks'               => $value['remarks'],
+                                    'type'                  => $value['type'],
+                                    'hinsei'                => '',
+                                    'created_at'            => now(),
+                                    'updated_at'            => now()
+                                ];
+                            }
+                            
+                            $checksheet_data_result =  $ChecksheetData->storeChecksheetDatas($checksheet_datas);
+                        }
+                    }
+
+                    $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+
+                    $status = "Success";
+                    $message = "Inspection begins"; 
+
+                    $trial_checksheet_id = $last_id['id'];
+                }
+            }
+            else 
+            {
+                $status = 'Attention';
+                $message = 'This Part Number is On-going inspection';
             }
 
             DB::commit();
