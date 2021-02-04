@@ -409,7 +409,17 @@ class TrialChecksheetController extends Controller
                                 TrialChecksheet $TrialChecksheet,
                                 Request $Request)
     {
+
         $application_date = $Request->application_date;
+
+        $in_use_data = $TrialChecksheet->getInUse($application_date);
+
+        $in_use = '';
+
+        if ( !empty($in_use_data) ) 
+        {
+            $in_use = $in_use_data['in_use'];
+        }
 
         $status = 'Error';
         $message = 'Required Fields';
@@ -417,60 +427,70 @@ class TrialChecksheetController extends Controller
         $data_trial_ledger_merge = [];
         $trial_checksheet_data_merge = [];
 
-        if ($application_date !== null) 
+        if ($in_use === 0 || $in_use === '') 
         {
-            $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($application_date)),true);
-            $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
-
-            if ($supplier_data) 
+            if ($application_date !== null) 
             {
-                $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
-            }
+                $trial_ledger_data  = json_decode(json_encode($TrialLedger->getTrialLedger($application_date)),true);
+                $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
-            $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
-
-            if($trial_checksheet_data)
-            {
-                // if exist
-                if ($data_trial_ledger_merge) 
+                if ($supplier_data) 
                 {
-                    $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
+                    $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
                 }
 
-                $logs = 'The Data Exist in TrialChecksheet';
+                $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
-            }
-            else
-            {
-                // not exist
-                $id = 
+                if($trial_checksheet_data)
+                {
+                    // if exist
+                    if ($data_trial_ledger_merge) 
+                    {
+                        $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
+                    }
+
+                    $logs = 'The Data Exist in TrialChecksheet';
+
+                }
+                else
+                {
+                    // not exist
+                    $id = 
+                    [
+                        'id' => null
+                    ];
+
+                    if ($data_trial_ledger_merge) 
+                    {
+                        $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
+                    }
+
+                    $logs = 'The Data Not Exist in TrialChecksheet';
+
+                }
+
+                $status = 'Error';
+                $message = 'Please Upload Supplier or No Supplier code';
+
+                if ($trial_checksheet_data_merge) 
+                {
+                    $status = 'Success';
+                    $message = 'Details Successfully Load';
+                }
+
+                $result = 
                 [
-                    'id' => null
+                    'trial_checksheets' => $trial_checksheet_data_merge,
                 ];
-
-                if ($data_trial_ledger_merge) 
-                {
-                    $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
-                }
-
-                $logs = 'The Data Not Exist in TrialChecksheet';
-
             }
-
-            $status = 'Error';
-            $message = 'Please Upload Supplier or No Supplier code';
-
-            if ($trial_checksheet_data_merge) 
-            {
-                $status = 'Success';
-                $message = 'Details Successfully Load';
-            }
-
-            $result = 
-            [
-                'trial_checksheets' => $trial_checksheet_data_merge,
-            ];
         }
+        else 
+        {
+            $logs = 'On-going inspection';
+            $status = 'Attention';
+            $message = 'This Part Number is On-going inspection';
+        }
+        
 
         ActivityLog::activityLog($message . ' - ' . $logs, Session::get('name'));
 

@@ -91,6 +91,8 @@ class TaktTimeController extends Controller
                 $message = "Inspection will continue"; 
 
                 $takt_time_result = $TaktTime->updateOrCreateTaktTime($data);
+
+                $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['in_use' => 1]);
             }
             else
             {
@@ -102,6 +104,7 @@ class TaktTimeController extends Controller
                     'trial_number'          => $trial_number,
                     'inspection_reason'     => $inspection_reason,
                     'date_inspected'        => now(),
+                    'in_use'                => 1,
                 ];
         
                 $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
@@ -236,7 +239,7 @@ class TaktTimeController extends Controller
         ];
     }
 
-    public function StopCycleTime(TaktTime $TaktTime, Request $Request)
+    public function StopCycleTime(TaktTime $TaktTime, TrialChecksheet $TrialChecksheet, Request $Request)
     {
         $trial_checksheet_id    = $Request->trial_checksheet_id;
         $actual_time            = $Request->actual_time;
@@ -263,6 +266,8 @@ class TaktTimeController extends Controller
                     'total_takt_time'       => $total_takt_time,
                     'takt_time'             => $takt_time,
                 ];
+
+                $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['in_use' => 0]);
         
                 $result = $TaktTime->updateOrCreateTaktTime($data);
         

@@ -19,6 +19,12 @@ class TrialChecksheet extends Model
         ->first();
     }
 
+    public function getInUse($application_date)
+    {
+        return TrialChecksheet::where('application_date',$application_date)
+        ->first('in_use');
+    }
+
     public function storeTrialChecksheet($data)
     {
         return TrialChecksheet::create($data);

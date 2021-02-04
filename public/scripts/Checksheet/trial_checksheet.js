@@ -470,6 +470,8 @@ const CHECKSHEET = (() => {
                         title: data.status,
                         text: data.message,
                     })
+
+                    
                 }
 
                 $('#accordion_details').LoadingOverlay('hide');
