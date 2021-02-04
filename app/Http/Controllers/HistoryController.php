@@ -50,6 +50,10 @@ class HistoryController extends Controller
         {
             $decision = 3;
         }
+        else if ($status === 'REINSPECTION') 
+        {
+            $decision = 5;
+        }
 
         if ($status === 'FOR INSPECTION') 
         {
@@ -65,34 +69,34 @@ class HistoryController extends Controller
                         if ($checksheet_value->application_date === $ledger_value->application_date)
                         {
                             $match_application_date[] =  $ledger_value->application_date;
-                            $result = [];
+                            // $result = [];
                         }
-                        else 
-                        {
-                            $result[] = 
-                            [   
-                                'id' => $ledger_value->application_date,
-                                'judgment' => '',
-                                'part_number' => $ledger_value->part_number,
-                                'revision_number' => $ledger_value->revision_number,
-                                'trial_number' => $ledger_value->trial_number,
-                                'inspection_reason' => $ledger_value->inspection_reason,
-                                'inspect_by' => $ledger_value->inspector_id,
-                                'inspect_datetime' => '',
-                                'evaluated_by' => '',
-                                'evaluated_datetime' => '',
-                                'approved_by' => '',
-                                'approved_datetime' => '',
-                                'disapproved_by' => '',
-                                'disapproved_datetime' => '',
-                                'file' => '',
-                            ];
-                            $match_application_date = false;
-                        }
+                        // else 
+                        // {
+                        //     $result[] = 
+                        //     [   
+                        //         'id' => $ledger_value->application_date,
+                        //         'judgment' => '',
+                        //         'part_number' => $ledger_value->part_number,
+                        //         'revision_number' => $ledger_value->revision_number,
+                        //         'trial_number' => $ledger_value->trial_number,
+                        //         'inspection_reason' => $ledger_value->inspection_reason,
+                        //         'inspect_by' => $ledger_value->inspector_id,
+                        //         'inspect_datetime' => '',
+                        //         'evaluated_by' => '',
+                        //         'evaluated_datetime' => '',
+                        //         'approved_by' => '',
+                        //         'approved_datetime' => '',
+                        //         'disapproved_by' => '',
+                        //         'disapproved_datetime' => '',
+                        //         'file' => '',
+                        //     ];
+                        //     $match_application_date = false;
+                        // }
                     }
                 }
 
-                if($match_application_date !== false)
+                if($match_application_date)
                 {
                     for($x=0; $x<count($match_application_date);$x++)
                     {

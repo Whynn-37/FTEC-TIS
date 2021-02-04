@@ -117,12 +117,12 @@ class ChecksheetItem extends Model
     public function getfirstTrialNg($trial_checksheet_id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
-        ->orWhere(function ($query) {
+        ->where(function ($query) {
             $query->orWhere('type', 'like', '%Min and Max and Form Tolerance%')
                   ->orWhere('type', 'like', '%Actual%')
                   ->orWhere('type', 'like', '%Material Thickness%')
                   ->orWhere('type', 'like', '%Min and Max%')
-                  ->orWhere('tools', 'like', '%VSL%');
+                  ->orWhere('tools', 'VSL');
         })
         ->select('id', 'item_number')
         ->orderBy('item_number', 'asc')
