@@ -1,12 +1,7 @@
 $(document).ready(function () 
 {
     $('#tbl_history_data').DataTable();
-
     $("#accordion_attachment").remove();
-    $("#modal_view_inspection_data .modal-footer").remove();
-
-    $('#tbl_history_data').DataTable();
-
     
 });
 
@@ -22,6 +17,7 @@ const HISTORY = (() => {
         let file_button_color = 'btn-primary';
         let button_style = '';
         let history_function = 'APPROVE.ViewFinishedInspectionData';
+        let approved_button = '';
 
         if(status === 'FOR INSPECTION')
         {
@@ -29,6 +25,11 @@ const HISTORY = (() => {
             file_button_color = 'btn-secondary';
             button_style = 'cursor: not-allowed;';
             history_function = 'HISTORY.ViewForInspectionHistory';
+        }
+
+        if (status === 'APPROVED') 
+        {
+            approved_button = 1;
         }
 
         $('#modal_view_inspection_data .modal-title').html(`<h3 class="modal-title" id="modal_title">HISTORY - ${status}</h3>`);
@@ -44,11 +45,11 @@ const HISTORY = (() => {
                 $('#tbl_history_data').DataTable().destroy();
                 $('#tbody_tbl_history_data').empty();
                 let tbody = '';
-                data.forEach((value) => {
+                data.data.forEach((value) => {
                         tbody +=
                         `<tr>
                         <td>
-                            <button class="btn btn-primary btn-block" onclick="${history_function}('${value.id}');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
+                            <button class="btn btn-primary btn-block" onclick="${history_function}('${value.id}', ${approved_button});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                         </td>
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
@@ -100,19 +101,19 @@ const HISTORY = (() => {
             {
                 console.log(data);
                 // //checksheet details
-                $('.history-trial_checksheet_modal #txt_part_number').val(data.part_number);
-                $('.history-trial_checksheet_modal #txt_revision').val(data.revision_number);
-                $('.history-trial_checksheet_modal #txt_trial_number').val(data.trial_number);
-                $('.history-trial_checksheet_modal #txt_part_name').val(data.part_name);
-                $('.history-trial_checksheet_modal #txt_model_name').val(data.model_name);//hindi pa kasama sa returned data
-                $('.history-trial_checksheet_modal #txt_supplier_code').val(data.supplier_code);
-                $('.history-trial_checksheet_modal #txt_supplier_name').val(data.supplier_name);//hindi pa kasama sa returned data
-                $('.history-trial_checksheet_modal #txt_received_date').val(data.received_date);//hindi pa kasama sa returned data
-                $('.history-trial_checksheet_modal #txt_inspection_completion_date').val(data.date_finished);
-                $('.history-trial_checksheet_modal #txt_actual_inspection_time').val(data.inspection_actual_time);//hindi pa kasama sa returned data
-                $('.history-trial_checksheet_modal #txt_inspection_reason').val(data.inspection_reason);
-                $('.history-trial_checksheet_modal #txt_die_kind').val(data.die_class);
-                $('.history-trial_checksheet_modal #txt_inspector').val(data.inspector_id); //hindi pa kasama sa returned data
+                $('.history-trial_checksheet_modal #txt_part_number').val(data.data.part_number);
+                $('.history-trial_checksheet_modal #txt_revision').val(data.data.revision_number);
+                $('.history-trial_checksheet_modal #txt_trial_number').val(data.data.trial_number);
+                $('.history-trial_checksheet_modal #txt_part_name').val(data.data.part_name);
+                $('.history-trial_checksheet_modal #txt_model_name').val(data.data.model_name);//hindi pa kasama sa returned data
+                $('.history-trial_checksheet_modal #txt_supplier_code').val(data.data.supplier_code);
+                $('.history-trial_checksheet_modal #txt_supplier_name').val(data.data.supplier_name);//hindi pa kasama sa returned data
+                $('.history-trial_checksheet_modal #txt_received_date').val(data.data.received_date);//hindi pa kasama sa returned data
+                $('.history-trial_checksheet_modal #txt_inspection_completion_date').val(data.data.date_finished);
+                $('.history-trial_checksheet_modal #txt_actual_inspection_time').val(data.data.inspection_actual_time);//hindi pa kasama sa returned data
+                $('.history-trial_checksheet_modal #txt_inspection_reason').val(data.data.inspection_reason);
+                $('.history-trial_checksheet_modal #txt_die_kind').val(data.data.die_class);
+                $('.history-trial_checksheet_modal #txt_inspector').val(data.data.inspector_id); //hindi pa kasama sa returned data
                 
                 $('#div_modal_content').LoadingOverlay('hide');
             }
@@ -237,6 +238,34 @@ const HISTORY = (() => {
         {
             window.open(`../../../tis/storage/app/public/${file_folder}/${file_folder}${ext}`);
         }
+    }
+
+    this_history.editDataInspection =  (trial_checksheet_id,decision) =>
+    {
+        $.ajax({
+            url     : `edit-data-inspection`,
+            type    : 'patch',
+            dataType: 'json',
+            data    : 
+            {
+                _token              : _TOKEN,
+                trial_checksheet_id : trial_checksheet_id,
+                decision            : decision
+            },
+            success: data => 
+            {
+                Swal.fire({
+                    icon    : 'success',
+                    title   : data.status,
+                    text    : data.message,
+                })
+
+                HISTORY.loadHistoryList();
+                $("#modal_view_inspection_data").modal("hide");
+
+            }
+
+        })
     }
 
     return this_history;

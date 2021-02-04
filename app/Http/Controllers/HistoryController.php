@@ -6,6 +6,8 @@ use App\Approval;
 use Illuminate\Http\Request;
 use App\TrialChecksheet;
 use App\TrialLedger;
+use App\Helpers\ActivityLog;
+use Session;
 
 class HistoryController extends Controller
 {
@@ -152,14 +154,28 @@ class HistoryController extends Controller
                 }
             }
             
-            $result = $this->unique_multidim_array($result, 'id');
+            $data = $this->unique_multidim_array($result, 'id');
         }
         else 
         {
-            $result = $TrialChecksheet->history($decision);
+            $data = $TrialChecksheet->history($decision);
         }
 
-        return $result;
+        $status = 'Error';
+        $message = 'No history search';
+
+        if ($data) 
+        {
+            $status = 'Success';
+            $message = 'Successfully history search';
+        }
+
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $data
+        ];
     }
 
     public function getInspectionHistory(TrialLedger $TrialLedger, Request $Request)
@@ -168,7 +184,21 @@ class HistoryController extends Controller
 
         $data = $TrialLedger->getInspectionHistory($application_date);
 
-        return $data;
+        $status = 'Error';
+        $message = 'No history';
+
+        if ($data) 
+        {
+            $status = 'Success';
+            $message = 'Successfully load history';
+        }
+
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $data
+        ];
     }
 
     public function EditDataInspection(Approval $Approval, Request $Request)
@@ -176,6 +206,29 @@ class HistoryController extends Controller
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $decision = $Request->decision;
 
-        return $Approval->approved($trial_checksheet_id, ['decision' => $decision]);
+        $result = $Approval->approved($trial_checksheet_id, ['decision' => $decision]);
+
+        $status = 'Error';
+        $message = 'Not Successfuly update';
+
+        if ($result) 
+        {
+            $status = 'Success';
+            $message = 'Edit By Evaluator';
+
+            if ($decision === 5) 
+            {
+                $message = 'Edit By Inspector';
+            }
+        }
+
+        ActivityLog::activityLog($message, Session::get('name'));
+
+        return 
+        [
+            'status'    => $status,
+            'message'   => $message,
+            'data'      => $result
+        ];
     }
 }

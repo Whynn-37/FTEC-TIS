@@ -133,11 +133,13 @@ const APPROVE = (() => {
         });
     };
 
-    this_approve.ViewFinishedInspectionData = (id) => {
+    this_approve.ViewFinishedInspectionData = (id, approval_button = '') => {
 
         $('#modal_view_inspection_data').modal('show');
 
         $('#div_modal_content').LoadingOverlay('show');
+
+        console.log(approval_button);
 
         $.ajax({
             url     : `load-inspection-data`,
@@ -154,6 +156,9 @@ const APPROVE = (() => {
                 if (data.status === 'Success')
                 {
                     //checksheet details
+                    $('#btn_for_inspection').attr(`onclick`,`HISTORY.editDataInspection(${id},5);`);
+                    $('#btn_for_evaluator').attr(`onclick`,`HISTORY.editDataInspection(${id},1);`);
+
                     $('#txt_part_number').val(data.data.checksheet_details.part_number);
                     $('#txt_revision').val(data.data.checksheet_details.revision_number);
                     $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
@@ -196,6 +201,16 @@ const APPROVE = (() => {
 
                     //pagkuha ng checksheet item tapos checksheet data
                     APPROVE.GetChecksheetItem(data);
+
+                    if (approval_button === 1) 
+                    {
+                        $(".btn-app").remove();
+                    }
+                    else
+                    {
+                        $(".btn-history").remove();
+                    }
+                    
                 }
                 else
                 {

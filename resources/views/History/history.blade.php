@@ -22,6 +22,7 @@
                                 <select class="form-control mb-3" name="state" id="slc_status" onchange="HISTORY.loadHistoryList();">
                                     <option value="null" disabled selected>SELECT</option>
                                     <option value="FOR INSPECTION">FOR INSPECTION</option>
+                                    <option value="REINSPECTION">REINSPECTION</option>
                                     <option value="ON-GOING INSPECTION">ON-GOING INSPECTION</option>
                                     <option value="FOR EVALUATION">FOR EVALUATION</option>
                                     <option value="FOR APPROVAL">FOR APPROVAL</option>

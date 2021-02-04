@@ -148,9 +148,13 @@
             </div>
             <div class="modal-footer">
                 {{-- approve at disapprove --}}
-                <button id="btn_approve" type="button" class="btn btn-primary btn-block" onclick="APPROVE.ApproveData();"><strong class="strong-font"><i class="ti-check"></i> APPROVE</strong></button>
-                <button id="btn_cancel" type="button" class="btn btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
-                <button id="btn_disapprove" type="button" class="btn btn-danger btn-block" onclick="APPROVE.DisapproveData();"><strong class="strong-font"><i class="ti-close"></i> DISAPPROVE</strong></button>
+                <button id="btn_approve" type="button" class="btn btn-app btn-primary btn-block" onclick="APPROVE.ApproveData();"><strong class="strong-font"><i class="ti-check"></i> APPROVE</strong></button>
+                <button id="btn_cancel" type="button" class="btn btn-app btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                <button id="btn_disapprove" type="button" class="btn btn-app btn-danger btn-block" onclick="APPROVE.DisapproveData();"><strong class="strong-font"><i class="ti-close"></i> DISAPPROVE</strong></button>
+
+                {{-- history button return to evaluator and inspector --}}
+                <button id="btn_for_inspection" type="button" class="btn btn-history btn-primary btn-block"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO INSPECTION </strong></button>
+                <button id="btn_for_evaluator" type="button" class="btn btn-history btn-success btn-block"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO EVALUATOR </strong></button>
 
                 {{-- para sa pag disapprove --}}
                 <button id="btn_submit_disapprove" type="button" class="btn btn-danger btn-block" onclick="APPROVE.ProceedDisapproveData();" hidden><strong class="strong-font"><i class="ti-check"></i> PROCEED TO DISAPPROVE</strong></button>
