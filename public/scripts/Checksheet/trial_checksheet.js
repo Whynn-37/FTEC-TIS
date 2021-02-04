@@ -435,9 +435,9 @@ const CHECKSHEET = (() => {
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
-
                     $('#txt_temperature').val(data.data.trial_checksheets.temperature);
                     $('#txt_humidity').val(data.data.trial_checksheets.humidity);
+
                     if(list == 0)
                     {
                         //load ng cycle time
@@ -471,7 +471,38 @@ const CHECKSHEET = (() => {
                         text: data.message,
                     })
 
+                    $('#form_trial_checksheet')[0].reset();
                     
+                    //target takt time
+                    $('#div_target_takt_time_timer').attr('data-timer', 0);
+                    $("#div_target_takt_time_timer").TimeCircles().destroy();
+
+                    //actual time
+                    $('#div_actual_time_timer').attr('data-timer', 0);
+                    $("#div_actual_time_timer").TimeCircles().destroy();
+
+                    //takt time
+                    $("#div_takt_time_timer").TimeCircles().destroy();
+
+                    //downtime
+                    $("#div_downtime_timer").TimeCircles().destroy();
+
+                    $('#btn_start_time').prop('disabled',true);
+
+                    $('#tbl_takt_time').DataTable().destroy();
+                    $('#tbody_tbl_takt_time').empty();
+                    $('#tbl_takt_time').DataTable({
+                        "paging": true,
+                        "lengthChange": false,
+                        "searching": false,
+                        "ordering": false,
+                        "info": true,
+                        "autoWidth": true,
+                    });
+
+                    //downtime
+                    $('#tbody_tbl_downtime').empty();
+                    $('#td_total_downtime').html('');
                 }
 
                 $('#accordion_details').LoadingOverlay('hide');
@@ -545,6 +576,11 @@ const CHECKSHEET = (() => {
         $("#btn_finish_downtime").prop("disabled", true);
         $("#btn_start_downtime").prop("disabled", true);
         $("#slc_downtime_type").prop("disabled", true);
+
+        $("#div_target_takt_time_timer").TimeCircles().destroy();
+        $("#div_actual_time_timer").TimeCircles().destroy();
+        $("#div_takt_time_timer").TimeCircles().destroy();
+        $("#div_downtime_timer").TimeCircles().destroy();
     };
 
     this_checksheet.TaktTimeTimerAction = (status) => {
@@ -724,6 +760,12 @@ const CHECKSHEET = (() => {
                     $("#div_actual_time_timer").TimeCircles().rebuild();
                     $("#div_actual_time_timer").TimeCircles().stop();
 
+                    //takt time
+                    $("#div_takt_time_timer").TimeCircles().rebuild();
+                    $("#div_takt_time_timer").TimeCircles().stop();
+
+                    $("#div_downtime_timer").TimeCircles().rebuild();
+                    $("#div_downtime_timer").TimeCircles().stop();
                     // Swal.fire({
                     //     icon: 'success',
                     //     title: data.status,
