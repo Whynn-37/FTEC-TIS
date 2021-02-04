@@ -99,5 +99,6 @@ Route::get('back-to-approval','MailController@backToApproval');
 //history
 Route::get('history-search/{status}', 'HistoryController@historySearch');
 Route::get('get-inspection-history', 'HistoryController@getInspectionHistory');
+Route::patch('edit-data-inspection', 'HistoryController@editDataInspection');
 
 Route::get('load-activity-logs', 'ActivityLogController@loadActivityLog');

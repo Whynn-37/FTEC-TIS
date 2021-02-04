@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Approval;
 use Illuminate\Http\Request;
 use App\TrialChecksheet;
 use App\TrialLedger;
@@ -168,5 +169,13 @@ class HistoryController extends Controller
         $data = $TrialLedger->getInspectionHistory($application_date);
 
         return $data;
+    }
+
+    public function EditDataInspection(Approval $Approval, Request $Request)
+    {
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $decision = $Request->decision;
+
+        return $Approval->approved($trial_checksheet_id, ['decision' => $decision]);
     }
 }
