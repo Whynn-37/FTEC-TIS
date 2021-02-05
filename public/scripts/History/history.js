@@ -17,7 +17,7 @@ const HISTORY = (() => {
         let file_button_color = 'btn-primary';
         let button_style = '';
         let history_function = 'APPROVE.ViewFinishedInspectionData';
-        let approved_button = '';
+        let approved_button = 0;
 
         if(status === 'FOR INSPECTION')
         {
@@ -83,7 +83,7 @@ const HISTORY = (() => {
         });        
     };  
 
-    this_history.ViewForInspectionHistory = (id) => 
+    this_history.ViewForInspectionHistory = (id, approved_button = '') => 
     {
         $('.history-trial_checksheet_modal').modal('show');
 
