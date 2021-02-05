@@ -790,17 +790,13 @@ const IGM = (() => {
             {
                 if (tools === 'VSL' && type === 'Material Check')
                 {
-                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
                     // hinide ko lang kase may function na para sa pag delete ng data
-                    if ($(`#tr_item_no_1_sub_no_1`).length > 0)
-                    {
-                        $(`#tr_item_no_1_sub_no_1`).prop('hidden',true);
-                    }
-                    else
+                    if ($(`#tr_item_no_1_sub_no_1`).length == 0)
                     {
                         $(`#tr_item_no_1_sub_no_min_1`).prop('hidden',true);
                         $(`#tr_item_no_1_sub_no_max_1`).prop('hidden',true);
                     }
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
                 }
                 else
                 {
