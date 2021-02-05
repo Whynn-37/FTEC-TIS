@@ -133,15 +133,33 @@ const IGM = (() => {
                     {
                         item_no_count = '';
                         item_no_count += (trial_number > 1) ? data.data.count : data.data.items.length; // MERON NITO PARA MALAMAN KUNG GREATHER THAN TRIAL 1 NA KASE MAGKAIBA NG ITEM NO ANG ILOLOAD
-    
-                        // add item button , {{--IGM.AddIgmItemNo(type, current_item_no + 1, sub item count, added item no in between count)--}}
-                        var tfoot_tbl_igm = `
-                        <tfoot id="tfoot_add_igm_item">
-                            <td ${(trial_number > 1) ? 'colspan="10"' : 'colspan="9"'}> 
-                                <button id="btn_add_new_igm_item_no" type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
-                            </td>
-                        </tfoot>
-                        `;
+
+                        // nagkaroon ng gantong condition para pag loload igm ng disapproved na part number
+                        if ($('#tbl_new_igm').is(':hidden')) 
+                        {
+                            // add item button , {{--IGM.AddIgmItemNo(type, current_item_no + 1, sub item count, added item no in between count)--}}
+                            var tfoot_tbl_igm = `
+                            <tfoot id="tfoot_add_igm_item">
+                                <td ${(trial_number > 1) ? 'colspan="10"' : 'colspan="9"'}> 
+                                    <button id="btn_add_new_igm_item_no" type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+                                </td>
+                            </tfoot>
+                            `;
+                        }
+                        else
+                        {
+                            $('#tbl_new_igm').prop('hidden', true);
+                            $('#tbl_new_igm tbody').empty();
+
+                            tfoot_tbl_igm = `
+                            <tfoot id="tfoot_add_igm_item">
+                                <td ${(trial_number > 1) ? 'colspan="10"' : 'colspan="9"'}> 
+                                    <button id="btn_add_new_igm_item_no" type="button" class="btn btn-success btn-block" onclick="IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');"><strong class="strong-font"><i class="ti-plus"></i> ADD ITEM</strong></button>
+                                </td>
+                            </tfoot>
+                            `;
+                        }
+                        
                     } 
                     else 
                     {
