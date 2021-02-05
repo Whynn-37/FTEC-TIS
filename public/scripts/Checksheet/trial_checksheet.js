@@ -403,6 +403,7 @@ const CHECKSHEET = (() => {
         $('#div_card_takt_time').LoadingOverlay('show');
 
         $('#txt_inspection_list_id').val(list);
+        $('#tfoot_add_igm_item').remove();
 
         $.ajax({
             url     : `load-details`,
@@ -456,6 +457,7 @@ const CHECKSHEET = (() => {
                         $('#div_accordion_cycle_time').prop('hidden', true);
                         
                          //pag show ng attachments at ssave button
+                         
                         $('#div_row_numbering_drawing').prop('hidden',false);
                         $('#div_row_special_tool_data').prop('hidden',false);
                         $('#div_row_others_2').prop('hidden',false);
