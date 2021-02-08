@@ -236,15 +236,6 @@ const IGM = (() => {
             
             let remove_function = `<a id="a_remove_igm_item_no_${value.item_number}" class="dropdown-item" onclick="IGM.RemoveIgmItemNo(${value.item_number},'existing');"><i class="ti-close"></i> REMOVE</a>`;
 
-            //ito ang default na input ng specs
-            let td_specs = `<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">`;
-            
-            //ito yung para sa vsl
-            if (value.type === 'Material Check' && value.tools === 'VSL')
-            {
-                td_specs = `<input id="txt_item_no_${value.item_number}_specs" value="${specs}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateAddIgmItemNo(${value.item_number},'update_item_no_only');">`;
-            }
-
             tr_new_item += `${IGM.AddIgmItemNoHeader(value.item_number - 1,(value.item_type === 0) ? 'th_new_igm_sub_column' : 'th_new_igm_sub_column_dark','from_load_igm')}
 			<tr id="tr_item_no_${value.item_number}">
                 <td>
@@ -271,13 +262,13 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-                    ${td_specs}
+                    <input id="txt_item_no_${value.item_number}_specs"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_upper_limit" value="${upper_limit}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_upper_limit"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_lower_limit" value="${lower_limit}" type="text" class="form-control input_text_center text_to_uppercase" placeholder="lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_lower_limit"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td id="td_item_no_${value.item_number}_judgement" class="input_text_center" style="vertical-align: middle;">${judgement}</td>
 				${(trial_number > 1) ? remarks : ''}
@@ -296,8 +287,8 @@ const IGM = (() => {
             $(`#slc_item_no_${value.item_number}_tools`).attr('onchange',`IGM.SelectItemTools(${value.item_number},'${value.tools}');`);
 
             //para lang sa mga manual inputted na item at data
-            if (value.item_type === 0)
-            {
+            // if (value.item_type === 0)
+            // {
                 if (value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance'  || value.type === 'Actual' || value.type === 'Material Thickness') 
                 { 
                     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
@@ -305,7 +296,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
     
                 } 
-                else if (value.type === 'Material Check' && value.tools === 'VSL')
+                else if (value.type === 'Material Check' && value.tools === 'Visual Inspection' || value.tools === 'VSL')
                 {
                     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
                     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
@@ -317,7 +308,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
                     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', true);
                 }
-            }
+            // }
 
             //nilagay ko sa array para magamit sa paglalagay naman ng sub items nila 
             array_load_igm_type.push(value.type)
@@ -606,7 +597,7 @@ const IGM = (() => {
 
             $(`#slc_item_no_${item_no}_type`).empty();
 
-            if (tools === 'VSL')
+            if (tools === 'VSL' || tools === 'Visual Inspection')
             {
                 array_item_type_options += `<option value="${array_item_type[3]}">${array_item_type[3]}</option>`; //MAterial Check to
             }
@@ -699,7 +690,7 @@ const IGM = (() => {
             } 
             else 
             {
-                if (tools === 'VSL' && type === 'Material Check')
+                if (tools === 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
                 {
                     $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
                     $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
@@ -788,7 +779,7 @@ const IGM = (() => {
             }
             else
             {
-                if (tools === 'VSL' && type === 'Material Check')
+                if (tools === 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
                 {
                     // hinide ko lang kase may function na para sa pag delete ng data
                     if ($(`#tr_item_no_1_sub_no_1`).length == 0)
@@ -2465,12 +2456,13 @@ const IGM = (() => {
         {
             var visual_value    = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val();
         }
+
         let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val().toUpperCase();
         let specs           = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
         let tools           = $(`#slc_item_no_${item_no}_tools`).val();
         let type            = $(`#slc_item_no_${item_no}_type`).val();
 
-        if (tools == 'VSL' && type === 'Material Check')
+        if (tools == 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
         {
             if (specs !== '')
             {
