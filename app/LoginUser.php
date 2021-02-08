@@ -25,4 +25,11 @@ class LoginUser extends Model
         return LoginUser::where($incharge)
         ->get();
     }
+
+    public function getFullName($id)
+    {
+        return LoginUser::select('name', 'fullname')
+        ->where('name', $id)
+        ->first();
+    }
 }

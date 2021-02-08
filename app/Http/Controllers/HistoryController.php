@@ -7,17 +7,21 @@ use Illuminate\Http\Request;
 use App\TrialChecksheet;
 use App\TrialLedger;
 use App\Helpers\ActivityLog;
+use App\LoginUser;
 use Session;
 
 class HistoryController extends Controller
 {
-    public function unique_multidim_array($array, $key) { 
+    public function unique_multidim_array($array, $key) 
+    { 
         $temp_array = array(); 
         $i = 0; 
         $key_array = array(); 
         
-        foreach($array as $val) { 
-            if (!in_array($val[$key], $key_array)) { 
+        foreach($array as $val) 
+        { 
+            if (!in_array($val[$key], $key_array)) 
+            { 
                 $key_array[$i] = $val[$key]; 
                 $temp_array[] = $val; 
             } 
@@ -27,7 +31,10 @@ class HistoryController extends Controller
         return $temp_array; 
     }
 
-    public function historySearch(TrialChecksheet $TrialChecksheet, TrialLedger $TrialLedger, Request $Request)
+    public function historySearch(TrialChecksheet $TrialChecksheet, 
+                                    TrialLedger $TrialLedger, 
+                                    LoginUser $LoginUser,
+                                    Request $Request)
     {
         $status = $Request->status;
 
@@ -72,30 +79,7 @@ class HistoryController extends Controller
                         if ($checksheet_value->application_date === $ledger_value->application_date)
                         {
                             $match_application_date[] =  $ledger_value->application_date;
-                            // $result = [];
                         }
-                        // else 
-                        // {
-                        //     $result[] = 
-                        //     [   
-                        //         'id' => $ledger_value->application_date,
-                        //         'judgment' => '',
-                        //         'part_number' => $ledger_value->part_number,
-                        //         'revision_number' => $ledger_value->revision_number,
-                        //         'trial_number' => $ledger_value->trial_number,
-                        //         'inspection_reason' => $ledger_value->inspection_reason,
-                        //         'inspect_by' => $ledger_value->inspector_id,
-                        //         'inspect_datetime' => '',
-                        //         'evaluated_by' => '',
-                        //         'evaluated_datetime' => '',
-                        //         'approved_by' => '',
-                        //         'approved_datetime' => '',
-                        //         'disapproved_by' => '',
-                        //         'disapproved_datetime' => '',
-                        //         'file' => '',
-                        //     ];
-                        //     $match_application_date = false;
-                        // }
                     }
                 }
 
@@ -109,6 +93,8 @@ class HistoryController extends Controller
 
                     foreach ($data['ledger'] as $ledger_value) 
                     { 
+                        $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
+
                         $result[] = 
                         [
                             'id' => $ledger_value->application_date,
@@ -117,7 +103,7 @@ class HistoryController extends Controller
                             'revision_number' => $ledger_value->revision_number,
                             'trial_number' => $ledger_value->trial_number,
                             'inspection_reason' => $ledger_value->inspection_reason,
-                            'inspect_by' => $ledger_value->inspector_id,
+                            'inspect_by' => $fullname['fullname'],
                             'inspect_datetime' => '',
                             'evaluated_by' => '',
                             'evaluated_datetime' => '',
@@ -134,6 +120,8 @@ class HistoryController extends Controller
             {
                 foreach ($data['ledger'] as $ledger_value) 
                 {
+                    $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
+
                     $result[] = [
                         'id' => $ledger_value->application_date,
                         'judgment' => '',
@@ -141,7 +129,7 @@ class HistoryController extends Controller
                         'revision_number' => $ledger_value->revision_number,
                         'trial_number' => $ledger_value->trial_number,
                         'inspection_reason' => $ledger_value->inspection_reason,
-                        'inspect_by' => $ledger_value->inspector_id,
+                        'inspect_by' => $fullname['fullname'],
                         'inspect_datetime' => '',
                         'evaluated_by' => '',
                         'evaluated_datetime' => '',
@@ -159,6 +147,19 @@ class HistoryController extends Controller
         else 
         {
             $data = $TrialChecksheet->history($decision);
+
+            foreach ($data as $key => $value) 
+            {
+                $inspect_by = $LoginUser->getFullName($value['inspect_by']);
+                $evaluated_by = $LoginUser->getFullName($value['evaluated_by']);
+                $approved_by = $LoginUser->getFullName($value['approved_by']);
+                $disapproved_by = $LoginUser->getFullName($value['disapproved_by']);
+    
+                $data[$key]['inspect_by'] = $inspect_by['fullname'];
+                $data[$key]['evaluated_by'] = $evaluated_by['fullname'];
+                $data[$key]['approved_by'] = $approved_by['fullname'];
+                $data[$key]['disapproved_by'] = $disapproved_by['fullname'];
+            }
         }
 
         $status = 'Error';

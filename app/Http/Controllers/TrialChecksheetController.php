@@ -14,16 +14,20 @@ use App\Approval;
 use App\Attachment;
 use DB;
 use App\Helpers\ActivityLog;
+use App\LoginUser;
 use Session;
 class TrialChecksheetController extends Controller
 {
-    public function unique_multidim_array($array, $key) { 
+    public function unique_multidim_array($array, $key) 
+    { 
         $temp_array = array(); 
         $i = 0; 
         $key_array = array(); 
         
-        foreach($array as $val) { 
-            if (!in_array($val[$key], $key_array)) { 
+        foreach($array as $val) 
+        { 
+            if (!in_array($val[$key], $key_array)) 
+            { 
                 $key_array[$i] = $val[$key]; 
                 $temp_array[] = $val; 
             } 
@@ -281,7 +285,7 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function getForInspection(TrialLedger $TrialLedger)
+    public function getForInspection(TrialLedger $TrialLedger, LoginUser $LoginUser)
     {
         $data = $TrialLedger->getForInspection();
 
@@ -297,28 +301,9 @@ class TrialChecksheetController extends Controller
                     if ($checksheet_value->application_date === $ledger_value->application_date)
                     {
                         $match_application_date[] =  $ledger_value->application_date;
-                        // $result = [];
                     }
-                    // else 
-                    // {
-                    //     $result[] = 
-                    //     [
-                    //         'application_date' => $ledger_value->application_date,
-                    //         'part_number' => $ledger_value->part_number,
-                    //         'inspection_reason' => $ledger_value->inspection_reason,
-                    //         'revision_number' => $ledger_value->revision_number,
-                    //         'trial_number' => $ledger_value->trial_number,
-                    //         'part_name' => $ledger_value->part_name,
-                    //         'supplier_code' => $ledger_value->supplier_code,
-                    //         'inspector_id' => $ledger_value->inspector_id,
-                    //         'supplier_name' => $ledger_value->supplier_name
-                    //     ];
-                    //     $match_application_date = 'false';
-                    // }
                 }
             }
-
-            // return $match_application_date;
 
             if($match_application_date)
             {
@@ -330,6 +315,8 @@ class TrialChecksheetController extends Controller
 
                 foreach ($data['ledger'] as $ledger_value) 
                 { 
+                    $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
+
                     $result[] = 
                     [
                         'application_date' => $ledger_value->application_date,
@@ -339,7 +326,7 @@ class TrialChecksheetController extends Controller
                         'trial_number' => $ledger_value->trial_number,
                         'part_name' => $ledger_value->part_name,
                         'supplier_code' => $ledger_value->supplier_code,
-                        'inspector_id' => $ledger_value->inspector_id,
+                        'inspector_id' => $fullname['fullname'],
                         'supplier_name' => $ledger_value->supplier_name
                     ];
                 }
@@ -349,6 +336,8 @@ class TrialChecksheetController extends Controller
         {
             foreach ($data['ledger'] as $ledger_value) 
             {
+                $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
+
                 $result[] = 
                 [
                     'application_date' => $ledger_value->application_date,
@@ -358,7 +347,7 @@ class TrialChecksheetController extends Controller
                     'trial_number' => $ledger_value->trial_number,
                     'part_name' => $ledger_value->part_name,
                     'supplier_code' => $ledger_value->supplier_code,
-                    'inspector_id' => $ledger_value->inspector_id,
+                    'inspector_id' => $fullname['fullname'],
                     'supplier_name' => $ledger_value->supplier_name
                 ];
             }
@@ -409,14 +398,13 @@ class TrialChecksheetController extends Controller
                                 TrialChecksheet $TrialChecksheet,
                                 Request $Request)
     {
-
         $application_date = $Request->application_date;
 
         $in_use_data = $TrialChecksheet->getInUse($application_date);
 
         $in_use = '';
 
-        if ( !empty($in_use_data) ) 
+        if (!empty($in_use_data)) 
         {
             $in_use = $in_use_data['in_use'];
         }
@@ -450,7 +438,6 @@ class TrialChecksheetController extends Controller
                     }
 
                     $logs = 'The Data Exist in TrialChecksheet';
-
                 }
                 else
                 {
@@ -466,7 +453,6 @@ class TrialChecksheetController extends Controller
                     }
 
                     $logs = 'The Data Not Exist in TrialChecksheet';
-
                 }
 
                 $status = 'Error';
@@ -501,7 +487,6 @@ class TrialChecksheetController extends Controller
             'data'      =>  $result
         ];
     }
-
    
     public function storeIgm(UploadController $Upload, 
                             ChecksheetItem $ChecksheetItem,

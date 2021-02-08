@@ -17,6 +17,7 @@ use Session;
 use DB;
 use Excel;
 use App\Helpers\ActivityLog;
+use App\LoginUser;
 
 class ApprovalController extends Controller
 {
@@ -26,6 +27,7 @@ class ApprovalController extends Controller
                                         Attachment $Attachment,
                                         TaktTime $TaktTime,
                                         DownTime $DownTime,
+                                        LoginUser $LoginUser,
                                         Request $Request)
     {
         $trial_checksheet_id = $Request->id;
@@ -45,6 +47,9 @@ class ApprovalController extends Controller
         if ($trial_checksheet_id !== null) 
         {
             $checksheet_details = $TrialChecksheet->getChecksheetDetails($trial_checksheet_id);
+            $inspect_by = $LoginUser->getFullName($checksheet_details['inspect_by']);
+            $checksheet_details['inspect_by'] = $inspect_by['fullname'];
+
             $checksheet_items = $ChecksheetItem->getChecksheetItem($trial_checksheet_id);
             
             foreach($checksheet_items as $checksheet_items_value) 
@@ -108,11 +113,24 @@ class ApprovalController extends Controller
         ];
     }
     
-    public function loadFinishedInspection(TrialChecksheet $TrialChecksheet, Request $Request)
+    public function loadFinishedInspection(TrialChecksheet $TrialChecksheet, LoginUser $LoginUser, Request $Request)
     {
         $decision = $Request->decision;
 
         $data = $TrialChecksheet->loadFinishedInspection($decision);
+
+        foreach ($data as $key => $value) 
+        {
+            $inspect_by = $LoginUser->getFullName($value['inspect_by']);
+            $evaluated_by = $LoginUser->getFullName($value['evaluated_by']);
+            $approved_by = $LoginUser->getFullName($value['approved_by']);
+            $disapproved_by = $LoginUser->getFullName($value['disapproved_by']);
+
+            $data[$key]['inspect_by'] = $inspect_by['fullname'];
+            $data[$key]['evaluated_by'] = $evaluated_by['fullname'];
+            $data[$key]['approved_by'] = $approved_by['fullname'];
+            $data[$key]['disapproved_by'] = $disapproved_by['fullname'];
+        }
         
         $status = 'Error';
         $message = 'No Data';
