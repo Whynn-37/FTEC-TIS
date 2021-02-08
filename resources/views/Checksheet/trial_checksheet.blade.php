@@ -522,14 +522,8 @@
             allowOutsideClick: false,
             customClass: 'swal-wide',
         };
-        // select2
-        // let select2 = $('.select2').select2();
-        // select2.data('select2').$selection.css('height', '45px');
-        // select2.data('select2').$selection.css('margin-bottom', '1px');
         
-        // let select2_1 = $('.select2_1').select2();
-        // select2_1.data('select2').$selection.css('height', '45px');
-        // select2_1.data('select2').$selection.css('margin-bottom', '1px');
+        var session_fullname = $('#txt_session_fullname').text();
         
     </script>
     @endsection

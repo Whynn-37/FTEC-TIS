@@ -432,7 +432,7 @@ const CHECKSHEET = (() => {
                     $('#txt_plan_start_date').val(data.data.trial_checksheets.plan_start_date);
                     $('#txt_inspection_required_time').val(data.data.trial_checksheets.inspection_required_time);
                     $('#txt_die_kind').val(data.data.trial_checksheets.die_class);
-                    $('#txt_inspector').val(data.data.trial_checksheets.inspector_id);
+                    $('#txt_inspector').val(session_fullname);
                     $('#txt_supplier_code').val(data.data.trial_checksheets.supplier_code);
                     $('#txt_supplier_name').val(data.data.trial_checksheets.supplier_name);
 
