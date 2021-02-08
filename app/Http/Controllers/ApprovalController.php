@@ -86,7 +86,7 @@ class ApprovalController extends Controller
             $down_time_data = array_sum($data_down_sum);
 
             $status = 'Error';
-            $message = 'Successfully Load';
+            $message = 'Not Successfully Load';
 
             if((!empty($checksheet_details) === true) && 
             (!empty($checksheet_items) === true)  && 
