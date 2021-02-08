@@ -745,7 +745,16 @@ class TrialChecksheetController extends Controller
 
                 $attachment_result = $Attachment->storeFileMerge($trial_checksheet_id, $attachment_data);
 
-                $MailController->sendEmail($trial_checksheet_id, 'after_inspection');
+                $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                if ($whereSend['evaluated_by'] !== null) 
+                {
+                    $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
+                }
+                else 
+                {
+                    $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
+                }
 
                 $status  = 'Success';
                 $message = 'The inspection is done';

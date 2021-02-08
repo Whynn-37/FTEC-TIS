@@ -637,15 +637,15 @@ const APPROVE = (() => {
                                 Swal.fire({
                                     icon    : 'success',
                                     title   : 'Success',
-                                    text    : 'Diaspprove successful',
+                                    text    : 'Disapprove successful',
                                 })
                             }
                             else
                             {
                                 Swal.fire({
                                     icon    : 'error',
-                                    title   : data.status,
-                                    text    : data.message,
+                                    title   : 'Error',
+                                    text    : 'Not successful',
                                 })
                             }
                             $('#div_modal_content').LoadingOverlay('hide');

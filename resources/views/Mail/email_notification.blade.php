@@ -37,12 +37,49 @@
                                         <tr align="left"
                                         style="color: #1f2837; font-size: 14px; font-family: Open Sans, Helvetica, sans-serif; line-height: 28px;">
                                             <td>
-                                                <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
-                                                    TO: SIR. JACK BALATO
-                                                </p>
-                                                <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
-                                                     This is to inform you that, this part number is already finished.
-                                                </p>
+                                                @if($subject === 'For Re-inspection')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: {{$data['name_inspect_by']}}
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is re-inspection.
+                                                    </p>
+                                                @elseif($subject === 'For Evaluation')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: Evaluator
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is for evaluation
+                                                    </p>
+                                                @elseif($subject === 'For Re-Evaluation')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: {{$data['name_evaluated_by']}}
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is for re-evaluation
+                                                    </p>
+                                                @elseif($subject === 'For Approval')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: Approver
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is for for approval.
+                                                    </p>
+                                                @elseif($subject === 'For Re-Approval')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: {{$data['name_approved_by']}}
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is for re-approval.
+                                                    </p>
+                                                @elseif($subject === 'Approved')
+                                                    <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
+                                                        TO: All
+                                                    </p>
+                                                    <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
+                                                        This is to inform you that, this part number is approved.
+                                                    </p>
+                                                @endif
                                                 <p style="line-height: 26px;margin-bottom:15px;font-size:14;font-weight:700;margin-left:25%;">
                                                     Please see below details:
                                                </p>
@@ -91,7 +128,7 @@
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED BY </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['inspect_by']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_inspect_by']}} </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
@@ -102,7 +139,7 @@
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
@@ -114,7 +151,7 @@
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_approved_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
@@ -126,13 +163,19 @@
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_disapproved_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_datetime']}} </td>
                                                         </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
+                                                        </tr>
+                                                    @elseif($subject === 'For Re-inspection')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
@@ -145,7 +188,7 @@
                                         <tr>
                                             <td align="left"
                                                 style="color: #1f2837; font-size: 16px; font-family: Open Sans, Helvetica, sans-serif; line-height: 28px;">
-                                                <p>To visit Trial Inspection System, just click <a href="localhost/TIS/public">here.</a></p>
+                                                <p>To visit Touchscreen Inspection System, just click <a href="localhost/TIS/public">here.</a></p>
                                                 <br>
                                                 <p style="line-height: 26px; margin-bottom:15px;margin-left:15px;">
                                                     Thank you,
