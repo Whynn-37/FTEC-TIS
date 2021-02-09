@@ -86,7 +86,7 @@ class ApprovalController extends Controller
             $down_time_data = array_sum($data_down_sum);
 
             $status = 'Error';
-            $message = 'Successfully Load';
+            $message = 'Not Successfully Load';
 
             if((!empty($checksheet_details) === true) && 
             (!empty($checksheet_items) === true)  && 
@@ -294,6 +294,7 @@ class ApprovalController extends Controller
         $Supplier = new Supplier();
         $Approval = new Approval();
         $Attachment = new Attachment();
+        $LoginUser = new LoginUser();
 
         $status = 'Error';
         $message = 'No Data';
@@ -316,6 +317,16 @@ class ApprovalController extends Controller
             $takt_time = $TaktTime->loadCycleTime($trial_checksheet_id);
 
             $approval = $Approval->getApproval($trial_checksheet_id);
+
+            $inspect_by = $LoginUser->getFullName($approval['inspect_by']);
+            $evaluated_by = $LoginUser->getFullName($approval['evaluated_by']);
+            $approved_by = $LoginUser->getFullName($approval['approved_by']);
+            $disapproved_by = $LoginUser->getFullName($approval['disapproved_by']);
+
+            $approval['inspect_by'] = $inspect_by['fullname'];
+            $approval['evaluated_by'] = $evaluated_by['fullname'];
+            $approval['approved_by'] = $approved_by['fullname'];
+            $approval['disapproved_by'] = $disapproved_by['fullname'];
 
             $data =  [
                 'details' => $data_trial_ledger_merge,
@@ -518,6 +529,8 @@ class ApprovalController extends Controller
                     'decision' => 2
                 ];
 
+                $result =  $Approval->approved($trial_checksheet_id, $data);
+
                 $second_page_data = $this->generateSecondPage($trial_checksheet_id);
                 $this->generateTrialEvaluationResult($trial_checksheet_id);
 
@@ -538,7 +551,16 @@ class ApprovalController extends Controller
 
                 $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
-                $status = 'after_evaluation';
+                $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                if ($whereSend['disapproved_by'] !== null) 
+                {
+                    $status = 're_approval';
+                }
+                else 
+                {
+                    $status = 'for_approval';
+                }
 
                 $folder_name = $folder_name['file_folder'];
 
@@ -554,7 +576,9 @@ class ApprovalController extends Controller
                     'reason' => $reason
                 ];
 
-                $status = 'disapproved';
+                $result =  $Approval->approved($trial_checksheet_id, $data);
+
+                $status = 're_inspect';
 
                 $folder_name = '';
 
@@ -568,6 +592,8 @@ class ApprovalController extends Controller
                     'approved_datetime' => now(),
                     'decision' => 0
                 ];
+
+                $result =  $Approval->approved($trial_checksheet_id, $data);
 
                 $second_page_data = $this->generateSecondPage($trial_checksheet_id);
                 $this->generateTrialEvaluationResult($trial_checksheet_id);
@@ -604,7 +630,9 @@ class ApprovalController extends Controller
                     'reason' => $reason
                 ];
 
-                $status = 'disapproved';
+                $result =  $Approval->approved($trial_checksheet_id, $data);
+
+                $status = 're_evaluation';
 
                 $folder_name = '';
 
@@ -619,6 +647,8 @@ class ApprovalController extends Controller
                     'decision' => 2
                 ];
 
+                $result =  $Approval->approved($trial_checksheet_id, $data);
+
                 $second_page_data = $this->generateSecondPage($trial_checksheet_id);
                 $this->generateTrialEvaluationResult($trial_checksheet_id);
 
@@ -632,13 +662,12 @@ class ApprovalController extends Controller
 
                 $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
-                $status = 'after_evaluation';
+                $status = 're_approval';
 
                 $folder_name = '';
 
                 $message = 'Reapproved by Evaluator';
             }
-            $result =  $Approval->approved($trial_checksheet_id, $data);
 
             $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
 
@@ -651,24 +680,6 @@ class ApprovalController extends Controller
             $status = 'Error';
             $message = $th->getMessage();
             DB::rollback();
-        }
-
-        if ($action == 1) 
-        {
-            $action = 'Approved';
-        }
-        else 
-        {
-            $action = 'Disapproved';
-        }
-
-        if ($decision === 1 || $decision === 3) 
-        {
-            $decision = 'Evaluator';
-        }
-        else if($decision === 2) 
-        {
-            $decision = 'Approver';
         }
 
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Action : ' . $action . ' - Decision : ' . $decision . ' - Selected File : ' . $selected_file . ' - Reason : ' . $reason, Session::get('name'));
