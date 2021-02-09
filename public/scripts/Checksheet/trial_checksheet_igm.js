@@ -240,6 +240,7 @@ const IGM = (() => {
 			<tr id="tr_item_no_${value.item_number}">
                 <td>
 			        <input type="text" id="txt_hidden_item_no_${value.item_number}" value="${value.id}" hidden>
+			        <input type="text" id="txt_item_no_${value.item_type}_item_type" value="${value.item_type}" hidden>
 					<div class="dropright">
 						<span id="span_item_no_${value.item_number}_label">${value.item_number}</span>
 						<button id="btn_validate_sub_no_count_${value.item_number}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(1,${value.item_number});"></button>
@@ -262,13 +263,13 @@ const IGM = (() => {
 					</select>
 				</td>
 				<td>
-                    <input id="txt_item_no_${value.item_number}_specs"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+                    <input id="txt_item_no_${value.item_number}_specs" value="${specs}"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="specification" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_upper_limit"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_upper_limit" value="${upper_limit}"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="upper limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td>
-					<input id="txt_item_no_${value.item_number}_lower_limit"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
+					<input id="txt_item_no_${value.item_number}_lower_limit" value="${lower_limit}"  type="text" class="form-control input_text_center text_to_uppercase" placeholder="lower limit" disabled onkeyup="IGM.ValidateItemNoUpperAndLowerLimit(${value.item_number});">
 				</td>
 				<td id="td_item_no_${value.item_number}_judgement" class="input_text_center" style="vertical-align: middle;">${judgement}</td>
 				${(trial_number > 1) ? remarks : ''}
@@ -296,7 +297,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${value.item_number}_lower_limit`).prop('disabled', false);
     
                 } 
-                else if (value.type === 'Material Check' && value.tools === 'Visual Inspection' || value.tools === 'VSL')
+                else if (value.type === 'Material Check' && value.tools === 'Visual Inspection' || value.type === 'Material Check' && value.tools === 'VSL')
                 {
                     $(`#txt_item_no_${value.item_number}_specs`).prop('disabled', false);
                     $(`#txt_item_no_${value.item_number}_upper_limit`).prop('disabled', true);
@@ -535,6 +536,7 @@ const IGM = (() => {
             <tr id="tr_item_no_${item_no_holder}">
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_holder}" hidden>
+                    <input type="text" id="txt_item_no_${item_no_holder}_item_type" value="0" hidden>
 					<div class="dropright">
 						<span id="span_item_no_${item_no_holder}_label">${item_no_holder}</span>
 						<button id="btn_validate_sub_no_count_${item_no_holder}" class="dropdown-toggle button_dropdown" type="button" data-toggle="dropdown" style="margin-left: 20%;"  onclick="IGM.ValidateSubNoCount(${existing_sub_no_count_holder},${item_no_holder});"></button>
@@ -577,6 +579,7 @@ const IGM = (() => {
         let tools                       = $(`#slc_item_no_${item_no}_tools`).val();
         let split_type_onchange_value   = $(`#slc_item_no_${item_no}_type`).attr('onchange').split(',');
         let array_item_type_options     = '<option value=""selected disabled>Select type</option>';
+        let item_type                   = $(`#txt_item_no_${item_no}_item_type`).val();
         
         $(`#slc_item_no_${item_no}_tools`).attr('onchange', `IGM.SelectItemTools(${item_no},'${tools}');`);
 
@@ -653,7 +656,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${item_no}_lower_limit`).prop('disabled', false);
 
                     //pag insert sa DB ng item at data
-                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column','select_item_tools');
+                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column','select_item_tools',item_type);
                     
                 } 
                 else 
@@ -668,7 +671,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${item_no}_lower_limit`).val('');
                     
                     //pag insert sa DB ng item at data
-                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column','select_item_tools');
+                    IGM.ValidateAddIgmItemNo(item_no, 'th_new_igm_sub_column','select_item_tools',item_type);
                 }
             }
         }
@@ -678,6 +681,8 @@ const IGM = (() => {
 
         let tools         = $(`#slc_item_no_${item_no}_tools`).val();
         let type          = $(`#slc_item_no_${item_no}_type`).val();
+        let item_type     = $(`#txt_item_no_${item_no}_item_type`).val();
+
        
         $(`#span_error_item_no_${item_no}_type`).remove();
 
@@ -690,7 +695,7 @@ const IGM = (() => {
             } 
             else 
             {
-                if (tools === 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
+                if (tools === 'VSL' && type === 'Material Check'|| tools === 'Visual Inspection' && type === 'Material Check')
                 {
                     $(`#txt_item_no_${item_no}_specs`).prop('disabled', false);
                     $(`#txt_item_no_${item_no}_upper_limit`).prop('disabled', true);
@@ -719,7 +724,7 @@ const IGM = (() => {
                 $(`#span_error_item_no_${item_no}_type`).remove();
 
                 //pag insert sa DB ng item at data
-                IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type');
+                IGM.ValidateAddIgmItemNo(item_no, bg_header,'select_item_type',item_type);
             }
         } 
         else 
@@ -730,7 +735,7 @@ const IGM = (() => {
     };
 
     // pag insert ng item sa DB, dito narin gumagawa ng hidden checksheet_item_id
-    this_igm.ValidateAddIgmItemNo = (item_no, bg_header,action) => {
+    this_igm.ValidateAddIgmItemNo = (item_no, bg_header,action,item_type) => {
 
         let trial_checksheet_id = $('#trial_checksheet_id').val();
         let id                  = $(`#txt_hidden_item_no_${item_no}`).val();
@@ -743,7 +748,7 @@ const IGM = (() => {
         if (action === 'select_item_type')
         {   
             //pag update or create ng checksheet item
-            IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+            IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type);
         }
         else
         {
@@ -767,19 +772,19 @@ const IGM = (() => {
 
                     $(`#accordion_igm`).LoadingOverlay('hide');
                     //pag update or create ng checksheet item
-                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action);
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action,item_type);
                 }
                 else
                 {
                     if (action === 'select_item_tools')
                     {
-                        IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                        IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type);
                     }
                 }
             }
             else
             {
-                if (tools === 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
+                if (tools === 'VSL' && type === 'Material Check'|| tools === 'Visual Inspection' && type === 'Material Check')
                 {
                     // hinide ko lang kase may function na para sa pag delete ng data
                     if ($(`#tr_item_no_1_sub_no_1`).length == 0)
@@ -787,26 +792,26 @@ const IGM = (() => {
                         $(`#tr_item_no_1_sub_no_min_1`).prop('hidden',true);
                         $(`#tr_item_no_1_sub_no_max_1`).prop('hidden',true);
                     }
-                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type);
                 }
                 else
                 {
-                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action);
+                    IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type);
                 }
             }
         }
     };
 
-    this_igm.ProceedAddIgmItemNo = (id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action) =>{
+    this_igm.ProceedAddIgmItemNo = (id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type = 0) =>{
         
         let split_existing_sub_no_count = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',');
-        let existing_sub_no_count = split_existing_sub_no_count[2];
+        let existing_sub_no_count       = split_existing_sub_no_count[2];
         
         if ($(`#a_add_igm_item_no_${item_no}`).length !== 0)
         {
-            var split_add_igm_item_no = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
-            var split_remove_status = split_add_igm_item_no[4].split(')');
-            var remove_status = split_remove_status[0].replace(/"|'/g, '');
+            var split_add_igm_item_no   = $(`#a_add_igm_item_no_${item_no}`).attr('onclick').split(',');
+            var split_remove_status     = split_add_igm_item_no[4].split(')');
+            var remove_status           = split_remove_status[0].replace(/"|'/g, '');
         }
         else
         {
@@ -840,6 +845,7 @@ const IGM = (() => {
                 specification       : specification,
                 upper_limit         : upper_limit,
                 lower_limit         : lower_limit,
+                item_type           : item_type,
             },
             success: data => 
             {
@@ -1055,10 +1061,13 @@ const IGM = (() => {
                     }
                     else
                     {
-                        //pagka binago upper and lower limit, mag rerejudge ulit ng sub item at overall judgement ng item
-                        for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) 
+                        if (type !== 'Material Check' && tools !== 'Visual Inspection' || type !== 'Material Check' && tools !== 'VSL')
                         {
-                            IGM.RejudgementAfterItemNoUpdate(item_no, sub_no_index);
+                            //pagka binago upper and lower limit, mag rerejudge ulit ng sub item at overall judgement ng item
+                            for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) 
+                            {
+                                IGM.RejudgementAfterItemNoUpdate(item_no, sub_no_index);
+                            }
                         }
                     }
                     
@@ -2462,12 +2471,13 @@ const IGM = (() => {
         let tools           = $(`#slc_item_no_${item_no}_tools`).val();
         let type            = $(`#slc_item_no_${item_no}_type`).val();
 
-        if (tools == 'VSL' || tools === 'Visual Inspection' && type === 'Material Check')
+        if (tools == 'VSL' && type === 'Material Check'|| tools === 'Visual Inspection' && type === 'Material Check')
         {
-            if (specs !== '')
+            if (specs !== '' && specs !== '-')
             {
                 if (coordinates !== '')
                 {
+                    $(`#span_specs_error_${item_no}`).remove();
                     $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
         
                     if (visual_no !== 'undefined')
@@ -2475,7 +2485,7 @@ const IGM = (() => {
                         if (visual_no === 1) 
                         {
                             $(`#span_visual_item_no_${item_no}_error_${visual_no}`).remove();
-                            $(`#span_error_specs_item_no_${item_no}`).remove();
+                            $(`#span_specs_error_${item_no}`).remove();
         
                             if (visual_value === '') 
                             {
@@ -2551,14 +2561,16 @@ const IGM = (() => {
                 }
                 else
                 {
+                    $(`#span_specs_error_${item_no}`).remove();
                     $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
                     $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).after(`<span id="span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}" class="span-error">Required</span>`);
                 }
             }
             else
             {
-                $(`#span_error_specs_item_no_${item_no}`).remove();
-                $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_error_specs_item_no_${item_no}" class="span-error">Required</span>`);
+                $(`#span_specs_error_${item_no}`).remove();
+                $(`#span_error_coordinates_item_no_${item_no}_sub_no_${sub_no}`).remove();
+                $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val('');
             }
         }
@@ -2701,6 +2713,7 @@ const IGM = (() => {
         let specs       = $(`#txt_item_no_${item_no}_specs`).val();
         let tools       = $(`#slc_item_no_${item_no}_tools`).val();
         let type        = $(`#slc_item_no_${item_no}_type`).val();
+        let item_type   = $(`#txt_item_no_${item_no}_item_type`).val();
 
         if (specs !== '')
         {   
@@ -2721,7 +2734,10 @@ const IGM = (() => {
                     }
                     else
                     {
-                        $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                        if (type !== 'Material Check' && tools !== 'Visual Inspection' || type !== 'Material Check' && tools !== 'VSL')
+                        {
+                            $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                        }
                     }
                     
                 }
@@ -2739,26 +2755,38 @@ const IGM = (() => {
                     }
                     else
                     {
-                        $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                        if (type !== 'Material Check' && tools !== 'Visual Inspection' || tools === 'VSL' && type === 'Material Check')
+                        {
+                            $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                        }
                     }
                     
                 }
                 
-                if (upper_limit !== '' && lower_limit !== '') 
+                if (tools === 'VSL' && type === 'Material Check' || tools === 'Visual Inspection' && type === 'Material Check')
                 {
-                    if (upper_limit !== '-' && lower_limit !== '-')
+                    $(`#span_lower_limit_error_${item_no}`).remove();
+                    //para sa pag update ng upper or lower limit
+                    IGM.ValidateAddIgmItemNo(item_no,'','update_item_no_only',item_type);
+                }
+                else
+                {
+                    if (upper_limit !== '' && lower_limit !== '') 
                     {
-                        if (parseFloat(lower_limit) > parseFloat(upper_limit)) 
+                        if (upper_limit !== '-' && lower_limit !== '-')
                         {
-                            $(`#span_lower_limit_error_${item_no}`).remove();
-                            $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
-                            $(`#txt_item_no_${item_no}_lower_limit`).val('');
-                        } 
-                        else 
-                        {
-                            $(`#span_lower_limit_error_${item_no}`).remove();
-                            //para sa pag update ng upper or lower limit
-                            IGM.ValidateAddIgmItemNo(item_no,'','update_item_no_only');
+                            if (parseFloat(lower_limit) > parseFloat(upper_limit)) 
+                            {
+                                $(`#span_lower_limit_error_${item_no}`).remove();
+                                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Lower limit cannot be higher than upper limit</span>`);
+                                $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                            } 
+                            else 
+                            {
+                                $(`#span_lower_limit_error_${item_no}`).remove();
+                                //para sa pag update ng upper or lower limit
+                                IGM.ValidateAddIgmItemNo(item_no,'','update_item_no_only',item_type);
+                            }
                         }
                     }
                 }
@@ -2767,16 +2795,26 @@ const IGM = (() => {
             {
                 $(`#span_specs_error_${item_no}`).remove();
                 $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
-                $(`#txt_item_no_${item_no}_upper_limit`).val('');
-                $(`#txt_item_no_${item_no}_lower_limit`).val('');
+               
+                if (type !== 'Material Check' && tools !== 'Visual Inspection' || type !== 'Material Check' && tools !== 'VSL')
+                {
+                    $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                    $(`#txt_item_no_${item_no}_lower_limit`).val('');
+                }
+                
             }
         } 
         else
         {
             $(`#span_specs_error_${item_no}`).remove();
             $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
-            $(`#txt_item_no_${item_no}_upper_limit`).val('');
-            $(`#txt_item_no_${item_no}_lower_limit`).val('');
+
+            if (type !== 'Material Check' && tools !== 'Visual Inspection' || type !== 'Material Check' && tools !== 'VSL')
+            {
+                $(`#txt_item_no_${item_no}_upper_limit`).val('');
+                $(`#txt_item_no_${item_no}_lower_limit`).val('');
+            }
+            
         }
     };
 

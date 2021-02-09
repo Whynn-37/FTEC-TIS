@@ -20,6 +20,7 @@ class ChecksheetItemController extends Controller
         $specification = $Request->specification;
         $upper_limit = $Request->upper_limit;
         $lower_limit = $Request->lower_limit;
+        $item_type = $Request->item_type; //added by george
         
         $status = 'Error';
         $message = 'No Data';
@@ -53,7 +54,7 @@ class ChecksheetItemController extends Controller
                     'upper_limit'           => $upper_limit,
                     'lower_limit'           => $lower_limit,
                     'judgment'              => 'N/A',
-                    'item_type'             => 0,
+                    'item_type'             => $item_type, //added by george
                     'judgment'              => 'N/A',
                     'remarks'               => '',
                     'hinsei'                => '',

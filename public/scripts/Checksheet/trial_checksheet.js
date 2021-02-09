@@ -559,30 +559,18 @@ const CHECKSHEET = (() => {
 
     this_checksheet.InitializeCycleTimeTimer = () => {
 
-        $("#btn_start_time").prop("hidden", false);
-        $("#btn_stop_time").prop("hidden", true);
-
-        $("#div_target_takt_time_timer").TimeCircles({
-            count_past_zero: false,
-        });
-        $("#div_takt_time_timer").TimeCircles();
-        $("#div_actual_time_timer").TimeCircles();
-        $("#div_takt_time_timer").TimeCircles();
-        $("#div_downtime_timer").TimeCircles();
-
-        $("#div_target_takt_time_timer").TimeCircles().stop();
-        $("#div_takt_time_timer").TimeCircles().stop();
-        $("#div_actual_time_timer").TimeCircles().stop();
-        $("#div_downtime_timer").TimeCircles().stop();
-
-        $("#btn_finish_downtime").prop("disabled", true);
-        $("#btn_start_downtime").prop("disabled", true);
-        $("#slc_downtime_type").prop("disabled", true);
-
+        
         $("#div_target_takt_time_timer").TimeCircles().destroy();
         $("#div_actual_time_timer").TimeCircles().destroy();
         $("#div_takt_time_timer").TimeCircles().destroy();
         $("#div_downtime_timer").TimeCircles().destroy();
+
+        $("#btn_start_time").prop("hidden", false);
+        $("#btn_stop_time").prop("hidden", true);
+
+        $("#btn_finish_downtime").prop("disabled", true);
+        $("#btn_start_downtime").prop("disabled", true);
+        $("#slc_downtime_type").prop("disabled", true);
     };
 
     this_checksheet.TaktTimeTimerAction = (status) => {
@@ -752,6 +740,14 @@ const CHECKSHEET = (() => {
                 });
                 if (status === 'load_cycle_time') 
                 {
+                    $("#div_target_takt_time_timer").TimeCircles({
+                        count_past_zero: false,
+                    });
+                    $("#div_takt_time_timer").TimeCircles();
+                    $("#div_actual_time_timer").TimeCircles();
+                    $("#div_takt_time_timer").TimeCircles();
+                    $("#div_downtime_timer").TimeCircles();
+            
                     //target takt time
                     $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
                     $("#div_target_takt_time_timer").TimeCircles().rebuild();

@@ -638,7 +638,6 @@ class ApprovalController extends Controller
 
                 $message = 'Reapproved by Evaluator';
             }
-            
             $result =  $Approval->approved($trial_checksheet_id, $data);
 
             $MailController->sendEmail($trial_checksheet_id, $status, $attachment);

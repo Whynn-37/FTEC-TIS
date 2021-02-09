@@ -328,7 +328,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
                 <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null  || value.remarks === '') ? '-' : value.remarks}</td>
-                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ?  td_edit_button : (value.type === 'Material Check' && value.tools === 'VSL') ? td_edit_button : ''}
+                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ?  td_edit_button : (value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ? td_edit_button : ''}
             </tr>`;
             
             array_type.push(value.type);
@@ -788,7 +788,7 @@ const EVALUATE = (() => {
 
         $(`#td_item_no_${item_no}_specs`).html(td_specs);
 
-        if (tools !== 'VSL' && type !== 'Material Check')
+        if (tools !== 'VSL' && type !== 'Material Check' || tools !== 'Visual Inspection' && type !== 'Material Check')
         {
             $(`#td_item_no_${item_no}_upper_limit`).html(td_upper_limit);
             $(`#td_item_no_${item_no}_lower_limit`).html(td_lower_limit);
@@ -874,7 +874,7 @@ const EVALUATE = (() => {
         let type                    = $(`#td_item_no_${item_no}_type`).html();
         let specs                   = $(`#txt_item_no_${item_no}_specs`).val().toUpperCase();
        
-        if (tools !== 'VSL' && type !== 'Material Check')
+        if (tools !== 'VSL' && type !== 'Material Check' || tools !== 'Visual Inspection' && type !== 'Material Check')
         {
             var upper_limit             = $(`#txt_item_no_${item_no}_upper_limit`).val();
             var lower_limit             = $(`#txt_item_no_${item_no}_lower_limit`).val();
@@ -888,7 +888,7 @@ const EVALUATE = (() => {
 
         
         
-        if (tools !== 'VSL' && type !== 'Material Check') //para to sa vsl at amterial check dahil di naman na eedit ang upper at lower limit non
+        if (tools !== 'VSL' && type !== 'Material Check' || tools !== 'Visual Inspection' && type !== 'Material Check') //para to sa vsl at amterial check dahil di naman na eedit ang upper at lower limit non
         {
             //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
             if (upper_limit === '-')
@@ -3029,7 +3029,7 @@ const EVALUATE = (() => {
                 $('#div_modal_content').LoadingOverlay('show');
 
                 let trial_checksheet_id = $('#trial_checksheet_id').val();
-
+               
                 $.ajax({
                     url     : `approved`,
                     type    : 'post',
