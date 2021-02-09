@@ -26,6 +26,10 @@ const HISTORY = (() => {
             button_style = 'cursor: not-allowed;';
             history_function = 'HISTORY.ViewForInspectionHistory';
         }
+        else
+        {
+            $('.modal-footer').hide();
+        }
 
         if (status === 'APPROVED') 
         {

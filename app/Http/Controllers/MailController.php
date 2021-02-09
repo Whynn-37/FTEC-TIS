@@ -17,57 +17,85 @@ class MailController extends Controller
         
         $data = $TrialChecksheet->getAllData($trial_checksheet_id);
 
-        if($status == 'after_inspection')
+        $inspect_by = $LoginUser->getFullName($data['inspect_by']);
+        $evaluated_by = $LoginUser->getFullName($data['evaluated_by']);
+        $approved_by = $LoginUser->getFullName($data['approved_by']);
+        $disapproved_by = $LoginUser->getFullName($data['disapproved_by']);
+
+        $data['name_inspect_by'] = $inspect_by['fullname'];
+        $data['name_evaluated_by'] = $evaluated_by['fullname'];
+        $data['name_approved_by'] = $approved_by['fullname'];
+        $data['name_disapproved_by'] = $disapproved_by['fullname'];
+
+        $receipient =  
+        [
+            'jed.relator@fujitsu.com',
+            'markjohrel.manzano@fujitsu.com',
+            'georgebien.almenanza@fujitsu.com',
+            'terrymerwin.balahadia@fujitsu.com',
+        ];
+
+        if($status == 're_inspect')
         {
-            $incharge = 
-            [
-                'Position' => 'Leader',
-                // 'Fullname' => ,
-            ];
+            $receipient = $LoginUser->sendEmailTo($data['inspect_by']);
+            $receipient = $receipient['EmailAdd'];
+            
+            $subject = 'For Re-inspection';
+        }
+        else if($status == 'for_evaluation')
+        {
+            // $receipient = [
+            //     'EmailAdd' => 'hirosawa-t@jp.fujitsu.com',
+            //     'EmailAdd' => 'sawazaki-koji@jp.fujitsu.com',
+            //     'EmailAdd' => 'satou.yutaka@jp.fujitsu.com',
+            // ];
 
             $subject = 'For Evaluation';
         }
-        else if($status == 'after_evaluation')
+        else if($status == 're_evaluation')
         {
-            // $incharge = 
-            // [
-            //     'Position' => 'Manager',
-            //     'Fullname' => ,
+            $receipient = $LoginUser->sendEmailTo($data['evaluated_by']);
+            $receipient = $receipient['EmailAdd'];
+
+            $subject = 'For Re-Evaluation';
+        }
+        else if($status == 'for_approval')
+        {
+            // $receipient = [
+            //     'EmailAdd' => 'koike.tamotsu@jp.fujitsu.com',
+            //     'EmailAdd' => 'saito.tomoyuki@fujitsu.com',
             // ];
 
             $subject = 'For Approval';
         }
+
+        else if($status == 're_approval')
+        {
+            $receipient = $LoginUser->sendEmailTo($data['disapproved_by']);
+            $receipient = $receipient['EmailAdd'];
+
+            $subject = 'For Re-Approval';
+        }
         else if($status == 'approved')
         {
-            // $incharge = 
-            // [
-            //     'Position' => 'General Manager',
-            //     'Fullname' => ,
+            // $receipient = [
+            //     'EmailAdd' => 'hirosawa-t@jp.fujitsu.com',
+            //     'EmailAdd' => 'sawazaki-koji@jp.fujitsu.com',
+            //     'EmailAdd' => 'satou.yutaka@jp.fujitsu.com',
+            //     'EmailAdd' => 'koike.tamotsu@jp.fujitsu.com',
+            //     'EmailAdd' => 'saito.tomoyuki@fujitsu.com',
+            //     'EmailAdd' => 'satou.hideko@jp.fujitsu.com',
             // ];
 
             $subject = 'Approved';
         }
-        else if($status == 'disapproved')
-        {
-            // $incharge = 
-            // [
-            //     'Position' => 'Secret',
-            //     'Fullname' => 'Inyida Ngoki',
-            // ];
+        // else if($status == 'disapproved')
+        // {
+        //     $receipient = $LoginUser->sendEmailTo($data['evaluated_by']);
 
-            $subject = 'Disapproved';
-        }
+        //     $subject = 'Disapproved';
+        // }
 
-        // $receipient = $LoginUser->sendEmailTo($incharge);
-        $receipient =  
-        [
-            // 'jed.relator@fujitsu.com',
-            // 'markjohrel.manzano@fujitsu.com',
-            'georgebien.almenanza@fujitsu.com',
-            // 'terrymerwin.balahadia@fujitsu.com',
-            // 'markangelo.cantalejo@fujitsu.com',
-        ];
-
-        Mail::to($receipient)->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
+        Mail::to($receipient)->bcc('jed.relator@fujitsu.com')->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
     }
 }

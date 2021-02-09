@@ -22,8 +22,8 @@ class LoginUser extends Model
 
     public function sendEmailTo($incharge)
     {
-        return LoginUser::where($incharge)
-        ->get();
+        return LoginUser::where('name', $incharge)
+        ->first();
     }
 
     public function getFullName($id)
