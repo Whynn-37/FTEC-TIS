@@ -10,7 +10,7 @@
                 <div class="row">
                     <div class="col-6">
                         <label> Supplier Code  </label>
-                        <input class="form-control" type="text" id="txt_supplier_code">
+                        <input type="number" class="form-control" type="text" id="txt_supplier_code">
                     </div>
                     <div class="col-6">
                         <label> Supplier Name  </label>
