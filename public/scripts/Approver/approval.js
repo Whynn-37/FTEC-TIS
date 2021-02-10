@@ -139,8 +139,6 @@ const APPROVE = (() => {
 
         $('#div_modal_content').LoadingOverlay('show');
 
-        console.log(approval_button);
-
         $.ajax({
             url     : `load-inspection-data`,
             type    : 'get',

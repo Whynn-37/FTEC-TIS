@@ -1270,10 +1270,8 @@ const IGM = (() => {
 
         if (item_no_existing_sub_no_count > 0) 
         {
-
-            if (item_no_existing_sub_no_count > 1) 
+            if (item_no_existing_sub_no_count > 1) //may ganto dahil yung pang 1 ay walang remove sub no
             {
-
                 for (let remove_sub_no_count = 2; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) 
                 {
 
@@ -1293,7 +1291,6 @@ const IGM = (() => {
             {
 
                 // $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
-                
                 $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`);
 
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).text(`${remove_sub_no_count}`);
@@ -1301,10 +1298,8 @@ const IGM = (() => {
 
                 $(`#txt_hidden_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `txt_hidden_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
 
-
-                if (item_no_existing_sub_no_type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') 
                 {
-
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
                     //coordinates
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
@@ -1346,21 +1341,27 @@ const IGM = (() => {
     };
 
     this_igm.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId = (type, previous_item_no, action) => {
-        if (action === 'add') {
+
+        if (action === 'add') 
+        {
             var new_item_no_counter = item_no_count;
             var count_value = parseInt(previous_item_no) + 2;
-        } else {
-            if (previous_item_no === 1) {
+        } 
+        else 
+        {
+            if (previous_item_no === 1) 
+            {
                 new_item_no_counter = parseInt(item_no_count) - 1;
-            } else {
+            } 
+            else 
+            {
                 new_item_no_counter = parseInt(item_no_count);
             }
             count_value = parseInt(previous_item_no);
         }
 
-
-        for (let a_count = count_value; a_count <= new_item_no_counter; a_count++) {
-
+        for (let a_count = count_value; a_count <= new_item_no_counter; a_count++) 
+        {
             if ($(`#a_add_igm_item_no_${a_count}`).length === 0)
             {
                 // type, item_no_count, existing_sub_no_count, added_item_no_between_count
@@ -1421,7 +1422,6 @@ const IGM = (() => {
                             $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'min');`);
                             $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'max');`);
                         }
-
                     } 
                     else 
                     {
@@ -1444,7 +1444,6 @@ const IGM = (() => {
                     }
                 }
             }
-
         }
     };
 
@@ -1689,7 +1688,7 @@ const IGM = (() => {
         {
             // PARA SA MGA NEXT MAIN ITEM NG NIREMOVE NA MAIN ITEM
             // for (let count = item_no; count < new_item_no_count; count++) 
-            for (let count = item_no; count < item_no_count; count++) 
+            for (let count = item_no; count < parseInt(item_no_count); count++) 
             {
                 if (count === item_no) 
                 {
@@ -1829,7 +1828,6 @@ const IGM = (() => {
                 if (existing_sub_no_count_value > 0) 
                 {
                     // IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
-                    
                     IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, split_add_item_no_onlick, next_item_no_holder, item_no_holder);
                     // if (count === new_item_no_count - 1) 
                     // if (count === item_no_count - 1) 
@@ -1841,7 +1839,7 @@ const IGM = (() => {
                     if_has_sub_no_count++;
                 }
             }
-
+            
             if (if_has_sub_no_count > 0)
             {
                 // IGM.AddIgmItemNoInputsBetweenChangeSubNoTemporaryIdToOriginalId(type_value, new_item_no_count - item_no_holder, 'remove');

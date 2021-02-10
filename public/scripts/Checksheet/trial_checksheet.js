@@ -9,16 +9,16 @@ let logVisit = function (event) {
 
     let trial_checksheet_id = $('#trial_checksheet_id').val();
 
-    let remaining_target_takt_time = $('#div_target_takt_time_timer').TimeCircles().getTime();
-    let converted_remaining_target_takt_time = remaining_target_takt_time / 60;
+    let remaining_target_takt_time              = $('#div_target_takt_time_timer').TimeCircles().getTime();
+    let converted_remaining_target_takt_time    = remaining_target_takt_time / 60;
 
-    let remaining_takt_time = $("#div_takt_time_timer").TimeCircles().getTime();
-    let absolute_value_remaining_takt_time = Math.abs(Math.floor(remaining_takt_time));
-    let converted_remaining_takt_time = absolute_value_remaining_takt_time / 60;
+    let remaining_takt_time                 = $("#div_takt_time_timer").TimeCircles().getTime();
+    let absolute_value_remaining_takt_time  = Math.abs(Math.floor(remaining_takt_time));
+    let converted_remaining_takt_time       = absolute_value_remaining_takt_time / 60;
 
-    let remaining_actual_time = $("#div_actual_time_timer").TimeCircles().getTime();
-    let absolute_value_remaining_actual_time = Math.abs(Math.floor(remaining_actual_time));
-    let converted_remaining_actual_time = absolute_value_remaining_actual_time / 60;
+    let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
+    let absolute_value_remaining_actual_time    = Math.abs(Math.floor(remaining_actual_time));
+    let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
 
     // URL to send the data to
     let url = `api/stop-cycle-time?trial_checksheet_id=${trial_checksheet_id}&actual_time=${converted_remaining_actual_time.toFixed(2)}&total_takt_time=${converted_remaining_takt_time.toFixed(2)}&takt_time=${Math.abs(converted_remaining_target_takt_time.toFixed(2))}`;
@@ -583,25 +583,25 @@ const CHECKSHEET = (() => {
             text = 'stop';
         }
 
-        Swal.fire(
-            $.extend(swal_options, {
-                confirmButtonText: 'Yes',
-                title: `Are you sure you want to ${text}?`,
-                text: ''
-            })
-        ).then((result) => {
-            if (result.value) 
-            {
-                if (status === "start_takt_time") 
+        if (status === "start_takt_time") 
+        {
+            Swal.fire(
+                $.extend(swal_options, {
+                    confirmButtonText: 'Yes',
+                    title: `Are you sure you want to ${text}?`,
+                    text: ''
+                })
+            ).then((result) => {
+                if (result.value) 
                 {
                     CHECKSHEET.StartCycleTime(downtime_running_time);
-                } 
-                else 
-                {
-                    CHECKSHEET.StopCycleTime(downtime_running_time);
                 }
-            }
-        });
+            });
+        } 
+        else 
+        {
+            CHECKSHEET.StopCycleTime(downtime_running_time);
+        }
     };
 
     //
