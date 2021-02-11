@@ -19,10 +19,11 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
-        "@sweetalert2/theme-dark": "^4.0.1",
-        "datatables.net": "^1.10.22",
+        "@sweetalert2/theme-dark": "^4.0.2",
+        "datatables.net": "^1.10.23",
+        "easytimer.js": "^4.3.1",
         "gasparesganga-jquery-loading-overlay": "^2.1.7",
         "select2": "^4.0.13",
-        "sweetalert2": "^10.9.0"
+        "sweetalert2": "^10.14.0"
     }
 }

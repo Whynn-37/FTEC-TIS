@@ -571,6 +571,7 @@ const CHECKSHEET = (() => {
         $("#btn_finish_downtime").prop("disabled", true);
         $("#btn_start_downtime").prop("disabled", true);
         $("#slc_downtime_type").prop("disabled", true);
+
     };
 
     this_checksheet.TaktTimeTimerAction = (status) => {
@@ -738,38 +739,31 @@ const CHECKSHEET = (() => {
                     </tr>`;
 
                 });
+
                 if (status === 'load_cycle_time') 
                 {
-                    $("#div_target_takt_time_timer").TimeCircles({
-                        count_past_zero: false,
-                    });
-                    $("#div_takt_time_timer").TimeCircles();
-                    $("#div_actual_time_timer").TimeCircles();
-                    $("#div_takt_time_timer").TimeCircles();
-                    $("#div_downtime_timer").TimeCircles();
-            
+                    $("#div_target_takt_time_timer").TimeCircles().destroy();
+                    $("#div_actual_time_timer").TimeCircles().destroy();
+                
                     //target takt time
+                    (target_takt_time == 0) ? target_time_plus = target_takt_time : target_time_plus = target_takt_time + 1;
                     $('#div_target_takt_time_timer').attr('data-timer', target_takt_time);
+                    $('#div_target_takt_time_timer').data('timer', target_time_plus).TimeCircles({count_past_zero: false});
                     $("#div_target_takt_time_timer").TimeCircles().rebuild();
                     $("#div_target_takt_time_timer").TimeCircles().stop();
-
                     //actual time
+                    (total_sum_total_takt_time == 0) ? actual_time_plus = total_sum_total_takt_time : actual_time_plus = total_sum_total_takt_time + 1;
                     $('#div_actual_time_timer').attr('data-timer', total_sum_total_takt_time);
+                    $('#div_actual_time_timer').data('timer', actual_time_plus).TimeCircles();
                     $("#div_actual_time_timer").TimeCircles().rebuild();
                     $("#div_actual_time_timer").TimeCircles().stop();
 
                     //takt time
-                    $("#div_takt_time_timer").TimeCircles().rebuild();
+                    // $("#div_takt_time_timer").TimeCircles().rebuild();
                     $("#div_takt_time_timer").TimeCircles().stop();
 
-                    $("#div_downtime_timer").TimeCircles().rebuild();
+                    // $("#div_downtime_timer").TimeCircles().rebuild();
                     $("#div_downtime_timer").TimeCircles().stop();
-                    // Swal.fire({
-                    //     icon: 'success',
-                    //     title: data.status,
-                    //     text: data.message,
-                    //     timer: 500
-                    // })
                 }
 
                 $('#tbody_tbl_takt_time').html(tbody);
@@ -793,14 +787,14 @@ const CHECKSHEET = (() => {
         let trial_checksheet_id                     = $('#trial_checksheet_id').val();
 
         let remaining_target_takt_time              = $('#div_target_takt_time_timer').TimeCircles().getTime();
-        let converted_remaining_target_takt_time    = Math.abs(remaining_target_takt_time / 60);
+        let converted_remaining_target_takt_time    = Math.abs((remaining_target_takt_time) / 60);
 
         let remaining_takt_time                     = $("#div_takt_time_timer").TimeCircles().getTime();
-        let absolute_value_remaining_takt_time      = Math.abs(Math.floor(remaining_takt_time));
+        let absolute_value_remaining_takt_time      = Math.abs(Math.floor((remaining_takt_time)));
         let converted_remaining_takt_time           = absolute_value_remaining_takt_time / 60;
 
         let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
-        let absolute_value_remaining_actual_time    = Math.abs(Math.floor(remaining_actual_time));
+        let absolute_value_remaining_actual_time    = Math.abs(Math.floor((remaining_actual_time)));
         let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
 
         $.ajax({
@@ -1143,13 +1137,14 @@ const CHECKSHEET = (() => {
                             for (let item_no_index = 1; item_no_index <= parseInt(item_no_count); item_no_index++) 
                             {
                                 let type = $(`#slc_item_no_${item_no_index}_type`).val();
-    
+                                let tools = $(`#slc_item_no_${item_no_index}_tools`).val();
+                                
+                                //pagkuha ng sub no count
+                                let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
+                                let sub_no_count    = onclick_value[2];
+
                                 if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                                 {
-                                    //pagkuha ng sub no count
-                                    let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
-                                    let sub_no_count    = onclick_value[2];
-    
                                     for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
                                     {
                                         for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
@@ -1169,6 +1164,21 @@ const CHECKSHEET = (() => {
                                         }
                                     }
                                 }
+                                else if (type === 'Actual' || type === 'Min and Max and Form Tolerance')
+                                {
+                                    for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
+                                    {
+                                        for (let value_index = 1; value_index <= 5; value_index++) 
+                                        {
+                                            let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_amt_${value_index}`).val();
+    
+                                            if (min_value === '')
+                                            {
+                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_amt_${value_index}`).val('-');
+                                            }
+                                        }
+                                    }
+                                }
     
                                 //pagkuha ng item judgements para sa buong judgment ng trial
                                 let item_judgment = $(`#td_item_no_${item_no_index}_judgement span`).text();
@@ -1181,34 +1191,45 @@ const CHECKSHEET = (() => {
                                 {
                                     ng_judgement_count++;
                                 }
-    
-                                if (item_no_index === parseInt(item_no_count))
+
+                                if ($.inArray(tools, array_item_tools) === -1)
                                 {
-                                    if (na_judgement_count > 0)
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Item with invalid tools has been found',
+                                        text: 'Please check your checksheet items.',
+                                    })
+                                }
+                                else
+                                {
+                                    if (item_no_index === parseInt(item_no_count))
                                     {
-                                        Swal.fire({
-                                            icon: 'warning',
-                                            title: 'Item with no judgement has been found',
-                                            text: 'Please check your checksheet items.',
-                                        })
-                                    }
-                                    else
-                                    {
-                                        //checking if NG or OK
-                                        (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
-                                        
-                                        Swal.fire(
-                                            $.extend(swal_options, {
-                                                title   : "Are you sure?",
-                                                text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
-                                            })
-                                        ).then((result) => 
+                                        if (na_judgement_count > 0)
                                         {
-                                            if (result.value) 
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Item with no judgement has been found',
+                                                text: 'Please check your checksheet items.',
+                                            })
+                                        }
+                                        else
+                                        {
+                                            //checking if NG or OK
+                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
+                                            
+                                            Swal.fire(
+                                                $.extend(swal_options, {
+                                                    title   : "Are you sure?",
+                                                    text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
+                                                })
+                                            ).then((result) => 
                                             {
-                                                CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
-                                            }
-                                        });
+                                                if (result.value) 
+                                                {
+                                                    CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -1227,7 +1248,7 @@ const CHECKSHEET = (() => {
 
         let inspection_list_id = $('#txt_inspection_list_id').val();
 
-        console.log(inspection_list_id);
+        // console.log(inspection_list_id);
 
         form_data.append('judgment',final_judgment)
 
@@ -1315,7 +1336,7 @@ const CHECKSHEET = (() => {
                 $('#tbl_inspection_list').DataTable().destroy();
                 $('#tbody_tbl_inspection_list').empty();
 
-                console.log(data);
+                // console.log(data);
 
                 let tbody = '';
                
@@ -1365,7 +1386,7 @@ const CHECKSHEET = (() => {
                 $('#tbl_disapproved_list').DataTable().destroy();
                 $('#tbody_tbl_disapproved_list').empty();
 
-                console.log(data);
+                // console.log(data);
 
                 let tbody = '';
                
