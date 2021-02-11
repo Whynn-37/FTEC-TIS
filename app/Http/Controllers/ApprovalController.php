@@ -85,6 +85,8 @@ class ApprovalController extends Controller
 
             $down_time_data = array_sum($data_down_sum);
 
+            $actual_time_data = $TaktTime->getActual($trial_checksheet_id);
+
             $status = 'Error';
             $message = 'Not Successfully Load';
 
@@ -109,6 +111,7 @@ class ApprovalController extends Controller
                 'attachment'            => $attachment_data,
                 'takt_time'             => $takt_time_data,
                 'down_time'             => $down_time_data,
+                'actual_time'           => $actual_time_data['actual_time'],
             ]
         ];
     }
@@ -382,6 +385,7 @@ class ApprovalController extends Controller
         $ChecksheetData = new ChecksheetData();
         $Supplier = new Supplier();
         $Approval = new Approval();
+        $LoginUser = new LoginUser();
 
         $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
         $data_supplier = json_decode(json_encode($Supplier->getSupplier($data_trial_ledger['supplier_code'])),true);
@@ -487,9 +491,20 @@ class ApprovalController extends Controller
             }
         }
 
-        $approval_data = json_decode(json_encode($Approval->getApproval($trial_checksheet_id)),true);
+        $approval_data = $Approval->getApproval($trial_checksheet_id);
 
-        return [
+        $inspect_by = $LoginUser->getFullName($approval_data['inspect_by']);
+        $evaluated_by = $LoginUser->getFullName($approval_data['evaluated_by']);
+        $approved_by = $LoginUser->getFullName($approval_data['approved_by']);
+        $disapproved_by = $LoginUser->getFullName($approval_data['disapproved_by']);
+
+        $approval_data['inspect_by'] = $inspect_by['fullname'];
+        $approval_data['evaluated_by'] = $evaluated_by['fullname'];
+        $approval_data['approved_by'] = $approved_by['fullname'];
+        $approval_data['disapproved_by'] = $disapproved_by['fullname'];
+
+        return 
+        [
             'checksheet_details'    =>  $data_trial_ledger_merge,
             'details_data'          =>  $details_data,
             'items'                 =>  $checksheet_items_result,

@@ -57,6 +57,7 @@ class TrialChecksheet extends Model
             'trial_ledgers.inspection_reason',
             'trial_ledgers.model_name',
             'trial_ledgers.application_date',
+            'trial_ledgers.inspection_required_time',
             'suppliers.supplier_name',
             'approvals.inspect_by',
             )
