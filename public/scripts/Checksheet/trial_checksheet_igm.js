@@ -908,25 +908,16 @@ const IGM = (() => {
                                             //pag remove ng tr
                                             $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
                                         }
+
                                     }
-                                    // else
-                                    // {
-                                    //     //pang AMT (Actual Material Thickness)
-                                    //     $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-
-                                    //     let item_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}`).val();
-                                    //     let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
-
-                                    //     for (let index = 1; index <= existing_sub_no_count; index++) 
-                                    //     {
-                                    //         let sub_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}_sub_no_${index}`).val();
-                                    //         //remove muna yung checksheet data sa DB
-                                    //         IGM.ProceedRemoveSubNo(item_no_hidden_id, sub_no_hidden_id,index,new_item_judgement);
-                                    //         //pag remove ng tr
-                                    //         $(`#tr_item_no_${item_no}_sub_no_min_${index}`).remove();
-                                    //         $(`#tr_item_no_${item_no}_sub_no_max_${index}`).remove();
-                                    //     }
-                                    // }
+                                    else
+                                    {   
+                                        //para mag rejudge
+                                        for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) 
+                                        {
+                                            IGM.RejudgementAfterItemNoUpdate(item_no, sub_no_index);
+                                        }
+                                    }
 
                                     if ($(`#tr_item_no_${item_no}_sub_no_min_1`).length === 0 && $(`#tr_item_no_${item_no}_sub_no_max_1`).length === 0)
                                     {
@@ -943,18 +934,36 @@ const IGM = (() => {
                                     //pag remove ng mga sub item based sa kung ilan
                                     if ($(`#tr_item_no_${item_no}_sub_no_1`).length > 0)
                                     {
-                                        $(`#tr_item_no_${item_no}_sub_no_column`).remove();
-
-                                        let item_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}`).val();
-                                        let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
-
-                                        for (let index = 1; index <= existing_sub_no_count; index++) 
+                                        let remove_count = 0;
+                                        
+                                        if ($(`#txt_item_no_${item_no}_sub_no_1_visual_1`).length > 0)//ito yung nagsasabi if pang actual/materialthickness ang input na nakalabas or OK/NG/NA ang pang input
                                         {
-                                            let sub_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}_sub_no_${index}`).val();
-                                            //remove muna yung checksheet data sa DB
-                                            IGM.ProceedRemoveSubNo(item_no_hidden_id, sub_no_hidden_id,index,new_item_judgement);
-                                            //pag remove ng tr
-                                            $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+                                            $(`#tr_item_no_${item_no}_sub_no_column`).remove();
+
+                                            let item_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}`).val();
+                                            let new_item_judgement = IGM.RejudgementAfterRemoveSubNo(item_no);
+
+                                            for (let index = 1; index <= existing_sub_no_count; index++) 
+                                            {
+                                                let sub_no_hidden_id  = $(`#txt_hidden_item_no_${item_no}_sub_no_${index}`).val();
+                                                //remove muna yung checksheet data sa DB
+                                                IGM.ProceedRemoveSubNo(item_no_hidden_id, sub_no_hidden_id,index,new_item_judgement);
+                                                //pag remove ng tr
+                                                $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+                                                
+                                                remove_count++;
+                                            }
+
+                                            tr_sub_no_column = IGM.AddIgmSubNoHeader(item_no, 2, bg_header);
+                                            IGM.ProceedAddIgmSubNo(`${type}`, 1, tr_sub_no_column, item_no, 1, 0, 1);
+                                        }
+
+                                        if (remove_count === 0)
+                                        {
+                                            for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) 
+                                            {
+                                                IGM.ValidateSubItemGetDataAMT(item_no, sub_no_index);
+                                            }
                                         }
                                     }
                                     else
@@ -973,10 +982,7 @@ const IGM = (() => {
                                             $(`#tr_item_no_${item_no}_sub_no_min_${index}`).remove();
                                             $(`#tr_item_no_${item_no}_sub_no_max_${index}`).remove();
                                         } 
-                                    }
 
-                                    if ($(`#tr_item_no_${item_no}_sub_no_amt_1`).length === 0)
-                                    {
                                         tr_sub_no_column = IGM.AddIgmSubNoHeader(item_no, 2, bg_header);
                                         IGM.ProceedAddIgmSubNo(`${type}`, 1, tr_sub_no_column, item_no, 1, 0, 1);
                                     }
@@ -1004,10 +1010,15 @@ const IGM = (() => {
                                             $(`#tr_item_no_${item_no}_sub_no_min_${index}`).remove();
                                             $(`#tr_item_no_${item_no}_sub_no_max_${index}`).remove();
                                         } 
+
+                                        tr_sub_no_column = IGM.AddIgmSubNoHeader(item_no, 2, bg_header);
+                                        IGM.ProceedAddIgmSubNo(`${type}`, 1, tr_sub_no_column, item_no, 1, 0, 1);
                                     }
                                     else
                                     {
-                                        if (type === 'Actual' || type === 'Material Thickness')
+                                        let remove_count = 0;
+
+                                        if ($(`#txt_item_no_${item_no}_sub_no_1_amt_1`).length > 0)//ito yung nagsasabi if pang actual/materialthickness ang input na nakalabas or OK/NG/NA ang pang input
                                         {
                                             //pang AMT (Actual Material Thickness)
                                             $(`#tr_item_no_${item_no}_sub_no_column`).remove();
@@ -1022,14 +1033,21 @@ const IGM = (() => {
                                                 IGM.ProceedRemoveSubNo(item_no_hidden_id, sub_no_hidden_id,index,new_item_judgement);
                                                 //pag remove ng tr
                                                 $(`#tr_item_no_${item_no}_sub_no_${index}`).remove();
+
+                                                remove_count++;
+                                            }
+
+                                            tr_sub_no_column = IGM.AddIgmSubNoHeader(item_no, 2, bg_header);
+                                            IGM.ProceedAddIgmSubNo(`${type}`, 1, tr_sub_no_column, item_no, 1, 0, 1);
+                                        }
+
+                                        if (remove_count === 0)
+                                        {
+                                            for (let sub_no_index = 1; sub_no_index <= existing_sub_no_count; sub_no_index++) 
+                                            {
+                                                IGM.ValidateSubItemGetDataVSL(item_no, sub_no_index);
                                             }
                                         }
-                                    }
-
-                                    if ($(`#tr_item_no_${item_no}_sub_no_1`).length === 0)
-                                    {
-                                        tr_sub_no_column = IGM.AddIgmSubNoHeader(item_no, 2, bg_header);
-                                        IGM.ProceedAddIgmSubNo(`${type}`, 1, tr_sub_no_column, item_no, 1, 0, 1);
                                     }
 
                                     $(`#accordion_igm`).LoadingOverlay('hide');
