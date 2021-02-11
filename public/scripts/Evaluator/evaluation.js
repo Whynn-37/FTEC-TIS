@@ -184,7 +184,9 @@ const EVALUATE = (() => {
                     $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
                     $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
                     $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
-                    $('#txt_actual_inspection_time').val(data.data.takt_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                    $('#txt_inspection_required_time').val(data.data.checksheet_details.inspection_required_time);//hindi pa kasama sa returned data
+                    $('#txt_actual_inspection_time').val(data.data.actual_time);//hindi pa kasama sa returned data
+                    $('#txt_total_takt_time').val(data.data.takt_time);//hindi pa kasama sa returned data
                     $('#txt_total_down_time').val(data.data.down_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
                     $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
                     $('#txt_die_kind').val(data.data.checksheet_details.die_class);

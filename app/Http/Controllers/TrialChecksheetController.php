@@ -15,6 +15,7 @@ use App\Attachment;
 use DB;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
+use Illuminate\Contracts\Session\Session as SessionSession;
 use Session;
 class TrialChecksheetController extends Controller
 {
@@ -510,12 +511,12 @@ class TrialChecksheetController extends Controller
             try 
             {
                 // $filename = $part_number . '_' . $revision_number;
-                $filename =$part_number.'_'.$revision_number.'(00)';
-                // $filename = 'igm';
+                // $filename =$part_number.'_'.$revision_number.'(00)';
+                $filename = 'igm';
                 
                 // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-                $path ='F:\TIS\\';
-                // $path ='D:\\';
+                // $path ='F:\TIS\\';
+                $path ='D:\\';
         
                 $igm_files = scandir($path);
         
@@ -537,8 +538,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
@@ -731,7 +732,8 @@ class TrialChecksheetController extends Controller
                 $approval_data =
                 [
                     'trial_checksheet_id'      => $trial_checksheet_id,
-                    'decision'                 => 1
+                    'decision'                 => 1,
+                    'inspect_by'               => Session::get('name'),
                 ];
 
                 $approval_result = $Approval->approved($trial_checksheet_id, $approval_data);
