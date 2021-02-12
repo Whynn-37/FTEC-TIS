@@ -577,8 +577,6 @@ class ApprovalController extends Controller
                     $status = 'for_approval';
                 }
 
-                $folder_name = $folder_name['file_folder'];
-
                 $message = 'Approved by Evaluator';
             }
             else if ($decision == 1 && $action == 2) 
@@ -594,8 +592,6 @@ class ApprovalController extends Controller
                 $result =  $Approval->approved($trial_checksheet_id, $data);
 
                 $status = 're_inspect';
-
-                $folder_name = '';
 
                 $message = 'Disapproved by Evaluator';
             }
@@ -631,8 +627,6 @@ class ApprovalController extends Controller
                     storage_path('app/public/' . $folder_name['file_folder'] . '/' . $folder_name['file_name_merge'] . '.xlsx'),
                 ];
 
-                $folder_name = '';
-
                 $message = 'Approved by Approver';
             }
             else if($decision == 2 && $action == 2)
@@ -648,8 +642,6 @@ class ApprovalController extends Controller
                 $result =  $Approval->approved($trial_checksheet_id, $data);
 
                 $status = 're_evaluation';
-
-                $folder_name = '';
 
                 $message = 'Disppproved by Approver';
             }
@@ -679,8 +671,6 @@ class ApprovalController extends Controller
 
                 $status = 're_approval';
 
-                $folder_name = '';
-
                 $message = 'Reapproved by Evaluator';
             }
 
@@ -705,7 +695,6 @@ class ApprovalController extends Controller
            'message'    => $message,
            'data'       => 
            [
-               'folder_name' => $folder_name,
                'result'      => $result,
            ]
         ];
