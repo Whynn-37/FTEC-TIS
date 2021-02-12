@@ -100,7 +100,11 @@
 </html>
 <script>
     function myFunction() {
+<<<<<<< HEAD
+      var myWindow = window.open("http://10.164.58.94/TIS/public/approved", "", "width=1200,height=600, left = 2300,top = 200");
+=======
       var myWindow = window.open("C:\\xampp\\htdocs\\TIS\\storage\\app\\public\\2020-12-08_CA50830-Y008_07\\second_page.pdf", "", "width=1200,height=600, left = 2300,top = 200");
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
     }
     </script>
 <?php /**PATH C:\xampp\htdocs\TIS\resources\views/welcome.blade.php ENDPATH**/ ?>

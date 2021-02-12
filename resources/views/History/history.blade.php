@@ -11,7 +11,7 @@
 
 <div class="main-content-inner">
     <div class="container">
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -34,19 +34,37 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <h4 class="header-title"><i class="fa fa-history"></i> HISTORY DATA</h4>
                         <div class="row">
+                            <div class="col-md-7">
+                                <h4 class="header-title"><i class="fa fa-history"></i> HISTORY DATA</h4>
+                            </div>
+                            <div class="col-md-2">
+                                <h5 style="text-align: center;padding-top:10px;"> SEARCH STATUS: </h5>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control mb-3" name="state" id="slc_status" onchange="HISTORY.loadHistoryList();">
+                                    <option value="null" disabled selected>SELECT</option>
+                                    <option value="FOR INSPECTION">FOR INSPECTION</option>
+                                    <option value="REINSPECTION">REINSPECTION</option>
+                                    <option value="ON-GOING INSPECTION">ON-GOING INSPECTION</option>
+                                    <option value="FOR EVALUATION">FOR EVALUATION</option>
+                                    <option value="FOR APPROVAL">FOR APPROVAL</option>
+                                    <option value="APPROVED">APPROVED</option>
+                                    <option value="DISAPPROVED">DISAPPROVED</option>
+                                </select>
+                            </div>
                             <div class="col-md-12">
                                 <div class="single-table">
                                     <table class="table table-responsive text-center table-bordered" id="tbl_history_data" style="text-align:justify;">
                                         <thead class="text-uppercase bg-dark">
                                             <tr class="text-white">
                                                 <th>ACTION</th>
+                                                <th>FILE</th>
                                                 <th>PART NUMBER</th>
                                                 <th>REVISION NUMBER</th>
                                                 <th>TRIAL NUMBER</th>
@@ -60,7 +78,6 @@
                                                 <th>APPROVED DATE</th>
                                                 <th>DISAPPROVED BY</th>
                                                 <th>DISAPPROVED DATE</th>
-                                                <th>FILE</th>
                                                 </tr>
                                         </thead>
                                         <tbody id="tbody_tbl_history_data"></tbody>
