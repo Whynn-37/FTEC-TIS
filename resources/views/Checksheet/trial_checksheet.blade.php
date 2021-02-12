@@ -524,6 +524,6 @@
         };
         
         var session_fullname = $('#txt_session_fullname').text();
-        
+
     </script>
     @endsection
