@@ -871,6 +871,7 @@
 #58 C:\\xampp\\htdocs\\TIS_TEST\\public\\index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #59 {main}
 "} 
+<<<<<<< HEAD
 [2021-02-12 14:33:59] local.ERROR: SQLSTATE[23502]: Not null violation: 7 ERROR:  null value in column "user_id" violates not-null constraint
 DETAIL:  Failing row contains (137, No Trial Checksheet ID - Id :  - Actual Time : 0.02 - Total Takt..., http://localhost/TIS/public/api/stop-cycle-time?actual_time=0.02..., POST, ::1, Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KH..., null, 2021-02-12 14:33:59, 2021-02-12 14:33:59). (SQL: insert into "activity_logs" ("subject", "url", "method", "ip", "browser", "user_id", "updated_at", "created_at") values (No Trial Checksheet ID - Id :  - Actual Time : 0.02 - Total Takt Time : 0.02 - Takt Time : 0, http://localhost/TIS/public/api/stop-cycle-time?actual_time=0.02&takt_time=0&total_takt_time=0.02&trial_checksheet_id=, POST, ::1, Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36, ?, 2021-02-12 14:33:59, 2021-02-12 14:33:59) returning "id") {"exception":"[object] (Illuminate\\Database\\QueryException(code: 23502): SQLSTATE[23502]: Not null violation: 7 ERROR:  null value in column \"user_id\" violates not-null constraint
 DETAIL:  Failing row contains (137, No Trial Checksheet ID - Id :  - Actual Time : 0.02 - Total Takt..., http://localhost/TIS/public/api/stop-cycle-time?actual_time=0.02..., POST, ::1, Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KH..., null, 2021-02-12 14:33:59, 2021-02-12 14:33:59). (SQL: insert into \"activity_logs\" (\"subject\", \"url\", \"method\", \"ip\", \"browser\", \"user_id\", \"updated_at\", \"created_at\") values (No Trial Checksheet ID - Id :  - Actual Time : 0.02 - Total Takt Time : 0.02 - Takt Time : 0, http://localhost/TIS/public/api/stop-cycle-time?actual_time=0.02&takt_time=0&total_takt_time=0.02&trial_checksheet_id=, POST, ::1, Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36, ?, 2021-02-12 14:33:59, 2021-02-12 14:33:59) returning \"id\") at C:\\xampp\\htdocs\\TIS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:671)
@@ -984,3 +985,5 @@ DETAIL:  Failing row contains (137, No Trial Checksheet ID - Id :  - Actual Time
 #51 C:\\xampp\\htdocs\\TIS\\public\\index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #52 {main}
 "} 
+=======
+>>>>>>> 97280e0bf07aebe39d9bf769a154d80cf67aee22
