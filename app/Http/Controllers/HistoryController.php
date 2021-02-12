@@ -215,11 +215,11 @@ class HistoryController extends Controller
         if ($result) 
         {
             $status = 'Success';
-            $message = 'Edit By Evaluator';
+            $message = 'Return to Evaluator';
 
-            if ($decision === 5) 
+            if ($decision == 5) 
             {
-                $message = 'Edit By Inspector';
+                $message = 'Return to Inspector';
             }
         }
 

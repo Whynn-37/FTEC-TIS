@@ -26,15 +26,16 @@ const HISTORY = (() => {
             button_style = 'cursor: not-allowed;';
             history_function = 'HISTORY.ViewForInspectionHistory';
         }
+        else if (status === 'APPROVED') 
+        {
+            approved_button = 1;
+        }
         else
         {
             $('.modal-footer').hide();
         }
 
-        if (status === 'APPROVED') 
-        {
-            approved_button = 1;
-        }
+       
 
         $('#modal_view_inspection_data .modal-title').html(`<h3 class="modal-title" id="modal_title">HISTORY - ${status}</h3>`);
         
@@ -246,30 +247,41 @@ const HISTORY = (() => {
 
     this_history.editDataInspection =  (trial_checksheet_id,decision) =>
     {
-        $.ajax({
-            url     : `edit-data-inspection`,
-            type    : 'patch',
-            dataType: 'json',
-            data    : 
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Please confirm it.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, please!'
+          }).then((result) => {
+            if (result.isConfirmed) 
             {
-                _token              : _TOKEN,
-                trial_checksheet_id : trial_checksheet_id,
-                decision            : decision
-            },
-            success: data => 
-            {
-                Swal.fire({
-                    icon    : 'success',
-                    title   : data.status,
-                    text    : data.message,
+                $.ajax({
+                    url     : `edit-data-inspection`,
+                    type    : 'patch',
+                    dataType: 'json',
+                    data    : 
+                    {
+                        _token              : _TOKEN,
+                        trial_checksheet_id : trial_checksheet_id,
+                        decision            : decision
+                    },
+                    success: data => 
+                    {
+                        Swal.fire({
+                            icon    : 'success',
+                            title   : data.status,
+                            text    : data.message,
+                        })
+
+                        HISTORY.loadHistoryList();
+                        $("#modal_view_inspection_data").modal("hide");
+                    }
                 })
-
-                HISTORY.loadHistoryList();
-                $("#modal_view_inspection_data").modal("hide");
-
             }
-
-        })
+        })        
     }
 
     return this_history;
