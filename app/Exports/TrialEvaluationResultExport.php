@@ -6,8 +6,10 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
+class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithDrawings
 {
     private $data;
     use Exportable;
@@ -20,6 +22,83 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
     /**
      * @return array
      */
+
+    public function drawings()
+    {
+        if ($this->data['approval']['evaluated_by'] !== null) 
+        {
+            $drawing = new Drawing();
+            $drawing->setName('Logo');
+    
+            switch ($this->data['approval']['evaluated_by']) 
+            {
+                case 'TERRY MERWIN BALAHADIA':
+                    $signature_evaluator = 'TERRY MERWIN, BALAHADIA';
+                    break;
+                case 'GEORGE BIEN ALMENANZA':
+                    $signature_evaluator = 'GEORGE, ALMENANZA';
+                    break;
+                case 'HARUKI FUJITA':
+                    $signature_evaluator = 'HARUKI,FUJITA';
+                    break;
+                case 'KOUJI SAWAZAKI':
+                    $signature_evaluator = 'KOUJI, SAWAZAKI';
+                    break;
+                case 'TAKAHIRO HIROSAWA':
+                    $signature_evaluator = 'TAKAHIRO, HIROSAWA';
+                    break;
+                case 'YUTAKA MORIYAMA':
+                    $signature_evaluator = 'YUTAKA, MORIYAMA';
+                    break;
+                case 'YUTAKA SATOU':
+                    $signature_evaluator = 'YUTAKA, SATOU';
+                    break;
+                default:
+                    $signature_evaluator = '';
+                    break;
+            }
+    
+            $drawing->setPath(storage_path('/app/public/second_page/signature/'. $signature_evaluator .'.png'));
+            $drawing->setHeight(65);
+            $drawing->setCoordinates('L10');
+        }
+        
+        if ($this->data['approval']['approved_by'] !== null) 
+        {
+            $drawing2 = new Drawing();
+            $drawing2->setName('Logo');
+
+            switch ($this->data['approval']['approved_by']) 
+            {
+                case 'MARK JOHREL MANZANO':
+                    $signature_approver = 'MARK JOHREL MANZANO';
+                    break; 
+                case 'KAZUSHI WATANABE':
+                    $signature_approver = 'KAZUSHI, WATANABE';
+                    break;
+                case 'TAMOTSU KOIKE':
+                    $signature_approver = 'TAMOTSU,KOIKE';
+                    break;
+                default:
+                    $signature_approver = '';
+                    break;
+            }
+
+            $drawing2->setPath(storage_path('/app/public/second_page/signature/'. $signature_approver .'.png'));
+            $drawing2->setHeight(65);
+            $drawing2->setCoordinates('V10');
+        }
+
+        if ($this->data['approval']['evaluated_by'] !== null && $this->data['approval']['approved_by'] === null) 
+        {
+            return $drawing;
+        }
+        else if ($this->data['approval']['evaluated_by'] !== null && $this->data['approval']['approved_by'] !== null) 
+        {
+            return [$drawing, $drawing2];
+        }
+    }
+
     public function registerEvents(): array
     {
         // dd($this->data);
@@ -143,15 +222,15 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
 
                 $judgment_value_cell = 'X5:Y6';
                 $event->sheet->getDelegate()->getStyle($judgment_value_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($judgment_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                $event->sheet->getDelegate()->getStyle($judgment_value_cell)->getFont('Calibri')->setSize(16)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($judgment_value_cell);
                 $event->sheet->getDelegate()->setCellValue('X5', $this->data['details']['judgment']);
 
                 // third row
-                for ($i=0; $i < count($this->data['takt_time']); $i++) 
-                { 
-                    $time_sum[] = $this->data['takt_time'][$i]['total_takt_time'];
-                }
+                // for ($i=0; $i < count($this->data['takt_time']); $i++) 
+                // { 
+                //     $time_sum[] = $this->data['takt_time'][$i]['actual'];
+                // }
 
                 $time_cell = 'B7:E8';
                 $event->sheet->getDelegate()->getStyle($time_cell)->applyFromArray($border_with_center_value);
@@ -163,7 +242,7 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->getStyle($time_value_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($time_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($time_value_cell);
-                $event->sheet->getDelegate()->setCellValue('F7', round(array_sum($time_sum)/1440, 2) . 'DAYS');
+                $event->sheet->getDelegate()->setCellValue('F7', $this->data['takt_time']);
 
                 $humidity_cell = 'H7:J8';
                 $event->sheet->getDelegate()->getStyle($humidity_cell)->applyFromArray($border_with_center_value);
@@ -221,41 +300,41 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths
                 $event->sheet->getDelegate()->mergeCells($inspectors_value_cell);
                 $event->sheet->getDelegate()->setCellValue('F9', $this->data['approval']['inspect_by']);
 
-                $evaluated_by_cell = 'H9:M9';
+                $evaluated_by_cell = 'H9:P9';
                 $event->sheet->getDelegate()->getStyle($evaluated_by_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($evaluated_by_cell)->getFont('Calibri')->setSize(12)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($evaluated_by_cell);
                 $event->sheet->getDelegate()->setCellValue('H9', 'EVALUATED BY:');
 
-                $evaluated_by_value_cell = 'H10:M12';
+                $evaluated_by_value_cell = 'H10:P12';
                 $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->getFont('Calibri')->setSize(8)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($evaluated_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('H10', $this->data['approval']['evaluated_by']);
+                $event->sheet->getDelegate()->setCellValue('H10', substr($this->data['approval']['evaluated_datetime'], 0, 10));
 
-                $checked_by_cell = 'N9:S9';
-                $event->sheet->getDelegate()->getStyle($checked_by_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($checked_by_cell)->getFont('Calibri')->setSize(12)->setBold(true);
-                $event->sheet->getDelegate()->mergeCells($checked_by_cell);
-                $event->sheet->getDelegate()->setCellValue('N9', 'CHECKED BY:');
+                // $checked_by_cell = 'N9:S9';
+                // $event->sheet->getDelegate()->getStyle($checked_by_cell)->applyFromArray($border_with_center_value);
+                // $event->sheet->getDelegate()->getStyle($checked_by_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                // $event->sheet->getDelegate()->mergeCells($checked_by_cell);
+                // $event->sheet->getDelegate()->setCellValue('N9', 'CHECKED BY:');
 
-                $checked_by_value_cell = 'N10:S12';
-                $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
-                $event->sheet->getDelegate()->mergeCells($checked_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('N10', $this->data['approval']['evaluated_by']);
+                // $checked_by_value_cell = 'N10:S12';
+                // $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->applyFromArray($border_with_center_value);
+                // $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                // $event->sheet->getDelegate()->mergeCells($checked_by_value_cell);
+                // $event->sheet->getDelegate()->setCellValue('N10', $this->data['approval']['evaluated_by']);
 
-                $approved_by_cell = 'T9:Y9';
+                $approved_by_cell = 'Q9:Y9';
                 $event->sheet->getDelegate()->getStyle($approved_by_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($approved_by_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                $event->sheet->getDelegate()->getStyle($approved_by_cell)->getFont('Calibri')->setSize(10)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($approved_by_cell);
-                $event->sheet->getDelegate()->setCellValue('T9', 'APPROVED BY:');
+                $event->sheet->getDelegate()->setCellValue('Q9', 'APPROVED BY:');
 
-                $approved_by_value_cell = 'T10:Y12';
+                $approved_by_value_cell = 'Q10:Y12';
                 $event->sheet->getDelegate()->getStyle($approved_by_value_cell)->applyFromArray($border_with_center_value);
-                $event->sheet->getDelegate()->getStyle($approved_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
+                $event->sheet->getDelegate()->getStyle($approved_by_value_cell)->getFont('Calibri')->setSize(8)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($approved_by_value_cell);
-                $event->sheet->getDelegate()->setCellValue('T10', $this->data['approval']['approved_by']);
+                $event->sheet->getDelegate()->setCellValue('Q10', substr($this->data['approval']['approved_datetime'], 0, 10));
 
                 // fifth row
                 $number_cell = 'B13:C14';

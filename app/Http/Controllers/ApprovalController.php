@@ -74,7 +74,7 @@ class ApprovalController extends Controller
                 $data_takt_sum[] = $total_takt_time_value['total_takt_time'];
             }
 
-            $takt_time_data = array_sum($data_takt_sum);
+            $takt_time_data = round(array_sum($data_takt_sum) - 0.02, 2);
 
             $down_time_data = $DownTime->getTotalDownTime($trial_checksheet_id);
 
@@ -83,7 +83,7 @@ class ApprovalController extends Controller
                 $data_down_sum[] = $total_down_time_value['total_down_time'];
             }
 
-            $down_time_data = array_sum($data_down_sum);
+            $down_time_data = round(array_sum($data_down_sum), 2);
 
             $actual_time_data = $TaktTime->getActual($trial_checksheet_id);
 
@@ -317,7 +317,7 @@ class ApprovalController extends Controller
                 $checksheet_datas[] = $ChecksheetData->getChecksheetData($checksheet_items_value->id);
             }
 
-            $takt_time = $TaktTime->loadCycleTime($trial_checksheet_id);
+            $takt_time = $TaktTime->getActual($trial_checksheet_id);
 
             $approval = $Approval->getApproval($trial_checksheet_id);
 
@@ -333,7 +333,7 @@ class ApprovalController extends Controller
 
             $data =  [
                 'details' => $data_trial_ledger_merge,
-                'takt_time' => $takt_time,
+                'takt_time' => $takt_time['actual_time'],
                 'items' => $checksheet_items,
                 'datas' => $checksheet_datas,
                 'approval' => $approval,
