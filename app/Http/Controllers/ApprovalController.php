@@ -74,7 +74,7 @@ class ApprovalController extends Controller
                 $data_takt_sum[] = $total_takt_time_value['total_takt_time'];
             }
 
-            $takt_time_data = round(array_sum($data_takt_sum) - 0.02, 2);
+            $takt_time_data = round(array_sum($data_takt_sum), 2);
 
             $down_time_data = $DownTime->getTotalDownTime($trial_checksheet_id);
 
