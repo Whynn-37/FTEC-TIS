@@ -22,6 +22,8 @@ class FpdfController extends Controller
         $files =$merge_data['file_name'];
         $location = storage_path('app/public/'.$folder_name.'/');
 
+        $circle = storage_path('app/public/second_page/circle.png');
+
         // if ($data['checksheet_details']['judgment'] === 'NG')
         // {
             $checksheet = []; 
@@ -120,6 +122,8 @@ class FpdfController extends Controller
                 ];
 
                 $indicator = 0;
+                
+                $date_finished = explode(" ", $data['checksheet_details']['date_finished']);
 
                 if (count($checksheet) !== 0) 
                 {
@@ -136,6 +140,7 @@ class FpdfController extends Controller
 
                         if ($indicator == 1)
                         {
+                            
                             $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
                             $template = $pdf->importPage(1);
                             $pdf->AddPage();
@@ -144,10 +149,13 @@ class FpdfController extends Controller
                             $pdf->SetFont('cid0jp');
                             $pdf->SetFontSize(11);
 
-                            $date_finished = explode(" ", $data['checksheet_details']['date_finished']);
                             // date
-                            $pdf->SetXY(180, 13);
+                            $pdf->SetXY(180, 10);
                             $pdf->Write(0, $date_finished[0]);
+
+                            // inspection reason
+                            if ($data['checksheet_details']['inspection_reason'] === 'ND') 
+                                $pdf->Image($circle,20,18, 10);
 
                             // supplier
                             $pdf->SetFontSize(6);
@@ -156,7 +164,7 @@ class FpdfController extends Controller
 
                             // part number
                             $pdf->SetFontSize(11);
-                            $pdf->SetXY(43, 30);
+                            $pdf->SetXY(43, 28);
                             $pdf->Write(0, $data['checksheet_details']['part_number']);
 
                             // part name
@@ -166,7 +174,7 @@ class FpdfController extends Controller
 
                             // revision number
                             $pdf->SetFontSize(11);
-                            $pdf->SetXY(95, 38);
+                            $pdf->SetXY(95, 36);
                             $pdf->Write(0, $data['checksheet_details']['revision_number']);
 
                             $pdf->SetFontSize(6);
@@ -179,32 +187,83 @@ class FpdfController extends Controller
                             $pdf->SetXY(143, 38);
                             $pdf->MultiCell(21,3, $inspect_datetime[0],0,'C');
 
+
                             // evaluated by
-                            $pdf->SetXY(164, 32);
-                            $pdf->MultiCell(21,3,$data['approval']['evaluated_by'],0,'C');
+                            // $pdf->SetXY(164, 32);
+                            // $pdf->MultiCell(21,3,$data['approval']['evaluated_by'],0,'C');
 
                             $evaluated_datetime = explode(" ", $data['approval']['evaluated_datetime']);
-                            $pdf->SetXY(164, 38);
+                            $pdf->SetXY(164, 32);
                             $pdf->MultiCell(21,3, $evaluated_datetime[0],0,'C');
 
+                            switch ($data['approval']['evaluated_by']) 
+                            {
+                                case 'TERRY MERWIN BALAHADIA':
+                                    $signature_evaluator = 'TERRY MERWIN, BALAHADIA';
+                                    break;
+                                case 'GEORGE BIEN ALMENANZA':
+                                    $signature_evaluator = 'GEORGE, ALMENANZA';
+                                    break;
+                                case 'HARUKI FUJITA':
+                                    $signature_evaluator = 'HARUKI,FUJITA';
+                                    break;
+                                case 'KOUJI SAWAZAKI':
+                                    $signature_evaluator = 'KOUJI, SAWAZAKI';
+                                    break;
+                                case 'TAKAHIRO HIROSAWA':
+                                    $signature_evaluator = 'TAKAHIRO, HIROSAWA';
+                                    break;
+                                case 'YUTAKA MORIYAMA':
+                                    $signature_evaluator = 'YUTAKA, MORIYAMA';
+                                    break;
+                                case 'YUTAKA SATOU':
+                                    $signature_evaluator = 'YUTAKA, SATOU';
+                                    break;
+                                default:
+                                    $signature_evaluator = '';
+                                    break;
+                            }
+
+                            $evaluator = storage_path('/app/public/second_page/signature/'. $signature_evaluator .'.png');
+
+                            $pdf->Image($evaluator,167,26, 15);
+
                             // approved by
-                            $pdf->SetXY(184, 32);
-                            $pdf->MultiCell(21,3,$data['approval']['approved_by'],0,'C');
+                            // $pdf->SetXY(184, 32);
+                            // $pdf->MultiCell(21,3,$data['approval']['approved_by'],0,'C');
 
                             $approved_datetime = explode(" ", $data['approval']['approved_datetime']);
-                            $pdf->SetXY(184, 38);
+                            $pdf->SetXY(184, 32);
                             $pdf->MultiCell(21,3, $approved_datetime[0],0,'C');
 
-                            $circle = storage_path('app/public/second_page/circle.png');
+                            switch ($data['approval']['approved_by']) 
+                            {
+                                case 'MARK JOHREL MANZANO':
+                                    $signature_approver = 'MARK JOHREL MANZANO';
+                                    break; 
+                                case 'KAZUSHI WATANABE':
+                                    $signature_approver = 'KAZUSHI, WATANABE';
+                                    break;
+                                case 'TAMOTSU KOIKE':
+                                    $signature_approver = 'TAMOTSU,KOIKE';
+                                    break;
+                                default:
+                                    $signature_approver = '';
+                                    break;
+                            }
+
+                            $approver = storage_path('/app/public/second_page/signature/'. $signature_approver .'.png');
+
+                            $pdf->Image($approver,187,26, 15);
 
                             // trial number
-                            $pdf->SetXY(75, 53);
+                            $pdf->SetXY(75, 52);
                             $pdf->Write(0, $data['details_data'][$i]['trial_number']);
                             // date
-                            $pdf->SetXY(80, 53);
+                            $pdf->SetXY(80, 52);
                             $pdf->Write(0, $date_finished[0]);
                             // revision number
-                            $pdf->SetXY(99, 53);
+                            $pdf->SetXY(99, 52);
                             $pdf->Write(0, $data['details_data'][$i]['revision_number']);
                             // judgment
                             if ($data['details_data'][$i]['judgment'] === 'GOOD') 
@@ -434,13 +493,13 @@ class FpdfController extends Controller
                         else if ($indicator == 2)
                         {
                             // trial number
-                            $pdf->SetXY(111, 53);
+                            $pdf->SetXY(111, 52);
                             $pdf->Write(0, $data['details_data'][$i]['trial_number']);
                             // date
-                            $pdf->SetXY(116, 53);
+                            $pdf->SetXY(116, 52);
                             $pdf->Write(0, $date_finished[0]);
                             // revision number
-                            $pdf->SetXY(135, 53);
+                            $pdf->SetXY(135, 52);
                             $pdf->Write(0, $data['details_data'][$i]['revision_number']);
                             // judgment
                             if ($data['details_data'][$i]['judgment'] === 'GOOD') 
@@ -570,13 +629,13 @@ class FpdfController extends Controller
                         else if ($indicator == 3) 
                         {
                             // trial number
-                            $pdf->SetXY(146, 53);
+                            $pdf->SetXY(146, 52);
                             $pdf->Write(0, $data['details_data'][$i]['trial_number']);
                             // date
-                            $pdf->SetXY(152, 53);
+                            $pdf->SetXY(152, 52);
                             $pdf->Write(0, $date_finished[0]);
                             // revision number
-                            $pdf->SetXY(171, 53);
+                            $pdf->SetXY(171, 52);
                             $pdf->Write(0, $data['details_data'][$i]['revision_number']);
                             // judgment
                             if ($data['details_data'][$i]['judgment'] === 'GOOD') 
@@ -726,8 +785,8 @@ class FpdfController extends Controller
             }
             else 
             {
-                $specs = $pdf->getTemplateSize($pageId);
-                $pdf->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
+                // $specs = $pdf->getTemplateSize($pageId);
+                $pdf->AddPage();
                 $path = $location.$file;
                 $pdf->Image($path,5,100,200);
             }
