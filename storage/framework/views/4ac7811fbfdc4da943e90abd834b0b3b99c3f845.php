@@ -11,11 +11,15 @@
 
 <div class="main-content-inner">
     <div class="container">
+<<<<<<< HEAD
         
+=======
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">
                     <div class="card-body">
+<<<<<<< HEAD
                         <div class="row">
                             <div class="col-md-7">
                                 <h4 class="header-title"><i class="fa fa-history"></i> HISTORY DATA</h4>
@@ -24,6 +28,12 @@
                                 <h5 style="text-align: center;padding-top:10px;"> SEARCH STATUS: </h5>
                             </div>
                             <div class="col-md-3">
+=======
+                        <h4 class="header-title"><i class="fa fa-search"></i> SEARCH HISTORY </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>STATUS:</label>
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
                                 <select class="form-control mb-3" name="state" id="slc_status" onchange="HISTORY.loadHistoryList();">
                                     <option value="null" disabled selected>SELECT</option>
                                     <option value="FOR INSPECTION">FOR INSPECTION</option>
@@ -35,13 +45,30 @@
                                     <option value="DISAPPROVED">DISAPPROVED</option>
                                 </select>
                             </div>
+<<<<<<< HEAD
+=======
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-5">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h4 class="header-title"><i class="fa fa-history"></i> HISTORY DATA</h4>
+                        <div class="row">
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
                             <div class="col-md-12">
                                 <div class="single-table">
                                     <table class="table table-responsive text-center table-bordered" id="tbl_history_data" style="text-align:justify;">
                                         <thead class="text-uppercase bg-dark">
                                             <tr class="text-white">
                                                 <th>ACTION</th>
+<<<<<<< HEAD
                                                 <th>FILE</th>
+=======
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
                                                 <th>PART NUMBER</th>
                                                 <th>REVISION NUMBER</th>
                                                 <th>TRIAL NUMBER</th>
@@ -55,6 +82,10 @@
                                                 <th>APPROVED DATE</th>
                                                 <th>DISAPPROVED BY</th>
                                                 <th>DISAPPROVED DATE</th>
+<<<<<<< HEAD
+=======
+                                                <th>FILE</th>
+>>>>>>> b052ab44bdb7e843ce67ee2309a1101511a9ea16
                                                 </tr>
                                         </thead>
                                         <tbody id="tbody_tbl_history_data"></tbody>
