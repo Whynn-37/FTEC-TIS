@@ -15,346 +15,58 @@ use App\Attachment;
 use DB;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
-use Illuminate\Contracts\Session\Session as SessionSession;
 use Session;
+use Illuminate\Support\Facades\Validator;
+use App\Helpers\Unique;
 class TrialChecksheetController extends Controller
 {
-    public function unique_multidim_array($array, $key) 
-    { 
-        $temp_array = array(); 
-        $i = 0; 
-        $key_array = array(); 
-        
-        foreach($array as $val) 
-        { 
-            if (!in_array($val[$key], $key_array)) 
-            { 
-                $key_array[$i] = $val[$key]; 
-                $temp_array[] = $val; 
-            } 
-            $i++; 
-        } 
-
-        return $temp_array; 
-    }
-
-    public function loadPartnumber(TrialLedger $TrialLedger)
-    {
-        $data = $TrialLedger->loadPartnumber();
-
-        if (count($data['checksheet']) !== 0) 
-        {
-            foreach ($data['ledger'] as $ledger_value) 
-            {
-                $application_date[] = $ledger_value->application_date;
-                foreach ($data['checksheet'] as $checksheet_value) 
-                {
-                    if ($checksheet_value->application_date === $ledger_value->application_date)
-                    {
-                        $match_application_date[] =  $ledger_value->application_date;
-                        $result = [];
-                    }
-                    else 
-                    {
-                        $result[] = 
-                        [
-                            'part_number' => $ledger_value->part_number
-                        ];
-                        $match_application_date = false;
-                    }
-                }
-            }
-
-            if($match_application_date !== false)
-            {
-                for($x=0; $x<count($match_application_date);$x++)
-                {
-                    $key = array_search($match_application_date[$x], $application_date); 
-                    unset($data['ledger'][$key]); 
-                }
-
-                foreach ($data['ledger'] as $ledger_value) 
-                { 
-                    $result[] = 
-                    [
-                        'part_number' => $ledger_value->part_number
-                    ];
-                }
-            }
-        }
-        else 
-        {
-            foreach ($data['ledger'] as $ledger_value) 
-            {
-                $result[] = [
-                    'part_number' => $ledger_value->part_number
-                ];
-            }
-        }
-
-        $result = $this->unique_multidim_array($result,'part_number');
-
-        $status = 'Error';
-        $message = 'No Part Number';
-
-        if (count($result) !== 0) 
-        {
-            $status = 'Success';
-            $message = 'Part Number Successfully Load';
-        }
-        
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $result
-        ];
-    }
-
-    public function loadInspectionReason(TrialLedger $TrialLedger, Request $Request)
-    {
-        $part_number = $Request->part_number;
-
-        $status = 'Error';
-        $message = 'Inspection Reason Required';
-
-        if ($part_number !== null) 
-        {
-            $data = $TrialLedger->loadInspectionReason($part_number);
-
-            if (count($data['checksheet']) !== 0) 
-            {
-                foreach ($data['ledger'] as $ledger_value) 
-                {
-                    $application_date[] = $ledger_value->application_date;
-                    foreach ($data['checksheet'] as $checksheet_value) 
-                    {
-                        if ($checksheet_value->application_date === $ledger_value->application_date)
-                        {
-                            $match_application_date[] =  $ledger_value->application_date;
-                            $result = [];
-                        }
-                        else
-                        {
-                            $result[] = 
-                            [
-                                'inspection_reason' => $ledger_value->inspection_reason
-                            ];
-                            $match_application_date = false;
-                        }
-                    }
-                }
-                
-                if($match_application_date !== false)
-                {
-                    for($x=0; $x<count($match_application_date);$x++)
-                    {
-                        $key = array_search($match_application_date[$x], $application_date); 
-                        unset($data['ledger'][$key]); 
-                    }
-
-                    foreach ($data['ledger'] as $ledger_value) 
-                    { 
-                        $result[] = 
-                        [
-                            'inspection_reason' => $ledger_value->inspection_reason
-                        ];
-                    }
-                }
-            }
-            else 
-            {
-                foreach ($data['ledger'] as $ledger_value) 
-                {
-                    $result[] = [
-                        'inspection_reason' => $ledger_value->inspection_reason
-                    ];
-                }
-            }
-
-            $result = $this->unique_multidim_array($result,'inspection_reason');
-
-            $status = 'Error';
-            $message = 'No Inspection Reason';
-
-            if (count($result) !== 0) 
-            {
-                $status = 'Success';
-                $message = 'Inspection Reason Successfully load';
-            }
-        }
-
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $result
-        ];
-    }
-
-    public function loadRevision(TrialLedger $TrialLedger, Request $Request)
-    {
-        $part_number = $Request->part_number;
-        $inspection_reason = $Request->inspection_reason;
-
-        $status = 'Error';
-        $message = 'Part Number Required';
-        $data = [];
-
-        if ($part_number !== null && $inspection_reason !== null) 
-        {
-            $data = $TrialLedger->loadRevision($part_number, $inspection_reason);
-
-            $status = 'Error';
-            $message = 'No Revision Number';
-
-            if (count($data) !== 0) 
-            {
-                $status = 'Success';
-                $message = 'Revision Number Successfully load';
-            }
-        }
-
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $data
-        ];
-    }
-
-    public function loadTrialNumber(TrialLedger $TrialLedger, Request $Request)
-    {
-        $part_number = $Request->part_number;
-        $inspection_reason = $Request->inspection_reason;
-        $revision_number = $Request->revision_number;
-
-        $status = 'Error';
-        $message = 'Part Number and Revision Number Required';
-
-        if ($part_number !== null && $inspection_reason !== null && $revision_number !== null) 
-        {
-            $result = $TrialLedger->loadTrialNumber($part_number, $inspection_reason, $revision_number);
-
-            $status = 'Error';
-            $message = 'No Trial number';
-
-            if (count($result) !== 0) 
-            {
-                $status = 'Success';
-                $message = 'Trial Number Successfully load';
-            }
-        }
-
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $result
-        ];
-    }
-
-    public function loadApplicationDate(TrialLedger $TrialLedger, Request $Request)
-    {
-        $part_number = $Request->part_number;
-        $inspection_reason = $Request->inspection_reason;
-        $revision_number = $Request->revision_number;
-        $trial_number = $Request->trial_number;
-
-        $status = 'Error';
-        $message = 'No Application Date';
-
-        if ($part_number !== null && $inspection_reason !== null && $revision_number !== null && $trial_number !== null) 
-        {
-            $result = $TrialLedger->loadApplicationDate($part_number, $inspection_reason, $revision_number, $trial_number);
-
-            $status = 'Error';
-            $message = 'No Application Date';
-
-            if ($result) 
-            {
-                $status = 'Success';
-                $message = 'Application Date Successfully load';
-            }
-        }
-
-        return 
-        [
-            'status'    =>  $status,
-            'message'   =>  $message,
-            'data'      =>  $result
-        ];
-    }
-
-    public function getForInspection(TrialLedger $TrialLedger, LoginUser $LoginUser)
+    public function getForInspection(TrialLedger $TrialLedger, LoginUser $LoginUser, Unique $Unique)
     {
         $data = $TrialLedger->getForInspection();
 
         $result = [];
+        $match_application_date = [];
 
-        if (count($data['checksheet']) !== 0) 
+        foreach ($data['ledger'] as $ledger_value) 
         {
-            foreach ($data['ledger'] as $ledger_value) 
+            $application_date[] = $ledger_value->application_date;
+            foreach ($data['checksheet'] as $checksheet_value) 
             {
-                $application_date[] = $ledger_value->application_date;
-                foreach ($data['checksheet'] as $checksheet_value) 
+                if ($checksheet_value->application_date === $ledger_value->application_date)
                 {
-                    if ($checksheet_value->application_date === $ledger_value->application_date)
-                    {
-                        $match_application_date[] =  $ledger_value->application_date;
-                    }
-                }
-            }
-
-            if($match_application_date)
-            {
-                for($x=0; $x<count($match_application_date);$x++)
-                {
-                    $key = array_search($match_application_date[$x], $application_date); 
-                    unset($data['ledger'][$key]); 
-                }
-
-                foreach ($data['ledger'] as $ledger_value) 
-                { 
-                    $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
-
-                    $result[] = 
-                    [
-                        'application_date' => $ledger_value->application_date,
-                        'part_number' => $ledger_value->part_number,
-                        'inspection_reason' => $ledger_value->inspection_reason,
-                        'revision_number' => $ledger_value->revision_number,
-                        'trial_number' => $ledger_value->trial_number,
-                        'part_name' => $ledger_value->part_name,
-                        'supplier_code' => $ledger_value->supplier_code,
-                        'inspector_id' => $fullname['fullname'],
-                        'supplier_name' => $ledger_value->supplier_name
-                    ];
+                    $match_application_date[] =  $ledger_value->application_date;
                 }
             }
         }
-        else 
-        {
-            foreach ($data['ledger'] as $ledger_value) 
-            {
-                $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
 
-                $result[] = 
-                [
-                    'application_date' => $ledger_value->application_date,
-                    'part_number' => $ledger_value->part_number,
-                    'inspection_reason' => $ledger_value->inspection_reason,
-                    'revision_number' => $ledger_value->revision_number,
-                    'trial_number' => $ledger_value->trial_number,
-                    'part_name' => $ledger_value->part_name,
-                    'supplier_code' => $ledger_value->supplier_code,
-                    'inspector_id' => $fullname['fullname'],
-                    'supplier_name' => $ledger_value->supplier_name
-                ];
+        if(count($match_application_date) !== 0)
+        {
+            for($x=0; $x<count($match_application_date);$x++)
+            {
+                $key = array_search($match_application_date[$x], $application_date); 
+                unset($data['ledger'][$key]); 
             }
         }
+            
+        foreach ($data['ledger'] as $ledger_value) 
+        { 
+            $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
 
-        $result = $this->unique_multidim_array($result,'application_date');
+            $result[] = 
+            [
+                'application_date' => $ledger_value->application_date,
+                'part_number' => $ledger_value->part_number,
+                'inspection_reason' => $ledger_value->inspection_reason,
+                'revision_number' => $ledger_value->revision_number,
+                'trial_number' => $ledger_value->trial_number,
+                'part_name' => $ledger_value->part_name,
+                'supplier_code' => $ledger_value->supplier_code,
+                'inspector_id' => $fullname['fullname'],
+                'supplier_name' => $ledger_value->supplier_name
+            ];
+        }
+
+        $result = $Unique->unique_multidim_array($result,'application_date');
 
         $status = 'Error';
         $message = 'No for inspection';
@@ -373,9 +85,19 @@ class TrialChecksheetController extends Controller
         ];
     }
 
-    public function getDisapprovedInspection(TrialLedger $TrialLedger)
+    public function getDisapprovedInspection(TrialLedger $TrialLedger, LoginUser $LoginUser)
     {
         $data = $TrialLedger->getDisapprovedInspection(5);
+
+        foreach ($data as $key => $value) 
+        {
+            $inspector = $LoginUser->getFullName($value->inspector_id);
+            $disapproved_by = $LoginUser->getFullName($value->disapproved_by);
+
+
+            $data[$key]['inspector_id'] = $inspector['fullname'];
+            $data[$key]['disapproved_by'] = $disapproved_by['fullname'];
+        }
 
         $status = 'Error';
         $message = 'No Disapproved inspection';
@@ -749,7 +471,7 @@ class TrialChecksheetController extends Controller
 
                 $whereSend = $Approval->getApproval($trial_checksheet_id);
 
-                if ($whereSend['evaluated_by'] !== null) 
+                if ($whereSend['disapproved_by'] !== null) 
                 {
                     $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
                 }
