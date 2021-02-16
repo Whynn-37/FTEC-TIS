@@ -129,12 +129,12 @@ const IGM = (() => {
                     //pagkuha ng checksheet items
                     IGM.GetChecksheetItems(data);
                     $('#txt_from_load_igm_status').val(data.data.items.length);
+                    $('#original_item_no_count').val(data.data.items.length);// gamit ko to para sa mga trial > 1 dahil hindi naman sunod sunod ang item no ng mga NG
                     //pagkuha ng max item number
                     if (data.data.items.length > 0) 
                     {
                         item_no_count = '';
                         item_no_count += (trial_number > 1) ? data.data.count : data.data.items.length; // MERON NITO PARA MALAMAN KUNG GREATHER THAN TRIAL 1 NA KASE MAGKAIBA NG ITEM NO ANG ILOLOAD
-                        $('#original_item_no_count').val(data.data.items.length);// gamit ko to para sa mga trial > 1 dahil hindi naman sunod sunod ang item no ng mga NG
 
                         // nagkaroon ng gantong condition para pag loload igm ng disapproved na part number
                         if ($('#tbl_new_igm').is(':hidden')) 
@@ -254,13 +254,13 @@ const IGM = (() => {
 					</div>
 				</td> 
 				<td>
-					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" ${(trial_number === 1) ? '' : 'disabled'}>
+					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" ${(trial_number == 1) ? '' : 'disabled'}>
 					<datalist id="item_tools_list">
 						${array_item_tools_options}
                     </datalist>
                 </td>
 				<td>
-					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" ${(trial_number === 0) ? '' : 'disabled'}>
+					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" ${(trial_number == 1) ? '' : 'disabled'}>
 						<option value=""selected disabled>Select type</option>
 						${array_item_type_options}
 					</select>

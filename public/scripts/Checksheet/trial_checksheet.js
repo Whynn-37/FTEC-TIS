@@ -1145,11 +1145,13 @@ const CHECKSHEET = (() => {
                         }
                         else
                         {
-                            let original_item_no_count = $('#original_item_no_count').val();// dahil sa trial no > 1, yung mga NG ay hindi naman sunod sunod ang item no
+                            let original_item_no_count  = $('#original_item_no_count').val();// dahil sa trial no > 1, yung mga NG ay hindi naman sunod sunod ang item no
+                            let trial_number            = $('#txt_trial_number').val();
                             
                             //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
-                            
-                            for (let item_no_index = 1; item_no_index <= parseInt(original_item_no_count); item_no_index++) 
+                            (trial_number == 1) ? loop_count = parseInt(item_no_count) : loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count);
+                            alert(loop_count)
+                            for (let item_no_index = 1; item_no_index <= loop_count; item_no_index++) 
                             {
                                 let item_number     = $(`#span_item_no_${item_no_index}_label`).text();
                                 let type            = $(`#slc_item_no_${item_number}_type`).val();
@@ -1218,7 +1220,7 @@ const CHECKSHEET = (() => {
                                 }
                                 else
                                 {
-                                    if (item_no_index === parseInt(original_item_no_count))
+                                    if (item_no_index === loop_count)
                                     {
                                         if (na_judgement_count > 0)
                                         {
