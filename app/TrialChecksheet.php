@@ -35,6 +35,15 @@ class TrialChecksheet extends Model
         return TrialChecksheet::find($id)->checksheet_items;
     }
 
+    public function getApplicationDate($part_number, $inspection_reason, $trial_number)
+    {
+        return TrialChecksheet::where('part_number', $part_number)
+        ->where('inspection_reason', $inspection_reason)
+        ->where('trial_rm_4m', $trial_number)
+        ->select('application_date')
+        ->first();
+    }
+
     public function getChecksheetDetails($id)
     {
         return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
@@ -190,4 +199,6 @@ class TrialChecksheet extends Model
             )
         ->get();
     }
+
+    
 }

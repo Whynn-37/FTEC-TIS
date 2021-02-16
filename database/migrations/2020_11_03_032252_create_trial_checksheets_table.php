@@ -26,6 +26,7 @@ class CreateTrialChecksheetsTable extends Migration
             $table->string('temperature')->nullable();
             $table->string('humidity')->nullable();
             $table->integer('in_use')->nullable();
+            $table->integer('trial_rm_4m')->nullable();
             $table->timestamps();
         });
     }
