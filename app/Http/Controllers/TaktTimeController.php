@@ -107,6 +107,15 @@ class TaktTimeController extends Controller
                 }
                 else
                 {
+                    $trial_rm_4m = 0;
+                    $prev_application_date = $TrialLedger->getApplicationDate($part_number, $inspection_reason, $trial_number-1);
+
+                    if ($trial_number == 99 || $trial_number == 88) 
+                    {
+                        $trial_rm_4m = $TrialLedger->countTrialRm4m($part_number, $inspection_reason);
+                        $prev_application_date = $TrialChecksheet->getApplicationDate($part_number, $inspection_reason, $trial_rm_4m-1);
+                    }
+
                     $trial_checksheet = 
                     [
                         'application_date'      => $application_date,
@@ -116,6 +125,7 @@ class TaktTimeController extends Controller
                         'inspection_reason'     => $inspection_reason,
                         'date_inspected'        => now(),
                         'in_use'                => 1,
+                        'trial_rm_4m'           => $trial_rm_4m,
                     ];
             
                     $last_id =  $TrialChecksheet->storeTrialChecksheet($trial_checksheet);
@@ -149,13 +159,10 @@ class TaktTimeController extends Controller
                     ];
 
                     $attachment_result = $Attachment->storeAttachments($attachment_data);
-                    
-                    if($trial_number >= 2)
-                    {
-                        $application_date = $TrialLedger->getApplicationDate($part_number, $inspection_reason, $trial_number-1);
-                        
-                        $result_items = $TrialChecksheet->loadTrialCheckitemsNG($application_date);
 
+                    if($trial_number >= 2 || $trial_rm_4m >= 2)
+                    {
+                        $result_items = $TrialChecksheet->loadTrialCheckitemsNG($prev_application_date);
                         
                         if (count($result_items) !== 0) 
                         {

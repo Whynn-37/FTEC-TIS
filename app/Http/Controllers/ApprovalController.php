@@ -583,8 +583,8 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
-                    'evaluated_by' => Session::get('name'),
-                    'evaluated_datetime' => now(),
+                    'disapproved_by' => Session::get('name'),
+                    'disapproved_datetime' => now(),
                     'decision' => 5,
                     'reason' => $reason
                 ];

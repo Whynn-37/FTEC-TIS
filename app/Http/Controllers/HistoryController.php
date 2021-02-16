@@ -9,31 +9,15 @@ use App\TrialLedger;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
 use Session;
+use App\Helpers\Unique;
+use Illuminate\Support\Facades\Session as FacadesSession;
 
 class HistoryController extends Controller
 {
-    public function unique_multidim_array($array, $key) 
-    { 
-        $temp_array = array(); 
-        $i = 0; 
-        $key_array = array(); 
-        
-        foreach($array as $val) 
-        { 
-            if (!in_array($val[$key], $key_array)) 
-            { 
-                $key_array[$i] = $val[$key]; 
-                $temp_array[] = $val; 
-            } 
-            $i++; 
-        } 
-
-        return $temp_array; 
-    }
-
     public function historySearch(TrialChecksheet $TrialChecksheet, 
                                     TrialLedger $TrialLedger, 
                                     LoginUser $LoginUser,
+                                    Unique $Unique,
                                     Request $Request)
     {
         $status = $Request->status;
@@ -142,7 +126,7 @@ class HistoryController extends Controller
                 }
             }
             
-            $data = $this->unique_multidim_array($result, 'id');
+            $data = $Unique->unique_multidim_array($result, 'id');
         }
         else 
         {
@@ -207,7 +191,14 @@ class HistoryController extends Controller
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $decision = $Request->decision;
 
-        $result = $Approval->approved($trial_checksheet_id, ['decision' => $decision]);
+        $data = 
+        [
+            'decision' => $decision,
+            'disapproved_by' => Session::get('name'),
+            'disapproved_datetime' => now()
+        ];
+
+        $result = $Approval->approved($trial_checksheet_id, $data);
 
         $status = 'Error';
         $message = 'Not Successfuly update';
