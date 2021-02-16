@@ -785,9 +785,30 @@ class FpdfController extends Controller
             }
             else 
             {
-                $pdf->AddPage();
-                $path = $location.$file;
-                $pdf->Image($path);
+                list($w, $h) = getimagesize($file);
+                $pdf->AddPage($w > $h  ? 'L' : 'P');
+          
+                if($w> $h)
+                {
+                    // landscape
+                    if($w >  297){
+                        $w = 297-30;       
+                    }
+                    if($h >  210){
+                        $h = 210-20;   
+                    }
+                }
+                else
+                {
+                    //portrait
+                    if($h >  297){
+                        $h = 297-20;
+                    }
+                    if($w >  210){
+                        $w = 210-30;   
+                    }
+                }
+                $pdf->Image($file,20,20,$w,$h);
             }
         }
 

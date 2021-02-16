@@ -62,7 +62,7 @@ const SUPPLIER = (() => {
     this_supplier.clearData = () =>
     {
         $('.add-supplier-modal').modal('show');
-
+        $("#txt_supplier_code").prop('disabled',false);
         $("#txt_supplier_code").val('');
         $("#txt_supplier_name").val('');
     };
@@ -105,7 +105,7 @@ const SUPPLIER = (() => {
     this_supplier.showUpdateModal = (supplier_code,supplier_name) =>
     {
         $('.add-supplier-modal').modal('show');
-
+        $("#txt_supplier_code").prop('disabled',true);
         $("#txt_supplier_code").val(supplier_code);
         $("#txt_supplier_name").val(supplier_name);
     };

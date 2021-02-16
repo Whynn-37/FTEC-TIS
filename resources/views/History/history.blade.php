@@ -11,30 +11,6 @@
 
 <div class="main-content-inner">
     <div class="container">
-        {{-- <div class="row">
-            <div class="col-lg-12 mt-5">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h4 class="header-title"><i class="fa fa-search"></i> SEARCH HISTORY </h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>STATUS:</label>
-                                <select class="form-control mb-3" name="state" id="slc_status" onchange="HISTORY.loadHistoryList();">
-                                    <option value="null" disabled selected>SELECT</option>
-                                    <option value="FOR INSPECTION">FOR INSPECTION</option>
-                                    <option value="REINSPECTION">REINSPECTION</option>
-                                    <option value="ON-GOING INSPECTION">ON-GOING INSPECTION</option>
-                                    <option value="FOR EVALUATION">FOR EVALUATION</option>
-                                    <option value="FOR APPROVAL">FOR APPROVAL</option>
-                                    <option value="APPROVED">APPROVED</option>
-                                    <option value="DISAPPROVED">DISAPPROVED</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         <div class="row">
             <div class="col-lg-12 mt-5">
                 <div class="card shadow mb-4">

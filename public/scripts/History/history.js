@@ -32,10 +32,8 @@ const HISTORY = (() => {
         }
         else
         {
-            $('.modal-footer').hide();
+            $('#modal_view_inspection_data .modal-footer').hide();
         }
-
-       
 
         $('#modal_view_inspection_data .modal-title').html(`<h3 class="modal-title" id="modal_title">HISTORY - ${status}</h3>`);
         
