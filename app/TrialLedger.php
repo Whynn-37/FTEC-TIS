@@ -147,8 +147,8 @@ class TrialLedger extends Model
             'trial_ledgers.inspector_id', 
             'suppliers.supplier_name',
             'approvals.reason',
-            'approvals.evaluated_by',
-            'approvals.evaluated_datetime',
+            'approvals.disapproved_by',
+            'approvals.disapproved_datetime',
         )
         ->get();
     }
@@ -232,5 +232,13 @@ class TrialLedger extends Model
             'ledger' => $ledger,
             'checksheet' => $checksheet,
         ];
+    }
+
+    public function countTrialRm4m($part_number, $inspection_reason)
+    {
+        return TrialLedger::where('part_number', $part_number)
+        ->where('inspection_reason', $inspection_reason)
+        ->get()
+        ->count();
     }
 }

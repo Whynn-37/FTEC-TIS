@@ -1403,8 +1403,8 @@ const CHECKSHEET = (() => {
                         <td> ${value.part_name} </td>
                         <td> ${value.supplier_code} / ${value.supplier_name} </td>
                         <td> ${value.inspector_id} </td>
-                        <td> ${value.evaluated_by} </td>
-                        <td> ${value.evaluated_datetime} </td>
+                        <td> ${value.disapproved_by} </td>
+                        <td> ${value.disapproved_datetime} </td>
                         <td> ${value.reason} </td>
                     </tr>`;
                     
