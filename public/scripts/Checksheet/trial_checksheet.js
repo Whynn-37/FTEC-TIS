@@ -116,7 +116,7 @@ const CHECKSHEET = (() => {
                                 allowOutsideClick: false,
                             })
                             $('#div_main_content').prop('hidden', false);
-                            CHECKSHEET.LoadPartnumber();
+                            // CHECKSHEET.LoadPartnumber(); pinatanggal ni jed di na daw kailangan
                             CHECKSHEET.getForInspection();
                             CHECKSHEET.getDisapprovedInspection();
                             
@@ -712,9 +712,10 @@ const CHECKSHEET = (() => {
                 $('#tbl_takt_time').DataTable().destroy();
                 $('#tbody_tbl_takt_time').empty();
 
-                let tbody = '';
-                var target_takt_time = inspection_required_time * 60;
-                var total_sum_total_takt_time = 0;
+                let tbody                       = '';
+                var target_takt_time            = inspection_required_time * 60;
+                var total_sum_total_takt_time   = 0;
+                let total_of_total_takt_time    = 0;
 
                 data.data.forEach((value) => 
                 {
@@ -730,6 +731,9 @@ const CHECKSHEET = (() => {
                     });
 
                     total_sum_total_takt_time = -Math.abs(sum_total_takt_time * 60);
+
+                    // total_of_total_takt_time
+                    total_of_total_takt_time += parseFloat(value.total_takt_time);
 
                     tbody += `<tr>
                         <td>${value.start_date}</td>
@@ -764,6 +768,8 @@ const CHECKSHEET = (() => {
 
                     // $("#div_downtime_timer").TimeCircles().rebuild();
                     $("#div_downtime_timer").TimeCircles().stop();
+
+                    $('#total_of_total_takt_time').val(total_of_total_takt_time);
                 }
 
                 $('#tbody_tbl_takt_time').html(tbody);
@@ -793,9 +799,15 @@ const CHECKSHEET = (() => {
         let absolute_value_remaining_takt_time      = Math.abs(Math.floor((remaining_takt_time)));
         let converted_remaining_takt_time           = absolute_value_remaining_takt_time / 60;
 
-        let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
-        let absolute_value_remaining_actual_time    = Math.abs(Math.floor((remaining_actual_time)));
-        let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
+        // let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
+        // let absolute_value_remaining_actual_time    = Math.abs(Math.floor((remaining_actual_time)));
+        // let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
+        
+        let total_downtime                          = $('#td_total_downtime').html();
+        let total_of_total_takt_time                = $('#total_of_total_takt_time').val();
+
+        (total_downtime == '') ? total_downtime = 0 : total_downtime;
+        let converted_remaining_actual_time     = parseFloat(converted_remaining_takt_time) + parseFloat(total_of_total_takt_time) + parseFloat(total_downtime);
 
         $.ajax({
             url     : `stop-cycle-time`,
@@ -1133,14 +1145,18 @@ const CHECKSHEET = (() => {
                         }
                         else
                         {
+                            let original_item_no_count = $('#original_item_no_count').val();// dahil sa trial no > 1, yung mga NG ay hindi naman sunod sunod ang item no
+                            
                             //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
-                            for (let item_no_index = 1; item_no_index <= parseInt(item_no_count); item_no_index++) 
+                            
+                            for (let item_no_index = 1; item_no_index <= parseInt(original_item_no_count); item_no_index++) 
                             {
-                                let type = $(`#slc_item_no_${item_no_index}_type`).val();
-                                let tools = $(`#slc_item_no_${item_no_index}_tools`).val();
-                                
+                                let item_number     = $(`#span_item_no_${item_no_index}_label`).text();
+                                let type            = $(`#slc_item_no_${item_number}_type`).val();
+                                let tools           = $(`#slc_item_no_${item_number}_tools`).val();
+
                                 //pagkuha ng sub no count
-                                let onclick_value   = $(`#a_add_igm_item_no_${item_no_index}_sub_no`).attr('onclick').split(',');
+                                let onclick_value   = $(`#a_add_igm_item_no_${item_number}_sub_no`).attr('onclick').split(',');
                                 let sub_no_count    = onclick_value[2];
 
                                 if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
@@ -1149,17 +1165,17 @@ const CHECKSHEET = (() => {
                                     {
                                         for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
                                         {
-                                            let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
-                                            let max_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
+                                            let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
+                                            let max_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
     
                                             if (min_value === '')
                                             {
-                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
+                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
                                             }
                 
                                             if (max_value === '')
                                             {
-                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
+                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
                                             }
                                         }
                                     }
@@ -1170,18 +1186,18 @@ const CHECKSHEET = (() => {
                                     {
                                         for (let value_index = 1; value_index <= 5; value_index++) 
                                         {
-                                            let min_value = $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_amt_${value_index}`).val();
+                                            let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val();
     
                                             if (min_value === '')
                                             {
-                                                $(`#txt_item_no_${item_no_index}_sub_no_${sub_no_index}_amt_${value_index}`).val('-');
+                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val('-');
                                             }
                                         }
                                     }
                                 }
     
                                 //pagkuha ng item judgements para sa buong judgment ng trial
-                                let item_judgment = $(`#td_item_no_${item_no_index}_judgement span`).text();
+                                let item_judgment = $(`#td_item_no_${item_number}_judgement span`).text();
                                 
                                 if (item_judgment === 'N/A')
                                 {
@@ -1202,7 +1218,7 @@ const CHECKSHEET = (() => {
                                 }
                                 else
                                 {
-                                    if (item_no_index === parseInt(item_no_count))
+                                    if (item_no_index === parseInt(original_item_no_count))
                                     {
                                         if (na_judgement_count > 0)
                                         {
