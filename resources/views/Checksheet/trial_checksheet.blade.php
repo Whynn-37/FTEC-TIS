@@ -264,6 +264,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <input type="text" id="total_of_total_takt_time" hidden>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-12">
@@ -390,6 +391,7 @@
                                             {{-- existing --}}
                                             <div class="row">
                                                 <div class="col-md-12">
+                                                    <input type="text" id="original_item_no_count" hidden>
                                                     <div class="single-table">
                                                         <div class="table-responsive">
                                                             <table class="table text-center table-sm table-bordered" id="tbl_igm" hidden>

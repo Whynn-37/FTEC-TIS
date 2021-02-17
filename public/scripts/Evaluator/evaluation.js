@@ -11,6 +11,7 @@ const EVALUATE = (() => {
     let attachment_count            = '';
     let array_type                  = [];
     let array_item_number           = [];
+    let array_item_type             = [];
     let final_array_min_max_datas   = [];
     let checksheet_item_count       = '';
 
@@ -244,17 +245,16 @@ const EVALUATE = (() => {
         });
     };
 
-    this_evaluate.AddIgmSubNoHeader = (item_no_count, rowspan_count) => {
+    this_evaluate.AddIgmSubNoHeader = (item_no_count, rowspan_count,item_type) => {
         let tr_sub_no_column = `
 		<tr id="tr_item_no_${item_no_count}_sub_no_column">
 			<th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
-			<th width="5%" class="text-white bg-dark">SUB NO</th>
-			<th class="text-white bg-dark">COORDINATES</th>
-			<th class="text-white bg-dark" colspan="5">DATA</th>
-			<th class="text-white bg-dark">JUDGEMENT</th>
-            <th class="text-white bg-dark">REMARKS
-        </th>
-			<th class="text-white bg-dark"></th>
+			<th width="5%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">SUB NO</th>
+			<th class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">COORDINATES</th>
+			<th class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}" colspan="5">DATA</th>
+			<th class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">JUDGEMENT</th>
+            <th class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">REMARKS</th>
+			<th class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}"></th>
 		</tr>`;
         return tr_sub_no_column;
     };
@@ -305,7 +305,7 @@ const EVALUATE = (() => {
             //     </div>
             // </td>`;
             // (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action)
-            tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
+            tr_checksheet += `<tr class="text-white ${(value.item_type == 0) ? 'bg-success' : 'bg-dark'}" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th>TOOLS</th>
                 <th>TYPE</th>
@@ -335,6 +335,7 @@ const EVALUATE = (() => {
             
             array_type.push(value.type);
             array_item_number.push(value.item_number);
+            array_item_type.push(value.item_type);
 
             item_count++;
         });
@@ -381,8 +382,8 @@ const EVALUATE = (() => {
             {
                 existing_sub_no_count++;
                 
-                //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
-                EVALUATE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index]);
+                //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item, nakaglobal yung array_type, array_item_number at array_item_type
+                EVALUATE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index],array_item_type[a_index]);
     
                 $(`#th_igm_item_no_${array_item_number[a_index]}_extra_column`).prop('hidden', false);
             }
@@ -396,7 +397,7 @@ const EVALUATE = (() => {
         }
     };
 
-    this_evaluate.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
+    this_evaluate.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks,item_type) => {
 
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
@@ -417,7 +418,7 @@ const EVALUATE = (() => {
                 rowspan_count = 2;
             }
 
-            tr_sub_no_column += EVALUATE.AddIgmSubNoHeader(item_no_count, rowspan_count);
+            tr_sub_no_column += EVALUATE.AddIgmSubNoHeader(item_no_count, rowspan_count,item_type);
 
             tr_sub_no_inputs += EVALUATE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
 
@@ -868,7 +869,6 @@ const EVALUATE = (() => {
 
     this_evaluate.SaveEditItem = (item_no,existing_specs, existing_upper_limit, existing_lower_limit) => {
 
-
         let trial_checksheet_id     = $(`#trial_checksheet_id`).val();
         let item_no_id              = $(`#txt_hidden_item_no_${item_no}_id`).val();
         let item_no_sub_no_count    = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
@@ -887,142 +887,177 @@ const EVALUATE = (() => {
       
         let new_upper_limit     = parseFloat(upper_limit);
         let new_lower_limit     = parseFloat(lower_limit);
+        let empty_value_count   = 0;
+        let invalid_value_count = 0;
 
-        
-        
         if (tools !== 'VSL' && type !== 'Material Check' || tools !== 'Visual Inspection' && type !== 'Material Check') //para to sa vsl at amterial check dahil di naman na eedit ang upper at lower limit non
         {
             //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
-            if (upper_limit === '-')
+            if (upper_limit === '')
             {
-                new_upper_limit =  `-`;
-            }
-            else if (upper_limit === '-')
-            {
-                new_upper_limit =  '';
+                $(`#span_upper_limit_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
+                empty_value_count++;
             }
             else
             {
-                if (parseFloat(upper_limit) > 0)
+                if (upper_limit === '-')
                 {
-                    new_upper_limit =  `+${parseFloat(upper_limit)}`;
+                    $(`#span_upper_limit_error_${item_no}`).remove();
+                    $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Invalid</span>`);
+                    invalid_value_count++;
+                }
+                else 
+                {
+                    if (isNaN(parseFloat(upper_limit)))
+                    {
+                        $(`#span_upper_limit_error_${item_no}`).remove();
+                        $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Invalid</span>`);
+                        invalid_value_count++;
+                    }
+                    else
+                    {
+                        if (parseFloat(upper_limit) > 0)
+                        {
+                            new_upper_limit =  `+${parseFloat(upper_limit)}`;
+                        }
+                    }
                 }
             }
 
-            if (lower_limit === '-')
+            if (lower_limit === '')
             {
-                new_lower_limit =  `-`;
-            }
-            else if (lower_limit === '')
-            {
-                new_lower_limit =  '';
+                $(`#span_lower_limit_error_${item_no}`).remove();
+                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
+                empty_value_count++;
             }
             else
             {
-                if (parseFloat(lower_limit) > 0)
+                if (lower_limit === '-')
                 {
-                    new_lower_limit =  `+${parseFloat(lower_limit)}`;
+                    $(`#span_lower_limit_error_${item_no}`).remove();
+                    $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Invalid</span>`);
+                    invalid_value_count++;
+                }
+                else 
+                {
+                    if (isNaN(parseFloat(lower_limit)))
+                    {
+                        $(`#span_lower_limit_error_${item_no}`).remove();
+                        $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Invalid</span>`);
+                        invalid_value_count++;
+                    }
+                    else
+                    {
+                        if (parseFloat(lower_limit) > 0)
+                        {
+                            new_lower_limit =  `+${parseFloat(lower_limit)}`;
+                        }
+                    }
                 }
             }
 
             if (specs === '')
             {
                 $(`#span_specs_error_${item_no}`).remove();
-            
                 $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
             }
-            else if (upper_limit === '')
+            else
             {
-                $(`#span_upper_limit_error_${item_no}`).remove();
-                $(`#txt_item_no_${item_no}_upper_limit`).after(`<span id="span_upper_limit_error_${item_no}" class="span-error">Required</span>`);
+                $(`#span_specs_error_${item_no}`).remove();
             }
-            else if (lower_limit === '')
-            {
-            
-                $(`#span_lower_limit_error_${item_no}`).remove();
-                $(`#txt_item_no_${item_no}_lower_limit`).after(`<span id="span_lower_limit_error_${item_no}" class="span-error">Required</span>`);
-            }
-            else if (remarks === '')
+           
+            if (remarks === '')
             {
                 $(`#span_remarks_error_${item_no}`).remove();
                 $(`#txt_item_no_${item_no}_edit_item_remarks`).after(`<span id="span_remarks_error_${item_no}" class="span-error">Required</span>`);
             }
+            else
+            {
+                $(`#span_remarks_error_${item_no}`).remove();
+            }
 
-            if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
-            { 
-                Swal.fire($.extend(swal_options, {
-                    title: 'Are you sure you want to save?',
-                })).then((result) => 
+            if (empty_value_count == 0)
+            {
+                if (invalid_value_count == 0)
                 {
-                    if (result.value) 
-                    {
-                        $(`#accordion_igm`).LoadingOverlay('show');
-                        
-                        $(`#span_specs_error_${item_no}`).remove();
-                        $(`#span_upper_limit_error_${item_no}`).remove();
-                        $(`#span_lower_limit_error_${item_no}`).remove();
-                        $(`#span_remarks_error_${item_no}`).remove();
-
-                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                    if (specs !== '' && upper_limit !== '' && lower_limit !== '' && remarks !== '')
+                    { 
+                        Swal.fire($.extend(swal_options, {
+                            title: 'Are you sure you want to save?',
+                        })).then((result) => 
                         {
-                            for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
+                            if (result.value) 
                             {
-                                EVALUATE.RejudgementMinMax(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
-
-                                if (sub_no == item_no_sub_no_count)
-                                {
-                                    //para malaman kung may remarks o wala
-                                    (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
-                                }
-                            }
-                        }
-                        else if (type === 'Actual' || type === 'Material Thickness')
-                        {
-                            // ONGOING PA SA SAVE HINSEI DITO, CHECK NALANG ULIT PAGBALIK KUNG ANO PA MALI OR KULANG, kinoment ko lang nasa baba pero ito codes non
-                            for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
-                            {
-                                EVALUATE.RejudgementDataAMT(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
-
-                                if (sub_no == item_no_sub_no_count)
-                                {
-                                    //para malaman kung may remarks o wala
-                                    (remarks == null) ? new_remarks = '' : new_remarks = remarks;
-                                    EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
-                                }
-                            }
-                        }
-                        else 
-                        {
-                            let final_judgment = judgement;//ginanto ko lang para alam na final judgement
-
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,'edit_item');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
-
-                            for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
-                            {
-                                let coordinates     = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html();
-                                let judgment_datas  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
-
-                                let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
-                                let split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
-                                var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
-
-                                let array_visuals   = [];
-
-                                //data ng visuals
-                                for (let visual_no = 1; visual_no <= 5; visual_no++) 
-                                {
-                                    array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val());
-                                }
+                                $(`#accordion_igm`).LoadingOverlay('show');
                                 
-                                $(`#td_item_no_${item_no}_remarks`).html(new_remarks);
-
-                                // para sa pag update ng checksheet data
-                                EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,sub_item_remarks,judgement,final_judgment,type,item_no,'edit_item');
+                                $(`#span_specs_error_${item_no}`).remove();
+                                $(`#span_upper_limit_error_${item_no}`).remove();
+                                $(`#span_lower_limit_error_${item_no}`).remove();
+                                $(`#span_remarks_error_${item_no}`).remove();
+        
+                                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
+                                {
+                                    for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
+                                    {
+                                        EVALUATE.RejudgementMinMax(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
+        
+                                        if (sub_no == item_no_sub_no_count)
+                                        {
+                                            //para malaman kung may remarks o wala
+                                            (remarks == null) ? new_remarks = '' : new_remarks = remarks;
+                                            EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
+                                        }
+                                    }
+                                }
+                                else if (type === 'Actual' || type === 'Material Thickness')
+                                {
+                                    // ONGOING PA SA SAVE HINSEI DITO, CHECK NALANG ULIT PAGBALIK KUNG ANO PA MALI OR KULANG, kinoment ko lang nasa baba pero ito codes non
+                                    for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
+                                    {
+                                        EVALUATE.RejudgementDataAMT(item_no, sub_no, item_no_sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks);
+        
+                                        if (sub_no == item_no_sub_no_count)
+                                        {
+                                            //para malaman kung may remarks o wala
+                                            (remarks == null) ? new_remarks = '' : new_remarks = remarks;
+                                            EVALUATE.TrialChecksheetRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,'edit_item');
+                                        }
+                                    }
+                                }
+                                else 
+                                {
+                                    let final_judgment = judgement;//ginanto ko lang para alam na final judgement
+        
+                                    EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,'edit_item');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
+        
+                                    for (let sub_no = 1; sub_no <= item_no_sub_no_count; sub_no++) 
+                                    {
+                                        let coordinates     = $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html();
+                                        let judgment_datas  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+        
+                                        let split_sub_item_remarks          = $(`#btn_edit_item_no_${item_no}_sub_no_${sub_no}`).attr('onclick').split(',');
+                                        let split_split_sub_item_remarks    = split_sub_item_remarks[14].split(')');
+                                        var sub_item_remarks                = split_split_sub_item_remarks[0].replace(/"|'/g, '');
+        
+                                        let array_visuals   = [];
+        
+                                        //data ng visuals
+                                        for (let visual_no = 1; visual_no <= 5; visual_no++) 
+                                        {
+                                            array_visuals.push($(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).val());
+                                        }
+                                        
+                                        $(`#td_item_no_${item_no}_remarks`).html(new_remarks);
+        
+                                        // para sa pag update ng checksheet data
+                                        EVALUATE.ProceedEditData(item_no_id, sub_no, coordinates,array_visuals,judgment_datas,sub_item_remarks,judgement,final_judgment,type,item_no,'edit_item');
+                                    }
+                                }
                             }
-                        }
+                        })
                     }
-                })
+                }
             }
         }
         else
@@ -1055,6 +1090,7 @@ const EVALUATE = (() => {
             }
             else
             {
+                $(`#span_remarks_specs_${item_no}`).remove();
                 $(`#txt_item_no_${item_no}_specs`).after(`<span id="span_specs_error_${item_no}" class="span-error">Required</span>`);
             }
         }
@@ -1783,6 +1819,7 @@ const EVALUATE = (() => {
                 if (min_max_value === '-')
                 {
                     $(`#span_min_error_${min_max_no}`).remove();
+                    $(`#span_max_error_${min_max_no}`).remove();
 
                     if (type === 'Min and Max and Form Tolerance')
                     {
@@ -1799,7 +1836,9 @@ const EVALUATE = (() => {
                     if (isNaN(parseFloat(min_max_value))) 
                     {
                         $(`#span_min_error_${min_max_no}`).remove();
-                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${min_max_no}`).after(`<span id="span_min_error_${min_max_no}" class="span-error">Required</span>`);
+                        $(`#span_max_error_${min_max_no}`).remove();
+
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).after(`<span id="span_max_error_${min_max_no}" class="span-error">Required</span>`);
                         $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_no}`).val('');
                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
@@ -1807,6 +1846,7 @@ const EVALUATE = (() => {
                     else 
                     {
                         $(`#span_min_error_${min_max_no}`).remove();
+                        $(`#span_max_error_${min_max_no}`).remove();
                         EVALUATE.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type); 
                     }
                 }
@@ -2300,12 +2340,13 @@ const EVALUATE = (() => {
     this_evaluate.ValidateSubItemGetDataAMT = (item_no, sub_no) => {
         //AMT -> Actual Material Thickness, 5 inputs lang
 
-        let upper_limit     = $(`#td_item_no_${item_no}_upper_limit`).html();
-        let lower_limit     = $(`#td_item_no_${item_no}_lower_limit`).html();
-        let coordinates     = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-        let last_value      = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
-        
-        let array_judgement = [];
+        let upper_limit         = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit         = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let coordinates         = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let last_value          = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
+        let array_judgement     = [];
+        let empty_value_count   = 0;
+        let invalid_value_count = 0;
         
         if (coordinates !== '')
         {
@@ -2321,6 +2362,7 @@ const EVALUATE = (() => {
                     {
                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                        empty_value_count++;
                     }
                     else
                     {
@@ -2335,6 +2377,7 @@ const EVALUATE = (() => {
                             {
                                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                                 $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                invalid_value_count++;
                             }
                             else
                             {
@@ -2352,31 +2395,36 @@ const EVALUATE = (() => {
                         }
                     }
 
-                    if (data_index === 5)
+                    if (empty_value_count == 0)
                     {
-                        if (array_judgement.every( (value, i, array) => value === 'NA') == true)
+                        if (invalid_value_count == 0)
                         {
-                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        }
-                        else
-                        {
-                            if ($.inArray('NG',array_judgement) === -1) 
+                            if (data_index === 5)
                             {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                                
-                                array_judgement = [];
-                            } 
-                            else 
-                            {
-                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-                                $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-
-                                array_judgement = [];
+                                if (array_judgement.every( (value, i, array) => value === 'NA') == true)
+                                {
+                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                }
+                                else
+                                {
+                                    if ($.inArray('NG',array_judgement) === -1) 
+                                    {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                        
+                                        array_judgement = [];
+                                    } 
+                                    else 
+                                    {
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+        
+                                        array_judgement = [];
+                                    }
+                                }
                             }
                         }
-                        
                     }
                 }
             }
@@ -2451,84 +2499,141 @@ const EVALUATE = (() => {
 
     this_evaluate.ValidateSaveSubItemMinMax = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
         
-        let array_min_max_data  = [];
-        // let split_data          = visuals_min_max_datas.split(',');
-
-        // split_data.forEach((split_value) => {
-        //     array_min_max_data.push(split_value);
-        // });
+        let array_min_max_data    = [];
+        let empty_value_count     = 0;
+        let invalid_value_count   = 0;
 
         //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
         for (let a_count = 1; a_count <= 5; a_count++) 
         {
+            $(`#span_min_error_${a_count}`).remove();
+            $(`#span_max_error_${a_count}`).remove();
+
             let min_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val();
             let max_value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val();
 
             if (min_value === '')
             {
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).val('-');
+                $(`#span_required_min_${a_count}`).remove();
+                $(`#span_invalid_min_${a_count}`).remove();
+
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_min_${a_count}`).after(`<span id="span_required_min_${a_count}" class="span-error">Required</span>`);
+                empty_value_count++;
+            }
+            else
+            {
+                $(`#span_required_min_${a_count}`).remove();
+                $(`#span_invalid_min_${a_count}`).remove();
+
+                if (min_value === '-')
+                {
+                    array_min_max_data.push(min_value);
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_value)))
+                    {
+                        invalid_value_count++;
+                    }
+                    else
+                    {
+                        array_min_max_data.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+                    }
+                }
             }
 
             if (max_value === '')
             {
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).val('-');
-            }
-            
-            if (min_value === '-')
-            {
-                array_min_max_data.push(min_value);
+                $(`#span_required_max_${a_count}`).remove();
+                $(`#span_error_max_${a_count}`).remove();
+
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).after(`<span id="span_required_max_${a_count}" class="span-error">Required</span>`);
+                empty_value_count++;
             }
             else
             {
-                array_min_max_data.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+                if (max_value === '-')
+                {
+                    array_min_max_data.push(max_value);
+                }
+                else
+                {
+                    if (isNaN(parseFloat(min_value)))
+                    {
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${a_count}`).after(`<span id="span_invalid_max_${a_count}" class="span-error">Invalid</span>`);
+                        invalid_value_count++;
+                    }
+                    else
+                    {
+                        array_min_max_data.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
+                    }
+                }
             }
 
-            if (max_value === '-')
+            if (empty_value_count == 0)
             {
-                array_min_max_data.push(max_value);
-            }
-            else
-            {
-                array_min_max_data.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
-            }
-
-            if (a_count === 5)
-            {
-                EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_min_max_data,type,remarks);
+                if (invalid_value_count == 0)
+                {
+                    if (a_count === 5)
+                    {
+                        EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_min_max_data,type,remarks);
+                    }
+                }
             }
         }
     };
     
     this_evaluate.ValidateSaveSubItemAMT = (type, item_no, sub_no, coordinates,visuals_min_max_datas,sub_item_judgement,remarks,new_coordinates) => {
         
-        let array_data  = [];
-        // let split_data          = visuals_min_max_datas.split(',');
+        let array_data          = [];
+        let empty_value_count   = 0;
+        let invalid_value_count = 0;
 
-        // split_data.forEach((split_value) => {
-        //     array_data.push(split_value);
-        // });
-        
         //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka savesubitem lalgyan nalang ulit ng dash
         for (let a_count = 1; a_count <= 5; a_count++) 
         {
             let value = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).val();
-
+            
             if (value === '')
             {
-                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).val('-');
-            }
+                $(`#span_required_amt_${a_count}`).remove();
+                $(`#span_invalid_amt_${a_count}`).remove();
 
-            if (value === '-')
-            {
-                array_data.push(value);
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).after(`<span id="span_required_amt_${a_count}" class="span-error">Required</span>`);
+                empty_value_count++;
             }
             else
             {
-                array_data.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
-            }
-            if (a_count === 5)
-            {
-                EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_data,type,remarks);
+                if (value === '-')
+                {
+                    array_data.push(value);
+                }
+                else
+                {
+                    $(`#span_required_amt_${a_count}`).remove();
+                    $(`#span_invalid_amt_${a_count}`).remove();
+
+                    if (isNaN(parseFloat(value)))
+                    {
+                        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_${a_count}`).after(`<span id="span_invalid_amt_${a_count}" class="span-error">Invalid</span>`);
+                        invalid_value_count++;
+                    }
+                    else
+                    {
+                        array_data.push((parseFloat(value) > 0) ? `+${parseFloat(value)}`: parseFloat(value));
+                    }
+                }
+                
+                if (empty_value_count == 0)
+                {
+                    if (invalid_value_count == 0)
+                    {
+                        if (a_count === 5)
+                        {
+                            EVALUATE.ProceedSaveSubItem(item_no, sub_no,new_coordinates,array_data,type,remarks);
+                        }
+                    }
+                }
             }
         }
     };

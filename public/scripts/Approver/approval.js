@@ -7,8 +7,9 @@ const APPROVE = (() => {
 
     let this_approve = {};
 
-    let array_type                  = [];
-    let array_item_number           = [];
+    let array_type          = [];
+    let array_item_number   = [];
+    let array_item_type     = [];
    
     this_approve.LoadFinishedInspectionData = () => {
 
@@ -268,7 +269,7 @@ const APPROVE = (() => {
                 judgement = '<span class="badge badge-danger subitem-visual-judgement">NG</span>';
             }
             
-            tr_checksheet += `<tr class="text-white bg-dark" id="tr_item_no_${value.item_number}_column">
+            tr_checksheet += `<tr class="text-white ${(value.item_type == 0) ? 'bg-success' : 'bg-dark'}" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th width="5%">TOOLS</th>
                 <th width="10%">TYPE</th>
@@ -297,6 +298,7 @@ const APPROVE = (() => {
 
             array_type.push(value.type);
             array_item_number.push(value.item_number);
+            array_item_type.push(value.item_type);
 
             item_count++;
         });
@@ -316,7 +318,7 @@ const APPROVE = (() => {
         let array_coordinates               = [];
         let array_remarks               = [];
         let existing_sub_no_count           = -1;//naka -1 para pag increment nya naka 0 para pag pasok sa add igm sub no function sa zero sya papasok 
-        
+
         //pagkuha ng data id
         for (let a_index = 0; a_index < data.data.checksheet_data.length; a_index++) 
         {
@@ -343,7 +345,7 @@ const APPROVE = (() => {
                 existing_sub_no_count++;
 
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item
-                APPROVE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index]);
+                APPROVE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index],array_item_type[a_index]);
     
                 $(`#th_igm_item_no_${array_item_number[a_index]}_extra_column`).prop('hidden', false);
                 
@@ -358,20 +360,20 @@ const APPROVE = (() => {
         }
     };
 
-    this_approve.AddIgmSubNoHeader = (item_no_count, rowspan_count) => {
+    this_approve.AddIgmSubNoHeader = (item_no_count, rowspan_count,item_type) => {
         let tr_sub_no_column = `
 		<tr id="tr_item_no_${item_no_count}_sub_no_column">
 			<th id="th_tr_item_no_${item_no_count}_sub_no_column_rowspan" rowspan="${rowspan_count}"></th>
-			<th width="5%" class="text-white bg-dark">SUB NO</th>
-			<th width="18%" class="text-white bg-dark">COORDINATES</th>
-			<th width="30%" class="text-white bg-dark" colspan="5">DATA</th>
-			<th width="10%" class="text-white bg-dark">JUDGEMENT</th>
-			<th width="15%" class="text-white bg-dark">REMARKS</th>
+			<th width="5%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">SUB NO</th>
+			<th width="18%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">COORDINATES</th>
+			<th width="30%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}" colspan="5">DATA</th>
+			<th width="10%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">JUDGEMENT</th>
+			<th width="15%" class="text-white ${(item_type == 0) ? 'bg-success' : 'bg-dark'}">REMARKS</th>
 		</tr>`;
         return tr_sub_no_column;
     };
 
-    this_approve.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
+    this_approve.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks,item_type) => {
 
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
@@ -392,7 +394,7 @@ const APPROVE = (() => {
                 rowspan_count = 2;
             }
 
-            tr_sub_no_column += APPROVE.AddIgmSubNoHeader(item_no_count, rowspan_count);
+            tr_sub_no_column += APPROVE.AddIgmSubNoHeader(item_no_count, rowspan_count,item_type);
 
             tr_sub_no_inputs += APPROVE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
 
