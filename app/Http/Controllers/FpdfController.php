@@ -784,17 +784,21 @@ class FpdfController extends Controller
                 }
             }
             else 
-            {
-                list($w, $h) = getimagesize($file);
+            {   
+                $path = $location.$file;
+
+                list($w, $h) = getimagesize($path);
                 $pdf->AddPage($w > $h  ? 'L' : 'P');
           
                 if($w> $h)
                 {
                     // landscape
-                    if($w >  297){
+                    if($w >  297)
+                    {
                         $w = 297-30;       
                     }
-                    if($h >  210){
+                    if($h >  210)
+                    {
                         $h = 210-20;   
                     }
                 }
@@ -808,7 +812,7 @@ class FpdfController extends Controller
                         $w = 210-30;   
                     }
                 }
-                $pdf->Image($file,20,20,$w,$h);
+                $pdf->Image($path,20,20,$w,$h);
             }
         }
 
