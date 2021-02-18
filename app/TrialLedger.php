@@ -147,6 +147,8 @@ class TrialLedger extends Model
             'trial_ledgers.inspector_id', 
             'suppliers.supplier_name',
             'approvals.reason',
+            'approvals.inspect_by',
+            'approvals.inspect_datetime',
             'approvals.disapproved_by',
             'approvals.disapproved_datetime',
         )

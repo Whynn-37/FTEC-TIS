@@ -51,7 +51,7 @@
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
                                                         This is to inform you that, this part number is for evaluation
                                                     </p>
-                                                @elseif($subject === 'For Re-Evaluation')
+                                                @elseif($subject === 'For Re-Evaluation' || $subject === 'For Re-Evaluation - Approver')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
                                                         TO: {{$data['name_evaluated_by']}}
                                                     </p>
@@ -67,7 +67,7 @@
                                                     </p>
                                                 @elseif($subject === 'For Re-Approval')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
-                                                        TO: {{$data['name_approved_by']}}
+                                                            TO: {{$data['name_approved_by']}}
                                                     </p>
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
                                                         This is to inform you that, this part number is for re-approval.
@@ -135,7 +135,7 @@
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED DATE TIME </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['inspect_datetime']}} </td>
                                                     </tr>
-                                                    @if($data['evaluated_by'] !== null)
+                                                    @if($subject === 'For Approval' || $subject === 'For Re-Approval')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
@@ -147,7 +147,17 @@
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
                                                         </tr>
                                                     @endif
-                                                    @if ($data['approved_by'] !== null)
+                                                    @if ($subject === 'Approved')
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
+                                                        </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
@@ -159,7 +169,7 @@
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_datetime']}} </td>
                                                         </tr>
                                                     @endif
-                                                    @if ($data['disapproved_by'] !== null)
+                                                    @if($subject === 'For Re-inspection' || $subject === 'For Re-Evaluation - Approver' || $subject === ' For Re-Evaluation.')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED BY </td>
@@ -175,14 +185,7 @@
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
                                                         </tr>
-                                                    @elseif($subject === 'For Re-inspection')
-                                                        <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
-                                                        </tr>
                                                     @endif
-                                                    
                                                 </tbody>
                                         </table>
                                         <tr>
