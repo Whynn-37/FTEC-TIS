@@ -348,7 +348,7 @@ class ApprovalController extends Controller
                 $result = true;
 
                 $date = date('Ymd');
-                
+                // return Excel::download(new TrialEvaluationResultExport($data), 'test.xlsx');
                 return Excel::store(new TrialEvaluationResultExport($data), $folder_name['file_folder'] . "/{$data_trial_ledger_merge['part_number']}-{$data_trial_ledger_merge['revision_number']}-T{$data_trial_ledger_merge['trial_number']}-{$date}.xlsx", 'public');
             }
         }

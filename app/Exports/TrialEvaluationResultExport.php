@@ -441,10 +441,12 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                                     'type'          => $this->data['items'][$i]['type'],
                                     'upper_limit'   => $this->data['items'][$i]['upper_limit'],
                                     'lower_limit'   => $this->data['items'][$i]['lower_limit'],
+                                    'remarks_item'  => $this->data['items'][$i]['remarks'],
+                                    'hinsei'        => $this->data['items'][$i]['hinsei'],
                                     'coordinates'   => $this->data['datas'][$i][$q]['coordinates'],
                                     'data'          => explode(",",$this->data['datas'][$i][$q]['data']),
                                     'judgment'      => $this->data['datas'][$i][$q]['judgment'],
-                                    'remarks'       => $this->data['datas'][$i][$q]['remarks'],
+                                    'remarks_data'  => $this->data['datas'][$i][$q]['remarks'],
                                 ];
                             }
                         }
@@ -555,11 +557,19 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                     $event->sheet->getDelegate()->getStyle($judgment_value_cell2)->getAlignment()->setWrapText(true);
                     $event->sheet->getDelegate()->setCellValue('V'.$row, $value['judgment']);
 
+                    $remarks = '';
+                    if ($value['hinsei'] === 'HINSEI' && $value['remarks_data'] === null) 
+                        $remarks = 'Hinsei : ' . $value['remarks_item'];
+                    else if ($value['hinsei'] !== 'HINSEI' && $value['remarks_data'] !== '')
+                        $remarks = 'Remarks : ' . $value['remarks_data'];
+                    else if ($value['hinsei'] === 'HINSEI' && $value['remarks_data'] !== '')
+                        $remarks = 'Hinsei : ' . $value['remarks_item'] . ' Remarks : ' . $value['remarks_data'];
+
                     $remarks_value_cell = 'W'.$row.':Y'.$row;
                     $event->sheet->getDelegate()->getStyle($remarks_value_cell)->applyFromArray($border_with_center_value);
                     $event->sheet->getDelegate()->getStyle($remarks_value_cell)->getFont('Calibri')->setSize(11)->setBold(false);
                     $event->sheet->getDelegate()->mergeCells($remarks_value_cell);
-                    $event->sheet->getDelegate()->setCellValue('W'.$row, $value['remarks']);
+                    $event->sheet->getDelegate()->setCellValue('W'.$row, $remarks);
 
                     $row ++;
                     $number ++;
