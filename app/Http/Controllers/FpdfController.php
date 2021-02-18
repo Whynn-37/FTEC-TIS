@@ -156,6 +156,8 @@ class FpdfController extends Controller
                             // inspection reason
                             if ($data['checksheet_details']['inspection_reason'] === 'ND') 
                                 $pdf->Image($circle,20,18, 10);
+                            else if ($data['checksheet_details']['inspection_reason'] === 'TD') 
+                                $pdf->Image($circle,57,18, 10);
 
                             // supplier
                             $pdf->SetFontSize(6);
@@ -180,18 +182,64 @@ class FpdfController extends Controller
                             $pdf->SetFontSize(6);
 
                             // inspect by
-                            $pdf->SetXY(143, 32);
-                            $pdf->MultiCell(21,3,$data['approval']['inspect_by'],0,'C');
-
                             $inspect_datetime = explode(" ", $data['approval']['inspect_datetime']);
-                            $pdf->SetXY(143, 38);
+                            $pdf->SetXY(143, 32);
                             $pdf->MultiCell(21,3, $inspect_datetime[0],0,'C');
 
+                            switch ($data['approval']['inspect_by']) 
+                            {
+                                case 'JED RELATOR':
+                                    $signature_inspector = 'JED RELATOR';
+                                    break;
+                                case 'HIDEKO NAKAMURA':
+                                    $signature_inspector = 'HIDEKO NAKAMURA';
+                                    break;
+                                case 'KAZUHITO MITOMI':
+                                    $signature_inspector = 'KAZUHITO MITOMI';
+                                    break;
+                                case 'KIYOKAZU WATANABE':
+                                    $signature_inspector = 'KIYOKAZU WATANABE';
+                                    break;
+                                case 'MASAHARU KOBAYASHI':
+                                    $signature_inspector = 'MASAHARU KOBAYASHI';
+                                    break;   
+                                case 'MEGUMI NAGAI':
+                                    $signature_inspector = 'MEGUMI NAGAI';
+                                    break;
+                                case 'RUMIKO NISHIMURA':
+                                    $signature_inspector = 'RUMIKO NISHIMURA';
+                                    break;
+                                case 'SHINICHI HIROKI':
+                                    $signature_inspector = 'SHINICHI HIROKI';
+                                    break;
+                                case 'TAKAYOSHI SAKATSUME':
+                                    $signature_inspector = 'TAKAYOSHI SAKATSUME';
+                                    break; 
+                                case 'TOKIKO MATSUNAGA':
+                                    $signature_inspector = 'TOKIKO MATSUNAGA';
+                                    break;
+                                case 'YUUKI HORI':
+                                    $signature_inspector = 'YUUKI HORI';
+                                    break;
+                                case 'YUUKI KAMATA':
+                                    $signature_inspector = 'YUUKI KAMATA';
+                                    break;
+                                case 'YASUO TAKAHASHI':
+                                    $signature_inspector = 'YASUO TAKAHASHI';
+                                    break;
+                                case 'MAKIKO KAIDOU':
+                                    $signature_inspector = 'MAKIKO KAIDOU';
+                                    break;
+                                default:
+                                    $signature_inspector = '';
+                                    break;
+                            }
+
+                            $signature_inspector = storage_path('/app/public/second_page/signature/'. $signature_inspector .'.png');
+
+                            $pdf->Image($signature_inspector,146,26, 15);
 
                             // evaluated by
-                            // $pdf->SetXY(164, 32);
-                            // $pdf->MultiCell(21,3,$data['approval']['evaluated_by'],0,'C');
-
                             $evaluated_datetime = explode(" ", $data['approval']['evaluated_datetime']);
                             $pdf->SetXY(164, 32);
                             $pdf->MultiCell(21,3, $evaluated_datetime[0],0,'C');
@@ -199,25 +247,25 @@ class FpdfController extends Controller
                             switch ($data['approval']['evaluated_by']) 
                             {
                                 case 'TERRY MERWIN BALAHADIA':
-                                    $signature_evaluator = 'TERRY MERWIN, BALAHADIA';
+                                    $signature_evaluator = 'TERRY MERWIN BALAHADIA';
                                     break;
                                 case 'GEORGE BIEN ALMENANZA':
-                                    $signature_evaluator = 'GEORGE, ALMENANZA';
+                                    $signature_evaluator = 'GEORGE ALMENANZA';
                                     break;
                                 case 'HARUKI FUJITA':
-                                    $signature_evaluator = 'HARUKI,FUJITA';
+                                    $signature_evaluator = 'HARUKI FUJITA';
                                     break;
                                 case 'KOUJI SAWAZAKI':
-                                    $signature_evaluator = 'KOUJI, SAWAZAKI';
+                                    $signature_evaluator = 'KOUJI SAWAZAKI';
                                     break;
                                 case 'TAKAHIRO HIROSAWA':
-                                    $signature_evaluator = 'TAKAHIRO, HIROSAWA';
+                                    $signature_evaluator = 'TAKAHIRO HIROSAWA';
                                     break;
                                 case 'YUTAKA MORIYAMA':
-                                    $signature_evaluator = 'YUTAKA, MORIYAMA';
+                                    $signature_evaluator = 'YUTAKA MORIYAMA';
                                     break;
                                 case 'YUTAKA SATOU':
-                                    $signature_evaluator = 'YUTAKA, SATOU';
+                                    $signature_evaluator = 'YUTAKA SATOU';
                                     break;
                                 default:
                                     $signature_evaluator = '';
@@ -229,9 +277,6 @@ class FpdfController extends Controller
                             $pdf->Image($evaluator,167,26, 15);
 
                             // approved by
-                            // $pdf->SetXY(184, 32);
-                            // $pdf->MultiCell(21,3,$data['approval']['approved_by'],0,'C');
-
                             $approved_datetime = explode(" ", $data['approval']['approved_datetime']);
                             $pdf->SetXY(184, 32);
                             $pdf->MultiCell(21,3, $approved_datetime[0],0,'C');
@@ -242,10 +287,10 @@ class FpdfController extends Controller
                                     $signature_approver = 'MARK JOHREL MANZANO';
                                     break; 
                                 case 'KAZUSHI WATANABE':
-                                    $signature_approver = 'KAZUSHI, WATANABE';
+                                    $signature_approver = 'KAZUSHI WATANABE';
                                     break;
                                 case 'TAMOTSU KOIKE':
-                                    $signature_approver = 'TAMOTSU,KOIKE';
+                                    $signature_approver = 'TAMOTSU KOIKE';
                                     break;
                                 default:
                                     $signature_approver = '';
@@ -353,8 +398,6 @@ class FpdfController extends Controller
                                 $plus_minus = ' ';
                                 if (is_numeric($items['specification'])) 
                                 {
-                                    // $plus_minus = stripslashes(' ±');
-                                    // $plus_minus = iconv('UTF-8', 'windows-1252', $plus_minus);
                                     $plus_minus = ' ± ';
                                 }
 
@@ -367,12 +410,15 @@ class FpdfController extends Controller
                             }
 
                             $increment = 76;
+
+                            
+
                             foreach ($checksheet['datas'][$i] as $datas) 
                             {
                                 switch ($datas['judgment']) 
                                 {
                                     case 'GOOD':
-                                        $judgment = 'O';
+                                        $judgment = '○';
                                         break;
                                     case 'NG':
                                         $judgment = 'X';
@@ -515,7 +561,7 @@ class FpdfController extends Controller
                                 switch ($datas['judgment']) 
                                 {
                                     case 'GOOD':
-                                        $judgment = 'O';
+                                        $judgment = '○';
                                         break;
                                     case 'NG':
                                         $judgment = 'X';
@@ -649,7 +695,7 @@ class FpdfController extends Controller
                                 switch ($datas['judgment']) 
                                 {
                                     case 'GOOD':
-                                        $judgment = 'O';
+                                        $judgment = '○';
                                         break;
                                     case 'NG':
                                         $judgment = 'X';
@@ -825,7 +871,7 @@ class FpdfController extends Controller
         $Attachment->storeFileMerge($data['checksheet_details']['id'], $merge_data_file);
 
         
-        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'F');
+        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'I');
         exit;
     }
 }

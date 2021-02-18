@@ -348,7 +348,7 @@ class ApprovalController extends Controller
                 $result = true;
 
                 $date = date('Ymd');
-                
+                // return Excel::download(new TrialEvaluationResultExport($data), 'test.xlsx');
                 return Excel::store(new TrialEvaluationResultExport($data), $folder_name['file_folder'] . "/{$data_trial_ledger_merge['part_number']}-{$data_trial_ledger_merge['revision_number']}-T{$data_trial_ledger_merge['trial_number']}-{$date}.xlsx", 'public');
             }
         }
@@ -527,7 +527,6 @@ class ApprovalController extends Controller
         $reason = $Request->reason;
 
         $attachment = [];
-
         $status = 'Error';
         $message = 'Not Successfully Save';
 
@@ -537,6 +536,14 @@ class ApprovalController extends Controller
         {
             if ($decision == 1 && $action == 1) 
             {
+                $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                if (($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
+                        || ($whereSend['disapproved_by'] !== null && $whereSend['approved_by'] === null)) 
+                    $status = 'for_approval';
+                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
+                    $status = 're_approval';
+
                 $data = 
                 [
                     'evaluated_by' => Session::get('name'),
@@ -566,23 +573,14 @@ class ApprovalController extends Controller
 
                 $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
-                $whereSend = $Approval->getApproval($trial_checksheet_id);
-
-                if ($whereSend['disapproved_by'] !== null) 
-                {
-                    $status = 're_approval';
-                }
-                else 
-                {
-                    $status = 'for_approval';
-                }
-
                 $message = 'Approved by Evaluator';
             }
             else if ($decision == 1 && $action == 2) 
             {
                 $data = 
                 [
+                    'evaluated_by' => Session::get('name'),
+                    'evaluated_datetime' => now(),
                     'disapproved_by' => Session::get('name'),
                     'disapproved_datetime' => now(),
                     'decision' => 5,
@@ -617,7 +615,7 @@ class ApprovalController extends Controller
                     'file_name' =>  explode(',', $folder_name['file_merge'])
                 ];
 
-                $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                return $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
                 $status = 'approved';
 
@@ -633,6 +631,8 @@ class ApprovalController extends Controller
             {
                 $data = 
                 [
+                    'approved_by' => Session::get('name'),
+                    'approved_datetime' => now(),
                     'disapproved_by' => Session::get('name'),
                     'disapproved_datetime' => now(),
                     'decision' => 3,
@@ -641,7 +641,7 @@ class ApprovalController extends Controller
 
                 $result =  $Approval->approved($trial_checksheet_id, $data);
 
-                $status = 're_evaluation';
+                $status = 're_evaluation_approver';
 
                 $message = 'Disppproved by Approver';
             }

@@ -59,6 +59,21 @@ class MailController extends Controller
 
             $subject = 'For Re-Evaluation';
         }
+        else if($status == 're_evaluation_history')
+        {
+            $receipient = $LoginUser->sendEmailTo($data['evaluated_by']);
+            $receipient = $receipient['EmailAdd'];
+
+            $subject = 'For Re-Evaluation.';
+        }
+        else if($status == 're_evaluation_approver')
+        {
+            $receipient = $LoginUser->sendEmailTo($data['evaluated_by']);
+
+            $receipient = $receipient['EmailAdd'];
+
+            $subject = 'For Re-Evaluation - Approver';
+        }
         else if($status == 'for_approval')
         {
             // $receipient = [
@@ -71,7 +86,7 @@ class MailController extends Controller
 
         else if($status == 're_approval')
         {
-            $receipient = $LoginUser->sendEmailTo($data['disapproved_by']);
+            $receipient = $LoginUser->sendEmailTo($data['approved_by']);
             $receipient = $receipient['EmailAdd'];
 
             $subject = 'For Re-Approval';
