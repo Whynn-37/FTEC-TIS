@@ -33,25 +33,25 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
             switch ($this->data['approval']['evaluated_by']) 
             {
                 case 'TERRY MERWIN BALAHADIA':
-                    $signature_evaluator = 'TERRY MERWIN, BALAHADIA';
+                    $signature_evaluator = 'TERRY MERWIN BALAHADIA';
                     break;
                 case 'GEORGE BIEN ALMENANZA':
-                    $signature_evaluator = 'GEORGE, ALMENANZA';
+                    $signature_evaluator = 'GEORGE ALMENANZA';
                     break;
                 case 'HARUKI FUJITA':
-                    $signature_evaluator = 'HARUKI,FUJITA';
+                    $signature_evaluator = 'HARUKI FUJITA';
                     break;
                 case 'KOUJI SAWAZAKI':
-                    $signature_evaluator = 'KOUJI, SAWAZAKI';
+                    $signature_evaluator = 'KOUJI SAWAZAKI';
                     break;
                 case 'TAKAHIRO HIROSAWA':
-                    $signature_evaluator = 'TAKAHIRO, HIROSAWA';
+                    $signature_evaluator = 'TAKAHIRO HIROSAWA';
                     break;
                 case 'YUTAKA MORIYAMA':
-                    $signature_evaluator = 'YUTAKA, MORIYAMA';
+                    $signature_evaluator = 'YUTAKA MORIYAMA';
                     break;
                 case 'YUTAKA SATOU':
-                    $signature_evaluator = 'YUTAKA, SATOU';
+                    $signature_evaluator = 'YUTAKA SATOU';
                     break;
                 default:
                     $signature_evaluator = '';
@@ -74,10 +74,10 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                     $signature_approver = 'MARK JOHREL MANZANO';
                     break; 
                 case 'KAZUSHI WATANABE':
-                    $signature_approver = 'KAZUSHI, WATANABE';
+                    $signature_approver = 'KAZUSHI WATANABE';
                     break;
                 case 'TAMOTSU KOIKE':
-                    $signature_approver = 'TAMOTSU,KOIKE';
+                    $signature_approver = 'TAMOTSU KOIKE';
                     break;
                 default:
                     $signature_approver = '';
@@ -227,11 +227,6 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                 $event->sheet->getDelegate()->setCellValue('X5', $this->data['details']['judgment']);
 
                 // third row
-                // for ($i=0; $i < count($this->data['takt_time']); $i++) 
-                // { 
-                //     $time_sum[] = $this->data['takt_time'][$i]['actual'];
-                // }
-
                 $time_cell = 'B7:E8';
                 $event->sheet->getDelegate()->getStyle($time_cell)->applyFromArray($border_with_center_value);
                 $event->sheet->getDelegate()->getStyle($time_cell)->getFont('Calibri')->setSize(12)->setBold(true);
@@ -311,18 +306,6 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                 $event->sheet->getDelegate()->getStyle($evaluated_by_value_cell)->getFont('Calibri')->setSize(8)->setBold(true);
                 $event->sheet->getDelegate()->mergeCells($evaluated_by_value_cell);
                 $event->sheet->getDelegate()->setCellValue('H10', substr($this->data['approval']['evaluated_datetime'], 0, 10));
-
-                // $checked_by_cell = 'N9:S9';
-                // $event->sheet->getDelegate()->getStyle($checked_by_cell)->applyFromArray($border_with_center_value);
-                // $event->sheet->getDelegate()->getStyle($checked_by_cell)->getFont('Calibri')->setSize(12)->setBold(true);
-                // $event->sheet->getDelegate()->mergeCells($checked_by_cell);
-                // $event->sheet->getDelegate()->setCellValue('N9', 'CHECKED BY:');
-
-                // $checked_by_value_cell = 'N10:S12';
-                // $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->applyFromArray($border_with_center_value);
-                // $event->sheet->getDelegate()->getStyle($checked_by_value_cell)->getFont('Calibri')->setSize(12)->setBold(true);
-                // $event->sheet->getDelegate()->mergeCells($checked_by_value_cell);
-                // $event->sheet->getDelegate()->setCellValue('N10', $this->data['approval']['evaluated_by']);
 
                 $approved_by_cell = 'Q9:Y9';
                 $event->sheet->getDelegate()->getStyle($approved_by_cell)->applyFromArray($border_with_center_value);

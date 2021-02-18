@@ -536,6 +536,14 @@ class ApprovalController extends Controller
         {
             if ($decision == 1 && $action == 1) 
             {
+                $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                if (($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
+                        || ($whereSend['disapproved_by'] !== null && $whereSend['approved_by'] === null)) 
+                    $status = 'for_approval';
+                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
+                    $status = 're_approval';
+
                 $data = 
                 [
                     'evaluated_by' => Session::get('name'),
@@ -564,14 +572,6 @@ class ApprovalController extends Controller
                 ];
 
                 $FpdfController->mergeFile($merge_file_data, $second_page_data);
-
-                $whereSend = $Approval->getApproval($trial_checksheet_id);
-
-                if (($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
-                        || ($whereSend['disapproved_by'] !== null && $whereSend['approved_by'] === null)) 
-                    $status = 'for_approval';
-                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
-                    $status = 're_approval';
 
                 $message = 'Approved by Evaluator';
             }
@@ -615,7 +615,7 @@ class ApprovalController extends Controller
                     'file_name' =>  explode(',', $folder_name['file_merge'])
                 ];
 
-                $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                return $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
                 $status = 'approved';
 
