@@ -10,7 +10,7 @@ use App\Helpers\ActivityLog;
 use App\LoginUser;
 use Session;
 use App\Helpers\Unique;
-use Illuminate\Support\Facades\Session as FacadesSession;
+use App\Http\Controllers\MailController;
 
 class HistoryController extends Controller
 {
@@ -53,77 +53,49 @@ class HistoryController extends Controller
         {
             $data = $TrialLedger->history();
 
-            if (count($data['checksheet']) !== 0) 
+            foreach ($data['ledger'] as $ledger_value) 
             {
-                foreach ($data['ledger'] as $ledger_value) 
+                $application_date[] = $ledger_value->application_date;
+                foreach ($data['checksheet'] as $checksheet_value) 
                 {
-                    $application_date[] = $ledger_value->application_date;
-                    foreach ($data['checksheet'] as $checksheet_value) 
+                    if ($checksheet_value->application_date === $ledger_value->application_date)
                     {
-                        if ($checksheet_value->application_date === $ledger_value->application_date)
-                        {
-                            $match_application_date[] =  $ledger_value->application_date;
-                        }
-                    }
-                }
-
-                if($match_application_date)
-                {
-                    for($x=0; $x<count($match_application_date);$x++)
-                    {
-                        $key = array_search($match_application_date[$x], $application_date); 
-                        unset($data['ledger'][$key]); 
-                    }
-
-                    foreach ($data['ledger'] as $ledger_value) 
-                    { 
-                        $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
-
-                        $result[] = 
-                        [
-                            'id' => $ledger_value->application_date,
-                            'judgment' => '',
-                            'part_number' => $ledger_value->part_number,
-                            'revision_number' => $ledger_value->revision_number,
-                            'trial_number' => $ledger_value->trial_number,
-                            'inspection_reason' => $ledger_value->inspection_reason,
-                            'inspect_by' => $fullname['fullname'],
-                            'inspect_datetime' => '',
-                            'evaluated_by' => '',
-                            'evaluated_datetime' => '',
-                            'approved_by' => '',
-                            'approved_datetime' => '',
-                            'disapproved_by' => '',
-                            'disapproved_datetime' => '',
-                            'file' => '',
-                        ];
+                        $match_application_date[] =  $ledger_value->application_date;
                     }
                 }
             }
-            else 
-            {
-                foreach ($data['ledger'] as $ledger_value) 
-                {
-                    $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
 
-                    $result[] = [
-                        'id' => $ledger_value->application_date,
-                        'judgment' => '',
-                        'part_number' => $ledger_value->part_number,
-                        'revision_number' => $ledger_value->revision_number,
-                        'trial_number' => $ledger_value->trial_number,
-                        'inspection_reason' => $ledger_value->inspection_reason,
-                        'inspect_by' => $fullname['fullname'],
-                        'inspect_datetime' => '',
-                        'evaluated_by' => '',
-                        'evaluated_datetime' => '',
-                        'approved_by' => '',
-                        'approved_datetime' => '',
-                        'disapproved_by' => '',
-                        'disapproved_datetime' => '',
-                        'file' => '',
-                    ];
+            if($match_application_date)
+            {
+                for($x=0; $x<count($match_application_date);$x++)
+                {
+                    $key = array_search($match_application_date[$x], $application_date); 
+                    unset($data['ledger'][$key]); 
                 }
+            }
+
+            foreach ($data['ledger'] as $ledger_value) 
+            { 
+                $fullname = $LoginUser->getFullName($ledger_value->inspector_id);
+
+                $result[] = 
+                [
+                    'id' => $ledger_value->application_date,
+                    'judgment' => '',
+                    'part_number' => $ledger_value->part_number,
+                    'revision_number' => $ledger_value->revision_number,
+                    'trial_number' => $ledger_value->trial_number,
+                    'inspection_reason' => $ledger_value->inspection_reason,
+                    'inspect_by' => $fullname['fullname'],
+                    'inspect_datetime' => '',
+                    'evaluated_by' => '',
+                    'evaluated_datetime' => '',
+                    'approved_by' => '',
+                    'approved_datetime' => '',
+                    'disapproved_by' => '',
+                    'disapproved_datetime' => '',
+                    'file' => '',
+                ];
             }
             
             $data = $Unique->unique_multidim_array($result, 'id');
@@ -186,19 +158,27 @@ class HistoryController extends Controller
         ];
     }
 
-    public function EditDataInspection(Approval $Approval, Request $Request)
+                                    
+    public function EditDataInspection(Approval $Approval, MailController $MailController,  Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $decision = $Request->decision;
+        $reason = $Request->reason;
 
         $data = 
         [
             'decision' => $decision,
             'disapproved_by' => Session::get('name'),
-            'disapproved_datetime' => now()
+            'disapproved_datetime' => now(),
+            'reason' => $reason
         ];
 
         $result = $Approval->approved($trial_checksheet_id, $data);
+
+        if ($decision == 5) 
+            $MailController->sendEmail($trial_checksheet_id, 're_inspect');
+        else
+            $MailController->sendEmail($trial_checksheet_id, 're_evaluation_history');
 
         $status = 'Error';
         $message = 'Not Successfuly update';

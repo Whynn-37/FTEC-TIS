@@ -91,7 +91,7 @@ class TrialChecksheetController extends Controller
 
         foreach ($data as $key => $value) 
         {
-            $inspector = $LoginUser->getFullName($value->inspector_id);
+            $inspector = $LoginUser->getFullName($value->inspect_by);
             $disapproved_by = $LoginUser->getFullName($value->disapproved_by);
 
 
@@ -471,15 +471,11 @@ class TrialChecksheetController extends Controller
 
                 $whereSend = $Approval->getApproval($trial_checksheet_id);
 
-                if ($whereSend['disapproved_by'] !== null) 
-                {
-                    $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
-                }
-                else 
-                {
+                if ($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
                     $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
-                }
-
+                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
+                    $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
+                
                 $status  = 'Success';
                 $message = 'The inspection is done';
 
