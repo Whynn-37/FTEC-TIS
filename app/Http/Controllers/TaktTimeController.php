@@ -182,7 +182,7 @@ class TaktTimeController extends Controller
                                     'remarks'               => $items_value->remarks,
                                     'judgment'              => 'N/A',
                                     'hinsei'                => '',
-                                    'item_type'             => 0,
+                                    'item_type'             => $items_value->item_type,
                                     'created_at'            => now(),
                                     'updated_at'            => now()
                                 ];

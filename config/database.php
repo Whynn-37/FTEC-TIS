@@ -94,7 +94,7 @@ return [
         'mydb' => [
             'driver' => 'sqlsrv',
             'host' => '10.51.10.39',
-            'database' => 'mydb',
+            'database' => 'TIS',
             'username' => 'sa',
             'password' => 'ftec@1966',
             'charset' => 'utf8',

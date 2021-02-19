@@ -140,7 +140,6 @@ class FpdfController extends Controller
 
                         if ($indicator == 1)
                         {
-                            
                             $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
                             $template = $pdf->importPage(1);
                             $pdf->AddPage();
@@ -288,6 +287,9 @@ class FpdfController extends Controller
                                 case 'YUTAKA SATOU':
                                     $signature_evaluator = 'YUTAKA SATOU';
                                     break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_evaluator = 'ERIKA REFORMADO';
+                                    break;
                                 default:
                                     $signature_evaluator = '';
                                     break;
@@ -312,6 +314,9 @@ class FpdfController extends Controller
                                     break;
                                 case 'TAMOTSU KOIKE':
                                     $signature_approver = 'TAMOTSU KOIKE';
+                                    break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_approver = 'ERIKA REFORMADO';
                                     break;
                                 default:
                                     $signature_approver = '';
