@@ -861,30 +861,8 @@ class FpdfController extends Controller
 
                 list($w, $h) = getimagesize($path);
                 $pdf->AddPage($w > $h  ? 'L' : 'P');
-          
-                if($w> $h)
-                {
-                    // landscape
-                    if($w >  297)
-                    {
-                        $w = 297-30;       
-                    }
-                    if($h >  210)
-                    {
-                        $h = 210-20;   
-                    }
-                }
-                else
-                {
-                    //portrait
-                    if($h >  297){
-                        $h = 297-20;
-                    }
-                    if($w >  210){
-                        $w = 210-30;   
-                    }
-                }
-                $pdf->Image($path,20,20,$w,$h);
+
+                $pdf->Image($path,5,5,280);
             }
         }
 
@@ -897,7 +875,7 @@ class FpdfController extends Controller
         $Attachment->storeFileMerge($data['checksheet_details']['id'], $merge_data_file);
 
         
-        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'F');
+        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'I');
         exit;
     }
 }
