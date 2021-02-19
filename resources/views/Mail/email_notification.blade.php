@@ -89,99 +89,99 @@
                                             style="text-align:center;font-family: Open Sans, Helvetica, sans-serif;padding:20px;">
                                                 <thead>
                                                     <tr>
-                                                        <th style="background-color:#1A416E;font-size:12px;"> &nbsp; </th>
+                                                        <th style="background-color:#1A416E;font-size:12px;"> 図番 </th>
                                                         <th style="font-size:16px;background-color:#1A416E;color:#ffffff;">PART NUMBER</th>
                                                         <th style="font-size:16px;background-color:#1A416E;color:#ffffff;"> {{$data['part_number']}} </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 品名 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> PART NAME </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['part_name']}} </td>          
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 版数 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REVISION NUMBER </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['revision_number']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> トライアル数 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> TRIAL NUMBER </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['trial_number']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> サプライヤー名 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> SUPPLIER NAME </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['supplier_name']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 適用日 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPLICATION DATE </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['application_date']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 判定 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> JUDGMENT </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['judgment']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 検査者 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED BY </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_inspect_by']}} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 検査日時 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED DATE TIME </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['inspect_datetime']}} </td>
                                                     </tr>
                                                     @if($subject === 'For Approval' || $subject === 'For Re-Approval')
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
                                                         </tr>
                                                     @endif
                                                     @if ($subject === 'Approved')
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 承認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_approved_by']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 承認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_datetime']}} </td>
                                                         </tr>
                                                     @endif
-                                                    @if($subject === 'For Re-inspection' || $subject === 'For Re-Evaluation - Approver' || $subject === ' For Re-Evaluation.')
+                                                    @if($subject === 'For Re-inspection' || $subject === 'For Re-Evaluation - Approver' || $subject === 'For Re-Evaluation.')
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 否決者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED BY </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_disapproved_by']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 否決日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED DATE </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_datetime']}} </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> Japanese </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 理由 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
                                                         </tr>

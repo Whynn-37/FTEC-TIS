@@ -39,7 +39,7 @@ class MailController extends Controller
         {
             $receipient = $LoginUser->sendEmailTo($data['inspect_by']);
             $receipient = $receipient['EmailAdd'];
-            
+
             $subject = 'For Re-inspection';
         }
         else if($status == 'for_evaluation')
