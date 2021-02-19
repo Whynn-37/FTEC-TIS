@@ -18,6 +18,7 @@ use DB;
 use Excel;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
+use App\Helpers\Unique;
 
 class ApprovalController extends Controller
 {
@@ -361,23 +362,6 @@ class ApprovalController extends Controller
         ];
     }
 
-    public function unique_array($array, $key) 
-    { 
-        $temp_array = array(); 
-        $i = 0; 
-        $key_array = array(); 
-        
-        foreach($array as $val) { 
-            if (!in_array($val[$key], $key_array)) { 
-                $key_array[$i] = $val[$key]; 
-                $temp_array[] = $val; 
-            } 
-            $i++; 
-        } 
-
-        return $temp_array; 
-    }
-
     public function generateSecondPage($trial_checksheet_id)
     {
         $TrialChecksheet = new TrialChecksheet();
@@ -385,6 +369,7 @@ class ApprovalController extends Controller
         $ChecksheetData = new ChecksheetData();
         $Supplier = new Supplier();
         $Approval = new Approval();
+        $Unique = new Unique();
         $LoginUser = new LoginUser();
 
         $data_trial_ledger = json_decode(json_encode($TrialChecksheet->getChecksheetDetails($trial_checksheet_id)),true);
@@ -434,7 +419,7 @@ class ApprovalController extends Controller
 
         foreach ($result_merge as $details_key => $details_value) 
         {
-            $details_value = $this->unique_array($details_value, 'item_number');
+            $details_value = $Unique->unique_multidim_array($details_value, 'item_number');
             foreach ($details_value as $value) 
             {
                 $checksheets_item = json_decode(json_encode($ChecksheetItem->getItemNg($value['trial_checksheet_id'], $value['item_number'])),true);
@@ -615,7 +600,7 @@ class ApprovalController extends Controller
                     'file_name' =>  explode(',', $folder_name['file_merge'])
                 ];
 
-                return $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
                 $status = 'approved';
 

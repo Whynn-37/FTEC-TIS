@@ -94,4 +94,11 @@ class ChecksheetData extends Model
         return ChecksheetData::where('checksheet_item_id', $id)
         ->update($data);
     }
+
+    public function getdata($checksheet_item_id)
+    {
+        return ChecksheetData::where('checksheet_item_id', $checksheet_item_id)
+        ->select('sub_number')
+        ->get();
+    }
 }

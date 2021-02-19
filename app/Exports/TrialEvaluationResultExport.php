@@ -53,6 +53,9 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                 case 'YUTAKA SATOU':
                     $signature_evaluator = 'YUTAKA SATOU';
                     break;
+                case 'ERIKA REFORMADO':
+                    $signature_evaluator = 'ERIKA REFORMADO';
+                    break;
                 default:
                     $signature_evaluator = '';
                     break;
@@ -78,6 +81,9 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
                     break;
                 case 'TAMOTSU KOIKE':
                     $signature_approver = 'TAMOTSU KOIKE';
+                    break;
+                case 'ERIKA REFORMADO':
+                    $signature_approver = 'ERIKA REFORMADO';
                     break;
                 default:
                     $signature_approver = '';

@@ -358,6 +358,7 @@ class TrialChecksheetController extends Controller
         $trial_checksheet_id = $Request->trial_checksheet_id;
         $part_number = $Request->part_number;
         $inspection_reason = $Request->inspection_reason;
+        $trial_number = $Request->trial_number;
 
         $status = 'Error';
         $message = 'Not Successfully Load ';
@@ -378,10 +379,38 @@ class TrialChecksheetController extends Controller
 
             foreach ($checksheet_ids as $checksheet_ids_value) 
             {
-                $ids[] = $checksheet_ids_value['id'];
+                $trial_checksheet_ids[] = $checksheet_ids_value['id'];
             }
 
-            $checksheet_data = $ChecksheetItem->getItem($ids);
+            $checksheet_item_count = $ChecksheetItem->getItem($trial_checksheet_ids);
+
+            if ($trial_number == 1)
+            {
+                foreach ($checksheet_item_count as  $checksheet_item_count_value) 
+                {
+                    $checksheet_data[] = $ChecksheetData->getdata($checksheet_item_count_value['min']);
+                }
+    
+                for ($i=0; $i < count($checksheet_data); $i++) 
+                { 
+                    $checksheet_items[$i]['count'] = count($checksheet_data[$i]);
+                }
+            }
+
+            if ($trial_number >= 2)
+            {
+                $checksheet_item_ng_count = $ChecksheetItem->getNgItem($trial_checksheet_ids);
+
+                foreach ($checksheet_item_ng_count as  $checksheet_item_ng_count_value) 
+                {
+                    $checksheet_data[] = $ChecksheetData->getdata($checksheet_item_ng_count_value['min']);
+                }
+    
+                for ($i=0; $i < count($checksheet_data); $i++) 
+                { 
+                    $checksheet_items[$i]['count'] = count($checksheet_data[$i]);
+                }
+            }
 
             $status = 'Success';
             $message = 'Successfully Load';
@@ -395,7 +424,7 @@ class TrialChecksheetController extends Controller
             [
                 'items' => $checksheet_items,
                 'datas' => $checksheet_datas,
-                'count' => count($checksheet_data),
+                'count' => count($checksheet_item_count),
             ]
         ];
     }

@@ -140,7 +140,6 @@ class FpdfController extends Controller
 
                         if ($indicator == 1)
                         {
-                            
                             $pdf->setSourceFile(storage_path('app/public/second_page/second_page.pdf'));
                             $template = $pdf->importPage(1);
                             $pdf->AddPage();
@@ -230,6 +229,9 @@ class FpdfController extends Controller
                                 case 'MAKIKO KAIDOU':
                                     $signature_inspector = 'MAKIKO KAIDOU';
                                     break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_inspector = 'ERIKA REFORMADO';
+                                    break;
                                 default:
                                     $signature_inspector = '';
                                     break;
@@ -267,6 +269,9 @@ class FpdfController extends Controller
                                 case 'YUTAKA SATOU':
                                     $signature_evaluator = 'YUTAKA SATOU';
                                     break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_evaluator = 'ERIKA REFORMADO';
+                                    break;
                                 default:
                                     $signature_evaluator = '';
                                     break;
@@ -291,6 +296,9 @@ class FpdfController extends Controller
                                     break;
                                 case 'TAMOTSU KOIKE':
                                     $signature_approver = 'TAMOTSU KOIKE';
+                                    break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_approver = 'ERIKA REFORMADO';
                                     break;
                                 default:
                                     $signature_approver = '';
@@ -871,7 +879,7 @@ class FpdfController extends Controller
         $Attachment->storeFileMerge($data['checksheet_details']['id'], $merge_data_file);
 
         
-        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'I');
+        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'F');
         exit;
     }
 }

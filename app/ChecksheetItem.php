@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 class ChecksheetItem extends Model
 {
     protected $guarded = [];
@@ -132,8 +133,18 @@ class ChecksheetItem extends Model
     public function getItem($trial_checksheet_id)
     {
         return ChecksheetItem::whereIn('trial_checksheet_id', $trial_checksheet_id)
-        ->select('item_number')
+        ->select('item_number', DB::raw("MIN(id)"))
         ->groupBy('item_number')
         ->get();
     }
+
+    public function getNgItem($trial_checksheet_id)
+    {
+        return ChecksheetItem::whereIn('trial_checksheet_id', $trial_checksheet_id)
+        ->where('judgment', 'NG')
+        ->select('item_number', DB::raw("MIN(id)"))
+        ->groupBy('item_number')
+        ->get();
+    }
+    
 }
