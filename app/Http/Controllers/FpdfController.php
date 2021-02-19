@@ -230,6 +230,27 @@ class FpdfController extends Controller
                                 case 'MAKIKO KAIDOU':
                                     $signature_inspector = 'MAKIKO KAIDOU';
                                     break;
+                                case 'TERRY MERWIN BALAHADIA':
+                                    $signature_inspector = 'TERRY MERWIN BALAHADIA';
+                                    break;
+                                case 'GEORGE BIEN ALMENANZA':
+                                    $signature_inspector = 'GEORGE ALMENANZA';
+                                    break;
+                                case 'HARUKI FUJITA':
+                                    $signature_inspector = 'HARUKI FUJITA';
+                                    break;
+                                case 'KOUJI SAWAZAKI':
+                                    $signature_inspector = 'KOUJI SAWAZAKI';
+                                    break;
+                                case 'TAKAHIRO HIROSAWA':
+                                    $signature_inspector = 'TAKAHIRO HIROSAWA';
+                                    break;
+                                case 'YUTAKA MORIYAMA':
+                                    $signature_inspector = 'YUTAKA MORIYAMA';
+                                    break;
+                                case 'YUTAKA SATOU':
+                                    $signature_inspector = 'YUTAKA SATOU';
+                                    break;
                                 default:
                                     $signature_inspector = '';
                                     break;
@@ -871,7 +892,7 @@ class FpdfController extends Controller
         $Attachment->storeFileMerge($data['checksheet_details']['id'], $merge_data_file);
 
         
-        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'I');
+        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'F');
         exit;
     }
 }

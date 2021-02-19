@@ -140,6 +140,8 @@ const APPROVE = (() => {
 
         $('#div_modal_content').LoadingOverlay('show');
 
+        $('#txt_trial_checksheet_id').val(id);
+
         $.ajax({
             url     : `load-inspection-data`,
             type    : 'get',
@@ -155,8 +157,6 @@ const APPROVE = (() => {
                 if (data.status === 'Success')
                 {
                     //checksheet details
-                    $('#btn_for_inspection').attr(`onclick`,`HISTORY.editDataInspection(${id},5);`);
-                    $('#btn_for_evaluator').attr(`onclick`,`HISTORY.editDataInspection(${id},1);`);
 
                     $('#txt_part_number').val(data.data.checksheet_details.part_number);
                     $('#txt_revision').val(data.data.checksheet_details.revision_number);
@@ -656,6 +656,30 @@ const APPROVE = (() => {
                 }
             })
         }
+    };
+
+    this_approve.DisapproveDataHistory = (btn_id) => {
+
+        let id = $('#txt_trial_checksheet_id').val();
+
+        $('#btn_for_inspection').prop('hidden',true);
+        $('#btn_for_evaluator').prop('hidden',true);
+        $('#btn_submit_disapprove_history').prop('hidden',false);
+        $('#btn_cancel_disapprove_history').prop('hidden',false);
+        $('#accordion_disapprove_reason_history').prop('hidden',false);
+        $('#txt_disapprove_reason').focus();
+
+        $('#btn_submit_disapprove_history').attr(`onclick`,`HISTORY.editDataInspection(${id},${btn_id});`);
+    };
+
+    this_approve.CancelDisapproveDataHistory = () => {
+
+        $('#btn_for_inspection').prop('hidden',false);
+        $('#btn_for_evaluator').prop('hidden',false);
+        $('#btn_submit_disapprove_history').prop('hidden',true);
+        $('#btn_cancel_disapprove_history').prop('hidden',true);
+        $('#accordion_disapprove_reason_history').prop('hidden',true);
+        $('#span_error_reason').remove();
     };
 
     return this_approve;

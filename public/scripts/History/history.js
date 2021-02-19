@@ -246,6 +246,8 @@ const HISTORY = (() => {
 
     this_history.editDataInspection =  (trial_checksheet_id,decision) =>
     {
+        let history_reason = $('#txt_disapprove_reason_history').val();
+
         Swal.fire({
             title: 'Are you sure?',
             text: "Please confirm it.",
@@ -257,6 +259,7 @@ const HISTORY = (() => {
           }).then((result) => {
             if (result.isConfirmed) 
             {
+                $('#div_modal_content').LoadingOverlay('show');
                 $.ajax({
                     url     : `edit-data-inspection`,
                     type    : 'patch',
@@ -265,7 +268,8 @@ const HISTORY = (() => {
                     {
                         _token              : _TOKEN,
                         trial_checksheet_id : trial_checksheet_id,
-                        decision            : decision
+                        decision            : decision,
+                        reason              : history_reason
                     },
                     success: data => 
                     {
@@ -277,6 +281,7 @@ const HISTORY = (() => {
 
                         HISTORY.loadHistoryList();
                         $("#modal_view_inspection_data").modal("hide");
+                        $('#div_modal_content').LoadingOverlay('hide');
                     }
                 })
             }

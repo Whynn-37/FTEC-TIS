@@ -140,7 +140,7 @@
                             </div>
                         </div>
                     </div>
-
+                    {{-- REMARKS FOR APPROVAL --}}
                     <div id="accordion_disapprove_reason" class="according accordion-s2 gradiant-bg-danger mb-3" hidden>
                         <div class="card">
                             <div class="card-header">
@@ -159,6 +159,26 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- REMARKS FOR APPROVED - HISTORY --}}
+                    <div id="accordion_disapprove_reason_history" class="according accordion-s2 gradiant-bg-danger mb-3" hidden>
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="card-link" href="#accordion_reason_history"><strong
+                                        style="font-size: 20px;"><i class="ti-comment-alt"></i>
+                                        DISAPPROVE REASON</strong></a>
+                            </div>
+                            <div id="accordion_reason" class="show" data-parent="#accordion_disapprove_reason_history">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <textarea id="txt_disapprove_reason_history" class="form-control textarea_hinsei" placeholder="Enter reason"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -167,13 +187,21 @@
                 <button id="btn_cancel" type="button" class="btn btn-app btn-outline-secondary btn-block" data-dismiss="modal"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
                 <button id="btn_disapprove" type="button" class="btn btn-app btn-danger btn-block" onclick="APPROVE.DisapproveData();"><strong class="strong-font"><i class="ti-close"></i> DISAPPROVE</strong></button>
 
-                {{-- history button return to evaluator and inspector --}}
-                <button id="btn_for_inspection" type="button" class="btn btn-history btn-primary btn-block"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO INSPECTION </strong></button>
-                <button id="btn_for_evaluator" type="button" class="btn btn-history btn-success btn-block"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO EVALUATOR </strong></button>
-
                 {{-- para sa pag disapprove --}}
                 <button id="btn_submit_disapprove" type="button" class="btn btn-danger btn-block" onclick="APPROVE.ProceedDisapproveData();" hidden><strong class="strong-font"><i class="ti-check"></i> PROCEED TO DISAPPROVE</strong></button>
                 <button id="btn_cancel_disapprove" type="button" class="btn btn-outline-secondary btn-block" onclick="APPROVE.CancelDisapproveData();" hidden><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+                
+                {{-----------------------------------------------------------------------------------------------------------------------------------------------}}
+                
+                {{-- history button return to evaluator and inspector --}}
+                <input type="text" hidden id="txt_trial_checksheet_id">
+                <button id="btn_for_inspection" type="button" class="btn btn-history btn-primary btn-block" onclick="APPROVE.DisapproveDataHistory(5);"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO INSPECTION </strong></button>
+                <button id="btn_for_evaluator" type="button" class="btn btn-history btn-success btn-block" onclick="APPROVE.DisapproveDataHistory(3);"><strong class="strong-font"><i class="ti-back-left"></i> RETURN TO EVALUATOR </strong></button>
+                
+                {{-- para sa pag disapprove --}}
+                <button id="btn_submit_disapprove_history" type="button" class="btn btn-danger btn-block" hidden><strong class="strong-font"><i class="ti-check"></i> PROCEED TO DISAPPROVE</strong></button>
+                <button id="btn_cancel_disapprove_history" type="button" class="btn btn-outline-secondary btn-block" onclick="APPROVE.CancelDisapproveDataHistory();" hidden><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>
+            
             </div>
         </div>
     </div>

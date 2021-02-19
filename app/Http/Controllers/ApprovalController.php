@@ -615,7 +615,7 @@ class ApprovalController extends Controller
                     'file_name' =>  explode(',', $folder_name['file_merge'])
                 ];
 
-                return $FpdfController->mergeFile($merge_file_data, $second_page_data);
+                $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
                 $status = 'approved';
 
