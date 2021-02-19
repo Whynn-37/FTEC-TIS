@@ -16,10 +16,16 @@ let logVisit = function (event) {
     let absolute_value_remaining_takt_time  = Math.abs(Math.floor(remaining_takt_time));
     let converted_remaining_takt_time       = absolute_value_remaining_takt_time / 60;
 
-    let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
-    let absolute_value_remaining_actual_time    = Math.abs(Math.floor(remaining_actual_time));
-    let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
+    // let remaining_actual_time                   = $("#div_actual_time_timer").TimeCircles().getTime();
+    // let absolute_value_remaining_actual_time    = Math.abs(Math.floor(remaining_actual_time));
+    // let converted_remaining_actual_time         = absolute_value_remaining_actual_time / 60;
 
+    let total_downtime                          = $('#td_total_downtime').html();
+    let total_of_total_takt_time                = $('#total_of_total_takt_time').val();
+
+    (total_downtime == '') ? total_downtime = 0 : total_downtime;
+    let converted_remaining_actual_time     = parseFloat(converted_remaining_takt_time) + parseFloat(total_of_total_takt_time) + parseFloat(total_downtime);
+    
     // URL to send the data to
     let url = `api/stop-cycle-time?trial_checksheet_id=${trial_checksheet_id}&actual_time=${converted_remaining_actual_time.toFixed(2)}&total_takt_time=${converted_remaining_takt_time.toFixed(2)}&takt_time=${Math.abs(converted_remaining_target_takt_time.toFixed(2))}`;
 
@@ -1149,8 +1155,8 @@ const CHECKSHEET = (() => {
                             let trial_number            = $('#txt_trial_number').val();
                             
                             //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
-                            (trial_number == 1) ? loop_count = parseInt(item_no_count) : loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count);
-                            alert(loop_count)
+                            (trial_number == 1) ? loop_count = parseInt(item_no_count) : loop_count = parseInt(original_item_no_count) + (new_item_no_count == '') ? 0 : parseInt(new_item_no_count);
+
                             for (let item_no_index = 1; item_no_index <= loop_count; item_no_index++) 
                             {
                                 let item_number     = $(`#span_item_no_${item_no_index}_label`).text();
@@ -1210,7 +1216,7 @@ const CHECKSHEET = (() => {
                                     ng_judgement_count++;
                                 }
 
-                                if ($.inArray(tools, array_item_tools) === -1)
+                                if ($.inArray(tools, $.merge( array_item_tools, array_item_tools_words)) === -1)
                                 {
                                     Swal.fire({
                                         icon: 'warning',
@@ -1266,7 +1272,10 @@ const CHECKSHEET = (() => {
 
         let inspection_list_id = $('#txt_inspection_list_id').val();
 
-        // console.log(inspection_list_id);
+        if (inspection_list_id == 0)
+        {
+            CHECKSHEET.StopCycleTime('save_trial_checksheet');
+        }
 
         form_data.append('judgment',final_judgment)
 
@@ -1295,11 +1304,6 @@ const CHECKSHEET = (() => {
                     $('#tbody_tbl_takt_time').empty();
                     $('#tbody_tbl_downtime').empty();
                     $('#td_total_downtime').html('');
-
-                    if(inspection_list_id == 0)
-                    {
-                        CHECKSHEET.StopCycleTime('save_trial_checksheet');
-                    }
                     
                     $('#form_trial_checksheet')[0].reset();
                     $('#txt_revision_number').empty();

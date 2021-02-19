@@ -24,6 +24,7 @@
                                         <table class="table text-center table-bordered" id="tbl_finished_inspection_data">
                                             <thead class="text-uppercase bg-dark">
                                                 <tr class="text-white">
+                                                    <th>ACTION</th>
                                                     <th>PART NO</th>
                                                     <th>REVISION</th>
                                                     <th>TRIAL NUMBER</th>
@@ -34,7 +35,6 @@
                                                     <th>EVALUATED DATE/TIME</th>
                                                     <th>DATE FINISHED</th>
                                                     <th>JUDGEMENT</th>
-                                                    <th>ACTION</th>
                                                  </tr>
                                             </thead>
                                             <tbody id="tbody_tbl_finished_inspection_data"></tbody>

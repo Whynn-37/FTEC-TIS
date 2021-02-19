@@ -54,7 +54,7 @@ const HISTORY = (() => {
                         <td>
                             <button class="btn btn-primary btn-block" onclick="${history_function}('${value.id}', ${approved_button});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                         </td>
-                        <td><button class="btn ${file_button_color} btn-block" ${file_button} style="${button_style}" onclick="HISTORY.viewFiles('${value.id}','${status}','${value.file_name}','${value.file_folder}','${value.file_name_merge}');">VIEW FILES</button></td>
+                        <td><button class="btn ${file_button_color} btn-block" ${file_button} style="${button_style}" onclick="HISTORY.viewFiles('${value.id}','${status}','${value.file_name}','${value.file_folder}','${value.file_name_merge}');"><strong class="strong-font"><i class="ti-files"></i> VIEW FILES</strong></button></td>
                         <td>${value.part_number}</td>
                         <td>${value.revision_number}</td>
                         <td>${value.trial_number}</td>

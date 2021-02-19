@@ -3185,3 +3185,10 @@ table.dataTable thead td {
 .text_to_uppercase {
     text-transform: uppercase;
 }
+
+.td-wrap
+{
+  white-space:normal;
+  width:237px;
+  vertical-align:top;
+}

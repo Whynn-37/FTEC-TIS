@@ -109,7 +109,6 @@
                                             {{-- HIDDEN ID REQUEST NI JED --}}
                                             <input type="text" id="trial_checksheet_id" name="trial_checksheet_id" hidden>
                                             <input type="text" id="trial_checksheet_application_date" name="application_date" hidden>
-                                            <input type="text" id="txt_from_load_igm_status" hidden>
                                             <input type="text" id="txt_inspection_list_id" hidden>
                                             <div class="row">
                                                 <div class="col-md-3">

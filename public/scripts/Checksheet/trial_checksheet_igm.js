@@ -7,8 +7,8 @@ var sub_no_count        = 0; // count kung ilan ang sub no
 var item_no_count       = ''; // count kung ilan ang item no
 var new_item_no_count   = 0; // count kung ilan ang new_item_no_count
 var existing_sub_no_count_per_item;
-var array_item_tools    = ['BF', 'BG', 'BM', 'CM', 'CMM', 'CS', 'DC', 'DG', 'DI', 'DM', 'DPG', 'DSM', 'EG', 'GB', 'GM', 'GT', 'HG', 'HS', 'HT', 'IR', 'JIG', 'K', 'LS', 'MJ', 'MM', 'MP', 'PG', 'PJ', 'PLG', 'PM', 'PPS', 'PR', 'PS', 'RG', 'RHT', 'RT', 'RW', 'SDC', 'SF', 'SG', 'SR', 'ST', 'TD', 'TG', 'TI', 'TM', 'VAM', 'VHT', 'VSL'];//gamit ko kase to sa 
-
+var array_item_tools    = ['BF', 'BG', 'BM', 'CM', 'CMM', 'CS', 'DC', 'DG', 'DI', 'DM', 'DPG', 'DSM', 'EG', 'GB', 'GM', 'GT', 'HG', 'HS', 'HT', 'IR', 'JIG', 'K', 'LS', 'MJ', 'MM', 'MP', 'PG', 'PJ', 'PLG', 'PM', 'PPS', 'PR', 'PS', 'RG', 'RHT', 'RT', 'RW', 'SDC', 'SF', 'SG', 'SR', 'ST', 'TD', 'TG', 'TI', 'TM', 'VAM', 'VHT', 'VSL'];
+var array_item_tools_words    = ['Caliper','Height Gauge', 'Dial Test Indicator', 'Protractor','Plug Gauge', 'Pin Gauge','Dial Gauge','Visual Inspection','Micrometer','Projector','Multimeter','Torque Meter','Screw Torque Meter','Gear Test','Microscope','Laser Scan','R Gauge','Bore Gauge','Depth Gauge'];
 
 const IGM = (() => {
     let this_igm = {};
@@ -117,6 +117,7 @@ const IGM = (() => {
                 trial_checksheet_id : trial_checksheet_id,
                 part_number         : part_number,
                 inspection_reason   : inspection_reason,
+                trial_number        : trial_number,
             },
             success: data => 
             {
@@ -128,7 +129,7 @@ const IGM = (() => {
     
                     //pagkuha ng checksheet items
                     IGM.GetChecksheetItems(data);
-                    $('#txt_from_load_igm_status').val(data.data.items.length);
+
                     $('#original_item_no_count').val(data.data.items.length);// gamit ko to para sa mga trial > 1 dahil hindi naman sunod sunod ang item no ng mga NG
                     //pagkuha ng max item number
                     if (data.data.items.length > 0) 
@@ -254,13 +255,13 @@ const IGM = (() => {
 					</div>
 				</td> 
 				<td>
-					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" ${(trial_number == 1) ? '' : 'disabled'}>
+					<input list="item_tools_list" id="slc_item_no_${value.item_number}_tools" type="text" class="form-control input_text_center" placeholder="Select tools" ${(trial_number == 1) ? (value.item_type == 1) ? 'disabled' : '' : 'disabled'}>
 					<datalist id="item_tools_list">
 						${array_item_tools_options}
                     </datalist>
                 </td>
 				<td>
-					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" ${(trial_number == 1) ? '' : 'disabled'}>
+					<select id="slc_item_no_${value.item_number}_type" class="form-control" onchange="IGM.SelectItemType(${value.item_number},1);" ${(trial_number == 1) ? (value.item_type == 1) ? 'disabled' : '' : 'disabled'}>
 						<option value=""selected disabled>Select type</option>
 						${array_item_type_options}
 					</select>
@@ -396,6 +397,7 @@ const IGM = (() => {
             {
                 new_item_no_count++;
             }
+
             $('#tbl_new_igm').prop('hidden', false);
             $('#tr_item_no_main_column').prop('hidden', false);
             tr_new_item = IGM.AddIgmItemNoInputs(type, '', previous_item_no,remove_status);
@@ -755,31 +757,31 @@ const IGM = (() => {
         let upper_limit         = $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit         = $(`#txt_item_no_${item_no}_lower_limit`).val();
 
+        let new_upper_limit = (upper_limit == '') ? null : parseFloat(upper_limit);
+        let new_lower_limit = (upper_limit == '') ? null : parseFloat(lower_limit);
+
         if (action === 'select_item_type')
         { 
             //pag update or create ng checksheet item
-            IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,upper_limit,lower_limit,bg_header,action,item_type);
+            IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action,item_type);
         }
         else
         {
-            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness')
+            
+            //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
+            if (parseFloat(upper_limit) > 0)
+            {
+                new_upper_limit =  `+${parseFloat(upper_limit)}`;
+            }
+            
+            if (parseFloat(lower_limit) > 0)
+            {
+                new_lower_limit =  `+${parseFloat(lower_limit)}`;
+            }
+                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance' || type === 'Actual' || type === 'Material Thickness')
             {
                 if (specification !== '' && upper_limit !== '' && lower_limit !== '')
                 {
-                    let new_upper_limit = parseFloat(upper_limit);
-                    let new_lower_limit = parseFloat(lower_limit);
-
-                    //nilagyan ko ng ganto dahil pag ka "+0.6" ang nilagay na input, kusang inaalis yung positive sign kaso sa data nila galing trial ledger kasama yung "+" sign sa number kaya ayan
-                    if (parseFloat(upper_limit) > 0)
-                    {
-                        new_upper_limit =  `+${parseFloat(upper_limit)}`;
-                    }
-                    
-                    if (parseFloat(lower_limit) > 0)
-                    {
-                        new_lower_limit =  `+${parseFloat(lower_limit)}`;
-                    }
-
                     $(`#accordion_igm`).LoadingOverlay('hide');
                     //pag update or create ng checksheet item
                     IGM.ProceedAddIgmItemNo(id,trial_checksheet_id,item_no,tools,type,specification,new_upper_limit,new_lower_limit,bg_header,action,item_type);
@@ -832,9 +834,9 @@ const IGM = (() => {
         }
         else
         {
-            let load_igm_status = $('#txt_from_load_igm_status').val();
+            let item_type = $(`#txt_item_no_${item_no}_item_type`).val();
 
-            if (load_igm_status > 0)
+            if (item_type == 1)
             {
                 remove_status = $(`#a_add_igm_item_no_${item_no}_sub_no`).attr('onclick').split(',')[4].split(')')[0].replace(/"|'/g, '');
             }
@@ -1336,20 +1338,19 @@ const IGM = (() => {
 
             for (let remove_sub_no_count = 1; remove_sub_no_count <= item_no_existing_sub_no_count; remove_sub_no_count++) 
             {
-
                 // $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
                 $(`#th_tr_item_no_${previous_item_no_holder}_sub_no_column_rowspan`).attr('id', `th_tr_item_no_${next_item_no_holder}_sub_no_column_rowspan_1`);
 
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).text(`${remove_sub_no_count}`);
                 $(`#span_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_label`).attr('id', `span_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_label_1`);
 
-                $(`#txt_hidden_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `txt_hidden_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
+                //coordinates
+                $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
+                $(`#txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`).attr('onchange', `IGM.SubItemGetMinMax(${next_item_no_holder},${remove_sub_no_count})`);
 
                 if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') 
                 {
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_min_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_min_${remove_sub_no_count}_1`);
-                    //coordinates
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
 
                     //min
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_min_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_min_1_1`);
@@ -1368,19 +1369,29 @@ const IGM = (() => {
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_4_1`);
                     $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_max_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_max_5_1`);
 
-                } 
+                }
                 else 
                 {
-
                     $(`#tr_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}`).attr('id', `tr_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_1`);
-                    //coordinates
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_coordinates_1`);
+                   
                     //data
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_1_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_2_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_3_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_4_1`);
-                    $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_5_1`);
+                    if (item_no_existing_sub_no_type === 'Actual' || item_no_existing_sub_no_type === 'Material Thickness')
+                    {
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_amt_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_amt_1_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_amt_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_amt_2_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_amt_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_amt_3_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_amt_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_amt_4_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_amt_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_amt_5_1`);
+                    }
+                    else
+                    {
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_1`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_1_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_2`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_2_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_3`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_3_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_4`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_4_1`);
+                        $(`#txt_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_visual_5`).attr('id', `txt_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_visual_5_1`);
+                    }
+                    
                     $(`#td_item_no_${previous_item_no_holder}_sub_no_${remove_sub_no_count}_judgement`).attr('id', `td_item_no_${next_item_no_holder}_sub_no_${remove_sub_no_count}_judgement_1`);
                 }
             }
@@ -1442,11 +1453,13 @@ const IGM = (() => {
 
                     $(`#txt_hidden_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `txt_hidden_item_no_${a_count}_sub_no_${b_count}`);
 
+                    //coordinates
+                    $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
+
                     if (item_no_existing_sub_no_type === 'Min and Max' || item_no_existing_sub_no_type === 'Min and Max and Form Tolerance') 
                     {
                         $(`#tr_item_no_${a_count}_sub_no_min_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_min_${b_count}`);
-                        //coordinates
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
+                        
                         //min
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_1`);
                         $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_min_2`);
@@ -1466,28 +1479,51 @@ const IGM = (() => {
                         //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
                         for (let c_count = 1; c_count <= 5; c_count++) 
                         {
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'min');`);
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'max');`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onchange', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'min');`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onchange', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'max');`);
+                            let value = $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onclick').split(',')[0].split('(')[1].replace(/"|'/g, '');
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_min_${c_count}`).attr('onclick', `IGM.CheckIfDashValue('${value}',${a_count},${b_count},'min_${c_count}');`)
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_max_${c_count}`).attr('onclick', `IGM.CheckIfDashValue('${value}',${a_count},${b_count},'max_${c_count}');`)
                         }
                     } 
                     else 
                     {
                         $(`#tr_item_no_${a_count}_sub_no_${b_count}_1`).attr('id', `tr_item_no_${a_count}_sub_no_${b_count}`);
-                        //coordinates
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_coordinates_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_coordinates`);
-                        //data
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_1`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_2`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_3_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_3`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_4_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_4`);
-                        $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_5`);
+
+                        if (item_no_existing_sub_no_type === 'Actual' || item_no_existing_sub_no_type === 'Material Thickness')
+                        {
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_amt_1`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_amt_2`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_3_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_amt_3`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_4_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_amt_4`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_amt_5`);
+
+                                //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
+                                for (let c_count = 1; c_count <= 5; c_count++) 
+                                {
+                                    $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_${c_count}`).attr('onchange', `IGM.SubItemGetMinMax(${a_count},${b_count},${c_count},'amt');`);
+                                    let value = $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_${c_count}`).attr('onclick').split(',')[0].split('(')[1].replace(/"|'/g, '');
+                                    $(`#txt_item_no_${a_count}_sub_no_${b_count}_amt_${c_count}`).attr('onclick', `IGM.CheckIfDashValue('${value}',${a_count},${b_count},'amt_${c_count}');`)
+                                }
+                        }
+                        else
+                        {
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_1_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_1`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_2_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_2`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_3_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_3`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_4_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_4`);
+                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_5_1`).attr('id', `txt_item_no_${a_count}_sub_no_${b_count}_visual_5`);
+
+                            
+                            //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
+                            for (let c_count = 1; c_count <= 5; c_count++) 
+                            {
+                                $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${a_count},${b_count}, ${c_count});`);
+                            }
+                        }
+
                         $(`#td_item_no_${a_count}_sub_no_${b_count}_judgement_1`).attr('id', `td_item_no_${a_count}_sub_no_${b_count}_judgement`);
 
-                        //pag adjust ng subitemselectvisual na function pag nag add item in between tapos may existing sub item sa sunod na item
-                        for (let c_count = 1; c_count <= 5; c_count++) 
-                        {
-                            $(`#txt_item_no_${a_count}_sub_no_${b_count}_visual_${c_count}`).attr('onclick', `IGM.SubItemSelectVisual(${a_count},${b_count}, ${c_count});`);
-                        }
                     }
                 }
             }
@@ -1676,27 +1712,15 @@ const IGM = (() => {
             }
             else
             {
-                if (new_item_no_count === 1)
+                if (new_item_no_count !== 0)
                 {
-                    $(`#tr_item_no_${item_no}`).remove();
-                    $('#tfoot_add_igm_item').prop('hidden', false);
-                    $('#tbl_new_igm').prop('hidden', true);
-                    // new_item_no_count--;
-                    // item_no_count--;
-                    if (remove_status === 'existing')
+                    if (new_item_no_count === 1)
                     {
-                        item_no_count--;
-                    }
-                    else
-                    {
-                        new_item_no_count--;
-                        item_no_count--;
-                    }
-                }
-                else
-                {
-                    if (item_no === item_no_count)
-                    {
+                        $(`#tr_item_no_${item_no}`).remove();
+                        $('#tfoot_add_igm_item').prop('hidden', false);
+                        $('#tbl_new_igm').prop('hidden', true);
+                        // new_item_no_count--;
+                        // item_no_count--;
                         if (remove_status === 'existing')
                         {
                             item_no_count--;
@@ -1705,11 +1729,26 @@ const IGM = (() => {
                         {
                             new_item_no_count--;
                             item_no_count--;
-                        }//check kung ok na pag remove sa huli ng inadd na new item no
+                        }
                     }
                     else
                     {
-                        IGM.ProceedRemoveIgmItemNoChangeId(item_no,remove_status);
+                        if (item_no === item_no_count)
+                        {
+                            if (remove_status === 'existing')
+                            {
+                                item_no_count--;
+                            }
+                            else
+                            {
+                                new_item_no_count--;
+                                item_no_count--;
+                            }//check kung ok na pag remove sa huli ng inadd na new item no
+                        }
+                        else
+                        {
+                            IGM.ProceedRemoveIgmItemNoChangeId(item_no,remove_status);
+                        }
                     }
                 }
             }
@@ -1717,14 +1756,15 @@ const IGM = (() => {
         //para kung wala ng bagong add na items (yung kulay green ang column) lalabas na yung add item button
         if (new_item_no_count === 0)
         {
-            if (remove_status === 'existing')
-            {
-                $('#btn_add_new_igm_item_no').attr('onclick', `IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'existing');`);
-            }
-            else
-            {
-                $('#btn_add_new_igm_item_no').attr('onclick', `IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');`);
-            }
+            // if (remove_status === 'existing')
+            // {
+            //     $('#btn_add_new_igm_item_no').attr('onclick', `IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'existing');`);
+            // }
+            // else
+            // {
+            //     $('#btn_add_new_igm_item_no').attr('onclick', `IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');`);
+            // }
+            $('#btn_add_new_igm_item_no').attr('onclick', `IGM.AddIgmItemNo('',${parseInt(item_no_count) + 1},0,0,'new');`);
         }
     };
 
@@ -1870,10 +1910,26 @@ const IGM = (() => {
                 $(`#slc_item_no_${item_no_holder}_tools`).attr('onchange', `IGM.SelectItemTools(${item_no_holder}, ${tools_value});`);
                 
                 //other inputs
+
                 $(`#txt_item_no_${next_item_no_holder}_specs`).attr('id', `txt_item_no_${item_no_holder}_specs`);
                 $(`#txt_item_no_${next_item_no_holder}_upper_limit`).attr('id', `txt_item_no_${item_no_holder}_upper_limit`);
                 $(`#txt_item_no_${next_item_no_holder}_lower_limit`).attr('id', `txt_item_no_${item_no_holder}_lower_limit`);
                 $(`#td_item_no_${next_item_no_holder}_judgement`).attr('id', `td_item_no_${item_no_holder}_judgement`);
+
+                let item_type = $(`#txt_item_no_${item_no_holder}_item_type`).val();
+
+                if (item_type == 1)
+                {
+                    $(`#txt_item_no_${item_no_holder}_specs`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
+                    $(`#txt_item_no_${item_no_holder}_upper_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
+                    $(`#txt_item_no_${item_no_holder}_lower_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
+                }
+                else
+                {
+                    $(`#txt_item_no_${item_no_holder}_specs`).attr('onkeyup', `IGM.ValidateAddIgmItemNo(${item_no_holder},'','update_item_no_only',0);`);
+                    $(`#txt_item_no_${item_no_holder}_upper_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder},'update_item_no_only');`);
+                    $(`#txt_item_no_${item_no_holder}_lower_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder},'update_item_no_only');`);
+                }
 
                 if (existing_sub_no_count_value > 0) 
                 {
@@ -1926,10 +1982,9 @@ const IGM = (() => {
         //NATAPOS SA PAGKA SEARCH ULIT AY SIRA YUNG IGM NA NILOLOAD NYA
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
-        let rowspan = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
         
         //PAGKA NAG MANUAL ADD NG SUB ITEM AY UNDEFINED ITO
-        (remove_status == undefined) ? new_remove_status = $(`#a_remove_igm_item_no_${item_no_count}`).attr('onclick').split(',')[1].split(')')[0].replace(/"|'/g, '') : new_remove_status = remove_status;
+        (remove_status == undefined) ? new_remove_status = $(`#a_add_igm_item_no_${item_no_count}_sub_no`).attr('onclick').split(',')[4].split(')')[0].replace(/"|'/g, '') : new_remove_status = remove_status;
 
         if (existing_sub_no_count === 0) 
         {
@@ -2003,20 +2058,13 @@ const IGM = (() => {
             // naka global na sub_no_count;
             sub_no_count++;
 
-            if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
-            {
-                var rowspan_count = rowspan + 1;
-            } 
-            else 
-            {
-                rowspan_count = rowspan;
-            }
+            let rowspan = $(`#th_tr_item_no_${item_no_count}_sub_no_column_rowspan`).attr('rowspan');
 
             //meron nito para malaman kung mag didisplay ng new row sa table sabay add sa DB or mag didisplay lang ng row sa table
             if (action !== 'select_item_type')
-            {   
+            {
                 // pag store ng data sa DB, nandito nadin yung addigmsubnoinputs
-                IGM.ProceedAddIgmSubNo(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, rowspan_count,array_data,judgement,coordinates);
+                IGM.ProceedAddIgmSubNo(type, next_number, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, added_item_no_between_count, rowspan,array_data,judgement,coordinates);
                 $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
             }
             else
@@ -2476,10 +2524,14 @@ const IGM = (() => {
     };
 
     this_igm.RemoveSubNoChangeIdMMAndMMF = (item_no, sub_no, count, type, next_sub_no, added_item_no_between_count, existing_sub_no_count_per_item) => {
-        if (count === sub_no) {
+        
+        if (count === sub_no) 
+        {
             var sub_no_holder = sub_no;
             var next_sub_no_holder = next_sub_no;
-        } else {
+        } 
+        else 
+        {
             var sub_no_holder = count;
             var next_sub_no_holder = parseInt(count) + 1;
         }
@@ -2512,9 +2564,10 @@ const IGM = (() => {
         $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_4`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_4`);
         $(`#txt_item_no_${item_no}_sub_no_${next_sub_no_holder}_max_5`).attr('id', `txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_5`);
 
-        for (let c_count = 1; c_count <= 5; c_count++) {
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'min');`);
-            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_${c_count}`).attr('onkeyup', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'max');`);
+        for (let c_count = 1; c_count <= 5; c_count++) 
+        {
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_min_${c_count}`).attr('onchange ', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'min');`);
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no_holder}_max_${c_count}`).attr('onchange ', `IGM.SubItemGetMinMax(${item_no},${sub_no_holder},${c_count},'max');`);
         }
     };
 
@@ -2747,6 +2800,7 @@ const IGM = (() => {
             if (array_visuals.every( (value, i, array) => value === 'NA') == true)
             {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="input_text_center">N/A</span>');
+                $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
 
                 IGM.SubitemCalculateOverallJudgement(item_no, sub_no, array_visuals);
             }
@@ -2949,7 +3003,7 @@ const IGM = (() => {
         let upper_limit   =   $(`#txt_item_no_${item_no}_upper_limit`).val();
         let lower_limit   =   $(`#txt_item_no_${item_no}_lower_limit`).val();
         let specs         =   $(`#txt_item_no_${item_no}_specs`).val();
-        let coordinates   =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val().toUpperCase();
+        let coordinates   =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
         let min_max_value =   $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).val();
 
         $(`#txt_item_no_${item_no}_sub_no_${sub_no}_${min_max_type}_${min_max_no}`).attr('onclick',`IGM.CheckIfDashValue('${min_max_value}',${item_no},${sub_no},'${min_max_type}_${min_max_no}')`);
@@ -3034,7 +3088,7 @@ const IGM = (() => {
 
     this_igm.ValidateMinMaxType = (item_no, sub_no,min_max_type,min_max_no) => {
 
-        let coordinates         = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val().toUpperCase();
+        let coordinates         = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
 
         if (min_max_type === '' || min_max_type == undefined)
         {
@@ -3067,15 +3121,15 @@ const IGM = (() => {
                 {
                     $(`#span_min_error_${min_max_no}`).remove();
 
-                    if (type === 'Min and Max and Form Tolerance')
-                    {
-                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    }
-                    else
-                    {
+                    // if (type === 'Min and Max and Form Tolerance')
+                    // {
+                    //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    // }
+                    // else
+                    // {
                         IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type);
-                    }
+                    // }
                 }
                 else
                 {
@@ -3095,13 +3149,13 @@ const IGM = (() => {
             {
                 if (min_max_value === '-')
                 {
-                    if (type === 'Min and Max and Form Tolerance')
-                    {
-                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    }
-                    else
-                    {
+                    // if (type === 'Min and Max and Form Tolerance')
+                    // {
+                    //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    // }
+                    // else
+                    // {
                         for (let min_max_count = min_max_no - 1; min_max_count < min_max_no; min_max_count++) 
                         {
                             if ($(`#txt_item_no_${item_no}_sub_no_${sub_no}_max_${min_max_count}`).val() === '') 
@@ -3118,7 +3172,7 @@ const IGM = (() => {
                                 }
                             }
                         } 
-                    }
+                    // }
 
                 }
                 else
@@ -3158,15 +3212,15 @@ const IGM = (() => {
                 {
                     $(`#span_min_error_${min_max_no}`).remove();
 
-                    if (type === 'Min and Max and Form Tolerance')
-                    {
-                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    }
-                    else
-                    {
+                    // if (type === 'Min and Max and Form Tolerance')
+                    // {
+                    //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    // }
+                    // else
+                    // {
                         IGM.ValidateSubItemGetMinMaxWithUpperAndLowerLimit(item_no, sub_no, min_max_no, min_max_type); 
-                    }
+                    // }
                 }
                 else
                 {
@@ -3189,15 +3243,15 @@ const IGM = (() => {
             {
                 if (min_max_value === '-')
                 {
-                    if (type === 'Min and Max and Form Tolerance')
-                    {
-                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                    }
-                    else
-                    {
+                    // if (type === 'Min and Max and Form Tolerance')
+                    // {
+                    //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                    // }
+                    // else
+                    // {
                         IGM.ValidateSubItemGetMinMax5(item_no, sub_no, min_max_no, min_max_type);
-                    }
+                    // }
                 }
                 else
                 {
@@ -3494,7 +3548,7 @@ const IGM = (() => {
                         }
                         else
                         {
-                            if (!isNaN(parseFloat(min_value_loop)))
+                            if (!isNaN(parseFloat(max_value_loop)))
                             {
                                 //para sa iba pang condition para sa MMF may range na kasama
                                 if (type === 'Min and Max and Form Tolerance')
@@ -3565,54 +3619,54 @@ const IGM = (() => {
                                 //pagpush ng min and max data
                                 if (min_value === '-')
                                 {
-                                    //para malaman kung yung max ay nakadash lang
-                                    if (type === 'Min and Max and Form Tolerance')
-                                    {
-                                        if (max_value !== '')
-                                        {
-                                            if (max_value !== '-')
-                                            {
-                                                dash_count++;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dash_count++;
-                                        }
-                                        array_min_max_value.push(max_value);
-                                    }
-                                    else
-                                    {
-                                        array_min_max_value.push(min_value);
-                                    }
+                                    // //para malaman kung yung max ay nakadash lang
+                                    // if (type === 'Min and Max and Form Tolerance')
+                                    // {
+                                    //     if (min_value === '-')
+                                    //     {
+                                    //         dash_count++;
+                                    //         array_min_max_value.push(min_value);
+                                    //     }
+                                    //     else
+                                    //     {
+                                    //         if (min_value === '')
+                                    //         {
+                                    //             dash_count++;
+                                    //             array_min_max_value.push('-');
+                                    //         }
+                                    //         else
+                                    //         {
+                                    //             array_min_max_value.push((parseFloat(min_value) > 0) ? `+${parseFloat(min_value)}`: parseFloat(min_value));
+                                    //         }
+                                    //     }
+                                    // }
+                                    // else
+                                    // {
+                                    //     array_min_max_value.push(min_value);
+                                    // }
+                                    dash_count++;
+                                    array_min_max_value.push(min_value);
                                     
                                 }
                                 else
                                 {
                                     if (min_value === '')
                                     {
-                                        //para malaman kung yung max ay nakadash lang
-                                        if (type === 'Min and Max and Form Tolerance')
-                                        {
-                                            if (max_value !== '')
-                                            {
-                                                if (max_value !== '-')
-                                                {
-                                                    dash_count++;
-                                                }
-                                            } 
-                                            else
-                                            {
-                                                dash_count++;
-                                            }
-                                            array_min_max_value.push(max_value);
-                                        }
-                                        else
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                            array_min_max_value.push('-');
-                                        }
+                                        // //para malaman kung yung max ay nakadash lang
+                                        // if (type === 'Min and Max and Form Tolerance')
+                                        // {
+                                        //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        // }
+                                        // else
+                                        // {
+                                        //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     array_min_max_value.push('-');
+                                        // }
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        array_min_max_value.push('-');
                                     }
                                     else
                                     {
@@ -3622,53 +3676,52 @@ const IGM = (() => {
 
                                 if (max_value === '-')
                                 {
-                                    //para malaman kung yung min ay nakadash lang
-
-                                    if (type === 'Min and Max and Form Tolerance')
-                                    {
-                                        if (min_value !== '')
-                                        {
-                                            if (min_value !== '-')
-                                            {
-                                                dash_count++;
-                                            }
-                                            array_min_max_value.push(min_value);
-                                        }
-                                        else
-                                        {
-                                            dash_count++;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        array_min_max_value.push(max_value);
-                                    }
+                                    // //para malaman kung yung max ay nakadash lang
+                                    // if (type === 'Min and Max and Form Tolerance')
+                                    // {
+                                    //     if (max_value === '-')
+                                    //     {
+                                    //         dash_count++;
+                                    //         array_min_max_value.push(max_value);
+                                    //     }
+                                    //     else
+                                    //     {
+                                    //         if (max_value === '')
+                                    //         {
+                                    //             dash_count++;
+                                    //             array_min_max_value.push('-');
+                                    //         }
+                                    //         else
+                                    //         {
+                                    //             array_min_max_value.push((parseFloat(max_value) > 0) ? `+${parseFloat(max_value)}`: parseFloat(max_value));
+                                    //         }
+                                    //     }
+                                    // }
+                                    // else
+                                    // {
+                                    //     array_min_max_value.push(max_value);
+                                    // }
+                                    dash_count++;
+                                    array_min_max_value.push(max_value);
                                 }
                                 else
                                 {
                                     if (max_value === '')
                                     {
-                                        if (type === 'Min and Max and Form Tolerance')
-                                        {
-                                            if (max_value !== '')
-                                            {
-                                                if (max_value !== '-')
-                                                {
-                                                    dash_count++;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                dash_count++;
-                                            }
-                                            array_min_max_value.push(min_value);
-                                        }
-                                        else
-                                        {
-                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                            array_min_max_value.push('-');
-                                        }
+                                        // if (type === 'Min and Max and Form Tolerance')
+                                        // {
+                                        //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        // }
+                                        // else
+                                        // {
+                                        //     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //     array_min_max_value.push('-');
+                                        // }
+                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        array_min_max_value.push('-');
                                     }
                                     else
                                     {
@@ -3680,38 +3733,159 @@ const IGM = (() => {
                                 {
                                     if (invalid_value_count == 0)
                                     {
-                                        //para malaman kung ang mga textbox ay may nakadash pagka naka MMF ang type
-                                        if (type === 'Min and Max and Form Tolerance')
+                                        // //para malaman kung ang mga textbox ay may nakadash pagka naka MMF ang type
+                                        // if (type === 'Min and Max and Form Tolerance')
+                                        // {
+                                        //     if (dash_count > 0)
+                                        //     {
+                                        //         let min_count   = 0;
+                                        //         let max_count   = 1;
+                                        //         let invalid_count = 0;
+
+                                        //         for (let index = 1; index <= 5; index++) 
+                                        //         {
+                                        //             (array_min_max_value[min_count] !== '-' && array_min_max_value[max_count] === '-' || array_min_max_value[min_count] === '-' && array_min_max_value[max_count] !== '-') ? invalid_count++ : '';
+
+                                        //             if (index == 5)
+                                        //             {
+                                        //                 if (invalid_count == 0)
+                                        //                 {
+                                        //                     if (array_min_max_judgement_per_sub_item.every( (value, i, array) => value === 'NA') == true)
+                                        //                     {
+                                        //                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //                     }
+                                        //                     else
+                                        //                     {
+                                        //                         //pag lalagay ng sub item judgement
+                                        //                         if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                        //                         {
+                                        //                             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                        //                         } 
+                                        //                         else 
+                                        //                         {
+                                        //                             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                        //                         }
+                                        //                         //pagkuha ng overall judgement para sa checksheet item 
+                                        //                         IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        //                         array_min_max_judgement_per_sub_item = [];
+                                        //                         array_min_max_value = [];
+                                        //                     }
+                                        //                 }
+                                        //                 else
+                                        //                 {
+                                        //                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //                     IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        //                     array_min_max_judgement_per_sub_item = [];
+                                        //                     array_min_max_value = [];
+                                        //                 }
+                                        //             }
+                                        //             min_count += 2;
+                                        //             max_count += 2;
+                                        //         }
+                                        //     }
+                                        //     else
+                                        //     {
+                                        //         if (array_min_max_judgement_per_sub_item.every( (value, i, array) => value === 'NA') == true)
+                                        //         {
+                                        //             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //             $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //         }
+                                        //         else
+                                        //         {
+                                        //             //pag lalagay ng sub item judgement
+                                        //             if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                        //             {
+                                        //                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                        //             } 
+                                        //             else 
+                                        //             {
+                                        //                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                        //             }
+                                        //             //pagkuha ng overall judgement para sa checksheet item 
+                                        //             IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        //             array_min_max_judgement_per_sub_item = [];
+                                        //             array_min_max_value = [];
+                                        //         }
+                                        //     }
+                                        // }
+                                        // else
+                                        // {
+                                        //     if (array_min_max_judgement_per_sub_item.every( (value, i, array) => value === 'NA') == true)
+                                        //     {
+                                        //         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        //         IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        //         array_min_max_judgement_per_sub_item = [];
+                                        //         array_min_max_value = [];
+                                        //     }
+                                        //     else
+                                        //     {
+                                        //         //pag lalagay ng sub item judgement
+                                        //         if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                        //         {
+                                        //             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                        //         } 
+                                        //         else 
+                                        //         {
+                                        //             $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                        //         }
+
+                                        //         //pagkuha ng overall judgement para sa checksheet item 
+                                        //         IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        //         array_min_max_judgement_per_sub_item = [];
+                                        //         array_min_max_value = [];
+                                        //     }
+                                        // }
+
+                                        if (dash_count > 0)
                                         {
-                                            if (dash_count > 0)
+                                            let min_count   = 0;
+                                            let max_count   = 1;
+                                            let invalid_count = 0;
+
+                                            for (let index = 1; index <= 5; index++) 
                                             {
-                                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                            }
-                                            else
-                                            {
-                                                if (array_min_max_judgement_per_sub_item.every( (value, i, array) => value === 'NA') == true)
+                                                (array_min_max_value[min_count] !== '-' && array_min_max_value[max_count] === '-' || array_min_max_value[min_count] === '-' && array_min_max_value[max_count] !== '-') ? invalid_count++ : '';
+
+                                                if (index == 5)
                                                 {
-                                                    $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                                    $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
-                                                }
-                                                else
-                                                {
-                                                    //pag lalagay ng sub item judgement
-                                                    if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                                    if (invalid_count == 0)
                                                     {
-                                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
-                                                    } 
-                                                    else 
-                                                    {
-                                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                                        if (array_min_max_judgement_per_sub_item.every( (value, i, array) => value === 'NA') == true)
+                                                        {
+                                                            $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                                            $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                                        }
+                                                        else
+                                                        {
+                                                            //pag lalagay ng sub item judgement
+                                                            if ($.inArray('NG',array_min_max_judgement_per_sub_item) === -1)
+                                                            {
+                                                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-success subitem-visual-judgement">GOOD</span>`);
+                                                            } 
+                                                            else 
+                                                            {
+                                                                $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
+                                                            }
+                                                            //pagkuha ng overall judgement para sa checksheet item 
+                                                            IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                                            array_min_max_judgement_per_sub_item = [];
+                                                            array_min_max_value = [];
+                                                        }
                                                     }
-                                                    //pagkuha ng overall judgement para sa checksheet item 
-                                                    IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
-                                                    array_min_max_judgement_per_sub_item = [];
-                                                    array_min_max_value = [];
+                                                    else
+                                                    {
+                                                        $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                                        $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                                        IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                                        array_min_max_judgement_per_sub_item = [];
+                                                        array_min_max_value = [];
+                                                    }
                                                 }
-                                                
+                                                min_count += 2;
+                                                max_count += 2;
                                             }
                                         }
                                         else
@@ -3732,19 +3906,20 @@ const IGM = (() => {
                                                 {
                                                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="badge badge-danger subitem-visual-judgement">NG</span>`);
                                                 }
-
                                                 //pagkuha ng overall judgement para sa checksheet item 
                                                 IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
                                                 array_min_max_judgement_per_sub_item = [];
                                                 array_min_max_value = [];
                                             }
                                         }
-                                    
                                     }
                                     else
                                     {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                                         $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                        IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                                        array_min_max_judgement_per_sub_item = [];
+                                        array_min_max_value = [];
                                     }
                                 }
                             }
@@ -3755,6 +3930,10 @@ const IGM = (() => {
             else 
             {
                 $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                IGM.SubitemCalculateOverallJudgement(item_no,sub_no,array_min_max_value);
+                array_min_max_judgement_per_sub_item = [];
+                array_min_max_value = [];
             }
         }
     };
@@ -4165,6 +4344,9 @@ const IGM = (() => {
                                 {
                                     $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
                                     $(`#td_item_no_${item_no}_judgement`).html(`<span class="input_text_center">N/A</span>`);
+                                    IGM.SubitemCalculateOverallJudgement(item_no, sub_no, array_value);
+                                    array_value     = [];
+                                    array_judgement = [];
                                 }
                                 else
                                 {
@@ -4317,7 +4499,7 @@ const IGM = (() => {
                 }
                 else
                 {
-                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'NG', coordinates, array_data, judgment_datas)
+                    IGM.ProceedSubitemCalculateOverallJudgement(id, sub_no, 'N/A', coordinates, array_data, judgment_datas)
                     $(`#td_item_no_${item_no}_judgement`).html('<span class="input_text_center">N/A</span>');
                     array_overall_judgement = [];
                 }
