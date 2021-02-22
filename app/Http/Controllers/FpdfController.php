@@ -250,6 +250,9 @@ class FpdfController extends Controller
                                 case 'YUTAKA SATOU':
                                     $signature_inspector = 'YUTAKA SATOU';
                                     break;
+                                case 'ERIKA REFORMADO':
+                                    $signature_inspector = 'ERIKA REFORMADO';
+                                    break;
                                 default:
                                     $signature_inspector = '';
                                     break;
@@ -875,7 +878,7 @@ class FpdfController extends Controller
         $Attachment->storeFileMerge($data['checksheet_details']['id'], $merge_data_file);
 
         
-        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'I');
+        return $pdf->Output($location.$data['checksheet_details']['part_number']. '-' . $data['checksheet_details']['revision_number'] . '-' . 'T' . $data['checksheet_details']['trial_number'] . '-' . date('Ymd') . '.pdf', 'F');
         exit;
     }
 }

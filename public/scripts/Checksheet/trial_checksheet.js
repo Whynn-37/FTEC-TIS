@@ -1162,7 +1162,6 @@ const CHECKSHEET = (() => {
                             //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
                             (trial_number == 1) ? loop_count = parseInt(item_no_count) : (trial_number == 88 || trial_number == 99) ? (trial_rm_4m_status == 1) ? loop_count = parseInt(item_no_count) :loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count) : loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count);
 
-                            alert (loop_count);
                             for (let item_no_index = 1; item_no_index <= loop_count; item_no_index++) 
                             {
                                 let item_number     = $(`#span_item_no_${item_no_index}_label`).text();

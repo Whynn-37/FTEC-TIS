@@ -233,12 +233,12 @@ class TrialChecksheetController extends Controller
             try 
             {
                 // $filename = $part_number . '_' . $revision_number;
-                $filename =$part_number.'_'.$revision_number.'(00)';
-                // $filename = 'igm';
+                // $filename =$part_number.'_'.$revision_number.'(00)';
+                $filename = 'igm';
                 
                 // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-                $path ='F:\TIS\\';
-                // $path ='D:\\';
+                // $path ='F:\TIS\\';
+                $path ='D:\\';
         
                 $igm_files = scandir($path);
         
@@ -260,8 +260,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
@@ -290,11 +290,78 @@ class TrialChecksheetController extends Controller
                         {  
                             if($igm_data[$i]['item_number'] !== null && $igm_data[$i]['item_number'] !== 'Sub Seq')
                             {
+                                switch ($igm_data[$i]['tools']) 
+                                {
+                                    case 'Caliper':
+                                        $tools = 'DC';
+                                        break;
+                                    case 'Height Gauge':
+                                        $tools = 'HG';
+                                        break;
+                                    case 'Dial Test Indicator':
+                                        $tools = 'DI';
+                                        break;
+                                    case 'Protractor':
+                                        $tools = 'PR';
+                                        break;
+                                    case 'Plug Guage':
+                                        $tools = 'PLG';
+                                        break;
+                                    case 'Pin Gauge':
+                                        $tools = 'PG';
+                                        break;
+                                    case 'Dial Gauge':
+                                        $tools = 'DG';
+                                        break;
+                                    case 'Visual Inspection':
+                                        $tools = 'VSL';
+                                        break;
+                                    case 'Micrometer':
+                                        $tools = 'DM';
+                                        break;
+                                    case 'Projector':
+                                        $tools = 'PJ';
+                                        break;   
+                                    case 'Multimeter':
+                                        $tools = 'MM';
+                                        break;
+                                    case 'Torque Meter':
+                                        $tools = 'TM';
+                                        break;
+                                    case 'Screw Torque Meter':
+                                        $tools = 'ST';
+                                        break;
+                                    case 'CMM':
+                                        $tools = 'CMM';
+                                        break;
+                                    case 'Gear Test':
+                                        $tools = 'GT';
+                                        break;
+                                    case 'Microscope':
+                                        $tools = 'MP';
+                                        break;
+                                    case 'Laser Scan':
+                                        $tools = 'LS';
+                                        break;
+                                    case 'R Gauge':
+                                        $tools = 'RG';
+                                        break;
+                                    case 'Bore Gauge':
+                                        $tools = 'BG';
+                                        break;
+                                    case 'Depth Gauge':
+                                        $tools = 'DPG';
+                                        break;
+                                    default:
+                                        $tools = $igm_data[$i]['tools'];
+                                        break;
+                                }
+
                                 $checksheet_item[] = 
                                 [
                                     'trial_checksheet_id'   => $trial_checksheet_id,
                                     'item_number'           => intval($igm_data[$i]['item_number']),
-                                    'tools'                 => $igm_data[$i]['tools'],
+                                    'tools'                 => $tools,
                                     'type'                  => $igm_data[$i]['type'],
                                     'specification'         => $igm_data[$i]['specification'],
                                     'upper_limit'           => $igm_data[$i]['upper_limit'],
