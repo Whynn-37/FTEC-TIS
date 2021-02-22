@@ -106,6 +106,7 @@ const IGM = (() => {
         let part_number         = $('#txt_part_number').val();
         let inspection_reason   = $('#txt_inspection_reason').val();
         let trial_number        = $('#txt_trial_number').val();
+        let trial_rm_4m        = $('#txt_trial_rm_4m_status').val();
 
         $.ajax({
             url     : `load-igm`,
@@ -118,6 +119,7 @@ const IGM = (() => {
                 part_number         : part_number,
                 inspection_reason   : inspection_reason,
                 trial_number        : trial_number,
+                trial_rm_4m         : trial_rm_4m
             },
             success: data => 
             {

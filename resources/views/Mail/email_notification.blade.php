@@ -63,7 +63,7 @@
                                                         TO: Approver
                                                     </p>
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
-                                                        This is to inform you that, this part number is for for approval.
+                                                        This is to inform you that, this part number is for approval.
                                                     </p>
                                                 @elseif($subject === 'For Re-Approval')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">

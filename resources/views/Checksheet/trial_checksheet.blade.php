@@ -391,6 +391,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <input type="text" id="original_item_no_count" hidden>
+                                                    <input type="text" id="txt_trial_rm_4m_status" hidden>
                                                     <div class="single-table">
                                                         <div class="table-responsive">
                                                             <table class="table text-center table-sm table-bordered" id="tbl_igm" hidden>

@@ -359,6 +359,7 @@ class TrialChecksheetController extends Controller
         $part_number = $Request->part_number;
         $inspection_reason = $Request->inspection_reason;
         $trial_number = $Request->trial_number;
+        $trial_rm_4m = $Request->trial_rm_4m;
 
         $status = 'Error';
         $message = 'Not Successfully Load ';
@@ -385,20 +386,15 @@ class TrialChecksheetController extends Controller
 
             $checksheet_item_count = $ChecksheetItem->getItem($trial_checksheet_ids);
 
-            if ($trial_number == 1)
+            if ($trial_number == 1 || $trial_rm_4m == 1)
             {
                 foreach ($checksheet_item_count as  $checksheet_item_count_value) 
                 {
                     $checksheet_data[] = $ChecksheetData->getdata($checksheet_item_count_value['min']);
                 }
-    
-                for ($i=0; $i < count($checksheet_data); $i++) 
-                { 
-                    $checksheet_items[$i]['count'] = count($checksheet_data[$i]);
-                }
             }
 
-            if ($trial_number >= 2)
+            if ($trial_number >= 2 || $$trial_rm_4m >= 2)
             {
                 $checksheet_item_ng_count = $ChecksheetItem->getNgItem($trial_checksheet_ids);
 
@@ -406,11 +402,11 @@ class TrialChecksheetController extends Controller
                 {
                     $checksheet_data[] = $ChecksheetData->getdata($checksheet_item_ng_count_value['min']);
                 }
-    
-                for ($i=0; $i < count($checksheet_data); $i++) 
-                { 
-                    $checksheet_items[$i]['count'] = count($checksheet_data[$i]);
-                }
+            }
+
+            for ($i=0; $i < count($checksheet_data); $i++) 
+            { 
+                $checksheet_items[$i]['count'] = count($checksheet_data[$i]);
             }
 
             $status = 'Success';
