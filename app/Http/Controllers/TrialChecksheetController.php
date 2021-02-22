@@ -394,7 +394,7 @@ class TrialChecksheetController extends Controller
                 }
             }
 
-            if ($trial_number >= 2 || $$trial_rm_4m >= 2)
+            if ($trial_number >= 2 || $trial_rm_4m >= 2)
             {
                 $checksheet_item_ng_count = $ChecksheetItem->getNgItem($trial_checksheet_ids);
 
