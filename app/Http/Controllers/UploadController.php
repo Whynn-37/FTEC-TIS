@@ -11,6 +11,6 @@ class UploadController extends Controller
         $import = new UploadImport($sheet);
 
         Excel::import($import, $file);
-        return $import->get_data();
+        return $import->getData();
     }
 }
