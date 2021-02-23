@@ -58,6 +58,7 @@ Route::get('get-disapproved-inspection', 'TrialChecksheetController@getDisapprov
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
+Route::post('update-item','ChecksheetItemController@editItem');
 Route::delete('delete-item','ChecksheetItemController@deleteItem');
 
 // Checksheet Data

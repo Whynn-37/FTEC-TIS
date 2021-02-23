@@ -153,6 +153,33 @@ class ApprovalController extends Controller
         ];
     }
 
+    public function editItem(ChecksheetItem $ChecksheetItem, Request $Request)
+    {
+        $trial_checksheet_id = $Request->trial_checksheet_id;
+        $item_number = $Request->item_number;
+        $specification = $Request->specification;
+
+        $result = $ChecksheetItem->editItem($trial_checksheet_id, $item_number, ['specification' => $specification]);
+
+        $status = 'Error';
+        $message = 'Not Successfully Updated';
+
+        if ($result) 
+        {
+            $status = 'Success';
+            $message = 'The Evaluator edit the specs';
+        }
+
+        ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number . ' - Specs : ' . $specification, Session::get('name'));
+
+        return 
+        [
+            'status'    => $status ,
+            'message'   => $message,
+            'data'      => $result  
+        ];
+    }
+
     public function editHinsei(TrialChecksheet $TrialChecksheet, ChecksheetItem $ChecksheetItem, ChecksheetData $ChecksheetData, Request $Request)
     {
         $trial_checksheet_id = $Request->trial_checksheet_id;

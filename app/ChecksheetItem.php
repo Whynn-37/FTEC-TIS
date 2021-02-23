@@ -147,4 +147,11 @@ class ChecksheetItem extends Model
         ->get();
     }
     
+    public function editItem($trial_checksheet_id, $item_number, $data)
+    {
+        return ChecksheetItem::where('trial_checksheet_id', $trial_checksheet_id)
+        ->where('item_number', $item_number)
+        ->update($data);
+
+    }
 }
