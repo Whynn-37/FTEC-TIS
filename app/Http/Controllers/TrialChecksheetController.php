@@ -16,7 +16,7 @@ use DB;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
 use Session;
-use Illuminate\Support\Facades\Validator;
+use Validator;
 use App\Helpers\Unique;
 class TrialChecksheetController extends Controller
 {
@@ -33,9 +33,7 @@ class TrialChecksheetController extends Controller
             foreach ($data['checksheet'] as $checksheet_value) 
             {
                 if ($checksheet_value->application_date === $ledger_value->application_date)
-                {
                     $match_application_date[] =  $ledger_value->application_date;
-                }
             }
         }
 
@@ -94,7 +92,6 @@ class TrialChecksheetController extends Controller
             $inspector = $LoginUser->getFullName($value->inspect_by);
             $disapproved_by = $LoginUser->getFullName($value->disapproved_by);
 
-
             $data[$key]['inspector_id'] = $inspector['fullname'];
             $data[$key]['disapproved_by'] = $disapproved_by['fullname'];
         }
@@ -146,9 +143,7 @@ class TrialChecksheetController extends Controller
                 $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
                 if ($supplier_data) 
-                {
                     $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
-                }
 
                 $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
@@ -156,9 +151,7 @@ class TrialChecksheetController extends Controller
                 {
                     // if exist
                     if ($data_trial_ledger_merge) 
-                    {
                         $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
-                    }
 
                     $logs = 'The Data Exist in TrialChecksheet';
                 }
@@ -171,9 +164,7 @@ class TrialChecksheetController extends Controller
                     ];
 
                     if ($data_trial_ledger_merge) 
-                    {
                         $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
-                    }
 
                     $logs = 'The Data Not Exist in TrialChecksheet';
                 }
@@ -518,67 +509,84 @@ class TrialChecksheetController extends Controller
         $approval_result            = [];
         $attachment_result          = [];
 
-        if(count($Request->file()) !== 0)
+        $mail_send = '';
+
+        $validator = Validator::make($Request->all(), [
+            'numbering_drawing'         =>  'required',
+            'material_certification'    =>  'required',
+            'special_tool_data'         =>  'required',
+            'temperature'               =>  'required',
+            'humidity'                  =>  'required',
+        ]);
+
+        if ($validator->fails())
+        {   
+            $message = $validator->errors();
+        }
+        else
         {
-            DB::beginTransaction();
-
-            try 
+            if(count($Request->file()) !== 0)
             {
-                for($i=0; $i < count($Request->file()); $i++)
+                DB::beginTransaction();
+
+                try 
                 {
-                    if ($Request->file($file_names[$i]) !== '') 
+                    for($i=0; $i < count($Request->file()); $i++)
                     {
-                        $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
+                        if ($Request->file($file_names[$i]) !== '') 
+                        {
+                            $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
 
-                        $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                            $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                        }
                     }
+
+                    $trial_checksheet_data = 
+                    [
+                        'date_finished'    => now(),
+                        'judgment'         => $judgment,
+                        'temperature'      => $temperature,
+                        'humidity'         => $humidity,
+                    ];
+
+                    $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
+
+                    $approval_data =
+                    [
+                        'trial_checksheet_id'      => $trial_checksheet_id,
+                        'decision'                 => 1,
+                        'inspect_by'               => Session::get('name'),
+                    ];
+
+                    $approval_result = $Approval->approved($trial_checksheet_id, $approval_data);
+
+                    $attachment_data =
+                    [
+                        'trial_checksheet_id'   => $trial_checksheet_id,
+                        'file_folder'           => $folder_name,
+                        'file_name'             => implode(',',$files)
+                    ];
+
+                    $attachment_result = $Attachment->storeFileMerge($trial_checksheet_id, $attachment_data);
+
+                    $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                    if ($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
+                        $mail_send = $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
+                    else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
+                        $mail_send = $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
+                    
+                    $status  = 'Success';
+                    $message = 'The inspection is done';
+
+                    DB::commit();
+                } 
+                catch (\Throwable $th) 
+                {
+                    $status = 'Error';
+                    $message = $th->getMessage();
+                    DB::rollback();
                 }
-
-                $trial_checksheet_data = 
-                [
-                    'date_finished'    => now(),
-                    'judgment'         => $judgment,
-                    'temperature'      => $temperature,
-                    'humidity'         => $humidity,
-                ];
-
-                $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
-
-                $approval_data =
-                [
-                    'trial_checksheet_id'      => $trial_checksheet_id,
-                    'decision'                 => 1,
-                    'inspect_by'               => Session::get('name'),
-                ];
-
-                $approval_result = $Approval->approved($trial_checksheet_id, $approval_data);
-
-                $attachment_data =
-                [
-                    'trial_checksheet_id'   => $trial_checksheet_id,
-                    'file_folder'           => $folder_name,
-                    'file_name'             => implode(',',$files)
-                ];
-
-                $attachment_result = $Attachment->storeFileMerge($trial_checksheet_id, $attachment_data);
-
-                $whereSend = $Approval->getApproval($trial_checksheet_id);
-
-                if ($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
-                    $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
-                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
-                    $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
-                
-                $status  = 'Success';
-                $message = 'The inspection is done';
-
-                DB::commit();
-            } 
-            catch (\Throwable $th) 
-            {
-                $status = 'Error';
-                $message = $th->getMessage();
-                DB::rollback();
             }
         }
 
@@ -588,6 +596,7 @@ class TrialChecksheetController extends Controller
         [
             'status'    => $status,
             'message'   => $message,
+            'mail'      => $mail_send,
             'result'    => 
             [
                 'trial_checksheet_result'   => $trial_checksheet_result,

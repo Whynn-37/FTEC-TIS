@@ -515,6 +515,8 @@ class ApprovalController extends Controller
         $status = 'Error';
         $message = 'Not Successfully Save';
 
+        $mail_send = '';
+
         DB::beginTransaction();
 
         try 
@@ -659,7 +661,7 @@ class ApprovalController extends Controller
                 $message = 'Reapproved by Evaluator';
             }
 
-            $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
+            $mail_send = $MailController->sendEmail($trial_checksheet_id, $status, $attachment);
 
             $status = 'Success';
 
@@ -678,6 +680,7 @@ class ApprovalController extends Controller
         [
            'status'     => $status ,
            'message'    => $message,
+           'mail'       => $mail_send,
            'data'       => 
            [
                'result'      => $result,

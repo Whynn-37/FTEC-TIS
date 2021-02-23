@@ -112,5 +112,12 @@ class MailController extends Controller
         // }
 
         Mail::to($receipient)->bcc('jed.relator@fujitsu.com')->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
+
+        if (count(Mail::failures()) > 0) 
+            return 'There was a problem sending the email, Please try again';
+        else
+        {
+            return 'Email Send';
+        }
     }
 }
