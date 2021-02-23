@@ -321,7 +321,7 @@ const EVALUATE = (() => {
                     <input type="text" id="txt_hidden_item_no_${value.item_number}_id"  value="${value.id}" hidden>
                     <input type="text" id="txt_hidden_item_no_${value.item_number}_sub_no_count"  value="${data.data.checksheet_data[item_count].length}" hidden>
                     <input type="text" id="txt_hidden_item_no_${value.item_number}_item_type"  value="${value.item_type}" hidden>
-                    <span id="span_item_no_${value.item_number}_label" >${value.item_number}</span>
+                    <span id="span_item_no_${item_count + 1}_label" >${value.item_number}</span>
                 </td> 
                 <td id="td_item_no_${value.item_number}_tools">${value.tools}</td>
                 <td id="td_item_no_${value.item_number}_type">${value.type}</td>
@@ -1344,11 +1344,11 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.OverallRejudgement = (item_no, sub_no, array_data, sub_no_count,trial_checksheet_id,tools,type,specs,new_upper_limit,new_lower_limit,item_type,remarks, action,new_coordinates) => {
-
         //pagkuha ng existing sub count
         let total_sub_no_count              = sub_no_count;
         let id                              = $(`#txt_hidden_item_no_${item_no}_id`).val();
         let judgment_datas                  = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
+        let trial_number                    = $(`#txt_trial_number`).text();
 
         if (action === 'edit_item')
         {
@@ -1377,7 +1377,9 @@ const EVALUATE = (() => {
 
         for (let index = 1; index <= total_sub_no_count; index++) 
         {
-            array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+            let item_number = $(`#span_item_no_${index}_label`).text();// may ganto kase hindi naman laging sa 1 nagsisimula yung mga NG na items
+
+            array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${(trial_number > 1) ? item_number : index}_judgement span`).text());
         }
 
         //para malaman ang checksheet item judgement
@@ -1497,14 +1499,16 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.TrialChecksheetRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,action) => {
-
+       
+        let trial_number         = $('#txt_trial_number').val();
         let judgment_item        = $(`#td_item_no_${item_no}_judgement span`).text();
         let array_item_judgment  = [];
 
         //pagkuha ng item judgements para sa buong judgment ng trial
         for (let index = 1; index <= parseInt(checksheet_item_count); index++) 
         {
-            let item_judgment = $(`#td_item_no_${index}_judgement span`).text();
+            item_number = $(`#span_item_no_${index}_label`).text();
+            let item_judgment = $(`#td_item_no_${(trial_number > 1) ? item_number : index}_judgement span`).text();
 
             array_item_judgment.push(item_judgment);
 
@@ -2312,13 +2316,15 @@ const EVALUATE = (() => {
     this_evaluate.ValidateSubItemGetDataAMT = (item_no, sub_no) => {
         //AMT -> Actual Material Thickness, 5 inputs lang
 
-        let upper_limit         = $(`#td_item_no_${item_no}_upper_limit`).html();
-        let lower_limit         = $(`#td_item_no_${item_no}_lower_limit`).html();
-        let coordinates         = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
-        let last_value          = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
-        let array_judgement     = [];
-        let empty_value_count   = 0;
-        let invalid_value_count = 0;
+        let upper_limit             = $(`#td_item_no_${item_no}_upper_limit`).html();
+        let lower_limit             = $(`#td_item_no_${item_no}_lower_limit`).html();
+        let coordinates             = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_coordinates`).val();
+        let last_value              = $(`#txt_item_no_${item_no}_sub_no_${sub_no}_amt_5`).val();
+        let array_judgement         = [];
+        let array_overall_judgement = [];
+        let empty_value_count       = 0;
+        let invalid_value_count     = 0;
+        let total_sub_no_count      = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
         
         if (coordinates !== '')
         {
@@ -2383,16 +2389,30 @@ const EVALUATE = (() => {
                                     if ($.inArray('NG',array_judgement) === -1) 
                                     {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
-                                        
                                         array_judgement = [];
                                     } 
                                     else 
                                     {
                                         $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
-        
                                         array_judgement = [];
+                                    }
+
+
+                                    //para malaman ang checksheet item judgement
+                                    for (let index = 1; index <= total_sub_no_count; index++) 
+                                    {
+                                        array_overall_judgement.push($(`#td_item_no_${item_no}_sub_no_${index}_judgement span`).text());
+                                    }
+
+                                    if ($.inArray('NG',array_overall_judgement) === -1) 
+                                    {
+                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-success subitem-visual-judgement">GOOD</span>');
+                                        array_overall_judgement = [];
+                                    } 
+                                    else 
+                                    {
+                                        $(`#td_item_no_${item_no}_judgement`).html('<span class="badge badge-danger subitem-visual-judgement">NG</span>');
+                                        array_overall_judgement = [];
                                     }
                                 }
                             }
@@ -2989,11 +3009,13 @@ const EVALUATE = (() => {
 
     this_evaluate.GetTrialChecksheetJudgement = () => {
 
-        let array_trial_checksheet_overall_judgement = [];
+        let array_trial_checksheet_overall_judgement    = [];
+        let trial_number                                = $('#txt_trial_number').val();
 
         for (let index = 1; index <= parseInt(checksheet_item_count); index++) 
         {
-            array_trial_checksheet_overall_judgement.push($(`#td_item_no_${index}_judgement span`).text());
+            item_number = $(`#span_item_no_${index}_label`).text();
+            array_trial_checksheet_overall_judgement.push($(`#td_item_no_${(trial_number > 1) ? item_number : index}_judgement span`).text());
         } 
         //para malaman ang trial checksheet judgement
         ($.inArray('NG', array_trial_checksheet_overall_judgement) === - 1) ? final_judgment = 'GOOD' : final_judgment = 'NG';
@@ -3247,6 +3269,3 @@ const EVALUATE = (() => {
 
     return this_evaluate;
 })();
-
-// SA MMF DI PWEDE NA NAKA DASH MAPA MIN OR MAX, DAPAT PAREHO MAY VALUE, REFER SA TRIALCHECKSHEET IGM
-// CHECK DIN PAGSESAVE NG VISUALS AT ACTUAL MATERIAL THICKNESS

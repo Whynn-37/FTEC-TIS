@@ -47,16 +47,16 @@ const APPROVE = (() => {
                             <td>
                                 <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.id});"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                             </td>
-                            <td nowrap>${value.part_number}</td>
-                            <td nowrap>${value.revision_number}</td>
-                            <td nowrap>${value.trial_number}</td>
-                            <td nowrap>${value.inspection_reason}</td>
-                            <td nowrap>${value.inspect_by}</td>
-                            <td nowrap>${value.inspect_datetime}</td>
-                            <td nowrap>${value.evaluated_by}</td>
-                            <td nowrap>${value.evaluated_datetime}</td>
-                            <td nowrap>${value.date_finished}</td>
-                            <td nowrap>${judgement}</td>
+                            <td width="10%">${value.part_number}</td>
+                            <td width="5%">${value.revision_number}</td>
+                            <td width="5%">${value.trial_number}</td>
+                            <td width="5%">${value.inspection_reason}</td>
+                            <td>${value.inspect_by}</td>
+                            <td width="5%">${value.inspect_datetime}</td>
+                            <td>${value.evaluated_by}</td>
+                            <td width="5%">${value.evaluated_datetime}</td>
+                            <td width="5%">${value.date_finished}</td>
+                            <td>${judgement}</td>
                         </tr>`;
                         // <button class="btn btn-primary btn-block" onclick="APPROVE.ViewFinishedInspectionData(${value.trial_checksheet_id},'finished');"><strong class="strong-font"><i class="ti-eye"></i> VIEW DATA</strong></button>
                     });

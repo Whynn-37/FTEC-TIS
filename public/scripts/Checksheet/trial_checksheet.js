@@ -1157,108 +1157,114 @@ const CHECKSHEET = (() => {
                         {
                             let original_item_no_count  = $('#original_item_no_count').val();// dahil sa trial no > 1, yung mga NG ay hindi naman sunod sunod ang item no
                             let trial_number            = $('#txt_trial_number').val();
-                            let trial_rm_4m_status            = $('#txt_trial_rm_4m_status').val();
+                            let trial_rm_4m_status      = $('#txt_trial_rm_4m_status').val();
                             
                             //nilagyan ko nito gawa nung onclick na function na kapag naka dash ay buburahin yung dash sa textbox. kaso hindi gumagana yung onchange na function pagka ganon unless manual na burahin yung dash. nilagay ko to para pagka save lalgyan nalang ulit ng dash
                             (trial_number == 1) ? loop_count = parseInt(item_no_count) : (trial_number == 88 || trial_number == 99) ? (trial_rm_4m_status == 1) ? loop_count = parseInt(item_no_count) :loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count) : loop_count = parseInt(original_item_no_count) + parseInt(new_item_no_count);
 
-                            alert (loop_count);
                             for (let item_no_index = 1; item_no_index <= loop_count; item_no_index++) 
                             {
-                                let item_number     = $(`#span_item_no_${item_no_index}_label`).text();
-                                let type            = $(`#slc_item_no_${item_number}_type`).val();
-                                let tools           = $(`#slc_item_no_${item_number}_tools`).val();
+                                let item_number     = $(`#txt_hidden_original_item_no_${item_no_index}_label`).val();
 
-                                //pagkuha ng sub no count
-                                let onclick_value   = $(`#a_add_igm_item_no_${item_number}_sub_no`).attr('onclick').split(',');
-                                let sub_no_count    = onclick_value[2];
-
-                                if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
+                                if (item_number != undefined || item_number != '')
                                 {
-                                    for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
+                                    let type            = $(`#slc_item_no_${item_number}_type`).val();
+                                    let tools           = $(`#slc_item_no_${item_number}_tools`).val();
+                                    //pagkuha ng sub no count
+                                    if ($(`#a_add_igm_item_no_${item_number}_sub_no`).length === 1)
                                     {
-                                        for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
+                                        let onclick_value   = $(`#a_add_igm_item_no_${item_number}_sub_no`).attr('onclick').split(',');
+                                        let sub_no_count    = onclick_value[2];
+        
+                                        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance')
                                         {
-                                            let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
-                                            let max_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
-    
-                                            if (min_value === '')
+                                            for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
                                             {
-                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
-                                            }
-                
-                                            if (max_value === '')
-                                            {
-                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
-                                            }
-                                        }
-                                    }
-                                }
-                                else if (type === 'Actual' || type === 'Min and Max and Form Tolerance')
-                                {
-                                    for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
-                                    {
-                                        for (let value_index = 1; value_index <= 5; value_index++) 
-                                        {
-                                            let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val();
-    
-                                            if (min_value === '')
-                                            {
-                                                $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val('-');
-                                            }
-                                        }
-                                    }
-                                }
-    
-                                //pagkuha ng item judgements para sa buong judgment ng trial
-                                let item_judgment = $(`#td_item_no_${item_number}_judgement span`).text();
-                                
-                                if (item_judgment === 'N/A')
-                                {
-                                    na_judgement_count++;
-                                }
-                                else if (item_judgment === 'NG')
-                                {
-                                    ng_judgement_count++;
-                                }
-
-                                if ($.inArray(tools, $.merge( array_item_tools, array_item_tools_words)) === -1)
-                                {
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Item with invalid tools has been found',
-                                        text: 'Please check your checksheet items.',
-                                    })
-                                }
-                                else
-                                {
-                                    if (item_no_index === loop_count)
-                                    {
-                                        if (na_judgement_count > 0)
-                                        {
-                                            Swal.fire({
-                                                icon: 'warning',
-                                                title: 'Item with no judgement has been found',
-                                                text: 'Please check your checksheet items.',
-                                            })
-                                        }
-                                        else
-                                        {
-                                            //checking if NG or OK
-                                            (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
-                                            
-                                            Swal.fire(
-                                                $.extend(swal_options, {
-                                                    title   : "Are you sure?",
-                                                    text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
-                                                })
-                                            ).then((result) => 
-                                            {
-                                                if (result.value) 
+                                                for (let min_max_index = 1; min_max_index <= 5; min_max_index++) 
                                                 {
-                                                    CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                                    let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val();
+                                                    let max_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val();
+            
+                                                    if (min_value === '')
+                                                    {
+                                                        $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_min_${min_max_index}`).val('-');
+                                                    }
+                        
+                                                    if (max_value === '')
+                                                    {
+                                                        $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_max_${min_max_index}`).val('-');
+                                                    }
                                                 }
-                                            });
+                                            }
+                                        }
+                                        else if (type === 'Actual' || type === 'Min and Max and Form Tolerance')
+                                        {
+                                            for (let sub_no_index = 1; sub_no_index <= sub_no_count; sub_no_index++) 
+                                            {
+                                                for (let value_index = 1; value_index <= 5; value_index++) 
+                                                {
+                                                    let min_value = $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val();
+            
+                                                    if (min_value === '')
+                                                    {
+                                                        $(`#txt_item_no_${item_number}_sub_no_${sub_no_index}_amt_${value_index}`).val('-');
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+            
+                                    //pagkuha ng item judgements para sa buong judgment ng trial
+                                    let item_judgment = $(`#td_item_no_${item_number}_judgement span`).text();
+                                    
+                                    if (item_judgment === 'N/A')
+                                    {
+                                        na_judgement_count++;
+                                    }
+                                    else if (item_judgment === 'NG')
+                                    {
+                                        ng_judgement_count++;
+                                    }
+
+                                    if ($.inArray(tools, $.merge(array_item_tools, array_item_tools_words)) === -1)
+                                    {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Item with invalid tools has been found',
+                                            text: 'Please check your checksheet items.',
+                                        })
+                                    }
+                                    else
+                                    {
+                                        if (item_no_index === loop_count)
+                                        {
+                                            if (na_judgement_count > 0)
+                                            {
+                                                Swal.fire({
+                                                    icon: 'warning',
+                                                    title: 'Item with no judgement has been found',
+                                                    text: 'Please check your checksheet items.',
+                                                })
+                                            }
+                                            else
+                                            {
+                                                //checking if NG or OK
+                                                (ng_judgement_count > 0) ? final_judgment = 'NG' : final_judgment = 'GOOD';
+                                                
+                                                Swal.fire(
+                                                    $.extend(swal_options, {
+                                                        title   : "Are you sure?",
+                                                        text    : `Click 'Yes' to finish the inspection, 'No' if you want to continue inspecting.`,
+                                                    })
+                                                ).then((result) => 
+                                                {
+                                                    if (result.value) 
+                                                    {
+                                                        CHECKSHEET.ProceedSaveTrialChecksheet(final_judgment)
+                                                    }
+                                                });
+                                            }
                                         }
                                     }
                                 }
