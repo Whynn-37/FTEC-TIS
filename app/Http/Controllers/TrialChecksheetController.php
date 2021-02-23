@@ -501,9 +501,6 @@ class TrialChecksheetController extends Controller
         $trial_number           = $Request->trial_number;
 
         $folder_name    = $part_number . '-' . $revision_number . '-T' . $trial_number . '-' . date('Ymd');//pinadagdag ni jed - george
-
-        $status         = 'Error';
-        $message        = 'No File';
             
         $trial_checksheet_result    = [];
         $approval_result            = [];
@@ -521,10 +518,14 @@ class TrialChecksheetController extends Controller
 
         if ($validator->fails())
         {   
+            $status         = 'Attention';
             $message = $validator->errors();
         }
         else
         {
+            $status         = 'Error';
+            $message        = 'No File';
+
             if(count($Request->file()) !== 0)
             {
                 DB::beginTransaction();
@@ -608,16 +609,16 @@ class TrialChecksheetController extends Controller
 
     public function updateJudgment(ChecksheetItem $ChecksheetItem, 
                                     ChecksheetData $ChecksheetData, 
-                                    Request $request)
+                                    Request $Request)
     {
-        $id                  = $request->id;
-        $sub_number          = $request->sub_number;
+        $id                  = $Request->id;
+        $sub_number          = $Request->sub_number;
 
-        $judgment_items      = $request->judgment_items;
+        $judgment_items      = $Request->judgment_items;
 
-        $coordinates         = $request->coordinates;
-        $data                = $request->data;
-        $judgment_datas      = $request->judgment_datas;
+        $coordinates         = $Request->coordinates;
+        $data                = $Request->data;
+        $judgment_datas      = $Request->judgment_datas;
 
         $status  = 'Error';
         $message = 'No Data';

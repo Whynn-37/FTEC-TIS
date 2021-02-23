@@ -166,13 +166,7 @@ class ApprovalController extends Controller
         $judgment = $Request->judgment;
         $item_type = $Request->item_type;
         $remarks = $Request->remarks;
-
         $judgment_checksheet = $Request->judgment_checksheet;
-
-        $trial_checksheet = 
-        [
-            'judgment'              => $judgment_checksheet
-        ];
         
         $data = 
         [
@@ -189,10 +183,8 @@ class ApprovalController extends Controller
             'hinsei'                => 'HINSEI',
         ];
 
-        $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
-
+        $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['judgment' => $judgment_checksheet]);
         $ChecksheetData->updateHinsei($checksheet_item_id, ['hinsei' => 'HINSEI']);
-
         $result = $ChecksheetItem->updateOrCreateChecksheetItem($data);
 
         $status = 'Error';
@@ -227,11 +219,8 @@ class ApprovalController extends Controller
         $judgment_datas = $Request->judgment_datas;
         $remarks = $Request->remarks;
         $item_type = $Request->item_type;
-
         $judgment_items = $Request->judgment_items;
-
         $judgment_checksheet = $Request->judgment_checksheet;
-
 
         $status = 'Error';
         $message = 'Not Successfully Updated';
@@ -241,16 +230,6 @@ class ApprovalController extends Controller
 
         try 
         {
-            $trial_checksheet = 
-            [
-                'judgment'              => $judgment_checksheet
-            ];
-
-            $items = 
-            [
-                'judgment'              => $judgment_items
-            ];
-
             $data = 
             [
                 'checksheet_item_id' => $checksheet_item_id,
@@ -262,8 +241,8 @@ class ApprovalController extends Controller
                 'type'               => $item_type,
             ];
 
-            $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet);
-            $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, $items);
+            $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, ['judgment' => $judgment_checksheet]);
+            $ChecksheetItem->updateAutoJudgmentItem($checksheet_item_id, ['judgment' => $judgment_items]);
             $ChecksheetData->updateOrCreateChecksheetData($data);
 
             $status = 'Success';
@@ -389,33 +368,18 @@ class ApprovalController extends Controller
 
         if (count($get_first_trial_ng) !== 0) 
         {
-            // if ($data_trial_ledger['trial_number'] !== 1) 
-            // {
-                for($i=0; $i < count($details_data); $i++)
-                {
-                    $trial_checksheet_id_result = $details_data[$i]['id'];
-                    for ($z=0; $z < count($get_first_trial_ng); $z++) 
-                    { 
-                        $result_merge[$i][] = [
-                            'trial_checksheet_id' => $trial_checksheet_id_result,
-                            'item_number' => $get_first_trial_ng[$z]['item_number']
-                        ];
-                    }
+            for($i=0; $i < count($details_data); $i++)
+            {
+                $trial_checksheet_id_result = $details_data[$i]['id'];
+                for ($z=0; $z < count($get_first_trial_ng); $z++) 
+                { 
+                    $result_merge[$i][] = [
+                        'trial_checksheet_id' => $trial_checksheet_id_result,
+                        'item_number' => $get_first_trial_ng[$z]['item_number']
+                    ];
                 }
-            // }
-            // else 
-            // {
-            //     for($i=0; $i < count($details_data); $i++)
-            //     {
-            //         $trial_checksheet_id_result = $details_data[$i]['id'];
-            //         $result_merge[$i][] = [
-            //             'trial_checksheet_id' => $details_data[$i]['id'],
-            //             'item_number' => $get_first_trial_ng[$i]['item_number']
-            //         ];
-            //     }
-            // }
+            }
         }
-
 
         foreach ($result_merge as $details_key => $details_value) 
         {
@@ -453,9 +417,7 @@ class ApprovalController extends Controller
                 $checksheet_data = [];
 
                 if ($value['id'] !== '') 
-                {
                     $checksheet_data = json_decode(json_encode($ChecksheetData->getDataNg($value['id'])),true);
-                }
                 
                 if (empty($checksheet_data)) 
                 {
@@ -577,7 +539,6 @@ class ApprovalController extends Controller
                 $result =  $Approval->approved($trial_checksheet_id, $data);
 
                 $status = 're_inspect';
-
                 $message = 'Disapproved by Evaluator';
             }
             else if($decision == 2 && $action == 1)
@@ -629,7 +590,6 @@ class ApprovalController extends Controller
                 $result =  $Approval->approved($trial_checksheet_id, $data);
 
                 $status = 're_evaluation_approver';
-
                 $message = 'Disppproved by Approver';
             }
             else if($decision == 3 && $action == 1)
@@ -657,7 +617,6 @@ class ApprovalController extends Controller
                 $FpdfController->mergeFile($merge_file_data, $second_page_data);
 
                 $status = 're_approval';
-
                 $message = 'Reapproved by Evaluator';
             }
 

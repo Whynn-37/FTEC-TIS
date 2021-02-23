@@ -21,7 +21,6 @@ class HistoryController extends Controller
                                     Request $Request)
     {
         $status = $Request->status;
-
         $result = [];
 
         if ($status === 'ON-GOING INSPECTION') 
@@ -59,9 +58,7 @@ class HistoryController extends Controller
                 foreach ($data['checksheet'] as $checksheet_value) 
                 {
                     if ($checksheet_value->application_date === $ledger_value->application_date)
-                    {
                         $match_application_date[] =  $ledger_value->application_date;
-                    }
                 }
             }
 

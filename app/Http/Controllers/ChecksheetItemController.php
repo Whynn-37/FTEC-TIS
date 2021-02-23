@@ -39,9 +39,7 @@ class ChecksheetItemController extends Controller
                     $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, '>=');
 
                     if (count($select_id) !== 0)
-                    {
                         $ChecksheetItem->updateId($select_id, 'update');
-                    }
                 }
                 
                 $checksheet_item = 
@@ -123,9 +121,7 @@ class ChecksheetItemController extends Controller
                 $select_id = $ChecksheetItem->selectUpdateId($trial_checksheet_id, $item_number, '>');
             
                 if (count($select_id) !== 0)
-                {
                     $ChecksheetItem->updateId($select_id, 'delete');
-                }
 
                 $result = $ChecksheetItem->deleteItem($id);
 
@@ -143,7 +139,6 @@ class ChecksheetItemController extends Controller
         }
         
         ActivityLog::activityLog($message . ' - Id : ' . $trial_checksheet_id . ' - Item Number : ' . $item_number, Session::get('name'));
-
 
         return 
         [

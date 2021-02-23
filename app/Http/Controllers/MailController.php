@@ -104,20 +104,12 @@ class MailController extends Controller
 
             $subject = 'Approved';
         }
-        // else if($status == 'disapproved')
-        // {
-        //     $receipient = $LoginUser->sendEmailTo($data['evaluated_by']);
-
-        //     $subject = 'Disapproved';
-        // }
 
         Mail::to($receipient)->bcc('jed.relator@fujitsu.com')->send(new SendMail($data, $attachment, 'Mail.email_notification', $subject));
 
         if (count(Mail::failures()) > 0) 
             return 'There was a problem sending the email, Please try again';
         else
-        {
             return 'Email Send';
-        }
     }
 }
