@@ -27,8 +27,6 @@ class Supplier extends Model
 
     public function updateOrCreateSupplier($data)
     {
-        //return ChecksheetItem::find($id)->update($data);
-
         return Supplier::updateOrCreate(
             [   
                 'supplier_code'     => $data['supplier_code'],

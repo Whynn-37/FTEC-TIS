@@ -35,5 +35,4 @@ class UploadImport implements ToCollection, WithMultipleSheets
     {
         return $this->data;
     }
-
 }

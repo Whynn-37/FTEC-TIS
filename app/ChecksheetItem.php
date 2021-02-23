@@ -8,11 +8,6 @@ class ChecksheetItem extends Model
 {
     protected $guarded = [];
 
-    public function checksheet_datas()
-    {
-        return $this->hasOne('App\ChecksheetData');
-    }
-
     public function getChecksheetItem($id)
     {
         return ChecksheetItem::where('trial_checksheet_id', $id)
@@ -43,11 +38,6 @@ class ChecksheetItem extends Model
             );
         }
         return $id;
-    }
-
-    public function loadChecksheetData($id)
-    {
-        return ChecksheetItem::find($id)->checksheet_datas;
     }
 
     public function updateOrCreateChecksheetItem($data)

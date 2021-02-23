@@ -19,10 +19,6 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
         $this->data  = $data;
     }
 
-    /**
-     * @return array
-     */
-
     public function drawings()
     {
         if ($this->data['approval']['evaluated_by'] !== null) 
@@ -96,13 +92,9 @@ class TrialEvaluationResultExport implements WithEvents, WithColumnWidths, WithD
         }
 
         if ($this->data['approval']['evaluated_by'] !== null && $this->data['approval']['approved_by'] === null) 
-        {
             return $drawing;
-        }
         else if ($this->data['approval']['evaluated_by'] !== null && $this->data['approval']['approved_by'] !== null) 
-        {
             return [$drawing, $drawing2];
-        }
     }
 
     public function registerEvents(): array

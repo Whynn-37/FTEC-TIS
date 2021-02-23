@@ -8,11 +8,6 @@ class TrialChecksheet extends Model
 
     protected $guarded = [];
 
-    public function checksheet_items()
-    {
-        return $this->hasMany('App\ChecksheetItem');
-    }
-
     public function getTrialChecksheet($application_date)
     {
         return TrialChecksheet::where('application_date',$application_date)
@@ -28,11 +23,6 @@ class TrialChecksheet extends Model
     public function storeTrialChecksheet($data)
     {
         return TrialChecksheet::create($data);
-    }
-
-    public function loadChecksheetItem($id)
-    {
-        return TrialChecksheet::find($id)->checksheet_items;
     }
 
     public function getApplicationDate($part_number, $inspection_reason, $trial_number)
@@ -127,7 +117,6 @@ class TrialChecksheet extends Model
     {
         return TrialChecksheet::where('part_number', $part_number)
         ->where('inspection_reason', $inspection_reason)
-        // ->where('judgment', 'NG')
         ->select('id', 'trial_number')
         ->orderBy('trial_number', 'asc')
         ->first();
@@ -199,6 +188,4 @@ class TrialChecksheet extends Model
             )
         ->get();
     }
-
-    
 }
