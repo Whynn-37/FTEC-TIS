@@ -54,10 +54,4 @@ class TaktTime extends Model
         ->latest()
         ->first();
     }
-
-    public function updateTaktTime($id,$data)
-    {
-        return TaktTime::where('id',$id['id'])
-        ->update($data);
-    }
 }

@@ -16,7 +16,7 @@ use DB;
 use App\Helpers\ActivityLog;
 use App\LoginUser;
 use Session;
-use Illuminate\Support\Facades\Validator;
+use Validator;
 use App\Helpers\Unique;
 class TrialChecksheetController extends Controller
 {
@@ -33,9 +33,7 @@ class TrialChecksheetController extends Controller
             foreach ($data['checksheet'] as $checksheet_value) 
             {
                 if ($checksheet_value->application_date === $ledger_value->application_date)
-                {
                     $match_application_date[] =  $ledger_value->application_date;
-                }
             }
         }
 
@@ -94,7 +92,6 @@ class TrialChecksheetController extends Controller
             $inspector = $LoginUser->getFullName($value->inspect_by);
             $disapproved_by = $LoginUser->getFullName($value->disapproved_by);
 
-
             $data[$key]['inspector_id'] = $inspector['fullname'];
             $data[$key]['disapproved_by'] = $disapproved_by['fullname'];
         }
@@ -146,9 +143,7 @@ class TrialChecksheetController extends Controller
                 $supplier_data      = json_decode(json_encode($Supplier->getSupplier($trial_ledger_data['supplier_code'])),true);
 
                 if ($supplier_data) 
-                {
                     $data_trial_ledger_merge = array_merge($trial_ledger_data, $supplier_data);
-                }
 
                 $trial_checksheet_data  = json_decode(json_encode($TrialChecksheet->getTrialChecksheet($application_date)),true);
 
@@ -156,9 +151,7 @@ class TrialChecksheetController extends Controller
                 {
                     // if exist
                     if ($data_trial_ledger_merge) 
-                    {
                         $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $trial_checksheet_data);
-                    }
 
                     $logs = 'The Data Exist in TrialChecksheet';
                 }
@@ -171,9 +164,7 @@ class TrialChecksheetController extends Controller
                     ];
 
                     if ($data_trial_ledger_merge) 
-                    {
                         $trial_checksheet_data_merge = array_merge($data_trial_ledger_merge, $id);
-                    }
 
                     $logs = 'The Data Not Exist in TrialChecksheet';
                 }
@@ -233,12 +224,12 @@ class TrialChecksheetController extends Controller
             try 
             {
                 // $filename = $part_number . '_' . $revision_number;
-                $filename =$part_number.'_'.$revision_number.'(00)';
-                // $filename = 'igm';
+                // $filename =$part_number.'_'.$revision_number.'(00)';
+                $filename = 'igm';
                 
                 // $path ='//10.51.10.39/Sharing/system igm/Guidance Manual/system igm/'; //pabalik nalang sa dati hindi kase nagana sakin -george
-                $path ='F:\TIS\\';
-                // $path ='D:\\';
+                // $path ='F:\TIS\\';
+                $path ='D:\\';
         
                 $igm_files = scandir($path);
         
@@ -260,8 +251,8 @@ class TrialChecksheetController extends Controller
                     $igm_file_name =  end($filtered_igm_files);
     
                     // $file = '\\\10.51.10.39\Sharing\system igm\Guidance Manual\system igm\\'.$igm_file_name; //pabalik nalang sa dati hindi kase nagana sakin -george
-                    // $file = 'D:\\'.$igm_file_name;
-                    $file = 'F:\TIS\\'.$igm_file_name;
+                    $file = 'D:\\'.$igm_file_name;
+                    // $file = 'F:\TIS\\'.$igm_file_name;
         
                     // $file = '\\\10.164.30.10\mit\Personal\Terry -shared 166\TIS\TIS DATA\\'.'IGM.xlsx';
                     $sheet = 0;
@@ -290,11 +281,78 @@ class TrialChecksheetController extends Controller
                         {  
                             if($igm_data[$i]['item_number'] !== null && $igm_data[$i]['item_number'] !== 'Sub Seq')
                             {
+                                switch ($igm_data[$i]['tools']) 
+                                {
+                                    case 'Caliper':
+                                        $tools = 'DC';
+                                        break;
+                                    case 'Height Gauge':
+                                        $tools = 'HG';
+                                        break;
+                                    case 'Dial Test Indicator':
+                                        $tools = 'DI';
+                                        break;
+                                    case 'Protractor':
+                                        $tools = 'PR';
+                                        break;
+                                    case 'Plug Guage':
+                                        $tools = 'PLG';
+                                        break;
+                                    case 'Pin Gauge':
+                                        $tools = 'PG';
+                                        break;
+                                    case 'Dial Gauge':
+                                        $tools = 'DG';
+                                        break;
+                                    case 'Visual Inspection':
+                                        $tools = 'VSL';
+                                        break;
+                                    case 'Micrometer':
+                                        $tools = 'DM';
+                                        break;
+                                    case 'Projector':
+                                        $tools = 'PJ';
+                                        break;   
+                                    case 'Multimeter':
+                                        $tools = 'MM';
+                                        break;
+                                    case 'Torque Meter':
+                                        $tools = 'TM';
+                                        break;
+                                    case 'Screw Torque Meter':
+                                        $tools = 'ST';
+                                        break;
+                                    case 'CMM':
+                                        $tools = 'CMM';
+                                        break;
+                                    case 'Gear Test':
+                                        $tools = 'GT';
+                                        break;
+                                    case 'Microscope':
+                                        $tools = 'MP';
+                                        break;
+                                    case 'Laser Scan':
+                                        $tools = 'LS';
+                                        break;
+                                    case 'R Gauge':
+                                        $tools = 'RG';
+                                        break;
+                                    case 'Bore Gauge':
+                                        $tools = 'BG';
+                                        break;
+                                    case 'Depth Gauge':
+                                        $tools = 'DPG';
+                                        break;
+                                    default:
+                                        $tools = $igm_data[$i]['tools'];
+                                        break;
+                                }
+
                                 $checksheet_item[] = 
                                 [
                                     'trial_checksheet_id'   => $trial_checksheet_id,
                                     'item_number'           => intval($igm_data[$i]['item_number']),
-                                    'tools'                 => $igm_data[$i]['tools'],
+                                    'tools'                 => $tools,
                                     'type'                  => $igm_data[$i]['type'],
                                     'specification'         => $igm_data[$i]['specification'],
                                     'upper_limit'           => $igm_data[$i]['upper_limit'],
@@ -443,75 +501,93 @@ class TrialChecksheetController extends Controller
         $trial_number           = $Request->trial_number;
 
         $folder_name    = $part_number . '-' . $revision_number . '-T' . $trial_number . '-' . date('Ymd');//pinadagdag ni jed - george
-
-        $status         = 'Error';
-        $message        = 'No File';
             
         $trial_checksheet_result    = [];
         $approval_result            = [];
         $attachment_result          = [];
 
-        if(count($Request->file()) !== 0)
+        $mail_send = '';
+
+        $validator = Validator::make($Request->all(), [
+            'numbering_drawing'         =>  'required',
+            'material_certification'    =>  'required',
+            'special_tool_data'         =>  'required',
+            'temperature'               =>  'required',
+            'humidity'                  =>  'required',
+        ]);
+
+        if ($validator->fails())
+        {   
+            $status         = 'Attention';
+            $message = $validator->errors();
+        }
+        else
         {
-            DB::beginTransaction();
+            $status         = 'Error';
+            $message        = 'No File';
 
-            try 
+            if(count($Request->file()) !== 0)
             {
-                for($i=0; $i < count($Request->file()); $i++)
+                DB::beginTransaction();
+
+                try 
                 {
-                    if ($Request->file($file_names[$i]) !== '') 
+                    for($i=0; $i < count($Request->file()); $i++)
                     {
-                        $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
+                        if ($Request->file($file_names[$i]) !== '') 
+                        {
+                            $files[] = $file_names[$i] . '.' . $Request->file($file_names[$i])->getClientOriginalExtension();
 
-                        $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                            $Request->file($file_names[$i])->storeAs($folder_name, $files[$i], 'public');
+                        }
                     }
+
+                    $trial_checksheet_data = 
+                    [
+                        'date_finished'    => now(),
+                        'judgment'         => $judgment,
+                        'temperature'      => $temperature,
+                        'humidity'         => $humidity,
+                    ];
+
+                    $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
+
+                    $approval_data =
+                    [
+                        'trial_checksheet_id'      => $trial_checksheet_id,
+                        'decision'                 => 1,
+                        'inspect_by'               => Session::get('name'),
+                    ];
+
+                    $approval_result = $Approval->approved($trial_checksheet_id, $approval_data);
+
+                    $attachment_data =
+                    [
+                        'trial_checksheet_id'   => $trial_checksheet_id,
+                        'file_folder'           => $folder_name,
+                        'file_name'             => implode(',',$files)
+                    ];
+
+                    $attachment_result = $Attachment->storeFileMerge($trial_checksheet_id, $attachment_data);
+
+                    $whereSend = $Approval->getApproval($trial_checksheet_id);
+
+                    if ($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
+                        $mail_send = $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
+                    else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
+                        $mail_send = $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
+                    
+                    $status  = 'Success';
+                    $message = 'The inspection is done';
+
+                    DB::commit();
+                } 
+                catch (\Throwable $th) 
+                {
+                    $status = 'Error';
+                    $message = $th->getMessage();
+                    DB::rollback();
                 }
-
-                $trial_checksheet_data = 
-                [
-                    'date_finished'    => now(),
-                    'judgment'         => $judgment,
-                    'temperature'      => $temperature,
-                    'humidity'         => $humidity,
-                ];
-
-                $trial_checksheet_result = $TrialChecksheet->updateTrialChecksheet($trial_checksheet_id, $trial_checksheet_data);
-
-                $approval_data =
-                [
-                    'trial_checksheet_id'      => $trial_checksheet_id,
-                    'decision'                 => 1,
-                    'inspect_by'               => Session::get('name'),
-                ];
-
-                $approval_result = $Approval->approved($trial_checksheet_id, $approval_data);
-
-                $attachment_data =
-                [
-                    'trial_checksheet_id'   => $trial_checksheet_id,
-                    'file_folder'           => $folder_name,
-                    'file_name'             => implode(',',$files)
-                ];
-
-                $attachment_result = $Attachment->storeFileMerge($trial_checksheet_id, $attachment_data);
-
-                $whereSend = $Approval->getApproval($trial_checksheet_id);
-
-                if ($whereSend['disapproved_by'] === null && $whereSend['evaluated_by'] === null) 
-                    $MailController->sendEmail($trial_checksheet_id, 'for_evaluation');
-                else if ($whereSend['disapproved_by'] !== null && $whereSend['evaluated_by'] !== null)
-                    $MailController->sendEmail($trial_checksheet_id, 're_evaluation');
-                
-                $status  = 'Success';
-                $message = 'The inspection is done';
-
-                DB::commit();
-            } 
-            catch (\Throwable $th) 
-            {
-                $status = 'Error';
-                $message = $th->getMessage();
-                DB::rollback();
             }
         }
 
@@ -521,6 +597,7 @@ class TrialChecksheetController extends Controller
         [
             'status'    => $status,
             'message'   => $message,
+            'mail'      => $mail_send,
             'result'    => 
             [
                 'trial_checksheet_result'   => $trial_checksheet_result,
@@ -532,16 +609,16 @@ class TrialChecksheetController extends Controller
 
     public function updateJudgment(ChecksheetItem $ChecksheetItem, 
                                     ChecksheetData $ChecksheetData, 
-                                    Request $request)
+                                    Request $Request)
     {
-        $id                  = $request->id;
-        $sub_number          = $request->sub_number;
+        $id                  = $Request->id;
+        $sub_number          = $Request->sub_number;
 
-        $judgment_items      = $request->judgment_items;
+        $judgment_items      = $Request->judgment_items;
 
-        $coordinates         = $request->coordinates;
-        $data                = $request->data;
-        $judgment_datas      = $request->judgment_datas;
+        $coordinates         = $Request->coordinates;
+        $data                = $Request->data;
+        $judgment_datas      = $Request->judgment_datas;
 
         $status  = 'Error';
         $message = 'No Data';

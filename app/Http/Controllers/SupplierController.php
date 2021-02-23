@@ -35,7 +35,8 @@ class SupplierController extends Controller
                 {
                     for($i = 1; $i < count($data); $i ++)
                     {
-                        $result[] = [
+                        $result[] = 
+                        [
                             'supplier_code'   =>  $data[$i][0],
                             'supplier_name'   =>  $data[$i][1]
                         ];

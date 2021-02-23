@@ -21,7 +21,6 @@ class HistoryController extends Controller
                                     Request $Request)
     {
         $status = $Request->status;
-
         $result = [];
 
         if ($status === 'ON-GOING INSPECTION') 
@@ -59,9 +58,7 @@ class HistoryController extends Controller
                 foreach ($data['checksheet'] as $checksheet_value) 
                 {
                     if ($checksheet_value->application_date === $ledger_value->application_date)
-                    {
                         $match_application_date[] =  $ledger_value->application_date;
-                    }
                 }
             }
 
@@ -165,6 +162,8 @@ class HistoryController extends Controller
         $decision = $Request->decision;
         $reason = $Request->reason;
 
+        $mail_send = '';
+
         $data = 
         [
             'decision' => $decision,
@@ -176,9 +175,9 @@ class HistoryController extends Controller
         $result = $Approval->approved($trial_checksheet_id, $data);
 
         if ($decision == 5) 
-            $MailController->sendEmail($trial_checksheet_id, 're_inspect');
+            $mail_send = $MailController->sendEmail($trial_checksheet_id, 're_inspect');
         else
-            $MailController->sendEmail($trial_checksheet_id, 're_evaluation_history');
+            $mail_send = $MailController->sendEmail($trial_checksheet_id, 're_evaluation_history');
 
         $status = 'Error';
         $message = 'Not Successfuly update';
@@ -200,6 +199,7 @@ class HistoryController extends Controller
         [
             'status'    => $status,
             'message'   => $message,
+            'mail'      => $mail_send,
             'data'      => $result
         ];
     }

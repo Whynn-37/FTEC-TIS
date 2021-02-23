@@ -31,9 +31,8 @@ class UploadImport implements ToCollection, WithMultipleSheets
         $this->data = $collection;
     }
 
-    public function get_data()
+    public function getData()
     {
         return $this->data;
     }
-
 }

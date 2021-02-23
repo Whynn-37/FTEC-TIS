@@ -68,7 +68,6 @@ class TaktTimeController extends Controller
         $checksheet_items = [];
         $approval_result = [];
         $attachment_result = [];
-        $hinsei_result = [];
 
         DB::beginTransaction();
 
@@ -79,9 +78,7 @@ class TaktTimeController extends Controller
             $in_use = '';
 
             if ( !empty($in_use_data) ) 
-            {
                 $in_use = $in_use_data['in_use'];
-            }
 
             if ($in_use === 0 || $in_use === '') 
             {
