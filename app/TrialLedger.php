@@ -115,6 +115,7 @@ class TrialLedger extends Model
         ->get();
 
         $checksheet = DB::table('trial_checksheets')
+        ->where('date_finished', '!=', null)
         ->get();
 
         return 
