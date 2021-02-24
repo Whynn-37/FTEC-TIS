@@ -291,9 +291,8 @@ const EVALUATE = (() => {
 
             //MERON NITO DAHIL MAY TYPES NA HINDI KAILANGAN NG HINSEI
             let td_edit_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
-                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>
+                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> ${(value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ? 'EDIT' : 'HINSEI'} </strong></button>
             </td>`;
-
             // let td_edit_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
             //     <div class="row">
             //         <div class="col-md-6">
@@ -330,7 +329,7 @@ const EVALUATE = (() => {
                 <td id="td_item_no_${value.item_number}_lower_limit">${lower_limit}</td>
                 <td id="td_item_no_${value.item_number}_judgement" class="input_text_center">${judgement}</td>
                 <td id="td_item_no_${value.item_number}_remarks" class="input_text_center">${(value.remarks == null  || value.remarks === '') ? '-' : value.remarks}</td>
-                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness') ?  td_edit_button : (value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ? td_edit_button : ''}
+                ${(value.type === 'Min and Max' || value.type === 'Min and Max and Form Tolerance' || value.type === 'Actual' || value.type === 'Material Thickness' || value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ?  td_edit_button  : ''}
             </tr>`;
             
             array_type.push(value.type);
@@ -769,6 +768,7 @@ const EVALUATE = (() => {
         else
         {
             $(`#btn_item_no_${item_no}_edit_item`).prop('hidden', true);
+           
             EVALUATE.RemarksInputs(item_no, tools, type, specs, upper_limit, lower_limit,remarks);
             EVALUATE.ItemDataInputs(item_no, tools, type, specs, upper_limit, lower_limit);
         }
@@ -800,9 +800,10 @@ const EVALUATE = (() => {
 
     this_evaluate.RemarksInputs = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
 
+        text_remarks = '<textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_edit_item_remarks" placeholder="Enter remarks"></textarea> <br>';
+
         let td_remarks = `
-        <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_edit_item_remarks" placeholder="Enter remarks"></textarea>
-        <br>
+        ${(type !== 'Material Check' && tools !== 'VSL' || type !== 'Material Check' && tools !== 'Visual Inspection') ? text_remarks : ''}
         <div class="row">
             <div class="col-md-6"><button type="button" class="btn btn-success btn-block btn-sm" onclick="EVALUATE.SaveEditItem(${item_no}, '${specs}', '${upper_limit}', '${lower_limit}');"><i class="ti-check"></i> SAVE</button></div>
             <div class="col-md-6"><button type="button" class="btn btn-secondary btn-block btn-sm" onclick="EVALUATE.CancelEditItem(${item_no},'${tools}', '${type}', '${specs}', '${upper_limit}', '${lower_limit}','${remarks}');"><i class="ti-na"></i> CANCEL</button></div>
@@ -1076,9 +1077,7 @@ const EVALUATE = (() => {
                         {
                             $(`#accordion_igm`).LoadingOverlay('show');
                             
-                            let final_judgment = judgement;//ginanto ko lang para alam na final judgement
-    
-                            EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,null,null,judgement,item_type,remarks,final_judgment,'edit_item');// ito ay Actual type. mga hindi nagbabago item judgement pagka naghinsei kaya same lang yung judgement para sa final judgement
+                            EVALUATE.ProceedVSLEditItem(trial_checksheet_id,item_no,tools,type,specs,null,null,remarks);
                         }
                     })
                 }
@@ -1496,6 +1495,48 @@ const EVALUATE = (() => {
             }
         });
 
+    };
+
+    this_evaluate.ProceedVSLEditItem = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,remarks) => {
+      
+        $.ajax({
+            url         : `edit-item`,
+            type        : 'post',
+            dataType    : 'json',
+            cache       : false,
+            data        : 
+            {
+                _token: _TOKEN,
+                trial_checksheet_id : trial_checksheet_id,
+                item_number         : item_no,
+                specification       : specs,
+            },
+            success: result => 
+            {
+                if(result.status === 'Success')
+                {
+                    EVALUATE.EditItemButton(item_no, tools, type, specs, new_upper_limit, new_lower_limit,remarks);
+
+                    $(`#td_item_no_${item_no}_specs`).html(specs);
+    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Edit successful',
+                    })
+                }
+                else
+                {
+                    Swal.fire({
+                        icon    : 'error',
+                        title   : data.status,
+                        text    : data.message,
+                    })
+                }
+
+                $(`#accordion_igm`).LoadingOverlay('hide');
+            }
+        });
     };
 
     this_evaluate.TrialChecksheetRejudgement = (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,item_type,new_remarks,action) => {

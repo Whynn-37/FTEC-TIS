@@ -58,7 +58,6 @@ Route::get('get-disapproved-inspection', 'TrialChecksheetController@getDisapprov
 
 // CHecksheet Item
 Route::post('store-items','ChecksheetItemController@storeItems');
-Route::post('update-item','ChecksheetItemController@editItem');
 Route::delete('delete-item','ChecksheetItemController@deleteItem');
 
 // Checksheet Data
@@ -89,6 +88,8 @@ Route::get('load-inspection-finished','ApprovalController@loadFinishedInspection
 Route::get('generate-trial-evaluation-result/{id}','ApprovalController@generateTrialEvaluationResult');
 Route::get('generate-second-page/{id}','ApprovalController@generateSecondPage');
 Route::post('approved','ApprovalController@approved');
+Route::post('edit-item','ApprovalController@editItem');
+
 
 Route::get('pdf-test', 'FpdfController@pdfTest');
 

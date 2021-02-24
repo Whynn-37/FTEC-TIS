@@ -2158,8 +2158,8 @@ const IGM = (() => {
                 <td style="vertical-align: middle;" rowspan="2">
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label" style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:5%;':margin_left}">${new_sub_no}</span>
-                        ${(trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button}
+                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label" style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:12%;':margin_left}">${new_sub_no}</span>
+                        ${(load_igm_status == 'from_load_igm') ? (trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button : td_remove_sub_no_button}
                     </div>
                 </td>
 				<td style="vertical-align: middle;" rowspan="2">
@@ -2211,8 +2211,8 @@ const IGM = (() => {
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label"  style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:5%;':margin_left}">${new_sub_no}</span>
-                        ${(trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button}
+                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label"  style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:12%;':margin_left}">${new_sub_no}</span>
+                        ${(load_igm_status == 'from_load_igm') ? (trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button : td_remove_sub_no_button}
                     </div>
                 </td>
                 <td class="td_sub_no_input">
@@ -2246,8 +2246,8 @@ const IGM = (() => {
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <div class="dropright">
-                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label"  style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:5%;':margin_left}">${new_sub_no}</span>
-                        ${(trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button}
+                        <span id="span_item_no_${item_no_count}_sub_no_${(trial_number > 1) ? (original_sub_item_count == '' || original_sub_item_count == undefined) ? new_sub_no : original_sub_item_count : new_sub_no}_label"  style="${(trial_number > 1) ? 'margin-right: 15%;' : 'margin-right: 20%;'} ${(trial_number > 1) ? 'margin-left:12%;':margin_left}">${new_sub_no}</span>
+                        ${(load_igm_status == 'from_load_igm') ? (trial_number > 1) ? ''  : (item_type == 1) ? '' : td_remove_sub_no_button : td_remove_sub_no_button}
                     </div>
                 </td>
                 <td class="td_sub_no_input">
