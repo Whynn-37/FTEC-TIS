@@ -155,7 +155,6 @@ const APPROVE = (() => {
             success: data => 
             {
                 //checksheet details
-
                 $('#txt_part_number').val(data.data.checksheet_details.part_number);
                 $('#txt_revision').val(data.data.checksheet_details.revision_number);
                 $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
@@ -172,8 +171,8 @@ const APPROVE = (() => {
                 $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
                 $('#txt_die_kind').val(data.data.checksheet_details.die_class);
                 $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
+                $('#tbl_igm tbody tr').remove();
                 
-                $('#tbl_igm tbody tr').remove()
                 if (data.status === 'Success')
                 {
                     //attachments
@@ -213,14 +212,6 @@ const APPROVE = (() => {
                         $(".btn-history").remove();
                     }
                     
-                }
-                else
-                {
-                    Swal.fire({
-                        icon    : 'error',
-                        title   : data.status,
-                        text    : data.message,
-                    })
                 }
 
                 $('#div_modal_content').LoadingOverlay('hide');

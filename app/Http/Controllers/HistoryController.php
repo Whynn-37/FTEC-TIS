@@ -132,11 +132,14 @@ class HistoryController extends Controller
         ];
     }
 
-    public function getInspectionHistory(TrialLedger $TrialLedger, Request $Request)
+    public function getInspectionHistory(TrialLedger $TrialLedger, LoginUser $LoginUser, Request $Request)
     {
         $application_date = $Request->id;
 
         $data = $TrialLedger->getInspectionHistory($application_date);
+
+        $inspect_by = $LoginUser->getFullName($data['inspector_id']);
+        $data['inspector_id'] = $inspect_by['fullname'];
 
         $status = 'Error';
         $message = 'No history';
