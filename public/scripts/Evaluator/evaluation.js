@@ -14,6 +14,7 @@ const EVALUATE = (() => {
     let array_item_type             = [];
     let final_array_min_max_datas   = [];
     let checksheet_item_count       = '';
+    let array_sub_number            = [];
 
     this_evaluate.LoadFinishedInspectionData = () => {
 
@@ -291,19 +292,9 @@ const EVALUATE = (() => {
 
             //MERON NITO DAHIL MAY TYPES NA HINDI KAILANGAN NG HINSEI
             let td_edit_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
-                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> ${(value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ? 'EDIT' : 'HINSEI'} </strong></button>
+                <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> ${(value.type === 'Material Check' && value.tools === 'VSL' || value.type === 'Material Check' && value.tools === 'Visual Inspection') ? 'EDIT SPECIFICATION' : 'HINSEI'} </strong></button>
             </td>`;
-            // let td_edit_hinsei_button = `<td colspan="3" id="td_item_no_${value.item_number}_edit_item">
-            //     <div class="row">
-            //         <div class="col-md-6">
-            //             <button type="button" id="btn_item_no_${value.item_number}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${value.item_number},'${value.tools}','${value.type}','${specs}','${upper_limit}','${lower_limit}','${(value.remarks == null) ? '' : value.remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> EDIT</strong></button>
-            //         </div>
-            //         <div class="col-md-6">
-            //             <button type="button" id="btn_item_no_${value.item_number}_hinsei" type="button" class="btn btn-danger btn-block" onclick="EVALUATE.Hinsei(${value.trial_checksheet_id},${value.item_number},'${value.tools}','${value.type}','${value.specification}','${value.upper_limit}','${value.lower_limit}','${value.judgment}',${value.item_type},'${(value.remarks === '') ? '-' : value.remarks}','${trial_checksheet_judgement}','hinsei');" ${(value.hinsei !== '' || value.hinsei != null) ? 'disabled' : ''}><strong class="strong-font"><i class="ti-close"></i> HINSEI</strong></button>
-            //         </div>
-            //     </div>
-            // </td>`;
-            // (trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgement,item_type,remarks,final_judgment,action)
+
             tr_checksheet += `<tr class="text-white ${(value.item_type == 0) ? 'bg-success' : 'bg-dark'}" id="tr_item_no_${value.item_number}_column">
                 <th width="5%">ITEM NO</th>
                 <th>TOOLS</th>
@@ -315,6 +306,7 @@ const EVALUATE = (() => {
                 <th>REMARKS</th>
                 <th id="th_igm_item_no_${value.item_number}_extra_column" colspan="7"></th>
             </tr>
+
             <tr id="tr_item_no_${value.item_number}">
                 <td>
                     <input type="text" id="txt_hidden_item_no_${value.item_number}_id"  value="${value.id}" hidden>
@@ -365,6 +357,7 @@ const EVALUATE = (() => {
                 array_judgement.push(value.judgment);
                 array_coordinates.push(value.coordinates);
                 array_remarks.push(value.remarks);
+                array_sub_number.push(value.sub_number);// ITO AY PARA LANG SA TRIAL 2 AND ABOVE
 
                 array_split_value = [];
                 if (value.data !== null)
@@ -382,7 +375,7 @@ const EVALUATE = (() => {
                 existing_sub_no_count++;
                 
                 //naka select item type to para lang magamit ko lang ulit yung process na ginamit ko sa select item type ng checksheet item, nakaglobal yung array_type, array_item_number at array_item_type
-                EVALUATE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index],array_item_type[a_index]);
+                EVALUATE.AddIgmSubNo(array_type[a_index], array_item_number[a_index], existing_sub_no_count,array_hidden_checksheet_data_id[b_index],array_data[b_index],array_judgement[b_index],array_coordinates[b_index],array_remarks[b_index],array_item_type[a_index],array_sub_number[b_index]);
     
                 $(`#th_igm_item_no_${array_item_number[a_index]}_extra_column`).prop('hidden', false);
             }
@@ -392,11 +385,12 @@ const EVALUATE = (() => {
             array_judgement                 = [];
             array_coordinates               = [];
             array_remarks                   = [];
+            array_sub_number                = [];
             existing_sub_no_count           = -1;
         }
     };
 
-    this_evaluate.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks,item_type) => {
+    this_evaluate.AddIgmSubNo = (type, item_no_count, existing_sub_no_count, checksheet_data_id,array_data,judgement,coordinates,remarks,item_type,NG_sub_item_no) => {
 
         let tr_sub_no_inputs = '';
         let tr_sub_no_column = '';
@@ -419,7 +413,7 @@ const EVALUATE = (() => {
 
             tr_sub_no_column += EVALUATE.AddIgmSubNoHeader(item_no_count, rowspan_count,item_type);
 
-            tr_sub_no_inputs += EVALUATE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
+            tr_sub_no_inputs += EVALUATE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks,NG_sub_item_no);
 
             $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
 
@@ -439,7 +433,7 @@ const EVALUATE = (() => {
             $(`#th_igm_item_no_${item_no_count}_extra_column`).prop('hidden', false);
 
             //pag lalagay lang ng row sa table, walang pag add sa DB
-            tr_sub_no_inputs += EVALUATE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks);
+            tr_sub_no_inputs += EVALUATE.AddIgmSubNoInputs(type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks,NG_sub_item_no);
             
             if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
             {
@@ -460,10 +454,11 @@ const EVALUATE = (() => {
         }
     };
 
-    this_evaluate.AddIgmSubNoInputs = (type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks) => {
+    this_evaluate.AddIgmSubNoInputs = (type, tr_sub_no_column, item_no_count, existing_sub_no_count_per_item, checksheet_data_id,array_data,judgement,coordinates,remarks,NG_sub_item_no) => {
 
-        let tr          = '';
-        let new_sub_no  = existing_sub_no_count_per_item;
+        let tr           = '';
+        let new_sub_no   = existing_sub_no_count_per_item;
+        let trial_number = $('#txt_trial_number').val();
 
         if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance') 
         {
@@ -471,7 +466,7 @@ const EVALUATE = (() => {
             <tr id="tr_item_no_${item_no_count}_sub_no_min_${new_sub_no}" >
                 <td style="vertical-align: middle;" rowspan="2">
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
-                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${(trial_number > 1) ? NG_sub_item_no : new_sub_no}</span>
                 </td>
                 <td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2">${coordinates}</td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
@@ -499,7 +494,7 @@ const EVALUATE = (() => {
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
-                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${(trial_number > 1) ? NG_sub_item_no : new_sub_no}</span>
                 </td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
@@ -520,7 +515,7 @@ const EVALUATE = (() => {
             <tr id="tr_item_no_${item_no_count}_sub_no_${new_sub_no}">
                 <td>
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
-                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" >${new_sub_no}</span>
+                    <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" >${(trial_number > 1) ? NG_sub_item_no : new_sub_no}</span>
                 </td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
                 <td class="td_sub_no_input">
@@ -775,7 +770,7 @@ const EVALUATE = (() => {
     };
 
     this_evaluate.EditItemButton = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
-        let button = `<button id="btn_item_no_${item_no}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> HINSEI</strong></button>`;
+        let button = `<button id="btn_item_no_${item_no}_edit_item" type="button" class="btn btn-primary btn-block" onclick="EVALUATE.EditItem(${item_no},'${tools}','${type}','${specs}','${upper_limit}','${lower_limit}','${remarks}');"><strong class="strong-font"><i class="ti-pencil-alt"></i> ${(type === 'Material Check' && tools === 'VSL' || type === 'Material Check' && tools === 'Visual Inspection')  ? 'EDIT SPECIFICATION' : 'HINSEI'}</strong></button>`;
         $(`#td_item_no_${item_no}_edit_item`).html(button);
 
         $(`#txt_item_no_${item_no}_edit_item_remarks`).text(remarks);
@@ -800,7 +795,7 @@ const EVALUATE = (() => {
 
     this_evaluate.RemarksInputs = (item_no, tools, type, specs, upper_limit, lower_limit,remarks) => {
 
-        text_remarks = '<textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_edit_item_remarks" placeholder="Enter remarks"></textarea> <br>';
+        text_remarks = `<textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_edit_item_remarks" placeholder="Enter remarks"></textarea> <br>`;
 
         let td_remarks = `
         ${(type !== 'Material Check' && tools !== 'VSL' || type !== 'Material Check' && tools !== 'Visual Inspection') ? text_remarks : ''}
@@ -1407,9 +1402,9 @@ const EVALUATE = (() => {
             //     EVALUATE.ProceedOverallRejudgement(trial_checksheet_id,item_no,tools,type,specs,new_upper_limit,new_lower_limit,judgment_item,item_type,new_remarks,final_judgment,action);
             //     array_overall_judgement     = [];
             // }
-
+            let original_sub_no = $(`#span_item_no_${item_no}_sub_no_${sub_no}_label`).text();
             // para sa pag update ng checksheet data
-            EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,sub_item_remarks,judgment_item,final_judgment,type,item_no,action);
+            EVALUATE.ProceedEditData(id, original_sub_no, coordinates,array_data,judgment_datas,sub_item_remarks,judgment_item,final_judgment,type,item_no,action);
             array_overall_judgement     = [];
         }
         else
@@ -2791,6 +2786,7 @@ const EVALUATE = (() => {
 
         let judgment_datas              = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text()
         let total_sub_no_count          = $(`#txt_hidden_item_no_${item_no}_sub_no_count`).val();
+        let original_sub_no             = $(`#span_item_no_${item_no}_sub_no_${sub_no}_label`).text();
 
         (remarks == null) ? new_remarks = '' : new_remarks = remarks;
         (specs !== '-') ? new_specs = specs : new_specs = '';
@@ -2844,7 +2840,7 @@ const EVALUATE = (() => {
                         // }
 
                         //auto judgement papunta sa DB para sa checksheet data
-                        EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
+                        EVALUATE.ProceedEditData(id, original_sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
                         array_overall_judgement     = [];
                         final_array_min_max_datas   = [];
 
@@ -2860,7 +2856,7 @@ const EVALUATE = (() => {
                         // }
 
                         //auto judgement papunta sa DB
-                        EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
+                        EVALUATE.ProceedEditData(id, original_sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
                         array_overall_judgement     = [];
                         final_array_min_max_datas   = [];
                     }
@@ -2879,7 +2875,7 @@ const EVALUATE = (() => {
                     // }
 
                     //auto judgement papunta sa DB
-                    EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
+                    EVALUATE.ProceedEditData(id, original_sub_no, coordinates,array_data,judgment_datas,new_remarks,'GOOD',trial_checksheet_judgement,type,item_no,'edit')
                     array_overall_judgement     = [];
                     final_array_min_max_datas   = [];
 
@@ -2895,7 +2891,7 @@ const EVALUATE = (() => {
                     // }
 
                     //auto judgement papunta sa DB
-                    EVALUATE.ProceedEditData(id, sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
+                    EVALUATE.ProceedEditData(id, original_sub_no, coordinates,array_data,judgment_datas,new_remarks,'NG',trial_checksheet_judgement,type,item_no,'edit')
                     array_overall_judgement     = [];
                     final_array_min_max_datas   = [];
                 }
