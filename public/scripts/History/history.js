@@ -30,8 +30,14 @@ const HISTORY = (() => {
         {
             approved_button = 1;
         }
+        else if(status === 'ON-GOING INSPECTION')
+        {
+            $('#accordion_disapprove_reason').hide();
+            $('#modal_view_inspection_data .modal-footer').hide();
+        }
         else
         {
+            
             $('#modal_view_inspection_data .modal-footer').hide();
         }
 
@@ -248,44 +254,54 @@ const HISTORY = (() => {
     {
         let history_reason = $('#txt_disapprove_reason_history').val();
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Please confirm it.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, please!'
-          }).then((result) => {
-            if (result.isConfirmed) 
-            {
-                $('#div_modal_content').LoadingOverlay('show');
-                $.ajax({
-                    url     : `edit-data-inspection`,
-                    type    : 'patch',
-                    dataType: 'json',
-                    data    : 
-                    {
-                        _token              : _TOKEN,
-                        trial_checksheet_id : trial_checksheet_id,
-                        decision            : decision,
-                        reason              : history_reason
-                    },
-                    success: data => 
-                    {
-                        Swal.fire({
-                            icon    : 'success',
-                            title   : data.status,
-                            text    : data.message,
-                        })
+        if(history_reason === '')
+        {   
+            $('#span_error_reason').remove();
+            $('#txt_disapprove_reason_history').after(`<span id="span_error_reason" class="span-error">Required</span>`);
+        }
+        else
+        {
+            $('#span_error_reason').remove();
 
-                        HISTORY.loadHistoryList();
-                        $("#modal_view_inspection_data").modal("hide");
-                        $('#div_modal_content').LoadingOverlay('hide');
-                    }
-                })
-            }
-        })        
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm it.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, please!'
+              }).then((result) => {
+                if (result.isConfirmed) 
+                {
+                    $('#div_modal_content').LoadingOverlay('show');
+                    $.ajax({
+                        url     : `edit-data-inspection`,
+                        type    : 'patch',
+                        dataType: 'json',
+                        data    : 
+                        {
+                            _token              : _TOKEN,
+                            trial_checksheet_id : trial_checksheet_id,
+                            decision            : decision,
+                            reason              : history_reason
+                        },
+                        success: data => 
+                        {
+                            Swal.fire({
+                                icon    : 'success',
+                                title   : data.status,
+                                text    : data.message,
+                            })
+    
+                            HISTORY.loadHistoryList();
+                            $("#modal_view_inspection_data").modal("hide");
+                            $('#div_modal_content').LoadingOverlay('hide');
+                        }
+                    })
+                }
+            })  
+        }  
     }
 
     return this_history;
