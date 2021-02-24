@@ -411,6 +411,8 @@ const IGM = (() => {
         } 
         else 
         {
+            $(`#th_igm_item_no_${item_no}_extra_column`).prop('hidden', false);
+
             if (existing_sub_no_count === 0) 
             {
                 // kung yung aaddan ng item ay yung last item no
@@ -583,7 +585,6 @@ const IGM = (() => {
 			</tr>`;
 
         return tr_new_item;
-
     };
 
     this_igm.SelectItemTools = (item_no) => {
@@ -1230,7 +1231,8 @@ const IGM = (() => {
         //item no inputs
         $(`#txt_item_no_${previous_item_no_holder}_specs`).attr('id', `txt_item_no_${next_item_no_holder}_1_specs`);
         //ValidateAddIgmItemNo
-        $(`#txt_item_no_${next_item_no_holder}_1_specs`).attr('onkeyup', `IGM.ValidateAddIgmItemNo(${next_item_no_holder});`);
+        let item_type = $(`#txt_item_no_${next_item_no_holder}_1_item_type`).val();
+        $(`#txt_item_no_${next_item_no_holder}_1_specs`).attr('onkeyup', `IGM.ValidateAddIgmItemNo(${next_item_no_holder},'','update_item_no_only',${item_type});`);
 
         $(`#txt_item_no_${previous_item_no_holder}_upper_limit`).attr('id', `txt_item_no_${next_item_no_holder}_1_upper_limit`);
         $(`#txt_item_no_${next_item_no_holder}_1_upper_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${next_item_no_holder},'update_item_no_only');`);
@@ -1670,6 +1672,7 @@ const IGM = (() => {
                 new_item_no_count--;
                 item_no_count--;
             }
+            $(`#th_igm_item_no_${item_no}_extra_column`).prop('hidden',true);
         } 
         else 
         {
@@ -1932,7 +1935,7 @@ const IGM = (() => {
 
                 if (item_type == 1)
                 {
-                    $(`#txt_item_no_${item_no_holder}_specs`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
+                    $(`#txt_item_no_${item_no_holder}_specs`).attr('onkeyup', `IGM.ValidateAddIgmItemNo(${item_no_holder},'','update_item_no_only',1);`);
                     $(`#txt_item_no_${item_no_holder}_upper_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
                     $(`#txt_item_no_${item_no_holder}_lower_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder});`);
                 }
@@ -1942,6 +1945,7 @@ const IGM = (() => {
                     $(`#txt_item_no_${item_no_holder}_upper_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder},'update_item_no_only');`);
                     $(`#txt_item_no_${item_no_holder}_lower_limit`).attr('onkeyup', `IGM.ValidateItemNoUpperAndLowerLimit(${item_no_holder},'update_item_no_only');`);
                 }
+
                 if (existing_sub_no_count_value > 0) 
                 {
                     // IGM.AddIgmItemNoInputsBetweenChangeSubNoIdToTemporaryId(type_value, a_add_igm_item_no_onclick_value.split(','), next_item_no_holder, item_no_holder);
@@ -4726,8 +4730,11 @@ const IGM = (() => {
             }
             else
             {
-                $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${visual_no}`).css('background-color', '#e8ecef');
-               
+                for (let b_index = 1; b_index <= 5; b_index++) 
+                {
+                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${b_index}`).css('background-color', '#e8ecef');
+                    $(`#txt_item_no_${item_no_count}_sub_no_${sub_no}_visual_${b_index}`).val('-');
+                }
             }
         }
         else
@@ -4767,5 +4774,3 @@ const IGM = (() => {
    
     return this_igm;
 })();
-
-

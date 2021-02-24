@@ -154,27 +154,28 @@ const APPROVE = (() => {
             },
             success: data => 
             {
+                //checksheet details
+
+                $('#txt_part_number').val(data.data.checksheet_details.part_number);
+                $('#txt_revision').val(data.data.checksheet_details.revision_number);
+                $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
+                $('#txt_part_name').val(data.data.checksheet_details.part_name);
+                $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
+                $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
+                $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
+                $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
+                $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
+                $('#txt_inspection_required_time').val(data.data.checksheet_details.inspection_required_time);//hindi pa kasama sa returned data
+                $('#txt_actual_inspection_time').val(data.data.actual_time);//hindi pa kasama sa returned data
+                $('#txt_total_takt_time').val(data.data.takt_time);//hindi pa kasama sa returned data
+                $('#txt_total_down_time').val(data.data.down_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
+                $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
+                $('#txt_die_kind').val(data.data.checksheet_details.die_class);
+                $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
+                
+                $('#tbl_igm tbody tr').remove()
                 if (data.status === 'Success')
                 {
-                    //checksheet details
-
-                    $('#txt_part_number').val(data.data.checksheet_details.part_number);
-                    $('#txt_revision').val(data.data.checksheet_details.revision_number);
-                    $('#txt_trial_number').val(data.data.checksheet_details.trial_number);
-                    $('#txt_part_name').val(data.data.checksheet_details.part_name);
-                    $('#txt_model_name').val(data.data.checksheet_details.model_name);//hindi pa kasama sa returned data
-                    $('#txt_supplier_code').val(data.data.checksheet_details.supplier_code);
-                    $('#txt_supplier_name').val(data.data.checksheet_details.supplier_name);//hindi pa kasama sa returned data
-                    $('#txt_application_date').val(data.data.checksheet_details.application_date);//hindi pa kasama sa returned data
-                    $('#txt_inspection_completion_date').val(data.data.checksheet_details.date_finished);
-                    $('#txt_inspection_required_time').val(data.data.checksheet_details.inspection_required_time);//hindi pa kasama sa returned data
-                    $('#txt_actual_inspection_time').val(data.data.actual_time);//hindi pa kasama sa returned data
-                    $('#txt_total_takt_time').val(data.data.takt_time);//hindi pa kasama sa returned data
-                    $('#txt_total_down_time').val(data.data.down_time);//hindi pa kasama sa returned data // papalit nalang ako ng application date
-                    $('#txt_inspection_reason').val(data.data.checksheet_details.inspection_reason);
-                    $('#txt_die_kind').val(data.data.checksheet_details.die_class);
-                    $('#txt_inspector').val(data.data.checksheet_details.inspect_by); //hindi pa kasama sa returned data
-
                     //attachments
                     let files = `
                     <div class="vertical-rectangle">
@@ -401,7 +402,7 @@ const APPROVE = (() => {
             $(`#tr_item_no_${item_no_count}`).after(tr_sub_no_inputs);
 
             //para sa pag papalit ng kulay ng visuals data
-            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data,'from_load_igm');
         } 
         else 
         {
@@ -427,7 +428,7 @@ const APPROVE = (() => {
             }
 
             //para sa pag papalit ng kulay ng visuals data
-            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data);
+            IGM.ChecksheetDataVisualsChangeColor(item_no_count,existing_sub_no_count_per_item,array_data,'from_load_igm');
         }
     };
 
@@ -444,7 +445,7 @@ const APPROVE = (() => {
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
                 </td>
-				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2" >${coordinates}</td>
+				<td id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates" style="vertical-align: middle;" rowspan="2" >${(coordinates == '' || coordinates == null) ? '-' : coordinates}</td>
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_2">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
 				<td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_min_3">${IGM.ChecksheetDataInputData(type,array_data,4)}</td>
@@ -471,7 +472,7 @@ const APPROVE = (() => {
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label">${new_sub_no}</span>
                 </td>
-                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${(coordinates == '' || coordinates == null) ? '-' : coordinates}</td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_1">${IGM.ChecksheetDataInputData(type,array_data,0)}</td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_2">${IGM.ChecksheetDataInputData(type,array_data,1)}</td>
                 <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_amt_3">${IGM.ChecksheetDataInputData(type,array_data,2)}</td>
@@ -489,7 +490,7 @@ const APPROVE = (() => {
                     <input type="text" id="txt_hidden_item_no_${item_no_count}_sub_no_${new_sub_no}" value="${checksheet_data_id}" hidden>
                     <span id="span_item_no_${item_no_count}_sub_no_${new_sub_no}_label" >${new_sub_no}</span>
                 </td>
-                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${coordinates}</td>
+                <td class="td_sub_no_input" id="td_item_no_${item_no_count}_sub_no_${new_sub_no}_coordinates">${(coordinates == '' || coordinates == null) ? '-' : coordinates}</td>
                 <td class="td_sub_no_input">
                     <input id="txt_item_no_${item_no_count}_sub_no_${new_sub_no}_visual_1" type="text" class="form-control input_text_center" placeholder="Click visual" disabled value="${IGM.ChecksheetDataInputData(type,array_data,0)}" >
                 </td>

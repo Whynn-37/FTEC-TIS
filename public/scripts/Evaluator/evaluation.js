@@ -1600,12 +1600,13 @@ const EVALUATE = (() => {
 
         let  edit_item_button   = $(`#btn_item_no_${item_no}_edit_item`).length;
         let  item_judgment      = $(`#td_item_no_${item_no}_judgement span`).text();
+        let  tools              = $(`#td_item_no_${item_no}_tools`).text();
 
         let td_coordinates = `<input id="txt_item_no_${item_no}_sub_no_${sub_no}_coordinates" type="text" class="form-control input_text_center text_to_uppercase" placeholder="Enter Coordinates" autocomplete="off" value="${coordinates}">`;
 
         let sub_item_judgement = $(`#td_item_no_${item_no}_sub_no_${sub_no}_judgement span`).text();
 
-        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness')
+        if (type === 'Min and Max' || type === 'Min and Max and Form Tolerance'||type === 'Actual' || type === 'Material Thickness' || type === 'Material Check' && tools === 'VSL' || type === 'Material Check' && tools === 'Visual Inspection')
         {
             if (edit_item_button === 0)
             {
@@ -1661,6 +1662,25 @@ const EVALUATE = (() => {
                         data_count++;
                     }
                 }
+
+                for (let visual_no = 1; visual_no <= 5; visual_no++) 
+                {
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('disabled',false);
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
+                    $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
+                }
+
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
+                let td_edit_button = `
+                <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
+                <br>
+                <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+                
+                <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
+
+                $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
+
+                $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
             }
         }
         else //pang mga kasamahan ng type = Belt Fit
@@ -1671,20 +1691,19 @@ const EVALUATE = (() => {
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).prop('readonly',true);
                 $(`#txt_item_no_${item_no}_sub_no_${sub_no}_visual_${visual_no}`).addClass('input-pointer');
             }
+
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
+            let td_edit_button = `
+            <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
+            <br>
+            <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
+            
+            <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
+
+            $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
+
+            $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
         }
-
-        $(`#td_item_no_${item_no}_sub_no_${sub_no}_coordinates`).html(td_coordinates);
-        let td_edit_button = `
-        <textarea class="form-control textarea_edit_item" id="txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks" placeholder="Enter remarks"></textarea>
-        <br>
-        <button type="button" class="btn btn-success btn-block" onclick="EVALUATE.SaveSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}')"><strong class="strong-font"><i class="ti-check"></i> SAVE</strong></button>
-        
-        <button type="button" class="btn btn-secondary btn-block" style="margin-top:5px;" onclick="EVALUATE.CancelSubItem('${type}',${item_no},${sub_no},'${coordinates}','${array_data}','${sub_item_judgement}','${remarks}','${item_judgment}')"><strong class="strong-font"><i class="ti-na"></i> CANCEL</strong></button>`;
-
-        
-        $(`#td_item_no_${item_no}_sub_no_${sub_no}_edit`).html(td_edit_button);
-
-        $(`#txt_item_no_${item_no}_sub_no_${sub_no}_edit_remarks`).val(remarks);
     };
 
     this_evaluate.SubItemSelectVisual = (item_no,sub_no,visual_no) => {
