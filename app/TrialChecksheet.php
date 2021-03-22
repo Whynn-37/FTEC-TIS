@@ -3,9 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+
 class TrialChecksheet extends Model
 {
-
     protected $guarded = [];
 
     public function getTrialChecksheet($application_date)
@@ -130,36 +130,6 @@ class TrialChecksheet extends Model
         ->get();
     }
 
-    public function getAllData($trial_checksheet_id)
-    {
-        return TrialChecksheet::join('trial_ledgers', 'trial_ledgers.application_date', 'trial_checksheets.application_date')
-        ->join('approvals', 'approvals.trial_checksheet_id', 'trial_checksheets.id')
-        ->join('suppliers', 'trial_ledgers.supplier_code', '=', 'suppliers.supplier_code')
-        ->where('trial_checksheets.id', $trial_checksheet_id)
-        ->select(
-            'trial_checksheets.id', 
-            'trial_checksheets.revision_number', 
-            'trial_checksheets.trial_number', 
-            'trial_checksheets.judgment', 
-            'trial_checksheets.part_number', 
-            'trial_ledgers.application_date', 
-            'trial_ledgers.part_name', 
-            'trial_ledgers.supplier_code', 
-            'suppliers.supplier_name', 
-            'approvals.inspect_by', 
-            'approvals.inspect_datetime', 
-            'approvals.evaluated_by', 
-            'approvals.evaluated_datetime', 
-            'approvals.approved_by', 
-            'approvals.approved_datetime', 
-            'approvals.disapproved_by', 
-            'approvals.disapproved_datetime', 
-            'approvals.decision', 
-            'approvals.reason'
-            )
-        ->first();
-    }
-
     public function history($decision)
     {
         return TrialChecksheet::join('trial_ledgers', 'trial_checksheets.application_date', 'trial_ledgers.application_date')
@@ -187,5 +157,15 @@ class TrialChecksheet extends Model
             'attachments.file_name_merge',
             )
         ->get();
+    }
+
+    public function getTrialLedger()
+    {
+        return $this->hasOne(TrialLedger::class, 'application_date', 'application_date');
+    }
+
+    public function getApproval()
+    {
+        return $this->hasOne(Approval::class);
     }
 }

@@ -132,4 +132,9 @@ class TrialLedger extends Model
         ->get()
         ->count();
     }
+
+    public function getSupplier()
+    {
+        return $this->hasOne(Supplier::class, 'supplier_code', 'supplier_code');
+    }
 }

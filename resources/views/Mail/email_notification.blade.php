@@ -39,7 +39,7 @@
                                             <td>
                                                 @if($subject === 'For Re-inspection')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
-                                                        TO: {{$data['name_inspect_by']}}
+                                                        TO: {{$data['get_approval']['inspect_by']}}
                                                     </p>
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
                                                         This is to inform you that, this part number is re-inspection.
@@ -53,7 +53,7 @@
                                                     </p>
                                                 @elseif($subject === 'For Re-Evaluation' || $subject === 'For Re-Evaluation - Approver')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
-                                                        TO: {{$data['name_evaluated_by']}}
+                                                        TO: {{$data['get_approval']['evaluated_by']}}
                                                     </p>
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
                                                         This is to inform you that, this part number is for re-evaluation
@@ -67,7 +67,7 @@
                                                     </p>
                                                 @elseif($subject === 'For Re-Approval')
                                                     <p style="line-height: 26px; margin-bottom:15px;font-size:14;font-weight:700;">
-                                                            TO: {{$data['name_approved_by']}}
+                                                            TO: {{$data['get_approval']['approved_by']}}
                                                     </p>
                                                     <p style="line-height: 20px;margin-bottom:15px;margin-left:20px;">
                                                         This is to inform you that, this part number is for re-approval.
@@ -91,29 +91,29 @@
                                                     <tr>
                                                         <th style="background-color:#1A416E;font-size:12px;"> 図番 </th>
                                                         <th style="font-size:16px;background-color:#1A416E;color:#ffffff;">PART NUMBER</th>
-                                                        <th style="font-size:16px;background-color:#1A416E;color:#ffffff;"> {{$data['part_number']}} </th>
+                                                        <th style="font-size:16px;background-color:#1A416E;color:#ffffff;"> {{$data['get_trial_ledger']['part_number']}} </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 品名 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> PART NAME </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['part_name']}} </td>          
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_trial_ledger']['part_name']}} </td>          
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 版数 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REVISION NUMBER </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['revision_number']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_trial_ledger']['revision_number']}} </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> トライアル数 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> TRIAL NUMBER </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['trial_number']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_trial_ledger']['trial_number']}} </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> サプライヤー名 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> SUPPLIER NAME </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['supplier_name']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_trial_ledger']['get_supplier']['supplier_name']}} </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 適用日 </td>
@@ -128,62 +128,62 @@
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 検査者 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED BY </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_inspect_by']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['inspect_by']}} </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 検査日時 </td>
                                                         <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> INSPECTED DATE TIME </td>
-                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['inspect_datetime']}} </td>
+                                                        <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['inspect_datetime']}} </td>
                                                     </tr>
                                                     @if($subject === 'For Approval' || $subject === 'For Re-Approval')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['evaluated_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['evaluated_datetime']}} </td>
                                                         </tr>
                                                     @endif
                                                     @if ($subject === 'Approved')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_evaluated_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['evaluated_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 確認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> EVALUATED DATE </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['evaluated_datetime']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['evaluated_datetime']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 承認者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_approved_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['approved_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 承認日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> APPROVED DATE </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['approved_datetime']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['approved_datetime']}} </td>
                                                         </tr>
                                                     @endif
                                                     @if($subject === 'For Re-inspection' || $subject === 'For Re-Evaluation - Approver' || $subject === 'For Re-Evaluation.')
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 否決者 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED BY </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['name_disapproved_by']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['disapproved_by']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 否決日 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> DISAPPROVED DATE </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['disapproved_datetime']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['disapproved_datetime']}} </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> 理由 </td>
                                                             <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> REASON </td>
-                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['reason']}} </td>
+                                                            <td style="font-size:16px;background-color:#dfdfe2;color:#000000;"> {{$data['get_approval']['reason']}} </td>
                                                         </tr>
                                                     @endif
                                                 </tbody>
@@ -206,25 +206,6 @@
                             </td>
                             <br>
                             <br>
-                            {{-- <tr>
-                                <td align="left"
-                                    style="color: #1f2837; font-size: 16px; font-family: Open Sans, Helvetica, sans-serif; line-height: 28px;">
-                                    <p style="line-height: 26px; margin-bottom:15px;">
-                                        
-                                    </p>
-                                </td>
-                            </tr> --}}
-                            {{-- <tr>
-                                <td align="left"
-                                    style="color: #1f2837; font-size: 16px; font-family: Open Sans, Helvetica, sans-serif; line-height: 28px;">
-                                    <p style="line-height: 26px; margin-bottom:15px;">
-                                        <br><br>
-                                        Regards,
-                                        <br>
-                                        DFM SYSTEM
-                                    </p>
-                                </td>
-                            </tr> --}}
                         </tbody>
                     </table>
                 </td>
@@ -237,9 +218,6 @@
     </table>
     </td>
     </tr>
-    {{-- <tr>
-        <td height="40" style="font-size: 40px; line-height: 40px;">&nbsp;</td>
-    </tr> --}}
     </tbody>
     </table>
     <!-- /body -->
